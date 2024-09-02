@@ -2,6 +2,7 @@
 
 import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/prisma/prisma';
+import { AuthError } from 'next-auth';
 
 export const login = async (provider: string, formData: FormData) => {
   const isLoggedIn = await auth();
@@ -24,6 +25,14 @@ export const login = async (provider: string, formData: FormData) => {
       });
     }
   } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin':
+          throw new Error('Invalid credentials.');
+        default:
+          throw new Error('Something went wrong.');
+      }
+    }
     throw error;
   }
 };

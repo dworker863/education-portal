@@ -1,19 +1,15 @@
 'use client';
 
 import { FormEvent } from 'react';
+import { registration } from '../libs/server-actions';
 
 const SignupForm = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const data = {
-      username: formData.get('username'),
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
 
-    console.log(data);
+    registration(formData);
   };
 
   return (
@@ -33,7 +29,7 @@ const SignupForm = () => {
         <br />
         <input id="password" type="text" name="password" />
       </fieldset>
-      <button type="submit">Sign In</button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 };

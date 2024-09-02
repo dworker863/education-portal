@@ -1,18 +1,15 @@
 'use client';
 
 import { FormEvent } from 'react';
+import { login } from '../libs/server-actions';
 
 const SigninForm = () => {
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const data = {
-      email: formData.get('email'),
-      password: formData.get('password'),
-    };
 
-    console.log(data);
+    login(formData);
   };
 
   return (

@@ -1,9 +1,15 @@
 'use server';
 
-import { signIn, signOut } from '@/auth';
+import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/prisma/prisma';
 
 export const login = async (provider: string, formData: FormData) => {
+  const isLoggedIn = await auth();
+
+  if (isLoggedIn) {
+    throw new Error('You are already signed in!');
+  }
+
   try {
     if (provider === 'credentials') {
       console.log({ provider });
@@ -35,6 +41,7 @@ export const registration = async (formData: FormData) => {
     return user;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 

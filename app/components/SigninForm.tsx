@@ -1,15 +1,22 @@
 'use client';
 
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { login } from '../libs/server-actions';
 
 const SigninForm = () => {
-  const handleSubmit = (provider: string, e: FormEvent) => {
+  const [error, setError] = useState(null);
+  const handleSubmit = async (provider: string, e: FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
 
-    login(provider, formData);
+    const user = login(provider, formData)
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        setError(error.message);
+      });
   };
 
   return (
@@ -27,6 +34,7 @@ const SigninForm = () => {
         </fieldset>
         <button type="submit">Sign In</button>
       </form>
+      {error && <p className="text-red-600">{error}</p>}
       <br />
       <br />
       <form onSubmit={handleSubmit.bind(null, 'google')}>

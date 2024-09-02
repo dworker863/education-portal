@@ -34,16 +34,25 @@ export const {
       },
     }),
   ],
-  // callbacks: {
-  //   jwt: ({ token, account, user }) => {
-  //     console.log({ user });
+  callbacks: {
+    signIn: async () => {
+      const isLoggedIn = await auth();
 
-  //     return token;
-  //   },
-  //   session: ({ token, session }) => {
-  //     return session;
-  //   },
-  // },
+      if (isLoggedIn) {
+        throw new Error('You are already signed in!');
+      }
+
+      return true;
+    },
+    // jwt: ({ token, account, user }) => {
+    //   console.log({ user });
+
+    //   return token;
+    // },
+    // session: ({ token, session }) => {
+    //   return session;
+    // },
+  },
 
   session: {
     strategy: 'jwt',

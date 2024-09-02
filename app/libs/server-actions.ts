@@ -1,20 +1,37 @@
 'use server';
 
-import { signIn } from '@/auth';
+import { signIn, signOut } from '@/auth';
+import { prisma } from '@/prisma/prisma';
 
 export const login = async (formData: FormData) => {
-  await signIn('credentials', {
-    email: formData.get('email'),
-    password: formData.get('password'),
-    redirectTo: '/',
-  });
+  try {
+    await signIn('credentials', {
+      email: formData.get('email'),
+      password: formData.get('password'),
+      redirectTo: '/',
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export const registration = async (formData: FormData) => {
-  const data = {
-    email: formData.get('email'),
-    password: formData.get('password'),
-  };
+  try {
+    const user = await prisma.user.create({
+      data: {
+        username: formData.get('username') as string,
+        email: formData.get('email') as string,
+        password: formData.get('password') as string,
+      },
+    });
 
-  console.log({ data });
+    return user;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const logout = async () => {
+  await signOut();
 };

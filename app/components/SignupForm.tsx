@@ -2,14 +2,18 @@
 
 import { FormEvent } from 'react';
 import { registration } from '../libs/server-actions';
+import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
-  const handleSubmit = (e: FormEvent) => {
+  const router = useRouter();
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
 
-    registration(formData);
+    const user = await registration(formData);
+
+    router.push('/');
   };
 
   return (

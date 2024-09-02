@@ -1,9 +1,10 @@
 import { auth } from '@/auth';
-import Image from 'next/image';
 import Link from 'next/link';
+import Button from './components/Button';
 
 export default async function Home() {
   const session = await auth();
+
   return (
     <main>
       {JSON.stringify(session)}
@@ -12,7 +13,7 @@ export default async function Home() {
       <br />
       <Link href="/signup">Sign Up</Link>
       <br />
-      <button>Sign Out</button>{' '}
+      <Button text="Sign Out" />
     </main>
   );
 }

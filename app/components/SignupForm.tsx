@@ -19,9 +19,9 @@ const SignupForm = () => {
   return (
     <form onSubmit={handleSubmit}>
       <fieldset>
-        <label htmlFor="username">Username</label>
+        <label htmlFor="name">Username</label>
         <br />
-        <input id="username" type="text" name="username" />
+        <input id="name" type="text" name="name" />
       </fieldset>
       <fieldset>
         <label htmlFor="email">Email</label>

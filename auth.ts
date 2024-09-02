@@ -1,6 +1,8 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
+import Google from 'next-auth/providers/google';
+import Github from 'next-auth/providers/github';
 import { prisma } from './prisma/prisma';
 
 export const {
@@ -11,6 +13,8 @@ export const {
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [
+    Google,
+    Github,
     Credentials({
       authorize: async (credentials) => {
         const user = await prisma.user.findUnique({
@@ -30,8 +34,21 @@ export const {
       },
     }),
   ],
+  // callbacks: {
+  //   jwt: ({ token, account, user }) => {
+  //     console.log({ user });
+
+  //     return token;
+  //   },
+  //   session: ({ token, session }) => {
+  //     return session;
+  //   },
+  // },
 
   session: {
     strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/signin',
   },
 });

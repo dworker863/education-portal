@@ -9,7 +9,7 @@ type TButtonProps = {
 
 const Button: FC<TButtonProps> = ({ text }) => {
   const handleClick = async () => {
-    logout();
+    await logout();
   };
 
   return <button onClick={handleClick}>{text}</button>;

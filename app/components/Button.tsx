@@ -5,14 +5,19 @@ import { logout } from '../libs/server-actions';
 
 type TButtonProps = {
   text: string;
+  type: 'button' | 'submit' | 'reset';
 };
 
-const Button: FC<TButtonProps> = ({ text }) => {
+const Button: FC<TButtonProps> = ({ text, type }) => {
   const handleClick = async () => {
     await logout();
   };
 
-  return <button onClick={handleClick}>{text}</button>;
+  return (
+    <button type={type} onClick={handleClick}>
+      {text}
+    </button>
+  );
 };
 
 export default Button;

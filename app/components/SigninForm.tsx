@@ -10,7 +10,7 @@ const SigninForm = () => {
 
     const formData = new FormData(e.target as HTMLFormElement);
 
-    const user = login(provider, formData)
+    login(provider, formData)
       .then((data) => {
         console.log(data);
       })

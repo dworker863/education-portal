@@ -3,6 +3,7 @@
 import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/prisma/prisma';
 import { AuthError } from 'next-auth';
+import { getUserByEmail } from './utils';
 
 export const login = async (provider: string, formData: FormData) => {
   const isLoggedIn = await auth();
@@ -13,7 +14,6 @@ export const login = async (provider: string, formData: FormData) => {
 
   try {
     if (provider === 'credentials') {
-      console.log({ provider });
       await signIn('credentials', {
         email: formData.get('email'),
         password: formData.get('password'),
@@ -39,6 +39,12 @@ export const login = async (provider: string, formData: FormData) => {
 
 export const registration = async (formData: FormData) => {
   try {
+    const isUserExists = await getUserByEmail(formData.get('email') as string);
+
+    if (isUserExists) {
+      throw new Error('User with this email already exists');
+    }
+
     const user = await prisma.user.create({
       data: {
         name: formData.get('name') as string,
@@ -47,7 +53,7 @@ export const registration = async (formData: FormData) => {
       },
     });
 
-    return user;
+    return Response.redirect(new URL('http://localhost:3000/'), 303);
   } catch (error) {
     console.log(error);
     throw error;

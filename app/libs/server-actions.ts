@@ -45,11 +45,19 @@ export const registration = async (formData: FormData) => {
       throw new Error('User with this email already exists');
     }
 
+    const birthDate = new Date(
+      formData.get('birthDate') as string,
+    ).toISOString();
+
     const user = await prisma.user.create({
       data: {
-        name: formData.get('name') as string,
         email: formData.get('email') as string,
+        name: formData.get('name') as string,
         password: formData.get('password') as string,
+        firstName: formData.get('firstName') as string,
+        lastName: formData.get('lastName') as string,
+        birthDate,
+        image: formData.get('image') as string,
       },
     });
   } catch (error) {

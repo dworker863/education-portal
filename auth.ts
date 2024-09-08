@@ -1,9 +1,35 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import { prisma } from './prisma/prisma';
+
+declare module 'next-auth' {
+  /**
+   * Returned by `auth`, `useSession`, `getSession` and received as a prop on the `SessionProvider` React Context
+   */
+  interface Session {
+    user: {
+      role: 'ADMIN' | 'USER';
+      password: string;
+      firstName: string;
+      lastName: string;
+      birthDate: string;
+      rating: string;
+      rank: string;
+      moneyUSD: number;
+      meta: string[];
+    } & DefaultSession['user'];
+
+    /**
+     * By default, TypeScript merges new interface properties and overwrites existing ones.
+     * In this case, the default session user properties will be overwritten,
+     * with the new ones defined above. To keep the default session user properties,
+     * you need to add them back into the newly declared interface.
+     */
+  }
+}
 
 export const {
   auth,
@@ -27,7 +53,8 @@ export const {
           credentials?.email === user?.email &&
           credentials?.password === user?.password
         ) {
-          return user;
+          const { password, ...userWithoutPassword } = user!;
+          return userWithoutPassword;
         }
 
         return null;
@@ -36,8 +63,6 @@ export const {
   ],
   callbacks: {
     signIn: async ({ user }) => {
-      console.log('SIGNN: ', { user });
-
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {
@@ -46,14 +71,19 @@ export const {
 
       return true;
     },
-    // jwt: ({ token, account, user }) => {
-    //   console.log({ user });
+    jwt: async ({ token, account, user }) => {
+      if (user) {
+        token = { ...token, user: { ...user } };
+      }
 
-    //   return token;
-    // },
-    // session: ({ token, session }) => {
-    //   return session;
-    // },
+      return token;
+    },
+    session: async ({ token, session }) => {
+      if (token.user) {
+        session = { ...session, user: { ...session.user, ...token.user } };
+      }
+      return session;
+    },
   },
 
   session: {

@@ -52,8 +52,6 @@ export const registration = async (formData: FormData) => {
         password: formData.get('password') as string,
       },
     });
-
-    return Response.redirect(new URL('http://localhost:3000/'), 303);
   } catch (error) {
     console.log(error);
     throw error;

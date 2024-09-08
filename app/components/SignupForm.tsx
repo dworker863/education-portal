@@ -2,8 +2,10 @@
 
 import { FormEvent, useState } from 'react';
 import { registration } from '../libs/server-actions';
+import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
+  const router = useRouter();
   const [error, setError] = useState(null);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -18,6 +20,8 @@ const SignupForm = () => {
       .catch((error) => {
         setError(error.message);
       });
+
+    router.push('/');
   };
 
   return (

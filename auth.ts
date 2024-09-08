@@ -35,7 +35,9 @@ export const {
     }),
   ],
   callbacks: {
-    signIn: async () => {
+    signIn: async ({ user }) => {
+      console.log('SIGNN: ', { user });
+
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {

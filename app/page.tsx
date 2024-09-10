@@ -1,12 +1,21 @@
 import { auth, signOut } from '@/auth';
 import Link from 'next/link';
 import Button from './components/Button';
+import Image from 'next/image';
 
 export default async function Home() {
   const session = await auth();
 
   return (
     <main>
+      {session?.user?.image && (
+        <Image
+          src={session?.user?.image?.replace(/\\/gi, '/')}
+          alt="avatar"
+          width={100}
+          height={100}
+        />
+      )}
       {JSON.stringify(session)}
       <br />
       <Link href="/signin">Sign In</Link>

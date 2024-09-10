@@ -3,7 +3,7 @@
 import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/prisma/prisma';
 import { AuthError } from 'next-auth';
-import { getUserByEmail } from './utils';
+import { fileUpload, getUserByEmail } from './utils';
 
 export const login = async (provider: string, formData: FormData) => {
   const isLoggedIn = await auth();
@@ -49,17 +49,22 @@ export const registration = async (formData: FormData) => {
       formData.get('birthDate') as string,
     ).toISOString();
 
-    const user = await prisma.user.create({
-      data: {
-        email: formData.get('email') as string,
-        name: formData.get('name') as string,
-        password: formData.get('password') as string,
-        firstName: formData.get('firstName') as string,
-        lastName: formData.get('lastName') as string,
-        birthDate,
-        image: formData.get('image') as string,
-      },
-    });
+    const file = formData.get('file') as File;
+    const imagePath = await fileUpload(file);
+
+    if (typeof imagePath === 'string') {
+      await prisma.user.create({
+        data: {
+          email: formData.get('email') as string,
+          name: formData.get('name') as string,
+          password: formData.get('password') as string,
+          firstName: formData.get('firstName') as string,
+          lastName: formData.get('lastName') as string,
+          birthDate,
+          image: imagePath,
+        },
+      });
+    }
   } catch (error) {
     console.log(error);
     throw error;

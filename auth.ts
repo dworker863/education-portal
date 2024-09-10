@@ -96,5 +96,6 @@ export const {
   },
   pages: {
     signIn: '/signin',
+    error: '/error',
   },
 });

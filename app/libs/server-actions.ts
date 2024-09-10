@@ -9,9 +9,9 @@ import bcrypt from 'bcryptjs';
 export const login = async (provider: string, formData: FormData) => {
   const isLoggedIn = await auth();
 
-  if (isLoggedIn) {
-    throw new Error('You are already signed in!');
-  }
+  // if (isLoggedIn) {
+  //   throw new Error('You are already signed in!');
+  // }
 
   try {
     if (provider === 'credentials') {

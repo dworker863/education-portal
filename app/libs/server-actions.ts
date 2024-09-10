@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from '@/auth';
 import { prisma } from '@/prisma/prisma';
 import { AuthError } from 'next-auth';
 import { fileUpload, getUserByEmail } from './utils';
+import bcrypt from 'bcryptjs';
 
 export const login = async (provider: string, formData: FormData) => {
   const isLoggedIn = await auth();
@@ -45,6 +46,11 @@ export const registration = async (formData: FormData) => {
       throw new Error('User with this email already exists');
     }
 
+    const hashedPassword = await bcrypt.hash(
+      formData.get('password') as string,
+      10,
+    );
+
     const birthDate = new Date(
       formData.get('birthDate') as string,
     ).toISOString();
@@ -57,7 +63,7 @@ export const registration = async (formData: FormData) => {
         data: {
           email: formData.get('email') as string,
           name: formData.get('name') as string,
-          password: formData.get('password') as string,
+          password: hashedPassword,
           firstName: formData.get('firstName') as string,
           lastName: formData.get('lastName') as string,
           birthDate,

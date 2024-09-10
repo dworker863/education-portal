@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -49,10 +50,14 @@ export const {
           },
         });
 
-        if (
-          credentials?.email === user?.email &&
-          credentials?.password === user?.password
-        ) {
+        if (!user) return null;
+
+        const passwordMatch = await bcrypt.compare(
+          credentials?.password as string,
+          user.password as string,
+        );
+
+        if (passwordMatch) {
           const { password, ...userWithoutPassword } = user!;
           return userWithoutPassword;
         }
@@ -62,7 +67,7 @@ export const {
     }),
   ],
   callbacks: {
-    signIn: async ({ user }) => {
+    signIn: async () => {
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {
@@ -71,7 +76,7 @@ export const {
 
       return true;
     },
-    jwt: async ({ token, account, user }) => {
+    jwt: async ({ token, user }) => {
       if (user) {
         token = { ...token, user: { ...user } };
       }

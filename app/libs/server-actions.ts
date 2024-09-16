@@ -6,33 +6,32 @@ import { AuthError } from 'next-auth';
 import { fileUpload, getUserByEmail } from './utils';
 import bcrypt from 'bcryptjs';
 import { loginSchema } from './validation';
+import { z } from 'zod';
 
-export const login = async (provider: string, formData: FormData) => {
-  const credetials = {
-    email: formData.get('email'),
-    password: formData.get('password'),
-  };
-  const parsedCredentials = await loginSchema.safeParse(credetials);
+export const login = async (
+  values?: z.infer<typeof loginSchema>,
+  provider: string = 'credentials',
+) => {
+  const isLoggedIn = await auth();
+
+  if (isLoggedIn) {
+    throw new Error('You are already signed in!');
+  }
+
+  if (!values) {
+    await signIn(provider, {
+      redirectTo: '/',
+    });
+  }
+  const parsedCredentials = await loginSchema.safeParse(values);
 
   if (parsedCredentials.success) {
-    const isLoggedIn = await auth();
-
-    if (isLoggedIn) {
-      throw new Error('You are already signed in!');
-    }
-
     try {
-      if (provider === 'credentials') {
-        await signIn('credentials', {
-          email: formData.get('email'),
-          password: formData.get('password'),
-          redirectTo: '/',
-        });
-      } else {
-        await signIn(provider, {
-          redirectTo: '/',
-        });
-      }
+      await signIn('credentials', {
+        email: parsedCredentials.data.email,
+        password: parsedCredentials.data.password,
+        redirectTo: '/',
+      });
     } catch (error) {
       if (error instanceof AuthError) {
         switch (error.type) {
@@ -46,7 +45,9 @@ export const login = async (provider: string, formData: FormData) => {
     }
   }
 
-  throw new Error(parsedCredentials.error?.message);
+  const errorMessage = JSON.parse(parsedCredentials.error?.message!)[0];
+
+  throw new Error(errorMessage);
 };
 
 export const registration = async (formData: FormData) => {

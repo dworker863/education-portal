@@ -5,7 +5,7 @@ import { prisma } from '@/prisma/prisma';
 import { AuthError } from 'next-auth';
 import { fileUpload, getUserByEmail } from './utils';
 import bcrypt from 'bcryptjs';
-import { loginSchema } from './validation';
+import { loginSchema, registrationSchema } from './validation';
 import { z } from 'zod';
 
 export const login = async (
@@ -50,43 +50,50 @@ export const login = async (
   throw new Error(errorMessage);
 };
 
-export const registration = async (formData: FormData) => {
-  try {
-    const isUserExists = await getUserByEmail(formData.get('email') as string);
+export const registration = async (
+  values: z.infer<typeof registrationSchema>,
+) => {
+  const parsedValues = await registrationSchema.safeParse(values);
 
-    if (isUserExists) {
-      throw new Error('User with this email already exists');
-    }
+  if (parsedValues.success) {
+    try {
+      const isUserExists = await getUserByEmail(values.email);
 
-    const hashedPassword = await bcrypt.hash(
-      formData.get('password') as string,
-      10,
-    );
+      if (isUserExists) {
+        throw new Error('User with this email already exists');
+      }
 
-    const birthDate = new Date(
-      formData.get('birthDate') as string,
-    ).toISOString();
+      const hashedPassword = await bcrypt.hash(values.password, 10);
 
-    const file = formData.get('file') as File;
-    const imagePath = await fileUpload(file);
+      const birthDate = new Date(values.birthDate as string).toISOString();
 
-    if (typeof imagePath === 'string') {
+      // const file = formData.get('file') as File;
+      // const imagePath = await fileUpload(file);
+
+      // if (typeof imagePath === 'string') {
       await prisma.user.create({
         data: {
-          email: formData.get('email') as string,
-          name: formData.get('name') as string,
+          email: values.email,
+          name: values.username,
           password: hashedPassword,
-          firstName: formData.get('firstName') as string,
-          lastName: formData.get('lastName') as string,
+          firstName: values.firstName,
+          lastName: values.lastName,
           birthDate,
-          image: imagePath,
+          // image: imagePath,
         },
       });
+
+      return { success: 'You successfully registred' };
+      // }
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-  } catch (error) {
-    console.log(error);
-    throw error;
   }
+
+  const errorMessage = JSON.parse(parsedValues?.error?.message! || '')[0];
+
+  throw new Error(errorMessage);
 };
 
 export const logout = async () => {

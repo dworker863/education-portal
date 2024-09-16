@@ -3,19 +3,44 @@
 import { FormEvent, useState } from 'react';
 import { registration } from '../libs/server-actions';
 import { useRouter } from 'next/navigation';
-import Button from './Button';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { registrationSchema } from '../libs/validation';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 const SignupForm = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const form = useForm<z.infer<typeof registrationSchema>>({
+    resolver: zodResolver(registrationSchema),
+    defaultValues: {
+      email: '',
+      username: '',
+      password: '',
+      confirmPassword: '',
+      firstName: '',
+      lastName: '',
+      birthDate: '',
+    },
+  });
 
-    const formData = new FormData(e.target as HTMLFormElement);
-
-    registration(formData)
+  const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
+    registration(values)
       .then((data) => {
+        console.log(data);
+
         router.push('/');
       })
       .catch((error) => {
@@ -24,50 +49,123 @@ const SignupForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <fieldset>
-        <label htmlFor="email">Email</label>
-        <br />
-        <input id="email" type="email" name="email" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="name">Username</label>
-        <br />
-        <input id="name" type="text" name="name" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="password">Password</label>
-        <br />
-        <input id="password" type="password" name="password" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="repeatPassword">Repeat Password</label>
-        <br />
-        <input id="repeatPassword" type="text" name="repeatPassword" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="firstName">First Name</label>
-        <br />
-        <input id="firstName" type="text" name="firstName" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="lastName">Last Name</label>
-        <br />
-        <input id="lastName" type="text" name="lastName" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="birthDate">Birth Date</label>
-        <br />
-        <input id="birthDate" type="date" name="birthDate" />
-      </fieldset>
-      <fieldset>
-        <label htmlFor="file">Image</label>
-        <br />
-        <input id="file" type="file" name="file" />
-      </fieldset>
-      {error && <p className="text-red-600">{error}</p>}
-      <Button type="submit" text="Sign Up" />
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input placeholder="example@gmail.com" {...field} />
+              </FormControl>
+              <FormDescription></FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="username" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input placeholder="******" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirm Password</FormLabel>
+              <FormControl>
+                <Input placeholder="******" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="firstName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>First Name</FormLabel>
+              <FormControl>
+                <Input placeholder="firstName" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="lastName"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Last Name</FormLabel>
+              <FormControl>
+                <Input placeholder="lastName" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="birthDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Birth Date</FormLabel>
+              <FormControl>
+                <Input placeholder="birthDate" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {error && <p className="text-red-600">{error}</p>}
+        <Button type="submit">Sign In</Button>
+      </form>
+    </Form>
   );
 };
 

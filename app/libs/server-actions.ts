@@ -5,37 +5,48 @@ import { prisma } from '@/prisma/prisma';
 import { AuthError } from 'next-auth';
 import { fileUpload, getUserByEmail } from './utils';
 import bcrypt from 'bcryptjs';
+import { loginSchema } from './validation';
 
 export const login = async (provider: string, formData: FormData) => {
-  const isLoggedIn = await auth();
+  const credetials = {
+    email: formData.get('email'),
+    password: formData.get('password'),
+  };
+  const parsedCredentials = await loginSchema.safeParse(credetials);
 
-  // if (isLoggedIn) {
-  //   throw new Error('You are already signed in!');
-  // }
+  if (parsedCredentials.success) {
+    const isLoggedIn = await auth();
 
-  try {
-    if (provider === 'credentials') {
-      await signIn('credentials', {
-        email: formData.get('email'),
-        password: formData.get('password'),
-        redirectTo: '/',
-      });
-    } else {
-      await signIn(provider, {
-        redirectTo: '/',
-      });
+    if (isLoggedIn) {
+      throw new Error('You are already signed in!');
     }
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin':
-          throw new Error('Invalid credentials.');
-        default:
-          throw new Error('Something went wrong.');
+
+    try {
+      if (provider === 'credentials') {
+        await signIn('credentials', {
+          email: formData.get('email'),
+          password: formData.get('password'),
+          redirectTo: '/',
+        });
+      } else {
+        await signIn(provider, {
+          redirectTo: '/',
+        });
       }
+    } catch (error) {
+      if (error instanceof AuthError) {
+        switch (error.type) {
+          case 'CredentialsSignin':
+            throw new Error('Invalid credentials.');
+          default:
+            throw new Error('Something went wrong.');
+        }
+      }
+      throw error;
     }
-    throw error;
   }
+
+  throw new Error(parsedCredentials.error?.message);
 };
 
 export const registration = async (formData: FormData) => {

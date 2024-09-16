@@ -14,7 +14,8 @@ const SigninForm = () => {
       .then((data) => {
         console.log(data);
       })
-      .catch((error) => {
+      .catch((e) => {
+        const error = JSON.parse(e.message)[0];
         setError(error.message);
       });
   };

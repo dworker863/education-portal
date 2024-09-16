@@ -5,6 +5,8 @@ import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 import Github from 'next-auth/providers/github';
 import { prisma } from './prisma/prisma';
+import { loginSchema } from './app/libs/validation';
+import { getUserByEmail } from './app/libs/utils';
 
 declare module 'next-auth' {
   /**
@@ -44,22 +46,22 @@ export const {
     Github,
     Credentials({
       authorize: async (credentials) => {
-        const user = await prisma.user.findUnique({
-          where: {
-            email: credentials.email as string,
-          },
-        });
+        const parsedCredentials = loginSchema.safeParse(credentials);
 
-        if (!user) return null;
+        if (parsedCredentials.success) {
+          const { email, password } = parsedCredentials.data;
+          const user = await getUserByEmail(email);
 
-        const passwordMatch = await bcrypt.compare(
-          credentials?.password as string,
-          user.password as string,
-        );
+          if (!user || !user.password) return null;
 
-        if (passwordMatch) {
-          const { password, ...userWithoutPassword } = user!;
-          return userWithoutPassword;
+          const passwordMatch = await bcrypt.compare(password, user.password);
+
+          if (passwordMatch) {
+            const { password, ...userWithoutPassword } = user;
+            return userWithoutPassword;
+          }
+
+          return null;
         }
 
         return null;

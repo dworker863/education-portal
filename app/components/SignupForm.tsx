@@ -33,19 +33,40 @@ const SignupForm = () => {
       firstName: '',
       lastName: '',
       birthDate: '',
+      file: null,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
-    registration(values)
-      .then((data) => {
-        console.log(data);
+  const fileRef = form.register('file');
 
-        router.push('/');
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
+  const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
+    const formData = new FormData();
+
+    for (const key in values) {
+      const value = values[key as keyof typeof values];
+
+      if (key !== 'file' && value !== undefined) {
+        formData.append(key, value);
+      }
+    }
+
+    if (values.file) {
+      console.log(values.file[0]);
+
+      formData.append('file', values.file[0]);
+    }
+
+    const res = await fetch('api/signup', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+    console.log(data);
+
+    if (data.error) {
+      setError(data.error);
+    }
   };
 
   return (
@@ -153,6 +174,28 @@ const SignupForm = () => {
               <FormLabel>Birth Date</FormLabel>
               <FormControl>
                 <Input placeholder="birthDate" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="file"
+          render={() => (
+            <FormItem>
+              <FormLabel>Image</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder="file"
+                  type="file"
+                  accept="image/*"
+                  {...fileRef}
+                />
               </FormControl>
               <FormDescription>
                 This is your public display name.

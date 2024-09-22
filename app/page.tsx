@@ -8,14 +8,14 @@ export default async function Home() {
 
   return (
     <main>
-      {/* {session?.user?.image && (
+      {session?.user?.image && (
         <Image
           src={session?.user?.image?.replace(/\\/gi, '/')}
           alt="avatar"
           width={100}
           height={100}
         />
-      )} */}
+      )}
       {JSON.stringify(session)}
       <br />
       <Link href="/signin">Sign In</Link>

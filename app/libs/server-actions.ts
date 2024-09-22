@@ -52,6 +52,7 @@ export const login = async (
 
 export const registration = async (
   values: z.infer<typeof registrationSchema>,
+  file: File,
 ) => {
   const parsedValues = await registrationSchema.safeParse(values);
 
@@ -67,24 +68,23 @@ export const registration = async (
 
       const birthDate = new Date(values.birthDate as string).toISOString();
 
-      // const file = formData.get('file') as File;
-      // const imagePath = await fileUpload(file);
+      const imagePath = await fileUpload(file);
 
-      // if (typeof imagePath === 'string') {
-      await prisma.user.create({
-        data: {
-          email: values.email,
-          name: values.username,
-          password: hashedPassword,
-          firstName: values.firstName,
-          lastName: values.lastName,
-          birthDate,
-          // image: imagePath,
-        },
-      });
+      if (typeof imagePath === 'string') {
+        await prisma.user.create({
+          data: {
+            email: values.email,
+            name: values.username,
+            password: hashedPassword,
+            firstName: values.firstName,
+            lastName: values.lastName,
+            birthDate,
+            image: imagePath,
+          },
+        });
 
-      return { success: 'You successfully registred' };
-      // }
+        return { success: 'You successfully registred' };
+      }
     } catch (error) {
       console.log(error);
       throw error;

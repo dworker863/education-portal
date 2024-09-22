@@ -24,8 +24,11 @@ export const fileUpload = async (file: File) => {
   try {
     const data = await file.arrayBuffer();
     const uploadPath = path.resolve('public/uploads', file.name);
+
     await fs.writeFile(uploadPath, Buffer.from(data));
+
     console.log('File successfully uploaded');
+
     return path.join('/uploads', file.name);
   } catch (error) {
     console.error(error);

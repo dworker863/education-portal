@@ -17,6 +17,8 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import ErrorMessage from './ErrorMessage';
+import SuccessMessage from './SuccessMessage';
 
 const SigninForm = () => {
   const [error, setError] = useState(null);
@@ -44,7 +46,7 @@ const SigninForm = () => {
 
     login(undefined, provider)
       .then((data) => {
-        console.log(data);
+        setError(null);
       })
       .catch((error) => {
         setError(error.message);
@@ -86,7 +88,7 @@ const SigninForm = () => {
             </FormItem>
           )}
         />
-        {error && <p className="text-red-600">{error}</p>}
+        {error && <ErrorMessage message={error} />}
         <Button type="submit">Sign In</Button>
       </form>
       <form onSubmit={handleSubmit.bind(null, 'google')}>

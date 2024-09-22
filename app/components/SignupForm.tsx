@@ -18,10 +18,13 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import ErrorMessage from './ErrorMessage';
+import SuccessMessage from './SuccessMessage';
 
 const SignupForm = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const form = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),
@@ -51,8 +54,6 @@ const SignupForm = () => {
     }
 
     if (values.file) {
-      console.log(values.file[0]);
-
       formData.append('file', values.file[0]);
     }
 
@@ -62,10 +63,17 @@ const SignupForm = () => {
     });
 
     const data = await res.json();
+
     console.log(data);
 
     if (data.error) {
       setError(data.error);
+      setSuccess(null);
+    }
+
+    if (data.success) {
+      setSuccess(data.success);
+      setError(null);
     }
   };
 
@@ -205,7 +213,8 @@ const SignupForm = () => {
           )}
         />
 
-        {error && <p className="text-red-600">{error}</p>}
+        {error && <ErrorMessage message={error} />}
+        {success && <SuccessMessage message={success} />}
         <Button type="submit">Sign In</Button>
       </form>
     </Form>

@@ -22,7 +22,9 @@ export async function POST(request: NextRequest) {
       const isUserExists = await getUserByEmail(data.email);
 
       if (isUserExists) {
-        return NextResponse.json('User with this email already exists');
+        return NextResponse.json({
+          error: 'User with this email already exists',
+        });
       }
 
       const hashedPassword = await bcrypt.hash(data.password, 10);
@@ -30,7 +32,7 @@ export async function POST(request: NextRequest) {
       const uploadResult = await fileUpload(data.file);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json(uploadResult.message);
+        return NextResponse.json({ error: uploadResult.message });
       }
 
       await prisma.user.create({
@@ -47,7 +49,7 @@ export async function POST(request: NextRequest) {
 
       return NextResponse.json({ success: 'You successfully registred' });
     } catch (error) {
-      return NextResponse.json({ error });
+      return NextResponse.json({ error: 'Something went wrong' });
     }
   }
 

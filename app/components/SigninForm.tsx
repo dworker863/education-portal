@@ -18,10 +18,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import { useSearchParams } from 'next/navigation';
 
 const SigninForm = () => {
   const [error, setError] = useState(null);
+  const searchParams = useSearchParams();
+  const urlError =
+    searchParams.get('error') === 'OAuthAccountNotLinked'
+      ? 'Email already in use with different provider'
+      : '';
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -88,7 +93,7 @@ const SigninForm = () => {
             </FormItem>
           )}
         />
-        {error && <ErrorMessage message={error} />}
+        {error || (urlError && <ErrorMessage message={error || urlError} />)}
         <Button type="submit">Sign In</Button>
       </form>
       <form onSubmit={handleSubmit.bind(null, 'google')}>

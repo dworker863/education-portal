@@ -1,7 +1,6 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
-import { registration } from '../libs/server-actions';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -75,6 +74,10 @@ const SignupForm = () => {
       setSuccess(data.success);
       setError(null);
     }
+
+    setTimeout(() => {
+      router.push('/');
+    }, 1000);
   };
 
   return (
@@ -215,7 +218,7 @@ const SignupForm = () => {
 
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Sign In</Button>
+        <Button type="submit">Sign Up</Button>
       </form>
     </Form>
   );

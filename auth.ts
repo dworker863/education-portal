@@ -1,4 +1,3 @@
-import bcrypt from 'bcryptjs';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
@@ -7,6 +6,7 @@ import Github from 'next-auth/providers/github';
 import { prisma } from './prisma/prisma';
 import { loginSchema } from './app/libs/validation';
 import { getUserByEmail } from './app/libs/utils';
+import authConfig from './auth.config';
 
 declare module 'next-auth' {
   /**
@@ -41,33 +41,13 @@ export const {
   signOut,
 } = NextAuth({
   adapter: PrismaAdapter(prisma),
-  providers: [
-    Google,
-    Github,
-    Credentials({
-      authorize: async (credentials) => {
-        const parsedCredentials = loginSchema.safeParse(credentials);
-
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-          const user = await getUserByEmail(email);
-
-          if (!user || !user.password) return null;
-
-          const passwordMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordMatch) {
-            const { password, ...userWithoutPassword } = user;
-            return userWithoutPassword;
-          }
-
-          return null;
-        }
-
-        return null;
-      },
-    }),
-  ],
+  session: {
+    strategy: 'jwt',
+  },
+  pages: {
+    signIn: '/signin',
+    error: '/error',
+  },
   callbacks: {
     signIn: async () => {
       const isLoggedIn = await auth();
@@ -92,12 +72,5 @@ export const {
       return session;
     },
   },
-
-  session: {
-    strategy: 'jwt',
-  },
-  pages: {
-    signIn: '/signin',
-    error: '/error',
-  },
+  ...authConfig,
 });

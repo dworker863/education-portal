@@ -1,11 +1,6 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { DefaultSession } from 'next-auth';
-import Credentials from 'next-auth/providers/credentials';
-import Google from 'next-auth/providers/google';
-import Github from 'next-auth/providers/github';
 import { prisma } from './prisma/prisma';
-import { loginSchema } from './app/libs/validation';
-import { getUserByEmail } from './app/libs/utils';
 import authConfig from './auth.config';
 
 declare module 'next-auth' {

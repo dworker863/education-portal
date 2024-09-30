@@ -1,6 +1,7 @@
 import { prisma } from '@/prisma/prisma';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -34,5 +35,48 @@ export const fileUpload = async (file: File) => {
     console.error(error);
 
     throw error;
+  }
+};
+
+export const getVerificationTokenByEmail = async (email: string) => {
+  try {
+    const token = await prisma.verificationToken.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    return token;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const generateVerificationToken = async (email: string) => {
+  const token = uuidv4();
+  const expires = new Date(new Date().getTime() + 600 * 1000);
+
+  try {
+    const existingToken = await getVerificationTokenByEmail(email);
+
+    if (existingToken) {
+      await prisma.verificationToken.delete({
+        where: {
+          id: existingToken.id,
+        },
+      });
+    }
+
+    const verificationToken = await prisma.verificationToken.create({
+      data: {
+        email,
+        token,
+        expires,
+      },
+    });
+
+    return verificationToken;
+  } catch (error) {
+    console.log(error);
   }
 };

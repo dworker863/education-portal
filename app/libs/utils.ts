@@ -17,6 +17,20 @@ export const getUserByEmail = async (email: string) => {
   }
 };
 
+export const getUserById = async (id: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const fileUpload = async (file: File) => {
   if (!file || file.size === 0) {
     return new Error('No file uploaded');

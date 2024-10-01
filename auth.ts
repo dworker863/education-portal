@@ -2,6 +2,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { DefaultSession } from 'next-auth';
 import { prisma } from './prisma/prisma';
 import authConfig from './auth.config';
+import { generateVerificationToken, getUserById } from './app/libs/utils';
 
 declare module 'next-auth' {
   /**
@@ -43,12 +44,30 @@ export const {
     signIn: '/signin',
     error: '/error',
   },
+  events: {
+    linkAccount: async ({ user }) => {
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
-    signIn: async () => {
+    signIn: async ({ user, account }) => {
+      if (account?.provider !== 'credentials') return true;
+
+      if (user.id) {
+        const existingUser = await getUserById(user.id);
+
+        if (!existingUser?.emailVerified) return false;
+      }
+
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {
-        throw new Error('You are already signed in!');
+        throw new Error('You are already signed in!', {});
       }
 
       return true;

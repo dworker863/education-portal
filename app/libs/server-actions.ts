@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { loginSchema } from './validation';
 import { z } from 'zod';
+import { getUserByEmail } from './utils';
 
 export const login = async (
   values?: z.infer<typeof loginSchema>,
@@ -11,9 +12,9 @@ export const login = async (
 ) => {
   const isLoggedIn = await auth();
 
-  if (isLoggedIn) {
-    throw new Error('You are already signed in!');
-  }
+  // if (isLoggedIn) {
+  //   throw new Error('You are already signed in!');
+  // }
 
   if (!values) {
     await signIn(provider, {

@@ -1,5 +1,9 @@
 import bcrypt from 'bcryptjs';
-import { fileUpload, getUserByEmail } from '@/app/libs/utils';
+import {
+  fileUpload,
+  generateVerificationToken,
+  getUserByEmail,
+} from '@/app/libs/utils';
 import { registrationSchema } from '@/app/libs/validation';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
@@ -11,6 +15,8 @@ export const config = {
 };
 
 export async function POST(request: NextRequest) {
+  console.log('SIGNUP ROUTE: ');
+
   const formData = await request.formData();
 
   const values = Object.fromEntries(formData.entries());
@@ -28,11 +34,20 @@ export async function POST(request: NextRequest) {
       }
 
       const hashedPassword = await bcrypt.hash(data.password, 10);
-      const birthDate = new Date(values.birthDate as string).toISOString();
-      const uploadResult = await fileUpload(data.file);
 
-      if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message });
+      let birthDate;
+      let uploadResult;
+
+      if (data.birthDate) {
+        birthDate = new Date(values.birthDate as string).toISOString();
+      }
+
+      if (data.file) {
+        uploadResult = await fileUpload(data.file);
+
+        if (uploadResult instanceof Error) {
+          return NextResponse.json({ error: uploadResult.message });
+        }
       }
 
       await prisma.user.create({
@@ -47,7 +62,11 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return NextResponse.json({ success: 'You successfully registred' });
+      const verificationToken = await generateVerificationToken(data.email);
+
+      return NextResponse.json({
+        success: 'Confirmation email sent',
+      });
     } catch (error) {
       return NextResponse.json({ error: 'Something went wrong' });
     }

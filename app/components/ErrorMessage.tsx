@@ -5,7 +5,7 @@ type TErrorMessageProps = {
 };
 
 const ErrorMessage: FC<TErrorMessageProps> = ({ message }) => {
-  return <div className="text-red-600">{message}</div>;
+  return <p className="text-red-600">{message}</p>;
 };
 
 export default ErrorMessage;

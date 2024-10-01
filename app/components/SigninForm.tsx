@@ -19,9 +19,11 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
 import { useSearchParams } from 'next/navigation';
+import SuccessMessage from './SuccessMessage';
 
 const SigninForm = () => {
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
@@ -39,21 +41,25 @@ const SigninForm = () => {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     login(values)
       .then((data) => {
-        console.log(data);
+        setError('');
+        // setSuccess(data.success);
       })
       .catch((error) => {
+        setSuccess('');
         setError(error.message);
       });
   };
 
-  const handleSubmit = async (provider: string, e: FormEvent) => {
+  const handleSubmitWithProvider = async (provider: string, e: FormEvent) => {
     e.preventDefault();
 
     login(undefined, provider)
       .then((data) => {
-        setError(null);
+        setError('');
+        // setSuccess(data.success);
       })
       .catch((error) => {
+        setSuccess('');
         setError(error.message);
       });
   };
@@ -93,13 +99,14 @@ const SigninForm = () => {
             </FormItem>
           )}
         />
-        {error || (urlError && <ErrorMessage message={error || urlError} />)}
+        {(error || urlError) && <ErrorMessage message={error || urlError} />}
+        {success && <SuccessMessage message={success} />}
         <Button type="submit">Sign In</Button>
       </form>
-      <form onSubmit={handleSubmit.bind(null, 'google')}>
+      <form onSubmit={handleSubmitWithProvider.bind(null, 'google')}>
         <button type="submit">Sign In with Google</button>
       </form>
-      <form onSubmit={handleSubmit.bind(null, 'github')}>
+      <form onSubmit={handleSubmitWithProvider.bind(null, 'github')}>
         <button type="submit">Sign In with Github</button>
       </form>
     </Form>

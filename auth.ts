@@ -1,8 +1,10 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import NextAuth, { DefaultSession } from 'next-auth';
+import NextAuth, { AuthError, DefaultSession } from 'next-auth';
 import { prisma } from './prisma/prisma';
 import authConfig from './auth.config';
 import { generateVerificationToken, getUserById } from './app/libs/utils';
+import { VerificationError } from './app/libs/errors';
+import { sendVerificationEmail } from './app/libs/mail';
 
 declare module 'next-auth' {
   /**
@@ -58,10 +60,17 @@ export const {
     signIn: async ({ user, account }) => {
       if (account?.provider !== 'credentials') return true;
 
-      if (user.id) {
+      if (user.id && user.email) {
         const existingUser = await getUserById(user.id);
 
-        if (!existingUser?.emailVerified) return false;
+        if (!existingUser?.emailVerified) {
+          const verificationToken = await generateVerificationToken(user.email);
+          await sendVerificationEmail(
+            verificationToken.email,
+            verificationToken.token,
+          );
+          throw new VerificationError('Confirmation email sent');
+        }
       }
 
       const isLoggedIn = await auth();

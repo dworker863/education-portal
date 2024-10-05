@@ -7,6 +7,7 @@ import {
 import { registrationSchema } from '@/app/libs/validation';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
+import { sendVerificationEmail } from '@/app/libs/mail';
 
 export const config = {
   api: {
@@ -63,6 +64,10 @@ export async function POST(request: NextRequest) {
       });
 
       const verificationToken = await generateVerificationToken(data.email);
+      await sendVerificationEmail(
+        verificationToken.email,
+        verificationToken.token,
+      );
 
       return NextResponse.json({
         success: 'Confirmation email sent',

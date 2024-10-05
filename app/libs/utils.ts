@@ -68,6 +68,8 @@ export const getVerificationTokenByEmail = async (email: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   const token = uuidv4();
+  console.log(token);
+
   const expires = new Date(new Date().getTime() + 600 * 1000);
 
   try {

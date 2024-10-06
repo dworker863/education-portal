@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
 import { useSearchParams } from 'next/navigation';
 import SuccessMessage from './SuccessMessage';
+import Link from 'next/link';
 
 const SigninForm = () => {
   const [error, setError] = useState('');
@@ -56,7 +57,7 @@ const SigninForm = () => {
     login(undefined, provider)
       .then((data) => {
         setError('');
-        // setSuccess(data.success);
+        setSuccess(data.success);
       })
       .catch((error) => {
         setSuccess('');
@@ -95,6 +96,9 @@ const SigninForm = () => {
               <FormDescription>
                 This is your public display name.
               </FormDescription>
+              <Button variant="link" asChild>
+                <Link href="/reset-password">Forgot password?</Link>
+              </Button>
               <FormMessage />
             </FormItem>
           )}

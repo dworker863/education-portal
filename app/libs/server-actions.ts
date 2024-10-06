@@ -2,16 +2,22 @@
 
 import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
-import { loginSchema, resetPasswordSchema } from './validation';
+import {
+  loginSchema,
+  newPasswordSchema,
+  resetPasswordSchema,
+} from './validation';
 import { z } from 'zod';
 import {
   generateResetPasswordToken,
+  getResetPasswordTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
 } from './utils';
 import { VerificationError } from './errors';
 import { prisma } from '@/prisma/prisma';
 import { sendResetPasswordEmail } from './mail';
+import bcrypt from 'bcryptjs';
 
 export const login = async (
   values?: z.infer<typeof loginSchema>,
@@ -68,25 +74,25 @@ export const logout = async () => {
 };
 
 export const confirmVerification = async (token: string) => {
+  const existingToken = await getVerificationTokenByToken(token);
+
+  if (!existingToken) {
+    throw new Error('Token does not exists');
+  }
+
+  const hasExprired = new Date(existingToken.expires) < new Date();
+
+  if (hasExprired) {
+    throw new Error('Link expired');
+  }
+
+  const existingUser = await getUserByEmail(existingToken.email);
+
+  if (!existingUser) {
+    throw new Error('Email does not exists');
+  }
+
   try {
-    const existingToken = await getVerificationTokenByToken(token);
-
-    if (!existingToken) {
-      throw new Error('Token does not exists');
-    }
-
-    const hasExprired = new Date(existingToken.expires) < new Date();
-
-    if (hasExprired) {
-      throw new Error('Link expired');
-    }
-
-    const existingUser = await getUserByEmail(existingToken.email);
-
-    if (!existingUser) {
-      throw new Error('Email does not exists');
-    }
-
     await prisma.user.update({
       where: {
         id: existingUser.id,
@@ -115,7 +121,7 @@ export const resetPassword = async (
   const parsedValues = await resetPasswordSchema.safeParse(values);
 
   if (!parsedValues.success) {
-    return { error: parsedValues.error?.issues[0].message };
+    throw new Error('Invalid email');
   }
 
   const { email } = parsedValues.data;
@@ -123,7 +129,7 @@ export const resetPassword = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    return { error: 'Email does not exists' };
+    throw new Error('Email does not exists');
   }
 
   const resetPasswordToken = await generateResetPasswordToken(email);
@@ -131,4 +137,75 @@ export const resetPassword = async (
     resetPasswordToken.email,
     resetPasswordToken.token,
   );
+
+  return { success: 'Reset link sent to your email' };
+};
+
+export const confirmResetPasswordToken = async (token: string) => {
+  const existingToken = await getResetPasswordTokenByToken(token);
+
+  if (!existingToken) {
+    throw new Error('Token not found');
+  }
+
+  const hasExprired = new Date(existingToken.expires) < new Date();
+
+  if (hasExprired) {
+    throw new Error('Link has expired');
+  }
+
+  const existingUser = await getUserByEmail(existingToken.email);
+
+  if (!existingUser) {
+    throw new Error('Email does not exists');
+  }
+
+  try {
+    await prisma.resetPasswordToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+
+    return { success: 'Add new password' };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const addNewPassword = async (
+  email: string,
+  values: z.infer<typeof newPasswordSchema>,
+) => {
+  const parsedValues = await newPasswordSchema.safeParse(values);
+
+  if (!parsedValues.success) {
+    throw new Error(parsedValues.error?.issues[0].message);
+  }
+
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser) {
+    throw new Error('Email does not exists');
+  }
+
+  const { password } = parsedValues.data;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await prisma.user.update({
+      where: {
+        email,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
+    return { success: 'Password successfully changed' };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };

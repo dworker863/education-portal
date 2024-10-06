@@ -127,6 +127,21 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
   }
 };
 
+export const getResetPasswordTokenByToken = async (token: string) => {
+  try {
+    const resetPasswordToken = await prisma.resetPasswordToken.findFirst({
+      where: {
+        token,
+      },
+    });
+
+    return resetPasswordToken;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 export const generateResetPasswordToken = async (email: string) => {
   const token = uuidv4();
   const expires = new Date(new Date().getTime() + 600 * 1000);

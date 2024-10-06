@@ -18,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
+import { resetPassword } from '../libs/server-actions';
 
 const ResetPasswordForm = () => {
   const [error, setError] = useState('');
@@ -31,7 +32,15 @@ const ResetPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof resetPasswordSchema>) => {
-    console.log(values);
+    resetPassword(values)
+      .then((data) => {
+        setError('');
+        setSuccess(data.success);
+      })
+      .catch((error) => {
+        setSuccess('');
+        setError(error.message);
+      });
   };
 
   return (

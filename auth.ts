@@ -65,10 +65,12 @@ export const {
 
         if (!existingUser?.emailVerified) {
           const verificationToken = await generateVerificationToken(user.email);
+
           await sendVerificationEmail(
             verificationToken.email,
             verificationToken.token,
           );
+
           throw new VerificationError('Confirmation email sent');
         }
       }

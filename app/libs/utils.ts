@@ -54,13 +54,27 @@ export const fileUpload = async (file: File) => {
 
 export const getVerificationTokenByEmail = async (email: string) => {
   try {
-    const token = await prisma.verificationToken.findFirst({
+    const verificationToken = await prisma.verificationToken.findFirst({
       where: {
         email,
       },
     });
 
-    return token;
+    return verificationToken;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getVerificationTokenByToken = async (token: string) => {
+  try {
+    const verificationToken = await prisma.verificationToken.findUnique({
+      where: {
+        token,
+      },
+    });
+
+    return verificationToken;
   } catch (error) {
     console.log(error);
   }

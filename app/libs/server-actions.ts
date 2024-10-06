@@ -4,8 +4,9 @@ import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import { loginSchema } from './validation';
 import { z } from 'zod';
-import { getUserByEmail } from './utils';
+import { getUserByEmail, getVerificationTokenByToken } from './utils';
 import { VerificationError } from './errors';
+import { prisma } from '@/prisma/prisma';
 
 export const login = async (
   values?: z.infer<typeof loginSchema>,
@@ -59,4 +60,46 @@ export const login = async (
 
 export const logout = async () => {
   await signOut();
+};
+
+export const confirmVerification = async (token: string) => {
+  try {
+    const existingToken = await getVerificationTokenByToken(token);
+
+    if (!existingToken) {
+      throw new Error('Token does not exists');
+    }
+
+    const hasExprired = new Date(existingToken.expires) < new Date();
+
+    if (hasExprired) {
+      throw new Error('Link expired');
+    }
+
+    const existingUser = await getUserByEmail(existingToken.email);
+
+    if (!existingUser) {
+      throw new Error('Email does not exists');
+    }
+
+    await prisma.user.update({
+      where: {
+        id: existingUser.id,
+      },
+      data: {
+        emailVerified: new Date(),
+        email: existingToken.email,
+      },
+    });
+
+    await prisma.verificationToken.delete({
+      where: {
+        id: existingToken.id,
+      },
+    });
+
+    return { success: 'Email verified' };
+  } catch (error) {
+    throw error;
+  }
 };

@@ -108,5 +108,6 @@ export const generateVerificationToken = async (email: string) => {
     return verificationToken;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };

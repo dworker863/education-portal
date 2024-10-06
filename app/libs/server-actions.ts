@@ -2,11 +2,16 @@
 
 import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
-import { loginSchema } from './validation';
+import { loginSchema, resetPasswordSchema } from './validation';
 import { z } from 'zod';
-import { getUserByEmail, getVerificationTokenByToken } from './utils';
+import {
+  generateResetPasswordToken,
+  getUserByEmail,
+  getVerificationTokenByToken,
+} from './utils';
 import { VerificationError } from './errors';
 import { prisma } from '@/prisma/prisma';
+import { sendResetPasswordEmail } from './mail';
 
 export const login = async (
   values?: z.infer<typeof loginSchema>,
@@ -102,4 +107,28 @@ export const confirmVerification = async (token: string) => {
   } catch (error) {
     throw error;
   }
+};
+
+export const resetPassword = async (
+  values: z.infer<typeof resetPasswordSchema>,
+) => {
+  const parsedValues = await resetPasswordSchema.safeParse(values);
+
+  if (!parsedValues.success) {
+    return { error: parsedValues.error?.issues[0].message };
+  }
+
+  const { email } = parsedValues.data;
+
+  const existingUser = await getUserByEmail(email);
+
+  if (!existingUser) {
+    return { error: 'Email does not exists' };
+  }
+
+  const resetPasswordToken = await generateResetPasswordToken(email);
+  await sendResetPasswordEmail(
+    resetPasswordToken.email,
+    resetPasswordToken.token,
+  );
 };

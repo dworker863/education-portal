@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { newPasswordSchema } from '../libs/validation';
 import { z } from 'zod';
@@ -26,24 +26,20 @@ import SuccessMessage from './SuccessMessage';
 
 const NewPasswordForm = () => {
   const [error, setError] = useState('');
+  const [tokenError, setTokenError] = useState('');
   const [success, setSuccess] = useState('');
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const email = searchParams.get('email');
 
   useEffect(() => {
-    if (!token) {
-      return;
-    }
-
     confirmResetPasswordToken(token)
       .then((data) => {
-        setError('');
-        setSuccess(data.success);
+        setTokenError('');
       })
       .catch((error) => {
-        setSuccess('');
-        setError(error.message);
+        setTokenError(error.message);
       });
   }, [token]);
 
@@ -57,10 +53,18 @@ const NewPasswordForm = () => {
 
   const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
     if (!email) {
+      setSuccess('');
+      setError('Invalid email');
       return null;
     }
 
-    addNewPassword(email, values)
+    if (!token) {
+      setSuccess('');
+      setError('Invalid token');
+      return null;
+    }
+
+    addNewPassword(token, email, values)
       .then((data) => {
         setError('');
         setSuccess(data.success);
@@ -69,7 +73,19 @@ const NewPasswordForm = () => {
         setSuccess('');
         setError(error.message);
       });
+
+    setTimeout(() => {
+      router.push('/');
+    }, 1500);
   };
+
+  if (tokenError) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <ErrorMessage message={tokenError} />
+      </div>
+    );
+  }
 
   return (
     <Form {...form}>

@@ -77,7 +77,7 @@ const SignupForm = () => {
 
     setTimeout(() => {
       router.push('/');
-    }, 1000);
+    }, 1500);
   };
 
   return (

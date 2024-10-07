@@ -141,7 +141,11 @@ export const resetPassword = async (
   return { success: 'Reset link sent to your email' };
 };
 
-export const confirmResetPasswordToken = async (token: string) => {
+export const confirmResetPasswordToken = async (token: string | null) => {
+  if (!token) {
+    throw new Error('Invalid token');
+  }
+
   const existingToken = await getResetPasswordTokenByToken(token);
 
   if (!existingToken) {
@@ -161,12 +165,6 @@ export const confirmResetPasswordToken = async (token: string) => {
   }
 
   try {
-    await prisma.resetPasswordToken.delete({
-      where: {
-        id: existingToken.id,
-      },
-    });
-
     return { success: 'Add new password' };
   } catch (error) {
     console.log(error);
@@ -175,6 +173,7 @@ export const confirmResetPasswordToken = async (token: string) => {
 };
 
 export const addNewPassword = async (
+  token: string,
   email: string,
   values: z.infer<typeof newPasswordSchema>,
 ) => {
@@ -194,6 +193,7 @@ export const addNewPassword = async (
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
+
     await prisma.user.update({
       where: {
         email,
@@ -202,6 +202,16 @@ export const addNewPassword = async (
         password: hashedPassword,
       },
     });
+
+    const existingToken = await getResetPasswordTokenByToken(token);
+
+    if (existingToken) {
+      await prisma.resetPasswordToken.delete({
+        where: {
+          id: existingToken.id,
+        },
+      });
+    }
 
     return { success: 'Password successfully changed' };
   } catch (error) {

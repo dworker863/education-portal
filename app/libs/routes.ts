@@ -4,6 +4,7 @@ export const authRoutes = [
   '/signup',
   '/api/signup',
   '/reset-password',
+  '/api/new-password',
 ];
 export const apiAuthPrefix = '/api/auth';
 export const DEFAULT_LOGIN_REDIRECT = '/profile';

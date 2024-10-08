@@ -70,3 +70,10 @@ model ResetPasswordToken {
   token   String
   expires DateTime
 }
+
+model twoFactorToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String
+  expires DateTime
+}

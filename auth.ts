@@ -2,7 +2,11 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import NextAuth, { AuthError, DefaultSession } from 'next-auth';
 import { prisma } from './prisma/prisma';
 import authConfig from './auth.config';
-import { generateVerificationToken, getUserById } from './app/libs/utils';
+import {
+  generateVerificationToken,
+  getTwoFactorConfirmationByUserId,
+  getUserById,
+} from './app/libs/utils';
 import { VerificationError } from './app/libs/errors';
 import { sendVerificationEmail } from './app/libs/mail';
 
@@ -60,6 +64,12 @@ export const {
     signIn: async ({ user, account }) => {
       if (account?.provider !== 'credentials') return true;
 
+      const isLoggedIn = await auth();
+
+      if (isLoggedIn) {
+        throw new Error('You are already signed in!', {});
+      }
+
       if (user.id && user.email) {
         const existingUser = await getUserById(user.id);
 
@@ -73,12 +83,20 @@ export const {
 
           throw new VerificationError('Confirmation email sent');
         }
-      }
 
-      const isLoggedIn = await auth();
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
+          existingUser.id,
+        );
 
-      if (isLoggedIn) {
-        throw new Error('You are already signed in!', {});
+        if (!twoFactorConfirmation) {
+          return false;
+        }
+
+        await prisma.twoFactorConfirmation.delete({
+          where: {
+            id: twoFactorConfirmation.id,
+          },
+        });
       }
 
       return true;

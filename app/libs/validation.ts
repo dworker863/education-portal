@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const loginSchema = z.object({
   email: z.string().email({ message: 'Incorrect email address' }),
   password: z.string().min(1, { message: 'Passwrod is required' }),
+  code: z.string({ message: 'Enter verification code' }),
 });
 
 export const registrationSchema = z

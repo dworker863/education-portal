@@ -36,6 +36,7 @@ const SigninForm = () => {
     defaultValues: {
       email: '',
       password: '',
+      code: '',
     },
   });
 
@@ -99,6 +100,22 @@ const SigninForm = () => {
               <Button variant="link" asChild>
                 <Link href="/reset-password">Forgot password?</Link>
               </Button>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="code"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Confirmation Code</FormLabel>
+              <FormControl>
+                <Input placeholder="" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

@@ -3,6 +3,7 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -248,6 +249,30 @@ export const getTwoFactorConfirmationByUserId = async (userId: string) => {
     );
 
     return twoFactorConfirmation;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const checkCredentials = async (email: string, password: string) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+
+    if (!existingUser) {
+      throw new Error('Email does not exists');
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      password,
+      existingUser.password!,
+    );
+
+    if (!passwordMatch) {
+      throw new Error('Invalid credentials');
+    }
+
+    return { success: 'Credentials successfully checked' };
   } catch (error) {
     console.log(error);
     throw error;

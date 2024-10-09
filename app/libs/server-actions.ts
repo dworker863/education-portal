@@ -13,6 +13,7 @@ import {
   generateResetPasswordToken,
   generateTwoFactorToken,
   getResetPasswordTokenByToken,
+  getTwoFactorTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
 } from './utils';
@@ -42,10 +43,35 @@ export const login = async (
   if (parsedCredentials.success) {
     try {
       const { email, password, code } = parsedCredentials.data;
-      const isChecked = await checkCredentials(email, password);
+      const existingUser = await checkCredentials(email, password);
 
-      if (isChecked) {
+      console.log('LOGIN: ', parsedCredentials.data);
+
+      if (existingUser) {
         if (code) {
+          const twoFactorToken = await getTwoFactorTokenByToken(code);
+
+          if (!twoFactorToken) {
+            throw new Error('Invalid code');
+          }
+
+          const hasExprired = new Date(twoFactorToken.expires) < new Date();
+
+          if (hasExprired) {
+            throw new Error('Code expired');
+          }
+
+          await prisma.twoFactorToken.delete({
+            where: {
+              id: twoFactorToken.id,
+            },
+          });
+
+          await prisma.twoFactorConfirmation.create({
+            data: {
+              userId: existingUser.id,
+            },
+          });
         } else {
           const twoFactorToken = await generateTwoFactorToken(email);
           await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
@@ -55,8 +81,8 @@ export const login = async (
       }
 
       const res = await signIn('credentials', {
-        email: parsedCredentials.data.email,
-        password: parsedCredentials.data.password,
+        email,
+        password,
         redirectTo: '/',
       });
     } catch (error) {

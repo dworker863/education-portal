@@ -50,7 +50,9 @@ const SigninForm = () => {
         }
 
         if (data.twoFactor) {
+          setError('');
           setTwoFactor(data.twoFactor);
+          setSuccess('Confirmation code sent');
         }
       })
       .catch((error) => {
@@ -70,7 +72,9 @@ const SigninForm = () => {
         }
 
         if (data.twoFactor) {
+          setError('');
           setTwoFactor(data.twoFactor);
+          setSuccess('Confirmation code sent');
         }
       })
       .catch((error) => {
@@ -141,7 +145,7 @@ const SigninForm = () => {
         )}
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Sign In</Button>
+        <Button type="submit">{!twoFactor ? 'Sign In' : 'Confirm'}</Button>
       </form>
       <form onSubmit={handleSubmitWithProvider.bind(null, 'google')}>
         <button type="submit">Sign In with Google</button>

@@ -260,7 +260,7 @@ export const checkCredentials = async (email: string, password: string) => {
     const existingUser = await getUserByEmail(email);
 
     if (!existingUser) {
-      throw new Error('Email does not exists');
+      throw new Error('Invalid credentials');
     }
 
     const passwordMatch = await bcrypt.compare(
@@ -272,7 +272,7 @@ export const checkCredentials = async (email: string, password: string) => {
       throw new Error('Invalid credentials');
     }
 
-    return true;
+    return existingUser;
   } catch (error) {
     console.log(error);
     throw error;

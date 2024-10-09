@@ -18,7 +18,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SuccessMessage from './SuccessMessage';
 import Link from 'next/link';
 
@@ -26,6 +26,7 @@ const SigninForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [twoFactor, setTwoFactor] = useState(false);
+  const router = useRouter();
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
@@ -44,12 +45,12 @@ const SigninForm = () => {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     login(values)
       .then((data) => {
-        if (data.success) {
+        if (data?.success) {
           setError('');
           setSuccess(data.success);
         }
 
-        if (data.twoFactor) {
+        if (data?.twoFactor) {
           setError('');
           setTwoFactor(data.twoFactor);
           setSuccess('Confirmation code sent');
@@ -66,12 +67,12 @@ const SigninForm = () => {
 
     login(undefined, provider)
       .then((data) => {
-        if (data.success) {
+        if (data?.success) {
           setError('');
           setSuccess(data.success);
         }
 
-        if (data.twoFactor) {
+        if (data?.twoFactor) {
           setError('');
           setTwoFactor(data.twoFactor);
           setSuccess('Confirmation code sent');

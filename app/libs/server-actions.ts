@@ -9,14 +9,16 @@ import {
 } from './validation';
 import { z } from 'zod';
 import {
+  checkCredentials,
   generateResetPasswordToken,
+  generateTwoFactorToken,
   getResetPasswordTokenByToken,
   getUserByEmail,
   getVerificationTokenByToken,
 } from './utils';
 import { VerificationError } from './errors';
 import { prisma } from '@/prisma/prisma';
-import { sendResetPasswordEmail } from './mail';
+import { sendResetPasswordEmail, sendTwoFactorToken } from './mail';
 import bcrypt from 'bcryptjs';
 
 export const login = async (
@@ -39,6 +41,19 @@ export const login = async (
 
   if (parsedCredentials.success) {
     try {
+      const { email, password, code } = parsedCredentials.data;
+      const isChecked = await checkCredentials(email, password);
+
+      if (isChecked) {
+        if (code) {
+        } else {
+          const twoFactorToken = await generateTwoFactorToken(email);
+          await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
+
+          return { twoFactor: true };
+        }
+      }
+
       const res = await signIn('credentials', {
         email: parsedCredentials.data.email,
         password: parsedCredentials.data.password,

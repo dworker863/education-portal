@@ -272,7 +272,7 @@ export const checkCredentials = async (email: string, password: string) => {
       throw new Error('Invalid credentials');
     }
 
-    return { success: 'Credentials successfully checked' };
+    return true;
   } catch (error) {
     console.log(error);
     throw error;

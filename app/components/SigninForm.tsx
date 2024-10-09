@@ -25,6 +25,7 @@ import Link from 'next/link';
 const SigninForm = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [twoFactor, setTwoFactor] = useState(false);
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
@@ -43,8 +44,14 @@ const SigninForm = () => {
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     login(values)
       .then((data) => {
-        setError('');
-        setSuccess(data.success);
+        if (data.success) {
+          setError('');
+          setSuccess(data.success);
+        }
+
+        if (data.twoFactor) {
+          setTwoFactor(data.twoFactor);
+        }
       })
       .catch((error) => {
         setSuccess('');
@@ -57,8 +64,14 @@ const SigninForm = () => {
 
     login(undefined, provider)
       .then((data) => {
-        setError('');
-        setSuccess(data.success);
+        if (data.success) {
+          setError('');
+          setSuccess(data.success);
+        }
+
+        if (data.twoFactor) {
+          setTwoFactor(data.twoFactor);
+        }
       })
       .catch((error) => {
         setSuccess('');
@@ -69,57 +82,63 @@ const SigninForm = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input placeholder="example@gmail.com" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="password"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Password</FormLabel>
-              <FormControl>
-                <Input placeholder="******" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <Button variant="link" asChild>
-                <Link href="/reset-password">Forgot password?</Link>
-              </Button>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="code"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Confirmation Code</FormLabel>
-              <FormControl>
-                <Input placeholder="" {...field} />
-              </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {!twoFactor && (
+          <>
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="example@gmail.com" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Password</FormLabel>
+                  <FormControl>
+                    <Input placeholder="******" {...field} />
+                  </FormControl>
+                  <FormDescription>
+                    This is your public display name.
+                  </FormDescription>
+                  <Button variant="link" asChild>
+                    <Link href="/reset-password">Forgot password?</Link>
+                  </Button>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </>
+        )}
+        {twoFactor && (
+          <FormField
+            control={form.control}
+            name="code"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Confirmation Code</FormLabel>
+                <FormControl>
+                  <Input placeholder="" {...field} />
+                </FormControl>
+                <FormDescription>
+                  This is your public display name.
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
         <Button type="submit">Sign In</Button>

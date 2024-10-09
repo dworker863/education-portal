@@ -73,11 +73,10 @@ const SignupForm = () => {
     if (data.success) {
       setSuccess(data.success);
       setError(null);
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
     }
-
-    setTimeout(() => {
-      router.push('/');
-    }, 1500);
   };
 
   return (

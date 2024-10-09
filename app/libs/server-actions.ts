@@ -47,7 +47,7 @@ export const login = async (
 
       console.log('LOGIN: ', parsedCredentials.data);
 
-      if (existingUser) {
+      if (existingUser && existingUser.emailVerified) {
         if (code) {
           const twoFactorToken = await getTwoFactorTokenByToken(code);
 

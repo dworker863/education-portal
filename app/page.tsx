@@ -30,6 +30,11 @@ export default async function Home() {
       >
         <Button text="Sign Out" type="submit" />
       </form>
+      <section>
+        <Link href="/course/html">HTML</Link>
+        <br />
+        <Link href="/course/nextjs">Next.js</Link>
+      </section>
     </main>
   );
 }

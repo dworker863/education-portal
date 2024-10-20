@@ -83,7 +83,6 @@ export const login = async (
       const res = await signIn('credentials', {
         email,
         password,
-        redirectTo: '/',
       });
     } catch (error) {
       if (error instanceof AuthError) {

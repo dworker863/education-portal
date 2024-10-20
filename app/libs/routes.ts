@@ -1,4 +1,9 @@
-export const publicRoutes = ['/', '/api/verification'];
+export const publicRoutes = [
+  '/',
+  '/api/verification',
+  '/course/html',
+  '/course/html/tags',
+];
 export const authRoutes = [
   '/signin',
   '/signup',

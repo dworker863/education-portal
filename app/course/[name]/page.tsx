@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button';
+import LessonForm from '@/app/components/LessonForm';
 import Link from 'next/link';
 
 export default function Course({ params }: { params: { name: string } }) {
@@ -8,7 +8,7 @@ export default function Course({ params }: { params: { name: string } }) {
       <Link href={`${params.name}/tags`}>Tags</Link>
       <br />
       <Link href={`${params.name}/flex`}>Flex</Link>
-      <Button>Add Lesson</Button>
+      <LessonForm />
     </>
   );
 }

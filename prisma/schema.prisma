@@ -103,7 +103,7 @@ model Lesson {
   name       String
   content    String
   images     String[] @default([])
-  video      String[] @default([])
+  video      String?
   exerciseId String
   courseId   String
   meta       String[] @default([])

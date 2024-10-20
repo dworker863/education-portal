@@ -78,3 +78,10 @@ export const newPasswordSchema = z
     message: 'Passwords does not match',
     path: ['confirmPassword'],
   });
+
+export const addLessonSchema = z.object({
+  name: z.string().min(1, { message: 'Add lesson name' }),
+  content: z.string().min(1, { message: 'Add lesson content' }),
+  images: z.array(z.string()),
+  video: z.optional(z.string()),
+});

@@ -18,8 +18,10 @@ import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
 import { Button } from '@/components/ui/button';
+import { useRouter } from 'next/navigation';
 
 const LessonForm = () => {
+  const router = useRouter();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const form = useForm<z.infer<typeof addLessonSchema>>({
@@ -34,12 +36,26 @@ const LessonForm = () => {
 
   const onSubmit = async (values: z.infer<typeof addLessonSchema>) => {
     console.log(values);
-    const data = await fetch('/api/lesson', {
+    const res = await fetch('/api/lesson', {
       method: 'POST',
       body: JSON.stringify(values),
     });
 
-    // const lesson = await data.json();
+    const data = await res.json();
+
+    if (data.error) {
+      setError(data.error);
+      setSuccess(null);
+      return;
+    }
+
+    if (data.success) {
+      setSuccess(data.success);
+      setError(null);
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
+    }
   };
 
   return (

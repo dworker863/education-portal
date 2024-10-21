@@ -1,16 +1,36 @@
+import { addLessonSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   console.log('LESSON ENDPOINT');
 
-  console.log(request);
-
   try {
-    const data = await request.json();
-    console.log(data);
+    const values = await request.json();
+    const { data, ...parsedValues } = await addLessonSchema.safeParse(values);
 
-    // const lesson = await prisma.lesson.create({});
+    if (!parsedValues.success) {
+      return NextResponse.json({
+        error: parsedValues.error?.issues[0].message,
+      });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: 'Invalid data' });
+    }
+
+    await prisma.lesson.create({
+      data: {
+        name: data.name,
+        content: data.content,
+        images: data.images,
+        video: data.video,
+        exerciseId: 'test',
+        courseId: 'test',
+      },
+    });
+
+    return NextResponse.json({ success: 'Lesson successfully added' });
   } catch (error) {
     console.log(error);
   }

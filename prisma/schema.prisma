@@ -114,7 +114,7 @@ model Exercise {
   name         String
   courseId     String
   task         String
-  code         String
+  code         String?
   test         String
   solution     String
   requiredRank String?

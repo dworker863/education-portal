@@ -85,3 +85,13 @@ export const addLessonSchema = z.object({
   images: z.array(z.string()),
   video: z.optional(z.string()),
 });
+
+export const addExerciseSchema = z.object({
+  name: z.string().min(1, { message: 'Add exercise name' }),
+  task: z.string().min(1, { message: 'Add task' }),
+  code: z.optional(z.string()),
+  test: z.string().min(1, { message: 'Add test' }),
+  solution: z.string().min(1, { message: 'Add solution' }),
+  requiredRank: z.optional(z.string()),
+  prizePoints: z.number().min(1, { message: 'Add prize points' }),
+});

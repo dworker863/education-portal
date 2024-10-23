@@ -15,8 +15,15 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { addCourse } from '../libs/server-actions';
+import { useState } from 'react';
+import ErrorMessage from './ErrorMessage';
+import SuccessMessage from './SuccessMessage';
 
 const CourseForm = () => {
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
     defaultValues: {
@@ -30,6 +37,15 @@ const CourseForm = () => {
 
   const onSubmit = async (values: z.infer<typeof courseSchema>) => {
     console.log(values);
+    addCourse(values)
+      .then((data) => {
+        setError(null);
+        setSuccess(data.success);
+      })
+      .catch((error) => {
+        setSuccess(null);
+        setError(error);
+      });
   };
 
   return (
@@ -105,6 +121,8 @@ const CourseForm = () => {
             </FormItem>
           )}
         />
+        {error && <ErrorMessage message={error} />}
+        {success && <SuccessMessage message={success} />}
         <Button type="submit">Add Course</Button>
       </form>
     </Form>

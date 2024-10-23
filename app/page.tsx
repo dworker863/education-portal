@@ -2,6 +2,7 @@ import { auth, signOut } from '@/auth';
 import Link from 'next/link';
 import Button from './components/Button';
 import Image from 'next/image';
+import CourseForm from './components/CourseForm';
 
 export default async function Home() {
   const session = await auth();
@@ -31,6 +32,7 @@ export default async function Home() {
         <Button text="Sign Out" type="submit" />
       </form>
       <section>
+        <CourseForm />
         <Link href="/course/html">HTML</Link>
         <br />
         <Link href="/course/nextjs">Next.js</Link>

@@ -96,13 +96,10 @@ export const exerciseSchema = z.object({
   prizePoints: z.string().min(1, { message: 'Add prize points' }),
 });
 
-export const coursSchema = z.object({
+export const courseSchema = z.object({
   name: z.string(),
   icon: z.string(),
-  usersIds: z.array(z.string()),
-  lessonsIds: z.array(z.string()),
-  priseUSD: z.number(),
+  priceUSD: z.number(),
   certificateId: z.optional(z.string()),
-  completedUsersCount: z.number(),
   category: z.string(),
 });

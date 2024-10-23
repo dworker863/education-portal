@@ -3,6 +3,7 @@
 import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import {
+  exerciseSchema,
   loginSchema,
   newPasswordSchema,
   resetPasswordSchema,
@@ -254,6 +255,38 @@ export const addNewPassword = async (
     }
 
     return { success: 'Password successfully changed' };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
+  const { data, ...parsedValues } = await exerciseSchema.safeParse(values);
+
+  if (!parsedValues.success) {
+    throw new Error(parsedValues.error?.issues[0].message);
+  }
+
+  if (!data) {
+    throw new Error('Invalid data');
+  }
+
+  try {
+    const exercise = await prisma.exercise.create({
+      data: {
+        name: data.name,
+        courseId: 'test',
+        task: data.task,
+        code: data.code,
+        test: data.test,
+        solution: data.solution,
+        requiredRank: data.requiredRank,
+        prizePoints: Number(data.prizePoints),
+      },
+    });
+
+    return { success: 'Exercise successfully added' };
   } catch (error) {
     console.log(error);
     throw error;

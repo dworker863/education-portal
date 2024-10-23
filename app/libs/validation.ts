@@ -79,19 +79,19 @@ export const newPasswordSchema = z
     path: ['confirmPassword'],
   });
 
-export const addLessonSchema = z.object({
+export const lessonSchema = z.object({
   name: z.string().min(1, { message: 'Add lesson name' }),
   content: z.string().min(1, { message: 'Add lesson content' }),
   images: z.array(z.string()),
   video: z.optional(z.string()),
 });
 
-export const addExerciseSchema = z.object({
+export const exerciseSchema = z.object({
   name: z.string().min(1, { message: 'Add exercise name' }),
   task: z.string().min(1, { message: 'Add task' }),
   code: z.optional(z.string()),
   test: z.string().min(1, { message: 'Add test' }),
   solution: z.string().min(1, { message: 'Add solution' }),
   requiredRank: z.optional(z.string()),
-  prizePoints: z.number().min(1, { message: 'Add prize points' }),
+  prizePoints: z.string().min(1, { message: 'Add prize points' }),
 });

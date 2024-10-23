@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { addExerciseSchema } from '../libs/validation';
+import { exerciseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -17,12 +17,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
+import { addExercise } from '../libs/server-actions';
 
 const ExerciseForm = () => {
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const form = useForm<z.infer<typeof addExerciseSchema>>({
-    resolver: zodResolver(addExerciseSchema),
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const form = useForm<z.infer<typeof exerciseSchema>>({
+    resolver: zodResolver(exerciseSchema),
     defaultValues: {
       name: '',
       task: '',
@@ -30,12 +31,20 @@ const ExerciseForm = () => {
       test: '',
       solution: '',
       requiredRank: '',
-      prizePoints: 0,
+      prizePoints: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof addExerciseSchema>) => {
-    console.log(values);
+  const onSubmit = async (values: z.infer<typeof exerciseSchema>) => {
+    addExercise(values)
+      .then((data) => {
+        setError(null);
+        setSuccess(data.success);
+      })
+      .catch((error) => {
+        setSuccess(null);
+        setError(error.message);
+      });
   };
 
   return (

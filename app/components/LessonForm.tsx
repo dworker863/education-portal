@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { addLessonSchema } from '../libs/validation';
+import { lessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
@@ -24,8 +24,8 @@ const LessonForm = () => {
   const router = useRouter();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const form = useForm<z.infer<typeof addLessonSchema>>({
-    resolver: zodResolver(addLessonSchema),
+  const form = useForm<z.infer<typeof lessonSchema>>({
+    resolver: zodResolver(lessonSchema),
     defaultValues: {
       name: '',
       content: '',
@@ -34,7 +34,7 @@ const LessonForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof addLessonSchema>) => {
+  const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
     console.log(values);
     const res = await fetch('/api/lesson', {
       method: 'POST',

@@ -1,4 +1,4 @@
-import { addLessonSchema } from '@/app/libs/validation';
+import { lessonSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const values = await request.json();
-    const { data, ...parsedValues } = await addLessonSchema.safeParse(values);
+    const { data, ...parsedValues } = await lessonSchema.safeParse(values);
 
     if (!parsedValues.success) {
       return NextResponse.json({

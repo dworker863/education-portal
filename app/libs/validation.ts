@@ -97,9 +97,31 @@ export const exerciseSchema = z.object({
 });
 
 export const courseSchema = z.object({
-  name: z.string(),
-  icon: z.string(),
-  priceUSD: z.number(),
-  certificateId: z.optional(z.string()),
-  category: z.string(),
+  name: z.string().min(1, { message: 'Add course name' }),
+  icon: z.optional(
+    z
+      .any()
+      .refine(
+        (file) => !file || file instanceof File || file[0] instanceof File,
+        {
+          message: 'Файл должен быть валидным',
+        },
+      )
+      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+        message: 'Файл не должен быть пустым',
+      })
+      .refine(
+        (file) => {
+          if (!file) return true;
+          if (file instanceof File) {
+            return file.type && file.type.includes('image');
+          }
+
+          return file[0]?.type && file[0].type.includes('image');
+        },
+        { message: 'Insert image' },
+      ),
+  ),
+  priceUSD: z.string().min(1, { message: 'Add course price' }),
+  category: z.string().min(1, { message: 'Add course category' }),
 });

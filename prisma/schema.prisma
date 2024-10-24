@@ -88,9 +88,9 @@ model TwoFactorConfirmation {
 model Course {
   id                  String   @id @default(cuid())
   name                String
-  icon                String
+  icon                String?
   usersIds            String[] @default([])
-  lessonsIds          String[]
+  lessonsIds          String[] @default([])
   priceUSD            Float
   certificateId       String?
   completedUsersCount Int

@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { addCourse } from '../libs/server-actions';
 import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
@@ -29,23 +28,44 @@ const CourseForm = () => {
     defaultValues: {
       name: '',
       icon: '',
-      priceUSD: 0,
-      certificateId: '',
+      priceUSD: '',
       category: '',
     },
   });
 
+  const fileRef = form.register('icon');
+
   const onSubmit = async (values: z.infer<typeof courseSchema>) => {
-    console.log(values);
-    addCourse(values)
-      .then((data) => {
-        setError(null);
-        setSuccess(data.success);
-      })
-      .catch((error) => {
-        setSuccess(null);
-        setError(error);
-      });
+    const formData = new FormData();
+
+    for (const key in values) {
+      const value = values[key as keyof typeof values];
+
+      if (key !== 'icon' && value !== undefined) {
+        formData.append(key, value);
+      }
+
+      if (key === 'icon') {
+        formData.append(key, values.icon[0]);
+      }
+    }
+
+    const res = await fetch('api/course', {
+      method: 'POST',
+      body: formData,
+    });
+
+    const data = await res.json();
+
+    if (data.error) {
+      setSuccess(null);
+      setError(data.error);
+    }
+
+    if (data.success) {
+      setError(null);
+      setSuccess(data.success);
+    }
   };
 
   return (
@@ -72,7 +92,12 @@ const CourseForm = () => {
             <FormItem>
               <FormLabel>Icon</FormLabel>
               <FormControl>
-                <Input placeholder="icon" {...field} />
+                <Input
+                  placeholder="icon"
+                  type="file"
+                  accept="image/*"
+                  {...fileRef}
+                />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />
@@ -93,20 +118,7 @@ const CourseForm = () => {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="certificateId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Certificate</FormLabel>
-              <FormControl>
-                <Input placeholder="certificate" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
         <FormField
           control={form.control}
           name="category"

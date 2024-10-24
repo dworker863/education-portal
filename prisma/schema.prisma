@@ -102,7 +102,7 @@ model Lesson {
   id         String   @id @default(cuid())
   name       String
   content    String
-  images     String[] @default([])
+  images     String?
   video      String?
   exerciseId String
   courseId   String

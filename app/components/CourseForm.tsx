@@ -44,10 +44,10 @@ const CourseForm = () => {
       if (key !== 'icon' && value !== undefined) {
         formData.append(key, value);
       }
+    }
 
-      if (key === 'icon') {
-        formData.append(key, values.icon[0]);
-      }
+    if (values.icon) {
+      formData.append('icon', values.icon[0]);
     }
 
     const res = await fetch('api/course', {
@@ -60,6 +60,7 @@ const CourseForm = () => {
     if (data.error) {
       setSuccess(null);
       setError(data.error);
+      return;
     }
 
     if (data.success) {

@@ -22,8 +22,10 @@ import { useRouter } from 'next/navigation';
 
 const LessonForm = () => {
   const router = useRouter();
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+
   const form = useForm<z.infer<typeof lessonSchema>>({
     resolver: zodResolver(lessonSchema),
     defaultValues: {
@@ -34,11 +36,26 @@ const LessonForm = () => {
     },
   });
 
+  const fileRef = form.register('images');
+
   const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
-    console.log(values);
+    const formData = new FormData();
+
+    for (const key in values) {
+      const value = values[key as keyof typeof values];
+
+      if (key !== 'images' && value !== undefined) {
+        formData.append(key, value);
+      }
+    }
+
+    if (values.images) {
+      formData.append('image', values.images[0]);
+    }
+
     const res = await fetch('/api/lesson', {
       method: 'POST',
-      body: JSON.stringify(values),
+      body: formData,
     });
 
     const data = await res.json();
@@ -52,9 +69,6 @@ const LessonForm = () => {
     if (data.success) {
       setSuccess(data.success);
       setError(null);
-      setTimeout(() => {
-        router.push('/');
-      }, 1500);
     }
   };
 
@@ -96,7 +110,7 @@ const LessonForm = () => {
             <FormItem>
               <FormLabel>Images</FormLabel>
               <FormControl>
-                <Input placeholder="Insert Image" {...field} />
+                <Input placeholder="Insert Image" type="file" {...fileRef} />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />
@@ -108,9 +122,9 @@ const LessonForm = () => {
           name="video"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Images</FormLabel>
+              <FormLabel>Video</FormLabel>
               <FormControl>
-                <Input placeholder="Insert Image" {...field} />
+                <Input placeholder="Insert video" {...field} />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />

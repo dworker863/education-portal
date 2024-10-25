@@ -36,7 +36,8 @@ const LessonForm = () => {
     },
   });
 
-  const fileRef = form.register('images');
+  const imagesRef = form.register('images');
+  const videoRef = form.register('video');
 
   const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
     const formData = new FormData();
@@ -44,13 +45,17 @@ const LessonForm = () => {
     for (const key in values) {
       const value = values[key as keyof typeof values];
 
-      if (key !== 'images' && value !== undefined) {
+      if (key !== 'images' && key !== 'video' && value !== undefined) {
         formData.append(key, value);
       }
     }
 
     if (values.images) {
-      formData.append('image', values.images[0]);
+      formData.append('images', values.images[0]);
+    }
+
+    if (values.video) {
+      formData.append('video', values.video[0]);
     }
 
     const res = await fetch('/api/lesson', {
@@ -110,7 +115,7 @@ const LessonForm = () => {
             <FormItem>
               <FormLabel>Images</FormLabel>
               <FormControl>
-                <Input placeholder="Insert Image" type="file" {...fileRef} />
+                <Input placeholder="Insert Image" type="file" {...imagesRef} />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />
@@ -124,7 +129,12 @@ const LessonForm = () => {
             <FormItem>
               <FormLabel>Video</FormLabel>
               <FormControl>
-                <Input placeholder="Insert video" {...field} />
+                <Input
+                  placeholder="Insert video"
+                  type="file"
+                  accept="video/*"
+                  {...videoRef}
+                />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />

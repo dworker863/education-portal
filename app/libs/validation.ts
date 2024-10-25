@@ -106,7 +106,30 @@ export const lessonSchema = z.object({
         { message: 'Insert image' },
       ),
   ),
-  video: z.optional(z.string()),
+  video: z.optional(
+    z
+      .any()
+      .refine(
+        (file) => !file || file instanceof File || file[0] instanceof File,
+        {
+          message: 'Файл должен быть валидным',
+        },
+      )
+      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+        message: 'Файл не должен быть пустым',
+      })
+      .refine(
+        (file) => {
+          if (!file) return true;
+          if (file instanceof File) {
+            return file.type && file.type.includes('video');
+          }
+
+          return file[0]?.type && file[0].type.includes('video');
+        },
+        { message: 'Insert video' },
+      ),
+  ),
 });
 
 export const exerciseSchema = z.object({

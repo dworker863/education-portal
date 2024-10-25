@@ -23,13 +23,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid data' });
     }
 
-    let uploadResult;
+    let uploadImagesResult;
+    let uploadVideoResult;
 
     if (data.images) {
-      uploadResult = await fileUpload(data.images);
+      uploadImagesResult = await fileUpload(data.images);
 
-      if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message });
+      if (uploadImagesResult instanceof Error) {
+        return NextResponse.json({ error: uploadImagesResult.message });
+      }
+    }
+
+    if (data.video) {
+      uploadVideoResult = await fileUpload(data.video);
+
+      if (uploadVideoResult instanceof Error) {
+        return NextResponse.json({ error: uploadVideoResult.message });
       }
     }
 
@@ -37,8 +46,8 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         content: data.content,
-        images: uploadResult,
-        video: data.video,
+        images: uploadImagesResult,
+        video: uploadVideoResult,
         exerciseId: 'test',
         courseId: 'test',
       },

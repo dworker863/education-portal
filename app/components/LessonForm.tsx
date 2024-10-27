@@ -14,13 +14,17 @@ import { useForm } from 'react-hook-form';
 import { lessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 
-const LessonForm = () => {
+type TLessonFormProps = {
+  courseId?: string;
+};
+
+const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
   const router = useRouter();
 
   const [error, setError] = useState(null);

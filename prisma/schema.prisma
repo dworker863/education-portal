@@ -27,7 +27,11 @@ model User {
   rank                  String                 @default("D-")
   moneyUSD              Int                    @default(0)
   meta                  String[]               @default([])
+  completedExercisesIds String[]
   accounts              Account[]
+  coursesInProgress     Course[]               @relation("UsersInProgressCourses")
+  completedCourses      Course[]               @relation("UsersCompletedCourses")
+  completedExercises    Exercise[]
   TwoFactorConfirmation TwoFactorConfirmation?
   // Optional for WebAuthn support
 
@@ -90,34 +94,40 @@ model Course {
   name                String
   icon                String?
   usersIds            String[] @default([])
-  lessonsIds          String[] @default([])
   priceUSD            Float
   certificateId       String?
   completedUsersCount Int
   category            String
   meta                String[] @default([])
+  lessons             Lesson[]
+  usersInProgress     User[]   @relation("UsersInProgressCourses")
+  completedUsers      User[]   @relation("UsersCompletedCourses")
 }
 
 model Lesson {
-  id         String   @id @default(cuid())
+  id         String     @id @default(cuid())
   name       String
   content    String
   images     String?
   video      String?
   exerciseId String
+  meta       String[]   @default([])
+  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId   String
-  meta       String[] @default([])
+  exercises  Exercise[]
 }
 
 model Exercise {
-  id           String   @id @default(cuid())
-  name         String
-  courseId     String
-  task         String
-  code         String?
-  test         String
-  solution     String
-  requiredRank String?
-  prizePoints  Int
-  meta         String[] @default([])
+  id             String   @id @default(cuid())
+  name           String
+  task           String
+  code           String?
+  test           String
+  solution       String
+  requiredRank   String?
+  prizePoints    Int
+  meta           String[] @default([])
+  lesson         Lesson   @relation(fields: [lessonId], references: [id])
+  lessonId       String
+  completedUsers User[]
 }

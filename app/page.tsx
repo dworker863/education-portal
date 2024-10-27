@@ -3,9 +3,11 @@ import Link from 'next/link';
 import Button from './components/Button';
 import Image from 'next/image';
 import CourseForm from './components/CourseForm';
+import { getAllCourses } from './libs/utils';
 
 export default async function Home() {
   const session = await auth();
+  const courses = await getAllCourses();
 
   return (
     <main>
@@ -33,9 +35,13 @@ export default async function Home() {
       </form>
       <section>
         <CourseForm />
-        <Link href="/course/html">HTML</Link>
+        {courses.length > 0 &&
+          courses.map((course) => (
+            <Link key={course.id} href={`/course/${course.name}`}>
+              {course.name}
+            </Link>
+          ))}
         <br />
-        <Link href="/course/nextjs">Next.js</Link>
       </section>
     </main>
   );

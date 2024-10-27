@@ -278,3 +278,26 @@ export const checkCredentials = async (email: string, password: string) => {
     throw error;
   }
 };
+
+export const getAllCourses = async () => {
+  try {
+    const courses = await prisma.course.findMany();
+    return courses;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getCourseByName = async (name: string) => {
+  try {
+    const courses = await prisma.course.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    return courses;
+  } catch (error) {
+    throw error;
+  }
+};

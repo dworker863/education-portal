@@ -130,6 +130,7 @@ export const lessonSchema = z.object({
         { message: 'Insert video' },
       ),
   ),
+  courseId: z.string(),
 });
 
 export const exerciseSchema = z.object({

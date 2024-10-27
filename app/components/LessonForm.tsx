@@ -37,6 +37,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
       content: '',
       images: [],
       video: '',
+      courseId,
     },
   });
 

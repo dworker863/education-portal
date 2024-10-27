@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
         content: data.content,
         images: uploadImagesResult,
         video: uploadVideoResult,
+        courseId: data.courseId,
         exerciseId: 'test',
-        courseId: 'test',
       },
     });
 

@@ -301,3 +301,12 @@ export const getCourseByName = async (name: string) => {
     throw error;
   }
 };
+
+export const getAllLessons = async () => {
+  try {
+    const lessons = await prisma.course.findMany();
+    return lessons;
+  } catch (error) {
+    throw error;
+  }
+};

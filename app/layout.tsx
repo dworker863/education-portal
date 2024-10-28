@@ -26,8 +26,8 @@ export default function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Link href="/signin">Open Modal</Link>
-          <div>{children}</div>
-          <div>{auth}</div>
+          {children}
+          {auth}
         </body>
       </html>
     </SessionProvider>

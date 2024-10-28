@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <main>
-      {session?.user?.image && (
+      {/* {session?.user?.image && (
         <Image
           src={session?.user?.image?.replace(/\\/gi, '/')}
           alt="avatar"
@@ -42,7 +42,7 @@ export default async function Home() {
             </Link>
           ))}
         <br />
-      </section>
+      </section> */}
     </main>
   );
 }

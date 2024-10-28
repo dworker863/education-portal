@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
+import Link from 'next/link';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,15 +14,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   session,
+  auth,
   children,
 }: Readonly<{
   session: Session | null;
+  auth: React.ReactNode;
   children: React.ReactNode;
 }>) {
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <Link href="/signin">Open Modal</Link>
+          <div>{children}</div>
+          <div>{auth}</div>
+        </body>
       </html>
     </SessionProvider>
   );

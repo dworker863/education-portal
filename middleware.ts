@@ -18,15 +18,15 @@ export default auth((req) => {
   const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
-    }
-  } else if (!isPublicRoute && !isApiAuthRoute && !isLoggedIn) {
-    console.log(pathname);
+  // if (isAuthRoute) {
+  //   if (isLoggedIn) {
+  //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
+  //   }
+  // } else if (!isPublicRoute && !isApiAuthRoute && !isLoggedIn) {
+  //   console.log(pathname);
 
-    return Response.redirect(new URL('/signin', req.nextUrl));
-  }
+  //   return Response.redirect(new URL('/signin', req.nextUrl));
+  // }
 });
 
 export const config = {

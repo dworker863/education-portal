@@ -310,3 +310,34 @@ export const getAllLessons = async () => {
     throw error;
   }
 };
+
+export const getLessonByName = async (name: string) => {
+  try {
+    const lesson = await prisma.lesson.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    return lesson;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateLesson = async (lessonId: string, exerciseId: string) => {
+  try {
+    const lesson = prisma.lesson.update({
+      where: {
+        id: lessonId,
+      },
+      data: {
+        exerciseId,
+      },
+    });
+
+    return lesson;
+  } catch (error) {
+    throw error;
+  }
+};

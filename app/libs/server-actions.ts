@@ -274,10 +274,10 @@ export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
   }
 
   try {
-    await prisma.exercise.create({
+    const exercise = await prisma.exercise.create({
       data: {
         name: data.name,
-        courseId: 'test',
+        lessonId: data.lessonId,
         task: data.task,
         code: data.code,
         test: data.test,
@@ -286,6 +286,17 @@ export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
         prizePoints: Number(data.prizePoints),
       },
     });
+
+    if (data.lessonId) {
+      await prisma.lesson.update({
+        where: {
+          id: data.lessonId,
+        },
+        data: {
+          exerciseId: exercise.id,
+        },
+      });
+    }
 
     return { success: 'Exercise successfully added' };
   } catch (error) {
@@ -311,9 +322,8 @@ export const addCourse = async (values: z.infer<typeof courseSchema>) => {
         name: data.name,
         icon: '',
         usersIds: [],
-        lessonsIds: [],
-        priceUSD: data.priceUSD,
-        certificateId: data.certificateId,
+        priceUSD: Number(data.priceUSD),
+        certificateId: 'test',
         completedUsersCount: 0,
         category: data.category,
       },

@@ -105,16 +105,16 @@ model Course {
 }
 
 model Lesson {
-  id         String     @id @default(cuid())
+  id         String    @id @default(cuid())
   name       String
   content    String
   images     String?
   video      String?
-  exerciseId String
-  meta       String[]   @default([])
-  course     Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  meta       String[]  @default([])
+  course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId   String
-  exercises  Exercise[]
+  exercise   Exercise?
+  exerciseId String?
 }
 
 model Exercise {
@@ -127,7 +127,7 @@ model Exercise {
   requiredRank   String?
   prizePoints    Int
   meta           String[] @default([])
-  lesson         Lesson   @relation(fields: [lessonId], references: [id])
-  lessonId       String
+  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId       String?  @unique
   completedUsers User[]
 }

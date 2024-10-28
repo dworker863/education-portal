@@ -141,6 +141,7 @@ export const exerciseSchema = z.object({
   solution: z.string().min(1, { message: 'Add solution' }),
   requiredRank: z.optional(z.string()),
   prizePoints: z.string().min(1, { message: 'Add prize points' }),
+  lessonId: z.string(),
 });
 
 export const courseSchema = z.object({

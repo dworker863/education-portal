@@ -22,6 +22,7 @@ import { useRouter } from 'next/navigation';
 
 type TLessonFormProps = {
   courseId?: string;
+  exerciseId?: string;
 };
 
 const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {

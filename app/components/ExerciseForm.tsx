@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { exerciseSchema } from '../libs/validation';
@@ -19,7 +19,11 @@ import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
 import { addExercise } from '../libs/server-actions';
 
-const ExerciseForm = () => {
+type TExerciseProps = {
+  lessonId?: string;
+};
+
+const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const form = useForm<z.infer<typeof exerciseSchema>>({
@@ -32,6 +36,7 @@ const ExerciseForm = () => {
       solution: '',
       requiredRank: '',
       prizePoints: '',
+      lessonId,
     },
   });
 

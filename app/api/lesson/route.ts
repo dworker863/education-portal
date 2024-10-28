@@ -49,7 +49,6 @@ export async function POST(request: NextRequest) {
         images: uploadImagesResult,
         video: uploadVideoResult,
         courseId: data.courseId,
-        exerciseId: 'test',
       },
     });
 

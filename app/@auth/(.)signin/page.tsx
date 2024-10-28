@@ -1,4 +1,5 @@
 import Modal from '@/app/components/Modal';
+import SigninForm from '@/app/components/SigninForm';
 
 export default function Login() {
   return (
@@ -8,7 +9,7 @@ export default function Login() {
       backButtonHref="/signup"
       showSocials
     >
-      Modal: Login
+      <SigninForm />
     </Modal>
   );
 }

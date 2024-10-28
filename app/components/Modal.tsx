@@ -28,7 +28,7 @@ const Modal: FC<TModalProps> = ({
   showSocials,
 }) => {
   return (
-    <Card className="w-[400px] text-center">
+    <Card className="w-[400px]">
       <CardHeader>
         <ModalHeader label={headerLabel} />
       </CardHeader>

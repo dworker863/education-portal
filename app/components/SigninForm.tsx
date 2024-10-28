@@ -23,10 +23,9 @@ import SuccessMessage from './SuccessMessage';
 import Link from 'next/link';
 
 const SigninForm = () => {
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
@@ -46,34 +45,12 @@ const SigninForm = () => {
     login(values)
       .then((data) => {
         if (data?.success) {
-          setError('');
+          setError(null);
           setSuccess(data.success);
         }
 
         if (data?.twoFactor) {
-          setError('');
-          setTwoFactor(data.twoFactor);
-          setSuccess('Confirmation code sent');
-        }
-      })
-      .catch((error) => {
-        setSuccess('');
-        setError(error.message);
-      });
-  };
-
-  const handleSubmitWithProvider = async (provider: string, e: FormEvent) => {
-    e.preventDefault();
-
-    login(undefined, provider)
-      .then((data) => {
-        if (data?.success) {
-          setError('');
-          setSuccess(data.success);
-        }
-
-        if (data?.twoFactor) {
-          setError('');
+          setError(null);
           setTwoFactor(data.twoFactor);
           setSuccess('Confirmation code sent');
         }
@@ -98,9 +75,6 @@ const SigninForm = () => {
                   <FormControl>
                     <Input placeholder="example@gmail.com" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -114,10 +88,12 @@ const SigninForm = () => {
                   <FormControl>
                     <Input placeholder="******" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    This is your public display name.
-                  </FormDescription>
-                  <Button variant="link" asChild>
+                  <Button
+                    className="px-0 font-normal"
+                    variant="link"
+                    size="sm"
+                    asChild
+                  >
                     <Link href="/reset-password">Forgot password?</Link>
                   </Button>
                   <FormMessage />
@@ -136,9 +112,6 @@ const SigninForm = () => {
                 <FormControl>
                   <Input placeholder="" {...field} />
                 </FormControl>
-                <FormDescription>
-                  This is your public display name.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -146,13 +119,9 @@ const SigninForm = () => {
         )}
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">{!twoFactor ? 'Sign In' : 'Confirm'}</Button>
-      </form>
-      <form onSubmit={handleSubmitWithProvider.bind(null, 'google')}>
-        <button type="submit">Sign In with Google</button>
-      </form>
-      <form onSubmit={handleSubmitWithProvider.bind(null, 'github')}>
-        <button type="submit">Sign In with Github</button>
+        <Button className="w-full" type="submit">
+          {!twoFactor ? 'Sign In' : 'Confirm'}
+        </Button>
       </form>
     </Form>
   );

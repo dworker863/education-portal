@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -11,6 +13,7 @@ import { FaGithub } from 'react-icons/fa6';
 import Socials from './Socials';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
 
 type TModalProps = {
   children: React.ReactNode;
@@ -27,6 +30,14 @@ const Modal: FC<TModalProps> = ({
   backButtonHref,
   showSocials,
 }) => {
+  const router = useRouter();
+  let pathname = usePathname();
+
+  const handleClick = () => {
+    pathname = backButtonHref;
+    // router.push(backButtonHref);
+  };
+
   return (
     <Card className="w-[400px]">
       <CardHeader>
@@ -39,8 +50,15 @@ const Modal: FC<TModalProps> = ({
         </CardFooter>
       )}
       <CardFooter>
-        <Button variant="link" className="font-normal w-full" size="sm" asChild>
+        <Button
+          variant="link"
+          className="font-normal w-full"
+          size="sm"
+          asChild
+          // onClick={handleClick}
+        >
           <Link href={backButtonHref}>{backButtonLabel}</Link>
+          {/* {backButtonLabel} */}
         </Button>
       </CardFooter>
     </Card>

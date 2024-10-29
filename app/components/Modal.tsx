@@ -30,16 +30,8 @@ const Modal: FC<TModalProps> = ({
   backButtonHref,
   showSocials,
 }) => {
-  const router = useRouter();
-  let pathname = usePathname();
-
-  const handleClick = () => {
-    pathname = backButtonHref;
-    // router.push(backButtonHref);
-  };
-
   return (
-    <Card className="w-[400px]">
+    <Card className="w-[500px]">
       <CardHeader>
         <ModalHeader label={headerLabel} />
       </CardHeader>

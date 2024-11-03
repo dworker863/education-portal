@@ -28,7 +28,7 @@ export default function RootLayout({
       <html lang="en">
         <body className={cn('bg-orange-700 text-white ', inter.className)}>
           <div className="container mx-auto">
-            <TopLine></TopLine>
+            <TopLine />
             {children}
             {auth}
           </div>

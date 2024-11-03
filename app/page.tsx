@@ -10,7 +10,7 @@ export default async function Home() {
 
   return (
     <main>
-      {/* {session?.user?.image && (
+      {session?.user?.image && (
         <Image
           src={session?.user?.image?.replace(/\\/gi, '/')}
           alt="avatar"
@@ -18,20 +18,8 @@ export default async function Home() {
           height={100}
         />
       )}
-      {JSON.stringify(session)}
-      <br />
-      <Link href="/signin">Sign In</Link>
-      <br />
-      <Link href="/signup">Sign Up</Link>
-      <br />
-      <form
-        action={async () => {
-          'use server';
-          await signOut();
-        }}
-      >
-        <Button text="Sign Out" type="submit" />
-      </form>
+      {/* {JSON.stringify(session)} */}
+
       <section>
         <CourseForm />
         {courses.length > 0 &&
@@ -41,7 +29,7 @@ export default async function Home() {
             </Link>
           ))}
         <br />
-      </section> */}
+      </section>
     </main>
   );
 }

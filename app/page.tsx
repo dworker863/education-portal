@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import CourseForm from './components/CourseForm';
 import { getAllCourses } from './libs/utils';
+import Courses from './components/Courses';
+import TopLine from './components/TopLine';
 
 export default async function Home() {
   const session = await auth();
@@ -10,6 +12,8 @@ export default async function Home() {
 
   return (
     <main>
+      <TopLine />
+
       {session?.user?.image && (
         <Image
           src={session?.user?.image?.replace(/\\/gi, '/')}
@@ -20,16 +24,7 @@ export default async function Home() {
       )}
       {/* {JSON.stringify(session)} */}
 
-      <section>
-        <CourseForm />
-        {courses.length > 0 &&
-          courses.map((course) => (
-            <Link key={course.id} href={`/course/${course.name}`}>
-              {course.name}
-            </Link>
-          ))}
-        <br />
-      </section>
+      <Courses courses={courses} />
     </main>
   );
 }

@@ -32,10 +32,7 @@ export default function RootLayout({
         <body className={cn('bg-orange-700 text-white ', inter.className)}>
           <AppWrapper>
             <Overlay>
-              <div className="container mx-auto">
-                <TopLine />
-                {children}
-              </div>
+              <div className="container mx-auto">{children}</div>
             </Overlay>
             {auth}
           </AppWrapper>

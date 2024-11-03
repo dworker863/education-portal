@@ -71,7 +71,10 @@ const CourseForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-8 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <FormField
           control={form.control}
           name="name"

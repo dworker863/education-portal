@@ -13,7 +13,7 @@ const TopLine = () => {
   const context = useContext(ModalContext);
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between py-5">
       <div className="flex-1 flex justify-start gap-5">Right</div>
       <div className="flex-1 flex justify-end gap-5">
         {data?.user ? (
@@ -31,7 +31,7 @@ const TopLine = () => {
             <button
               onClick={() => {
                 context?.setIsModalOpen(true);
-                router.push('/signin');
+                router.push('/signup');
               }}
             >
               Sign Up

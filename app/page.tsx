@@ -1,6 +1,5 @@
 import { auth, signOut } from '@/auth';
 import Link from 'next/link';
-import Button from './components/Button';
 import Image from 'next/image';
 import CourseForm from './components/CourseForm';
 import { getAllCourses } from './libs/utils';

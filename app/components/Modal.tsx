@@ -6,14 +6,15 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import ModalHeader from './ModalHeader';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa6';
 import Socials from './Socials';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { IoCloseSharp } from 'react-icons/io5';
 
 type TModalProps = {
   children: React.ReactNode;
@@ -30,10 +31,23 @@ const Modal: FC<TModalProps> = ({
   backButtonHref,
   showSocials,
 }) => {
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
+  if (!isModalOpen) return null;
+
   return (
-    <Card className="w-[500px]">
+    <Card className="w-[500px] relative">
       <CardHeader>
         <ModalHeader label={headerLabel} />
+        <Button
+          className="absolute right-0 top-0"
+          variant="link"
+          onClick={() => {
+            setIsModalOpen(false);
+          }}
+        >
+          <IoCloseSharp size={24} />
+        </Button>
       </CardHeader>
       <CardContent>{children}</CardContent>
       {showSocials && (
@@ -42,15 +56,8 @@ const Modal: FC<TModalProps> = ({
         </CardFooter>
       )}
       <CardFooter>
-        <Button
-          variant="link"
-          className="font-normal w-full"
-          size="sm"
-          asChild
-          // onClick={handleClick}
-        >
+        <Button variant="link" className="font-normal w-full" size="sm" asChild>
           <Link href={backButtonHref}>{backButtonLabel}</Link>
-          {/* {backButtonLabel} */}
         </Button>
       </CardFooter>
     </Card>

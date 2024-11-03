@@ -4,6 +4,8 @@ import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
+import TopLine from './components/TopLine';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,10 +26,12 @@ export default function RootLayout({
   return (
     <SessionProvider session={session}>
       <html lang="en">
-        <body className={inter.className}>
-          <Link href="/signin">Open Modal</Link>
-          {children}
-          {auth}
+        <body className={cn('bg-orange-700 text-white ', inter.className)}>
+          <div className="container mx-auto">
+            <TopLine></TopLine>
+            {children}
+            {auth}
+          </div>
         </body>
       </html>
     </SessionProvider>

@@ -6,15 +6,13 @@ import {
   CardFooter,
   CardHeader,
 } from '@/components/ui/card';
-import React, { FC, useState } from 'react';
+import React, { FC, useContext } from 'react';
 import ModalHeader from './ModalHeader';
-import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa6';
 import Socials from './Socials';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { IoCloseSharp } from 'react-icons/io5';
+import { ModalContext } from './AppWrapper';
 
 type TModalProps = {
   children: React.ReactNode;
@@ -31,9 +29,8 @@ const Modal: FC<TModalProps> = ({
   backButtonHref,
   showSocials,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(true);
-
-  if (!isModalOpen) return null;
+  const context = useContext(ModalContext);
+  if (!context?.isModalOpen) return null;
 
   return (
     <Card className="w-[500px] relative">
@@ -43,7 +40,7 @@ const Modal: FC<TModalProps> = ({
           className="absolute right-0 top-0"
           variant="link"
           onClick={() => {
-            setIsModalOpen(false);
+            context.setIsModalOpen(false);
           }}
         >
           <IoCloseSharp size={24} />

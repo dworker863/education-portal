@@ -6,6 +6,9 @@ import { Session } from 'next-auth';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import TopLine from './components/TopLine';
+import { createContext } from 'react';
+import AppWrapper from './components/AppWrapper';
+import Overlay from './components/Overlay';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,11 +30,15 @@ export default function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={cn('bg-orange-700 text-white ', inter.className)}>
-          <div className="container mx-auto">
-            <TopLine />
-            {children}
+          <AppWrapper>
+            <Overlay>
+              <div className="container mx-auto">
+                <TopLine />
+                {children}
+              </div>
+            </Overlay>
             {auth}
-          </div>
+          </AppWrapper>
         </body>
       </html>
     </SessionProvider>

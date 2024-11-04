@@ -13,16 +13,16 @@ type TCourseCardProps = {
 const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   return (
     <Link href={`/course/${course.name}`}>
-      <div className="flex flex-col w-full">
-        <h2>{course.name}</h2>
-        <div className="flex">
+      <div className="flex flex-col w-full p-5 rounded-lg bg-white text-black ">
+        <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
+        <div className="flex gap-10 mb-8">
           <div>
             {course.icon && (
               <Image
                 src={course.icon.replace(/\\/gi, '/')}
                 alt="avatar"
-                width={100}
-                height={100}
+                width={300}
+                height={300}
               />
             )}
           </div>
@@ -31,13 +31,14 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
         <div className="flex justify-between">
           <Button
             className="ml-4"
-            variant="secondary"
             onClick={async () => await deleteCourse(course.id)}
           >
             <FaTrash size={16} color="#c2410c" />
-            <span className="ml-2">Delete</span>
+            <span className="ml-2 text-">Delete</span>
           </Button>
-          {course.priceUSD + '$'}
+          <span className="text-orange-600 text-lg font-bold">
+            {course.priceUSD + '$'}
+          </span>
         </div>
       </div>
     </Link>

@@ -14,6 +14,7 @@ import {
   checkCredentials,
   generateResetPasswordToken,
   generateTwoFactorToken,
+  getCourseById,
   getResetPasswordTokenByToken,
   getTwoFactorTokenByToken,
   getUserByEmail,
@@ -332,6 +333,24 @@ export const addCourse = async (values: z.infer<typeof courseSchema>) => {
     return { success: 'Course successfully added' };
   } catch (error) {
     console.log(error);
+    throw error;
+  }
+};
+
+export const deleteCourse = async (id: string) => {
+  try {
+    const course = await getCourseById(id);
+
+    if (!course) throw new Error('Course does not exists');
+
+    await prisma.course.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: 'Course successfully deleted' };
+  } catch (error) {
     throw error;
   }
 };

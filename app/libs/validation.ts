@@ -170,6 +170,7 @@ export const courseSchema = z.object({
         { message: 'Insert image' },
       ),
   ),
+  description: z.string().min(1, { message: 'Add course description' }),
   priceUSD: z.string().min(1, { message: 'Add course price' }),
   category: z.string().min(1, { message: 'Add course category' }),
 });

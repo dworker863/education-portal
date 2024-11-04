@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
     await prisma.course.create({
       data: {
         name: data.name,
+        description: data.description,
         icon: uploadResult,
         priceUSD: Number(data.priceUSD),
         certificateId: 'test',

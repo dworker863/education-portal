@@ -290,13 +290,27 @@ export const getAllCourses = async () => {
 
 export const getCourseByName = async (name: string) => {
   try {
-    const courses = await prisma.course.findFirst({
+    const course = await prisma.course.findFirst({
       where: {
         name,
       },
     });
 
-    return courses;
+    return course;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getCourseById = async (id: string) => {
+  try {
+    const course = await prisma.course.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return course;
   } catch (error) {
     throw error;
   }

@@ -27,6 +27,7 @@ const CourseForm = () => {
     resolver: zodResolver(courseSchema),
     defaultValues: {
       name: '',
+      description: '',
       icon: '',
       priceUSD: '',
       category: '',
@@ -83,6 +84,20 @@ const CourseForm = () => {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="name" {...field} />
+              </FormControl>
+              <FormDescription></FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Input placeholder="Description" {...field} />
               </FormControl>
               <FormDescription></FormDescription>
               <FormMessage />

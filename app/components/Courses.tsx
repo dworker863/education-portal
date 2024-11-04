@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { ICourse } from '../interfaces/interfaces';
 import { FaPlus } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
+import { deleteCourse } from '../libs/server-actions';
+import CourseCard from './CourseCard';
 
 type TCoursesProps = {
   courses: ICourse[];
@@ -29,9 +32,7 @@ const Courses: FC<TCoursesProps> = ({ courses }) => {
       <section>
         {courses.length > 0 &&
           courses.map((course) => (
-            <Link key={course.name} href={`/course/${course.name}`}>
-              {course.name}
-            </Link>
+            <CourseCard key={course.id + course.name} course={course} />
           ))}
         <br />
       </section>

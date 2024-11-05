@@ -321,6 +321,7 @@ export const addCourse = async (values: z.infer<typeof courseSchema>) => {
     await prisma.course.create({
       data: {
         name: data.name,
+        description: data.description,
         icon: '',
         usersIds: [],
         priceUSD: Number(data.priceUSD),

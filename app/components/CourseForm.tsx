@@ -73,7 +73,7 @@ const CourseForm = () => {
   return (
     <Form {...form}>
       <form
-        className="space-y-8 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+        className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
         onSubmit={form.handleSubmit(onSubmit)}
       >
         <FormField

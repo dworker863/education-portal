@@ -318,7 +318,7 @@ export const getCourseById = async (id: string) => {
 
 export const getAllLessons = async () => {
   try {
-    const lessons = await prisma.course.findMany();
+    const lessons = await prisma.lesson.findMany();
     return lessons;
   } catch (error) {
     throw error;

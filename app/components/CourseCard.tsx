@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { deleteCourse } from '../libs/server-actions';
 import { Button } from '@/components/ui/button';
 import { FaTrash } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
 import Image from 'next/image';
 
 type TCourseCardProps = {
@@ -13,7 +14,7 @@ type TCourseCardProps = {
 const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   return (
     <Link href={`/course/${course.name}`}>
-      <div className="flex flex-col w-full p-5 rounded-lg bg-white text-black ">
+      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-white text-black ">
         <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
         <div className="flex gap-10 mb-8">
           <div>
@@ -29,14 +30,23 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           <div>{course.description}</div>
         </div>
         <div className="flex justify-between">
-          <Button
-            className="ml-4"
-            onClick={async () => await deleteCourse(course.id)}
-          >
-            <FaTrash size={16} color="#c2410c" />
-            <span className="ml-2 text-">Delete</span>
-          </Button>
-          <span className="text-orange-600 text-lg font-bold">
+          <div className="flex gap-2">
+            <Button
+              className="ml-4"
+              onClick={async () => await deleteCourse(course.id)}
+            >
+              <FaEdit size={22} color="#c2410c" />
+              <span className="ml-2 text-">Edit</span>
+            </Button>
+            <Button
+              className="ml-4"
+              onClick={async () => await deleteCourse(course.id)}
+            >
+              <FaTrash size={16} color="#c2410c" />
+              <span className="ml-2 text-">Delete</span>
+            </Button>
+          </div>
+          <span className="text-rose-600 text-lg font-bold">
             {course.priceUSD + '$'}
           </span>
         </div>

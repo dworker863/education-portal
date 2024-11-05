@@ -3,11 +3,8 @@
 import React, { FC, useState } from 'react';
 import CourseForm from './CourseForm';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 import { ICourse } from '../interfaces/interfaces';
 import { FaPlus } from 'react-icons/fa';
-import { FaTrash } from 'react-icons/fa';
-import { deleteCourse } from '../libs/server-actions';
 import CourseCard from './CourseCard';
 
 type TCoursesProps = {
@@ -21,7 +18,7 @@ const Courses: FC<TCoursesProps> = ({ courses }) => {
     <section className="py-5">
       <h1 className="text-center mb-10">Courses</h1>
       <Button
-        className="mb-10"
+        className="mb-5"
         variant="secondary"
         onClick={() => setShowForm(!showForm)}
       >

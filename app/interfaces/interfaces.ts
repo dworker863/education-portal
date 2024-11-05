@@ -10,3 +10,13 @@ export interface ICourse {
   usersIds: string[];
   meta: string[];
 }
+
+export interface ILesson {
+  id: string;
+  name: string;
+  content: string;
+  images: string | null;
+  video: string | null;
+  courseId: string;
+  exerciseId: string | null;
+}

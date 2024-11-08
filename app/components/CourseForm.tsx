@@ -18,10 +18,12 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
+import { FaPlus } from 'react-icons/fa';
 
 const CourseForm = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
@@ -71,92 +73,104 @@ const CourseForm = () => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
-        onSubmit={form.handleSubmit(onSubmit)}
+    <>
+      <Button
+        className="mb-5"
+        variant="secondary"
+        onClick={() => setShowForm(!showForm)}
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="name" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input placeholder="Description" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="icon"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Icon</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="icon"
-                  type="file"
-                  accept="image/*"
-                  {...fileRef}
-                />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="priceUSD"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price USD</FormLabel>
-              <FormControl>
-                <Input placeholder="priceUSD" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <FaPlus size={20} color="#c2410c" />
+        <span className="ml-2">{!showForm ? 'Add New Course' : 'Hide'}</span>
+      </Button>
+      {showForm && (
+        <Form {...form}>
+          <form
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="name" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Description" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="icon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Icon</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="icon"
+                      type="file"
+                      accept="image/*"
+                      {...fileRef}
+                    />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="priceUSD"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Price USD</FormLabel>
+                  <FormControl>
+                    <Input placeholder="priceUSD" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input placeholder="category" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {error && <ErrorMessage message={error} />}
-        {success && <SuccessMessage message={success} />}
-        <Button type="submit">Add Course</Button>
-      </form>
-    </Form>
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Category</FormLabel>
+                  <FormControl>
+                    <Input placeholder="category" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {error && <ErrorMessage message={error} />}
+            {success && <SuccessMessage message={success} />}
+            <Button type="submit">Add Course</Button>
+          </form>
+        </Form>
+      )}
+    </>
   );
 };
 

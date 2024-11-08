@@ -19,6 +19,7 @@ import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { FaPlus } from 'react-icons/fa';
 
 type TLessonFormProps = {
   courseId?: string;
@@ -27,6 +28,7 @@ type TLessonFormProps = {
 
 const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
   const router = useRouter();
+  const [showForm, setShowForm] = useState(false);
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -84,77 +86,93 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
   };
 
   return (
-    <Form {...form}>
-      <form
-        className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
-        onSubmit={form.handleSubmit(onSubmit)}
+    <>
+      <Button
+        className="mb-5"
+        variant="secondary"
+        onClick={() => setShowForm(!showForm)}
       >
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input placeholder="name" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="content"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Content</FormLabel>
-              <FormControl>
-                <Input placeholder="content" {...field} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="images"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Images</FormLabel>
-              <FormControl>
-                <Input placeholder="Insert Image" type="file" {...imagesRef} />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="video"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Video</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Insert video"
-                  type="file"
-                  accept="video/*"
-                  {...videoRef}
-                />
-              </FormControl>
-              <FormDescription></FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {error && <ErrorMessage message={error} />}
-        {success && <SuccessMessage message={success} />}
-        <Button type="submit">Add Lesson</Button>
-      </form>
-    </Form>
+        <FaPlus size={20} color="#c2410c" />
+        <span className="ml-2">{!showForm ? 'Add New Lesson' : 'Hide'}</span>
+      </Button>
+      {showForm && (
+        <Form {...form}>
+          <form
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="name" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="content"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Content</FormLabel>
+                  <FormControl>
+                    <Input placeholder="content" {...field} />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="images"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Images</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Insert Image"
+                      type="file"
+                      {...imagesRef}
+                    />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="video"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Video</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Insert video"
+                      type="file"
+                      accept="video/*"
+                      {...videoRef}
+                    />
+                  </FormControl>
+                  <FormDescription></FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {error && <ErrorMessage message={error} />}
+            {success && <SuccessMessage message={success} />}
+            <Button type="submit">Add Lesson</Button>
+          </form>
+        </Form>
+      )}
+    </>
   );
 };
 

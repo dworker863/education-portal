@@ -11,7 +11,7 @@ export default async function Lesson({
 
   return (
     <>
-      <h1>Lesson: {params.lesson}</h1>
+      <h1 className="mb-5 text-center text-xl uppercase">{params.lesson}</h1>
       <ExerciseForm lessonId={lesson?.id} />
       <div className="flex w-full px-10">
         <div className="w-2/4 text-center">Content</div>

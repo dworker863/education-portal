@@ -4,7 +4,6 @@ import React, { FC, useState } from 'react';
 import CourseForm from './CourseForm';
 import { Button } from '@/components/ui/button';
 import { ICourse } from '../interfaces/interfaces';
-import { FaPlus } from 'react-icons/fa';
 import CourseCard from './CourseCard';
 
 type TCoursesProps = {
@@ -12,20 +11,10 @@ type TCoursesProps = {
 };
 
 const Courses: FC<TCoursesProps> = ({ courses }) => {
-  const [showForm, setShowForm] = useState(false);
-
   return (
     <section className="py-5">
       <h1 className="text-center mb-10">Courses</h1>
-      <Button
-        className="mb-5"
-        variant="secondary"
-        onClick={() => setShowForm(!showForm)}
-      >
-        <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Add New Course' : 'Hide'}</span>
-      </Button>
-      {showForm && <CourseForm />}
+      <CourseForm />
       <section>
         {courses.length > 0 &&
           courses.map((course) => (

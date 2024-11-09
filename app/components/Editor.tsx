@@ -5,38 +5,50 @@ import sdk from '@stackblitz/sdk';
 
 type TEditorProps = {
   userId: string;
+  mode: 'exercise' | 'solution';
 };
 
-const Editor: FC<TEditorProps> = ({ userId }) => {
+const Editor: FC<TEditorProps> = ({ userId, mode }) => {
+  console.log(mode);
+
   useEffect(() => {
     const runEmbed = async () => {
       try {
         // Встраиваем проект
-        const vm = await sdk.embedProjectId('test', 'dworker-test');
-        const path = `${userId}/lesson.tsx`;
 
-        // Получаем зависимости проекта
-        // const deps = await vm.getDependencies();
+        if (mode === 'exercise') {
+          const vm = await sdk.embedProjectId('test', 'dworker-exercise');
+          const path = `${userId}/lesson.ts`;
 
-        // Применяем изменения к файловой системе
-        await vm.applyFsDiff({
-          create: {
-            [path]: 'console.log("Hello!")',
-            // 'deps.txt': JSON.stringify(deps, null, 2),
-          },
-          destroy: [],
-        });
+          // Получаем зависимости проекта
+          // const deps = await vm.getDependencies();
 
-        await vm.editor.setCurrentFile(path);
+          // Применяем изменения к файловой системе
+          await vm.applyFsDiff({
+            create: {
+              [path]: 'console.log("Exercise!")',
+            },
+            destroy: [],
+          });
 
-        await vm.editor.openFile(path);
+          // await vm.editor.setCurrentFile(path);
+          // await vm.editor.openFile(path);
+        }
+
+        if (mode === 'solution') {
+          const vm = await sdk.embedProjectId('test', 'dworker-solution');
+          const path = '/solution.ts';
+
+          // await vm.editor.setCurrentFile(path);
+          await vm.editor.openFile(path);
+        }
       } catch (error) {
         console.error('Error embedding project:', error);
       }
     };
 
     runEmbed();
-  }, [userId]);
+  }, [userId, mode]);
   return <div></div>;
 };
 

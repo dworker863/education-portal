@@ -32,7 +32,8 @@ const Editor: FC<TEditorProps> = ({ userId, mode }) => {
           });
 
           // await vm.editor.setCurrentFile(path);
-          // await vm.editor.openFile(path);
+          await vm.editor.openFile(path);
+          await vm.editor.setView('preview');
         }
 
         if (mode === 'solution') {

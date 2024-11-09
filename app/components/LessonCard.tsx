@@ -4,6 +4,8 @@ import React, { FC, useState } from 'react';
 import Editor from './Editor';
 import { ILesson } from '../interfaces/interfaces';
 import Video from './Video';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type TLessonCardProps = {
   lesson: ILesson | null;
@@ -12,19 +14,35 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson }) => {
   const [tab, setTab] = useState('exercise');
   return (
-    <div className="flex w-full p-10 bg-white text-black rounded-lg">
+    <div className="flex w-full gap-10 p-10 bg-white text-black rounded-lg">
       <div className="w-2/4">
         <h2 className="mb-5 text-center">Content</h2>
-        {lesson?.content}
+        <div className="mb-10">{lesson?.content}</div>
         {lesson?.video && <Video src={lesson?.video} />}
       </div>
-      <div className="w-2/4 text-center">
-        <h2 className="mb-5">Exercise</h2>
+      <div className="w-2/4">
+        <h2 className="mb-5 text-center">Exercise</h2>
         <nav>
-          <button onClick={() => setTab('exercise')}>Exercise</button>
-          <button onClick={() => setTab('solution')}>Solution</button>
+          <Button
+            variant={tab === 'exercise' ? 'default' : 'secondary'}
+            className={cn('rounded-es-none rounded-ee-none', {
+              'text-orange-600': tab === 'exercise',
+            })}
+            onClick={() => setTab('exercise')}
+          >
+            Exercise
+          </Button>
+          <Button
+            variant={tab === 'solution' ? 'default' : 'outline'}
+            className={cn('rounded-es-none rounded-ee-none', {
+              'text-orange-600': tab === 'solution',
+            })}
+            onClick={() => setTab('solution')}
+          >
+            Solution
+          </Button>
         </nav>
-        <div id="test">
+        <div className="h-[400px]" id="test">
           {tab === 'exercise' ? (
             <Editor userId="test" mode="exercise" />
           ) : (

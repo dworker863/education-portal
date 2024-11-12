@@ -1,5 +1,6 @@
 import Lessons from '@/app/components/Lessons';
-import { getAllLessons, getCourseByName } from '@/app/libs/utils';
+import { getCourseByName } from '@/app/libs/utils/courses';
+import { getAllLessons } from '@/app/libs/utils/lessons';
 
 export default async function Course({ params }: { params: { name: string } }) {
   const course = await getCourseByName(params.name);

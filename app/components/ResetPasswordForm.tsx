@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
-import { resetPassword } from '../libs/server-actions';
+import { resetPassword } from '../libs/server-actions/auth-actions';
 
 const ResetPasswordForm = () => {
   const [error, setError] = useState('');

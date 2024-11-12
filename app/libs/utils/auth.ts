@@ -1,0 +1,94 @@
+import { promises as fs } from 'fs';
+import path from 'path';
+import bcrypt from 'bcryptjs';
+import { prisma } from '@/prisma/prisma';
+
+export const getUserByEmail = async (email: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserById = async (id: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fileUpload = async (file: File) => {
+  if (!file || file.size === 0) {
+    return new Error('No file uploaded');
+  }
+
+  try {
+    const data = await file.arrayBuffer();
+    const uploadPath = path.resolve('public/uploads', file.name);
+
+    await fs.writeFile(uploadPath, Buffer.from(data));
+
+    console.log('File successfully uploaded');
+
+    return path.join('/uploads', file.name);
+  } catch (error) {
+    console.error(error);
+
+    throw error;
+  }
+};
+
+export const getTwoFactorConfirmationByUserId = async (userId: string) => {
+  try {
+    const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique(
+      {
+        where: {
+          userId,
+        },
+      },
+    );
+
+    return twoFactorConfirmation;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const checkCredentials = async (email: string, password: string) => {
+  try {
+    const existingUser = await getUserByEmail(email);
+
+    if (!existingUser) {
+      throw new Error('Invalid credentials');
+    }
+
+    const passwordMatch = await bcrypt.compare(
+      password,
+      existingUser.password!,
+    );
+
+    if (!passwordMatch) {
+      throw new Error('Invalid credentials');
+    }
+
+    return existingUser;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

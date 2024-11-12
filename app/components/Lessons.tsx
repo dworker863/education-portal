@@ -6,7 +6,7 @@ import { ILesson } from '../interfaces/interfaces';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { deleteLesson } from '../libs/server-actions';
+import { deleteLesson } from '../libs/server-actions/lessons-actions';
 
 type TLessonsProps = {
   courseId?: string;

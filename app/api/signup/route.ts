@@ -1,13 +1,10 @@
 import bcrypt from 'bcryptjs';
-import {
-  fileUpload,
-  generateVerificationToken,
-  getUserByEmail,
-} from '@/app/libs/utils';
 import { registrationSchema } from '@/app/libs/validation';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
-import { sendVerificationEmail } from '@/app/libs/mail';
+import { fileUpload, getUserByEmail } from '@/app/libs/utils/auth';
+import { generateVerificationToken } from '@/app/libs/utils/tokens';
+import { sendVerificationEmail } from '@/app/libs/utils/mail';
 
 export const config = {
   api: {

@@ -1,11 +1,11 @@
 import React, { FC } from 'react';
 import { ICourse } from '../interfaces/interfaces';
 import Link from 'next/link';
-import { deleteCourse } from '../libs/server-actions';
 import { Button } from '@/components/ui/button';
 import { FaTrash } from 'react-icons/fa';
 import { FaEdit } from 'react-icons/fa';
 import Image from 'next/image';
+import { deleteCourse } from '../libs/server-actions/courses-actions';
 
 type TCourseCardProps = {
   course: ICourse;

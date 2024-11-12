@@ -2,9 +2,9 @@ import { auth, signOut } from '@/auth';
 import Link from 'next/link';
 import Image from 'next/image';
 import CourseForm from './components/CourseForm';
-import { getAllCourses } from './libs/utils';
 import Courses from './components/Courses';
 import TopLine from './components/TopLine';
+import { getAllCourses } from './libs/utils/courses';
 
 export default async function Home() {
   const session = await auth();

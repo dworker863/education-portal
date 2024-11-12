@@ -16,13 +16,14 @@ import { newPasswordSchema } from '../libs/validation';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import {
-  addNewPassword,
-  confirmResetPasswordToken,
-} from '../libs/server-actions';
+
 import { useEffect, useState } from 'react';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
+import {
+  addNewPassword,
+  confirmResetPasswordToken,
+} from '../libs/server-actions/auth-actions';
 
 const NewPasswordForm = () => {
   const [error, setError] = useState('');

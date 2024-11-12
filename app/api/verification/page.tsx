@@ -2,7 +2,7 @@
 
 import ErrorMessage from '@/app/components/ErrorMessage';
 import SuccessMessage from '@/app/components/SuccessMessage';
-import { confirmVerification } from '@/app/libs/server-actions';
+import { confirmVerification } from '@/app/libs/server-actions/auth-actions';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 

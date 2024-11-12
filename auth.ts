@@ -1,14 +1,14 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
-import NextAuth, { AuthError, DefaultSession } from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import { prisma } from './prisma/prisma';
 import authConfig from './auth.config';
+import { VerificationError } from './app/libs/errors';
+import { sendVerificationEmail } from './app/libs/utils/mail';
 import {
-  generateVerificationToken,
   getTwoFactorConfirmationByUserId,
   getUserById,
-} from './app/libs/utils';
-import { VerificationError } from './app/libs/errors';
-import { sendVerificationEmail } from './app/libs/mail';
+} from './app/libs/utils/auth';
+import { generateVerificationToken } from './app/libs/utils/tokens';
 
 declare module 'next-auth' {
   /**

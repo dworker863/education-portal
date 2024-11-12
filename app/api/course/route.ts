@@ -1,4 +1,4 @@
-import { fileUpload } from '@/app/libs/utils';
+import { fileUpload } from '@/app/libs/utils/auth';
 import { courseSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';

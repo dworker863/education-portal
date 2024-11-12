@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import ErrorMessage from './ErrorMessage';
-import { addExercise } from '../libs/server-actions';
+import { addExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 
 type TExerciseProps = {

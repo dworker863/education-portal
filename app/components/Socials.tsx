@@ -4,9 +4,9 @@ import { Button } from '@/components/ui/button';
 import React, { FormEvent, useState } from 'react';
 import { FaGithub } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
-import { login } from '../libs/server-actions';
 import ErrorMessage from './ErrorMessage';
 import SuccessMessage from './SuccessMessage';
+import { login } from '../libs/server-actions/auth-actions';
 
 const Socials = () => {
   const [error, setError] = useState<string | null>(null);

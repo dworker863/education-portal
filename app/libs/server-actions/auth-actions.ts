@@ -1,30 +1,25 @@
 'use server';
 
 import { auth, signIn, signOut } from '@/auth';
-import { AuthError } from 'next-auth';
 import {
-  courseSchema,
-  exerciseSchema,
   loginSchema,
   newPasswordSchema,
   resetPasswordSchema,
-} from './validation';
+} from '../validation';
 import { z } from 'zod';
+import { prisma } from '@/prisma/prisma';
+import { sendResetPasswordEmail, sendTwoFactorToken } from '../utils/mail';
+import { AuthError } from 'next-auth';
+import { VerificationError } from '../errors';
+import bcrypt from 'bcryptjs';
+import { checkCredentials, getUserByEmail } from '../utils/auth';
 import {
-  checkCredentials,
   generateResetPasswordToken,
   generateTwoFactorToken,
-  getCourseById,
-  getLessonById,
   getResetPasswordTokenByToken,
   getTwoFactorTokenByToken,
-  getUserByEmail,
   getVerificationTokenByToken,
-} from './utils';
-import { VerificationError } from './errors';
-import { prisma } from '@/prisma/prisma';
-import { sendResetPasswordEmail, sendTwoFactorToken } from './mail';
-import bcrypt from 'bcryptjs';
+} from '../utils/tokens';
 
 export const login = async (
   values?: z.infer<typeof loginSchema>,
@@ -260,117 +255,6 @@ export const addNewPassword = async (
     return { success: 'Password successfully changed' };
   } catch (error) {
     console.log(error);
-    throw error;
-  }
-};
-
-export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
-  const { data, ...parsedValues } = await exerciseSchema.safeParse(values);
-
-  if (!parsedValues.success) {
-    throw new Error(parsedValues.error?.issues[0].message);
-  }
-
-  if (!data) {
-    throw new Error('Invalid data');
-  }
-
-  try {
-    const exercise = await prisma.exercise.create({
-      data: {
-        name: data.name,
-        lessonId: data.lessonId,
-        task: data.task,
-        code: data.code,
-        test: data.test,
-        solution: data.solution,
-        requiredRank: data.requiredRank,
-        prizePoints: Number(data.prizePoints),
-      },
-    });
-
-    if (data.lessonId) {
-      await prisma.lesson.update({
-        where: {
-          id: data.lessonId,
-        },
-        data: {
-          exerciseId: exercise.id,
-        },
-      });
-    }
-
-    return { success: 'Exercise successfully added' };
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-export const addCourse = async (values: z.infer<typeof courseSchema>) => {
-  const { data, ...parsedValues } = await courseSchema.safeParse(values);
-
-  if (!parsedValues.success) {
-    throw new Error(parsedValues.error?.issues[0].message);
-  }
-
-  if (!data) {
-    throw new Error('Invalid data');
-  }
-
-  try {
-    await prisma.course.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        icon: '',
-        usersIds: [],
-        priceUSD: Number(data.priceUSD),
-        certificateId: 'test',
-        completedUsersCount: 0,
-        category: data.category,
-      },
-    });
-
-    return { success: 'Course successfully added' };
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
-export const deleteCourse = async (id: string) => {
-  try {
-    const course = await getCourseById(id);
-
-    if (!course) throw new Error('Course does not exists');
-
-    await prisma.course.delete({
-      where: {
-        id,
-      },
-    });
-
-    return { success: 'Course successfully deleted' };
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const deleteLesson = async (id: string) => {
-  try {
-    const lesson = await getLessonById(id);
-
-    if (!lesson) throw new Error('Course does not exists');
-
-    await prisma.lesson.delete({
-      where: {
-        id,
-      },
-    });
-
-    return { success: 'Course successfully deleted' };
-  } catch (error) {
     throw error;
   }
 };

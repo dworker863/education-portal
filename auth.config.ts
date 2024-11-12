@@ -2,9 +2,9 @@ import GitHub from 'next-auth/providers/github';
 import type { NextAuthConfig } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
-import { getUserByEmail } from './app/libs/utils';
 import { loginSchema } from './app/libs/validation';
 import bcrypt from 'bcryptjs';
+import { getUserByEmail } from './app/libs/utils/auth';
 
 // Notice this is only an object, not a full Auth.js instance
 export default {

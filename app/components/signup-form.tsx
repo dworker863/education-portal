@@ -12,12 +12,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/app/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import { Input } from '@/app/components/input';
+import { Button } from '@/app/components/button';
+import ErrorMessage from './error-message';
+import SuccessMessage from './success-message';
 
 const SignupForm = () => {
   const router = useRouter();

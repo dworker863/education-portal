@@ -5,14 +5,14 @@ import {
   CardContent,
   CardFooter,
   CardHeader,
-} from '@/components/ui/card';
+} from '@/app/components/card';
 import React, { FC, useContext } from 'react';
-import ModalHeader from './ModalHeader';
-import Socials from './Socials';
-import { Button } from '@/components/ui/button';
+import ModalHeader from './modal-header';
+import { Button } from '@/app/components/button';
 import Link from 'next/link';
 import { IoCloseSharp } from 'react-icons/io5';
-import { ModalContext } from './AppWrapper';
+import { ModalContext } from './app-wrapper';
+import Socials from './socials';
 
 type TModalProps = {
   children: React.ReactNode;

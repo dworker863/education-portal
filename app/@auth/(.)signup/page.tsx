@@ -1,5 +1,5 @@
-import Modal from '@/app/components/Modal';
-import SignupForm from '@/app/components/SignupForm';
+import Modal from '@/app/components/modal';
+import SignupForm from '@/app/components/signup-form';
 import React from 'react';
 
 const SignUp = () => {

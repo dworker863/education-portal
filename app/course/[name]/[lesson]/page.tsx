@@ -1,6 +1,5 @@
-import Editor from '@/app/components/Editor';
-import ExerciseForm from '@/app/components/ExerciseForm';
-import LessonCard from '@/app/components/LessonCard';
+import ExerciseForm from '@/app/components/exercise-form';
+import LessonCard from '@/app/components/lesson-card';
 import { getLessonByName } from '@/app/libs/utils/lessons';
 
 export default async function Lesson({

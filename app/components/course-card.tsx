@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 import { ICourse } from '../interfaces/interfaces';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/button';
 import { FaTrash } from 'react-icons/fa';
 import { FaEdit } from 'react-icons/fa';
 import Image from 'next/image';

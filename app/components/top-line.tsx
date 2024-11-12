@@ -4,7 +4,7 @@ import { signOut } from '@/auth';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import React, { FC, useContext, useEffect } from 'react';
-import { ModalContext } from './AppWrapper';
+import { ModalContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 
 const TopLine = () => {

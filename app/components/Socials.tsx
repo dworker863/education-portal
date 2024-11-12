@@ -1,11 +1,11 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/button';
 import React, { FormEvent, useState } from 'react';
 import { FaGithub } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import ErrorMessage from './error-message';
+import SuccessMessage from './success-message';
 import { login } from '../libs/server-actions/auth-actions';
 
 const Socials = () => {

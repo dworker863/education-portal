@@ -4,11 +4,11 @@ import './globals.css';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
-import TopLine from './components/TopLine';
+import TopLine from './components/top-line';
 import { createContext } from 'react';
-import AppWrapper from './components/AppWrapper';
-import Overlay from './components/Overlay';
+import AppWrapper from './components/app-wrapper';
+import { cn } from './libs/cn';
+import Overlay from './components/overlay';
 
 const inter = Inter({ subsets: ['latin'] });
 

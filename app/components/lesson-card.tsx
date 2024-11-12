@@ -1,11 +1,11 @@
 'use client';
 
 import React, { FC, useState } from 'react';
-import Editor from './Editor';
 import { ILesson } from '../interfaces/interfaces';
-import Video from './Video';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Button } from '@/app/components/button';
+import { cn } from '../libs/cn';
+import Video from './video';
+import Editor from './editor';
 
 type TLessonCardProps = {
   lesson: ILesson | null;

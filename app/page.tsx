@@ -1,10 +1,10 @@
 import { auth, signOut } from '@/auth';
 import Link from 'next/link';
 import Image from 'next/image';
-import CourseForm from './components/CourseForm';
-import Courses from './components/Courses';
-import TopLine from './components/TopLine';
+import CourseForm from './components/course-form';
+import TopLine from './components/top-line';
 import { getAllCourses } from './libs/utils/courses';
+import Courses from './components/courses';
 
 export default async function Home() {
   const session = await auth();

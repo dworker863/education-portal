@@ -1,10 +1,10 @@
 'use client';
 
 import React, { FC, useState } from 'react';
-import CourseForm from './CourseForm';
-import { Button } from '@/components/ui/button';
+import CourseForm from './course-form';
+import { Button } from '@/app/components/button';
 import { ICourse } from '../interfaces/interfaces';
-import CourseCard from './CourseCard';
+import CourseCard from './course-card';
 
 type TCoursesProps = {
   courses: ICourse[];

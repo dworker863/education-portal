@@ -8,18 +8,18 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/app/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { newPasswordSchema } from '../libs/validation';
 import { z } from 'zod';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Input } from '@/app/components/input';
+import { Button } from '@/app/components/button';
 
 import { useEffect, useState } from 'react';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import ErrorMessage from './error-message';
+import SuccessMessage from './success-message';
 import {
   addNewPassword,
   confirmResetPasswordToken,

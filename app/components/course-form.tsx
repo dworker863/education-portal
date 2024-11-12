@@ -12,12 +12,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+} from '@/app/components/form';
+import { Input } from '@/app/components/input';
+import { Button } from '@/app/components/button';
 import { useState } from 'react';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
+import ErrorMessage from './error-message';
+import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
 
 const CourseForm = () => {

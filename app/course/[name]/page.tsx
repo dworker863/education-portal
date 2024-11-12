@@ -1,4 +1,4 @@
-import Lessons from '@/app/components/Lessons';
+import Lessons from '@/app/components/lessons';
 import { getCourseByName } from '@/app/libs/utils/courses';
 import { getAllLessons } from '@/app/libs/utils/lessons';
 

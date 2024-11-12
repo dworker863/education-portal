@@ -1,7 +1,7 @@
 'use client';
 
-import ErrorMessage from '@/app/components/ErrorMessage';
-import SuccessMessage from '@/app/components/SuccessMessage';
+import ErrorMessage from '@/app/components/error-message';
+import SuccessMessage from '@/app/components/success-message';
 import { confirmVerification } from '@/app/libs/server-actions/auth-actions';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';

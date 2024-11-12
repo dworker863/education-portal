@@ -1,10 +1,10 @@
 'use client';
 
 import React, { FC } from 'react';
-import LessonForm from './LessonForm';
+import LessonForm from './lesson-form';
 import { ILesson } from '../interfaces/interfaces';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/app/components/button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
 

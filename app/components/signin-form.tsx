@@ -13,12 +13,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import ErrorMessage from './ErrorMessage';
+} from '@/app/components/form';
+import { Input } from '@/app/components/input';
+import { Button } from '@/app/components/button';
+import ErrorMessage from './error-message';
 import { useRouter, useSearchParams } from 'next/navigation';
-import SuccessMessage from './SuccessMessage';
+import SuccessMessage from './success-message';
 import Link from 'next/link';
 import { login } from '../libs/server-actions/auth-actions';
 

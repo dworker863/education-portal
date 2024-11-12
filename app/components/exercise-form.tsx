@@ -13,10 +13,10 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import ErrorMessage from './ErrorMessage';
+} from '@/app/components/form';
+import { Input } from '@/app/components/input';
+import { Button } from '@/app/components/button';
+import ErrorMessage from './error-message';
 import { addExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 

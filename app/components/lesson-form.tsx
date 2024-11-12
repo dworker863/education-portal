@@ -8,16 +8,16 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
+} from '@/app/components/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { lessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/app/components/input';
 import { FC, useState } from 'react';
-import ErrorMessage from './ErrorMessage';
-import SuccessMessage from './SuccessMessage';
-import { Button } from '@/components/ui/button';
+import ErrorMessage from './error-message';
+import SuccessMessage from './success-message';
+import { Button } from '@/app/components/button';
 import { useRouter } from 'next/navigation';
 import { FaPlus } from 'react-icons/fa';
 

@@ -15,6 +15,7 @@ import {
   generateResetPasswordToken,
   generateTwoFactorToken,
   getCourseById,
+  getLessonById,
   getResetPasswordTokenByToken,
   getTwoFactorTokenByToken,
   getUserByEmail,
@@ -345,6 +346,24 @@ export const deleteCourse = async (id: string) => {
     if (!course) throw new Error('Course does not exists');
 
     await prisma.course.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: 'Course successfully deleted' };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteLesson = async (id: string) => {
+  try {
+    const lesson = await getLessonById(id);
+
+    if (!lesson) throw new Error('Course does not exists');
+
+    await prisma.lesson.delete({
       where: {
         id,
       },

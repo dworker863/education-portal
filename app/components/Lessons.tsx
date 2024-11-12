@@ -4,6 +4,9 @@ import React, { FC } from 'react';
 import LessonForm from './LessonForm';
 import { ILesson } from '../interfaces/interfaces';
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import { deleteLesson } from '../libs/server-actions';
 
 type TLessonsProps = {
   courseId?: string;
@@ -19,9 +22,22 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
         {lessons.length > 0 &&
           lessons.map((lesson) => (
             <li key={lesson.id + lesson.name}>
-              <Link href={`/course/${params.name}/${lesson.name}`}>
-                {lesson.name}
-              </Link>
+              <div className="flex items-center">
+                <Link href={`/course/${params.name}/${lesson.name}`}>
+                  {lesson.name}
+                </Link>
+                <Button className="ml-4" onClick={async () => {}}>
+                  <FaEdit size={22} color="#c2410c" />
+                  <span className="ml-2 text-">Edit</span>
+                </Button>
+                <Button
+                  className="ml-4"
+                  onClick={async () => await deleteLesson(lesson.id)}
+                >
+                  <FaTrash size={16} color="#c2410c" />
+                  <span className="ml-2 text-">Delete</span>
+                </Button>
+              </div>
             </li>
           ))}
       </ol>

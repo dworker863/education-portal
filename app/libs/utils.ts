@@ -355,3 +355,17 @@ export const updateLesson = async (lessonId: string, exerciseId: string) => {
     throw error;
   }
 };
+
+export const getLessonById = async (id: string) => {
+  try {
+    const lesson = await prisma.lesson.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    return lesson;
+  } catch (error) {
+    throw error;
+  }
+};

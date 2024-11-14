@@ -11,8 +11,6 @@ export async function POST(request: NextRequest) {
     const { data, ...parsedValues } = await courseSchema.safeParse(values);
 
     if (!parsedValues.success) {
-      console.log(parsedValues);
-
       return NextResponse.json({ error: parsedValues.error.issues[0].message });
     }
 
@@ -44,6 +42,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: 'Course successfully added' });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }

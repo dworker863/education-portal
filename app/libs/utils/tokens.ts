@@ -12,7 +12,7 @@ export const getVerificationTokenByEmail = async (email: string) => {
 
     return verificationToken;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
@@ -26,13 +26,12 @@ export const getVerificationTokenByToken = async (token: string) => {
 
     return verificationToken;
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 };
 
 export const generateVerificationToken = async (email: string) => {
   const token = uuidv4();
-  console.log(token);
 
   const expires = new Date(new Date().getTime() + 600 * 1000);
 
@@ -57,7 +56,6 @@ export const generateVerificationToken = async (email: string) => {
 
     return verificationToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -72,7 +70,6 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
 
     return resetPasswordToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -87,7 +84,6 @@ export const getResetPasswordTokenByToken = async (token: string) => {
 
     return resetPasswordToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -117,7 +113,6 @@ export const generateResetPasswordToken = async (email: string) => {
 
     return resetPasswordToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -132,7 +127,6 @@ export const getTwoFactorTokenByEmail = async (email: string) => {
 
     return twoFactorToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -147,7 +141,6 @@ export const getTwoFactorTokenByToken = async (token: string) => {
 
     return twoFactorToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -181,7 +174,6 @@ export const generateTwoFactorToken = async (email: string) => {
 
     return twoFactorToken;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

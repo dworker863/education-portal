@@ -15,6 +15,7 @@ import { ModalContext } from './app-wrapper';
 import Socials from './socials';
 
 type TModalProps = {
+  type: 'login' | 'registration';
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;
@@ -24,6 +25,7 @@ type TModalProps = {
 
 const Modal: FC<TModalProps> = ({
   children,
+  type,
   headerLabel,
   backButtonLabel,
   backButtonHref,
@@ -35,7 +37,7 @@ const Modal: FC<TModalProps> = ({
   return (
     <Card className="w-[500px] relative">
       <CardHeader>
-        <ModalHeader label={headerLabel} />
+        <ModalHeader label={headerLabel} type={type} />
         <Button
           className="absolute right-0 top-0"
           variant="link"

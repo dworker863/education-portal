@@ -42,7 +42,6 @@ export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
 
     return { success: 'Exercise successfully added' };
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

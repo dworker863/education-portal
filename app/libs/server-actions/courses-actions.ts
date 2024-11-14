@@ -32,7 +32,6 @@ export const addCourse = async (values: z.infer<typeof courseSchema>) => {
 
     return { success: 'Course successfully added' };
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

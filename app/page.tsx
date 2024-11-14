@@ -22,7 +22,6 @@ export default async function Home() {
           height={100}
         />
       )}
-      {/* {JSON.stringify(session)} */}
 
       <Courses courses={courses} />
     </main>

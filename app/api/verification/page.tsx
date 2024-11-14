@@ -27,7 +27,7 @@ export default function Page() {
         });
     } else {
       setSuccess('');
-      setError('Wrong token');
+      setError('Неверный токен');
     }
   }, [token, error, success]);
 

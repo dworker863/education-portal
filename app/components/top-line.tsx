@@ -17,7 +17,7 @@ const TopLine = () => {
       <div className="flex-1 flex justify-start gap-5">Right</div>
       <div className="flex-1 flex justify-end gap-5">
         {data?.user ? (
-          data.user.name
+          data.user.name || data.user.email
         ) : (
           <>
             <button

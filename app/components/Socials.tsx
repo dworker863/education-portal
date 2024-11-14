@@ -11,9 +11,7 @@ import { login } from '../libs/server-actions/auth-actions';
 const Socials = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const onSubmit = async (provider: string, e: FormEvent) => {
-    e.preventDefault();
-
+  const onSubmit = async (provider: string) => {
     login(undefined, provider)
       .then((data) => {
         if (data?.success) {

@@ -67,7 +67,7 @@ export const {
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {
-        throw new Error('You are already signed in!', {});
+        throw new Error('Вы уже авторизованы', {});
       }
 
       if (user.id && user.email) {
@@ -81,7 +81,9 @@ export const {
             verificationToken.token,
           );
 
-          throw new VerificationError('Confirmation email sent');
+          throw new VerificationError(
+            'Ссылка подтверждения отправлена на указанный email',
+          );
         }
 
         const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(

@@ -10,10 +10,9 @@ export const sendVerificationEmail = async (email: string, token: string) => {
       from: 'Acme <onboarding@resend.dev>',
       to: email,
       subject: 'Confirm your email',
-      html: `<p>Click <a href=${confirmLink}>here</a> to confirm email</p>`,
+      html: `<p>Перейдите по <a href=${confirmLink}>ссылке</a> для подтверждения email</p>`,
     });
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -29,7 +28,6 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
       html: `<p>Click <a href=${confirmLink}>here</a> to reset password</p>`,
     });
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -40,10 +38,9 @@ export const sendTwoFactorToken = async (email: string, token: string) => {
       from: 'Acme <onboarding@resend.dev>',
       to: email,
       subject: 'Two factor authentification',
-      html: `<p>Enter this code ${token}</p>`,
+      html: `<p>Введите этот код ${token}</p>`,
     });
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

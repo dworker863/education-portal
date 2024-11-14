@@ -17,7 +17,7 @@ import {
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import SuccessMessage from './success-message';
 import Link from 'next/link';
 import { login } from '../libs/server-actions/auth-actions';
@@ -29,7 +29,7 @@ const SigninForm = () => {
   const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email already in use with different provider'
+      ? 'Email уже используется другим провайдером'
       : '';
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -52,7 +52,7 @@ const SigninForm = () => {
         if (data?.twoFactor) {
           setError(null);
           setTwoFactor(data.twoFactor);
-          setSuccess('Confirmation code sent');
+          setSuccess('Код подтверждения отправлен на email');
         }
       })
       .catch((error) => {
@@ -84,9 +84,9 @@ const SigninForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Пароль</FormLabel>
                   <FormControl>
-                    <Input placeholder="******" {...field} />
+                    <Input placeholder="********" {...field} />
                   </FormControl>
                   <Button
                     className="px-0 font-normal"
@@ -94,7 +94,7 @@ const SigninForm = () => {
                     size="sm"
                     asChild
                   >
-                    <Link href="/reset-password">Forgot password?</Link>
+                    <Link href="/reset-password">Забыли пароль?</Link>
                   </Button>
                   <FormMessage />
                 </FormItem>
@@ -108,9 +108,9 @@ const SigninForm = () => {
             name="code"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirmation Code</FormLabel>
+                <FormLabel>Код подтверждения</FormLabel>
                 <FormControl>
-                  <Input placeholder="" {...field} />
+                  <Input placeholder="123456" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,7 +120,7 @@ const SigninForm = () => {
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
         <Button className="w-full" type="submit">
-          {!twoFactor ? 'Sign In' : 'Confirm'}
+          {!twoFactor ? 'Войти' : 'Подтвердить'}
         </Button>
       </form>
     </Form>

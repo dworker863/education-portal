@@ -20,7 +20,6 @@ import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 
 const SignupForm = () => {
-  const router = useRouter();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -62,8 +61,6 @@ const SignupForm = () => {
 
     const data = await res.json();
 
-    console.log(data);
-
     if (data.error) {
       setError(data.error);
       setSuccess(null);
@@ -72,18 +69,13 @@ const SignupForm = () => {
     if (data.success) {
       setSuccess(data.success);
       setError(null);
-      setTimeout(() => {
-        router.push('/');
-      }, 1500);
     }
   };
 
   return (
     <Form {...form}>
       <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
-        {/* Flex container to create two columns */}
         <div className="flex flex-wrap gap-4">
-          {/* Left column */}
           <div className="flex-1 space-y-6">
             <FormField
               control={form.control}
@@ -103,7 +95,7 @@ const SignupForm = () => {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Имя пользователя</FormLabel>
                   <FormControl>
                     <Input placeholder="username" {...field} />
                   </FormControl>
@@ -116,9 +108,9 @@ const SignupForm = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>Пароль</FormLabel>
                   <FormControl>
-                    <Input placeholder="******" {...field} />
+                    <Input placeholder="********" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -126,16 +118,15 @@ const SignupForm = () => {
             />
           </div>
 
-          {/* Right column */}
           <div className="flex-1 space-y-6">
             <FormField
               control={form.control}
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel>Подтвердить пароль</FormLabel>
                   <FormControl>
-                    <Input placeholder="******" {...field} />
+                    <Input placeholder="********" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -146,9 +137,9 @@ const SignupForm = () => {
               name="firstName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>Имя</FormLabel>
                   <FormControl>
-                    <Input placeholder="First Name" {...field} />
+                    <Input placeholder="Имя" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,9 +150,9 @@ const SignupForm = () => {
               name="lastName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>Фамилия</FormLabel>
                   <FormControl>
-                    <Input placeholder="Last Name" {...field} />
+                    <Input placeholder="Фамилия" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -170,13 +161,12 @@ const SignupForm = () => {
           </div>
         </div>
 
-        {/* Extra fields that span across both columns */}
         <FormField
           control={form.control}
           name="birthDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Birth Date</FormLabel>
+              <FormLabel>Дата рождения</FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -189,7 +179,7 @@ const SignupForm = () => {
           name="file"
           render={() => (
             <FormItem>
-              <FormLabel>Image</FormLabel>
+              <FormLabel>Аватар</FormLabel>
               <FormControl>
                 <Input
                   placeholder="file"
@@ -206,7 +196,7 @@ const SignupForm = () => {
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
         <Button type="submit" className="w-full">
-          Sign Up
+          Зарегистрироваться
         </Button>
       </form>
     </Form>

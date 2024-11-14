@@ -4,12 +4,9 @@ import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
-  console.log('LESSON ENDPOINT');
-
   try {
     const formData = await request.formData();
     const values = Object.fromEntries(formData.entries());
-    console.log(values);
 
     const { data, ...parsedValues } = lessonSchema.safeParse(values);
 
@@ -54,6 +51,6 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: 'Lesson successfully added' });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 }

@@ -6,16 +6,9 @@ import { fileUpload, getUserByEmail } from '@/app/libs/utils/auth';
 import { generateVerificationToken } from '@/app/libs/utils/tokens';
 import { sendVerificationEmail } from '@/app/libs/utils/mail';
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
-
 export async function POST(request: NextRequest) {
-  console.log('SIGNUP ROUTE: ');
-
   const formData = await request.formData();
+  console.log(formData.entries());
 
   const values = Object.fromEntries(formData.entries());
 
@@ -27,7 +20,7 @@ export async function POST(request: NextRequest) {
 
       if (isUserExists) {
         return NextResponse.json({
-          error: 'User with this email already exists',
+          error: 'Пользователь с данным email уже существует',
         });
       }
 
@@ -61,16 +54,17 @@ export async function POST(request: NextRequest) {
       });
 
       const verificationToken = await generateVerificationToken(data.email);
+
       await sendVerificationEmail(
         verificationToken.email,
         verificationToken.token,
       );
 
       return NextResponse.json({
-        success: 'Confirmation email sent',
+        success: 'Ссылка подтверждения отправлена на указанный email',
       });
     } catch (error) {
-      return NextResponse.json({ error: 'Something went wrong' });
+      return NextResponse.json({ error: 'Что-то пошло не так' });
     }
   }
 

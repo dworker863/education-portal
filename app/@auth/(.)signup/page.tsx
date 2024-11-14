@@ -5,8 +5,9 @@ import React from 'react';
 const SignUp = () => {
   return (
     <Modal
-      headerLabel="Create an account"
-      backButtonLabel="Already have an account?"
+      type="registration"
+      headerLabel="Создать аккаунт"
+      backButtonLabel="Уже есть аккаунт?"
       backButtonHref="/signin"
       showSocials
     >

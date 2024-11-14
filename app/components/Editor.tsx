@@ -9,8 +9,6 @@ type TEditorProps = {
 };
 
 const Editor: FC<TEditorProps> = ({ userId, mode }) => {
-  console.log(mode);
-
   useEffect(() => {
     const runEmbed = async () => {
       try {

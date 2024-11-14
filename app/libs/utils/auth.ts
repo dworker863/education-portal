@@ -42,12 +42,8 @@ export const fileUpload = async (file: File) => {
 
     await fs.writeFile(uploadPath, Buffer.from(data));
 
-    console.log('File successfully uploaded');
-
     return path.join('/uploads', file.name);
   } catch (error) {
-    console.error(error);
-
     throw error;
   }
 };
@@ -64,7 +60,6 @@ export const getTwoFactorConfirmationByUserId = async (userId: string) => {
 
     return twoFactorConfirmation;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -74,7 +69,7 @@ export const checkCredentials = async (email: string, password: string) => {
     const existingUser = await getUserByEmail(email);
 
     if (!existingUser) {
-      throw new Error('Invalid credentials');
+      throw new Error('Неверные имя пользователя или пароль');
     }
 
     const passwordMatch = await bcrypt.compare(
@@ -83,12 +78,11 @@ export const checkCredentials = async (email: string, password: string) => {
     );
 
     if (!passwordMatch) {
-      throw new Error('Invalid credentials');
+      throw new Error('Неверные имя пользователя или пароль');
     }
 
     return existingUser;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

@@ -14,7 +14,6 @@ export default {
     Credentials({
       authorize: async (credentials) => {
         const parsedCredentials = loginSchema.safeParse(credentials);
-        console.log('AUTHORIZE: ', parsedCredentials);
 
         if (parsedCredentials.success) {
           const { email, password } = parsedCredentials.data;

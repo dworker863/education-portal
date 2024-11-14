@@ -4,8 +4,9 @@ import SigninForm from '@/app/components/signin-form';
 export default function Login() {
   return (
     <Modal
-      headerLabel="Welcome back"
-      backButtonLabel="Don't have an account"
+      type="login"
+      headerLabel="Добро пожаловать"
+      backButtonLabel="Нет аккаунта?"
       backButtonHref="/signup"
       showSocials
     >

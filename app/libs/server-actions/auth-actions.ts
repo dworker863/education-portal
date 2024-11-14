@@ -28,7 +28,7 @@ export const login = async (
   const isLoggedIn = await auth();
 
   if (isLoggedIn) {
-    throw new Error('You are already signed in!');
+    throw new Error('Вы уже авторизованы');
   }
 
   if (!values) {
@@ -44,20 +44,18 @@ export const login = async (
       const { email, password, code } = parsedCredentials.data;
       const existingUser = await checkCredentials(email, password);
 
-      console.log('LOGIN: ', parsedCredentials.data);
-
       if (existingUser && existingUser.emailVerified) {
         if (code) {
           const twoFactorToken = await getTwoFactorTokenByToken(code);
 
           if (!twoFactorToken) {
-            throw new Error('Invalid code');
+            throw new Error('Неверный код');
           }
 
           const hasExprired = new Date(twoFactorToken.expires) < new Date();
 
           if (hasExprired) {
-            throw new Error('Code expired');
+            throw new Error('Код больше не действителен');
           }
 
           await prisma.twoFactorToken.delete({
@@ -79,7 +77,7 @@ export const login = async (
         }
       }
 
-      const res = await signIn('credentials', {
+      await signIn('credentials', {
         email,
         password,
       });
@@ -116,19 +114,19 @@ export const confirmVerification = async (token: string) => {
   const existingToken = await getVerificationTokenByToken(token);
 
   if (!existingToken) {
-    throw new Error('Token does not exists');
+    throw new Error('Токен не существует');
   }
 
   const hasExprired = new Date(existingToken.expires) < new Date();
 
   if (hasExprired) {
-    throw new Error('Link expired');
+    throw new Error('Ссылка больше не действительна');
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    throw new Error('Email does not exists');
+    throw new Error('Email не существует');
   }
 
   try {
@@ -148,7 +146,7 @@ export const confirmVerification = async (token: string) => {
       },
     });
 
-    return { success: 'Email verified' };
+    return { success: 'Email подтвержден' };
   } catch (error) {
     throw error;
   }
@@ -160,7 +158,7 @@ export const resetPassword = async (
   const parsedValues = await resetPasswordSchema.safeParse(values);
 
   if (!parsedValues.success) {
-    throw new Error('Invalid email');
+    throw new Error('Неверный email');
   }
 
   const { email } = parsedValues.data;
@@ -168,7 +166,7 @@ export const resetPassword = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    throw new Error('Email does not exists');
+    throw new Error('Email не существует');
   }
 
   const resetPasswordToken = await generateResetPasswordToken(email);
@@ -177,36 +175,35 @@ export const resetPassword = async (
     resetPasswordToken.token,
   );
 
-  return { success: 'Reset link sent to your email' };
+  return { success: 'Ссылка сброса пароля отправлен на ваш email' };
 };
 
 export const confirmResetPasswordToken = async (token: string | null) => {
   if (!token) {
-    throw new Error('Invalid token');
+    throw new Error('Токен не существует');
   }
 
   const existingToken = await getResetPasswordTokenByToken(token);
 
   if (!existingToken) {
-    throw new Error('Token not found');
+    throw new Error('Token не найден');
   }
 
   const hasExprired = new Date(existingToken.expires) < new Date();
 
   if (hasExprired) {
-    throw new Error('Link has expired');
+    throw new Error('Ссылка больше не действительна');
   }
 
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    throw new Error('Email does not exists');
+    throw new Error('Email не существует');
   }
 
   try {
-    return { success: 'Add new password' };
+    return { success: 'Введите новый пароль' };
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -225,7 +222,7 @@ export const addNewPassword = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    throw new Error('Email does not exists');
+    throw new Error('Email не существует');
   }
 
   const { password } = parsedValues.data;
@@ -252,9 +249,8 @@ export const addNewPassword = async (
       });
     }
 
-    return { success: 'Password successfully changed' };
+    return { success: 'Пароль успешно изменен' };
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };

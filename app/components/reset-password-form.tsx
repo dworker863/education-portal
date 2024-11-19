@@ -45,7 +45,7 @@ const ResetPasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="email"
@@ -55,16 +55,13 @@ const ResetPasswordForm = () => {
               <FormControl>
                 <Input placeholder="example@gmail.com" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Reset email send</Button>
+        <Button type="submit">Отправить</Button>
       </form>
     </Form>
   );

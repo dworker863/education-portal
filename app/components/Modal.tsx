@@ -15,7 +15,7 @@ import { ModalContext } from './app-wrapper';
 import Socials from './socials';
 
 type TModalProps = {
-  type: 'login' | 'registration';
+  type: 'login' | 'registration' | 'reset';
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;

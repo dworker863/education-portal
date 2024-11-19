@@ -38,8 +38,10 @@ const NewPasswordForm = () => {
     confirmResetPasswordToken(token)
       .then((data) => {
         setTokenError('');
+        setSuccess(data.success);
       })
       .catch((error) => {
+        setSuccess('');
         setTokenError(error.message);
       });
   }, [token]);
@@ -90,7 +92,7 @@ const NewPasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="password"
@@ -100,9 +102,6 @@ const NewPasswordForm = () => {
               <FormControl>
                 <Input placeholder="******" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -116,9 +115,6 @@ const NewPasswordForm = () => {
               <FormControl>
                 <Input placeholder="******" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

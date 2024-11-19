@@ -126,7 +126,7 @@ export const confirmVerification = async (token: string) => {
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    throw new Error('Email не существует');
+    throw new Error('Пользователя с таким email не существует');
   }
 
   try {
@@ -166,7 +166,7 @@ export const resetPassword = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    throw new Error('Email не существует');
+    throw new Error('Пользователя с таким email не существует');
   }
 
   const resetPasswordToken = await generateResetPasswordToken(email);
@@ -175,7 +175,7 @@ export const resetPassword = async (
     resetPasswordToken.token,
   );
 
-  return { success: 'Ссылка сброса пароля отправлен на ваш email' };
+  return { success: 'Ссылка сброса пароля отправлена на ваш email' };
 };
 
 export const confirmResetPasswordToken = async (token: string | null) => {
@@ -198,7 +198,7 @@ export const confirmResetPasswordToken = async (token: string | null) => {
   const existingUser = await getUserByEmail(existingToken.email);
 
   if (!existingUser) {
-    throw new Error('Email не существует');
+    throw new Error('Пользователя с таким email не существует');
   }
 
   try {
@@ -222,7 +222,7 @@ export const addNewPassword = async (
   const existingUser = await getUserByEmail(email);
 
   if (!existingUser) {
-    throw new Error('Email не существует');
+    throw new Error('Пользователя с таким email не существует');
   }
 
   const { password } = parsedValues.data;

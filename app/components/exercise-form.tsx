@@ -31,6 +31,16 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
 
   const form = useForm<z.infer<typeof exerciseSchema>>({
     resolver: zodResolver(exerciseSchema),
+    defaultValues: {
+      name: '',
+      task: '',
+      code: '',
+      test: '',
+      solution: '',
+      requiredRank: '',
+      prizePoints: '',
+      lessonId,
+    },
   });
 
   const onSubmit = async (values: z.infer<typeof exerciseSchema>) => {

@@ -18,7 +18,6 @@ import { FC, useState } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Button } from '@/app/components/button';
-import { useRouter } from 'next/navigation';
 import { FaPlus } from 'react-icons/fa';
 
 type TLessonFormProps = {
@@ -27,7 +26,6 @@ type TLessonFormProps = {
 };
 
 const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
-  const router = useRouter();
   const [showForm, setShowForm] = useState(false);
 
   const [error, setError] = useState(null);
@@ -35,6 +33,13 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
 
   const form = useForm<z.infer<typeof lessonSchema>>({
     resolver: zodResolver(lessonSchema),
+    defaultValues: {
+      name: '',
+      content: '',
+      images: [],
+      video: '',
+      courseId,
+    },
   });
 
   const imagesRef = form.register('images');

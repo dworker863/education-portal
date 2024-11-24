@@ -43,8 +43,8 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         content: data.content,
-        images: uploadImagesResult,
-        video: uploadVideoResult,
+        images: uploadImagesResult || null,
+        video: uploadVideoResult || null,
         courseId: data.courseId,
       },
     });

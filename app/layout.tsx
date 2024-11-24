@@ -1,11 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
-import Link from 'next/link';
-import TopLine from './components/top-line';
-import { createContext } from 'react';
 import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import Overlay from './components/overlay';
@@ -18,7 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  session,
   auth,
   children,
 }: Readonly<{
@@ -27,17 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body className={cn('bg-orange-700 text-white ', inter.className)}>
-          <AppWrapper>
-            <Overlay>
-              <div className="container mx-auto">{children}</div>
-            </Overlay>
-            {auth}
-          </AppWrapper>
-        </body>
-      </html>
-    </SessionProvider>
+    <html lang="en">
+      <body className={cn('bg-orange-700 text-white ', inter.className)}>
+        <AppWrapper>
+          <Overlay>
+            <div className="container mx-auto">{children}</div>
+          </Overlay>
+          {auth}
+        </AppWrapper>
+      </body>
+    </html>
   );
 }

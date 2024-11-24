@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from '../libs/validation';
@@ -21,8 +21,10 @@ import { useSearchParams } from 'next/navigation';
 import SuccessMessage from './success-message';
 import Link from 'next/link';
 import { login } from '../libs/server-actions/auth-actions';
+import { ModalContext } from './app-wrapper';
 
 const SigninForm = () => {
+  const context = useContext(ModalContext);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
@@ -34,11 +36,20 @@ const SigninForm = () => {
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      code: '',
+    },
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     login(values)
       .then((data) => {
+        if (!data) {
+          console.log('LOGIN REDIRECT');
+          context?.setIsModalOpen(false);
+        }
         if (data?.success) {
           setError(null);
           setSuccess(data.success);

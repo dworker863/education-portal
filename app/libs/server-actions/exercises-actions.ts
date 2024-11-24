@@ -21,10 +21,10 @@ export const addExercise = async (values: z.infer<typeof exerciseSchema>) => {
         name: data.name,
         lessonId: data.lessonId,
         task: data.task,
-        code: data.code,
+        code: data.code || null,
         test: data.test,
         solution: data.solution,
-        requiredRank: data.requiredRank,
+        requiredRank: data.requiredRank || 'D-',
         prizePoints: Number(data.prizePoints),
       },
     });

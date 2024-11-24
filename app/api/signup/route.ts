@@ -44,12 +44,12 @@ export async function POST(request: NextRequest) {
       await prisma.user.create({
         data: {
           email: data.email,
-          name: data.username,
+          name: data.username || null,
           password: hashedPassword,
-          firstName: data.firstName,
-          lastName: data.lastName,
-          birthDate,
-          image: uploadResult,
+          firstName: data.firstName || null,
+          lastName: data.lastName || null,
+          birthDate: birthDate || null,
+          image: uploadResult || null,
         },
       });
 

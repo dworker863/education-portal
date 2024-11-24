@@ -48,10 +48,6 @@ const NewPasswordForm = () => {
 
   const form = useForm<z.infer<typeof newPasswordSchema>>({
     resolver: zodResolver(newPasswordSchema),
-    defaultValues: {
-      password: '',
-      confirmPassword: '',
-    },
   });
 
   const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {

@@ -27,13 +27,6 @@ const CourseForm = () => {
 
   const form = useForm<z.infer<typeof courseSchema>>({
     resolver: zodResolver(courseSchema),
-    defaultValues: {
-      name: '',
-      description: '',
-      icon: '',
-      priceUSD: '',
-      category: '',
-    },
   });
 
   const fileRef = form.register('icon');

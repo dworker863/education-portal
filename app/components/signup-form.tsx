@@ -26,13 +26,6 @@ const SignupForm = () => {
   const form = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      email: '',
-      username: '',
-      password: '',
-      confirmPassword: '',
-      firstName: '',
-      lastName: '',
-      birthDate: '',
       file: null,
     },
   });

@@ -18,7 +18,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
 };
 
 export const sendResetPasswordEmail = async (email: string, token: string) => {
-  const confirmLink = `http://localhost:3000/api/new-password?token=${token}&email=${email}`;
+  const confirmLink = `http://localhost:3000/new-password?token=${token}&email=${email}`;
 
   try {
     await resend.emails.send({

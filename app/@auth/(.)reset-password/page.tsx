@@ -4,7 +4,7 @@ import ResetPasswordForm from '@/app/components/reset-password-form';
 export default function ResetPassword() {
   return (
     <Modal
-      type="reset"
+      type="reset-password"
       headerLabel=""
       backButtonLabel="Нет аккаунта?"
       backButtonHref="/signup"

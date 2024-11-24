@@ -6,7 +6,7 @@ import {
   CardFooter,
   CardHeader,
 } from '@/app/components/card';
-import React, { FC, useContext } from 'react';
+import React, { FC, useContext, useEffect } from 'react';
 import ModalHeader from './modal-header';
 import { Button } from '@/app/components/button';
 import Link from 'next/link';
@@ -15,7 +15,7 @@ import { ModalContext } from './app-wrapper';
 import Socials from './socials';
 
 type TModalProps = {
-  type: 'login' | 'registration' | 'reset';
+  type: 'login' | 'registration' | 'reset-password' | 'new-password';
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;
@@ -32,7 +32,8 @@ const Modal: FC<TModalProps> = ({
   showSocials,
 }) => {
   const context = useContext(ModalContext);
-  if (!context?.isModalOpen) return null;
+
+  if (!context?.isModalOpen && type !== 'new-password') return null;
 
   return (
     <Card className="w-[500px] relative">
@@ -42,7 +43,7 @@ const Modal: FC<TModalProps> = ({
           className="absolute right-0 top-0"
           variant="link"
           onClick={() => {
-            context.setIsModalOpen(false);
+            context?.setIsModalOpen(false);
           }}
         >
           <IoCloseSharp size={24} />

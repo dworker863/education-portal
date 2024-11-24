@@ -35,13 +35,6 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
 
   const form = useForm<z.infer<typeof lessonSchema>>({
     resolver: zodResolver(lessonSchema),
-    defaultValues: {
-      name: '',
-      content: '',
-      images: [],
-      video: '',
-      courseId,
-    },
   });
 
   const imagesRef = form.register('images');

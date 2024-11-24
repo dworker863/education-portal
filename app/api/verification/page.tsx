@@ -3,10 +3,11 @@
 import ErrorMessage from '@/app/components/error-message';
 import SuccessMessage from '@/app/components/success-message';
 import { confirmVerification } from '@/app/libs/server-actions/auth-actions';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Page() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const [success, setSuccess] = useState('');
@@ -19,6 +20,7 @@ export default function Page() {
           if (data?.success) {
             setError('');
             setSuccess(data?.success);
+            router.push('/');
           }
         })
         .catch((error) => {
@@ -29,7 +31,7 @@ export default function Page() {
       setSuccess('');
       setError('Неверный токен');
     }
-  }, [token, error, success]);
+  }, [token, error, success, router]);
 
   return (
     <div className="flex justify-center items-center h-screen">

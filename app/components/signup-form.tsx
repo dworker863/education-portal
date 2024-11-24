@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,8 +18,11 @@ import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
+import { ModalContext } from './app-wrapper';
 
 const SignupForm = () => {
+  const context = useContext(ModalContext);
+  const router = useRouter();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 

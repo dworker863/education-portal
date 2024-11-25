@@ -19,6 +19,7 @@ import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
 import { addExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
+import { Textarea } from './textarea';
 
 type TExerciseProps = {
   lessonId?: string;
@@ -63,7 +64,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
         onClick={() => setShowForm(!showForm)}
       >
         <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Add New Exercise' : 'Hide'}</span>
+        <span className="ml-2">
+          {!showForm ? 'Добавить Упражнение' : 'Скрыть'}
+        </span>
       </Button>
       {showForm && (
         <Form {...form}>
@@ -76,11 +79,10 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Название</FormLabel>
                   <FormControl>
-                    <Input placeholder="name" {...field} />
+                    <Input placeholder="Название" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -90,11 +92,10 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="task"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Task</FormLabel>
+                  <FormLabel>Задание</FormLabel>
                   <FormControl>
-                    <Input placeholder="task" {...field} />
+                    <Textarea placeholder="Задание" rows={5} {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -104,11 +105,14 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Code</FormLabel>
+                  <FormLabel>Код</FormLabel>
                   <FormControl>
-                    <Input placeholder="code" {...field} />
+                    <Textarea
+                      placeholder="Начальный код упражнения"
+                      rows={5}
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -118,11 +122,10 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="test"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Test</FormLabel>
+                  <FormLabel>Тест</FormLabel>
                   <FormControl>
-                    <Input placeholder="test" {...field} />
+                    <Textarea placeholder="Код теста" rows={5} {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -132,11 +135,10 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="solution"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Solution</FormLabel>
+                  <FormLabel>Решение</FormLabel>
                   <FormControl>
-                    <Input placeholder="solution" {...field} />
+                    <Textarea placeholder="Код решения" rows={5} {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -146,11 +148,10 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="requiredRank"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Required Rank</FormLabel>
+                  <FormLabel>Уровень</FormLabel>
                   <FormControl>
-                    <Input placeholder="requiredRank" {...field} />
+                    <Input placeholder="Необходимый уровень" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -160,18 +161,20 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               name="prizePoints"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Prize Points</FormLabel>
+                  <FormLabel>Баллы</FormLabel>
                   <FormControl>
-                    <Input placeholder="prizePoints" {...field} />
+                    <Input
+                      placeholder="Колличество призовых баллов"
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {error && <ErrorMessage message={error} />}
             {success && <ErrorMessage message={success} />}
-            <Button type="submit">Add Exercise</Button>
+            <Button type="submit">Добавить Упражнение</Button>
           </form>
         </Form>
       )}

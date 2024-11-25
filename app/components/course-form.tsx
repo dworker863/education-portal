@@ -19,6 +19,7 @@ import { useState } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
+import { Textarea } from '@/app/components/textarea';
 
 const CourseForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +81,7 @@ const CourseForm = () => {
         onClick={() => setShowForm(!showForm)}
       >
         <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Add New Course' : 'Hide'}</span>
+        <span className="ml-2">{!showForm ? 'Добавить Курс' : 'Скрыть'}</span>
       </Button>
       {showForm && (
         <Form {...form}>
@@ -93,11 +94,10 @@ const CourseForm = () => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Название</FormLabel>
                   <FormControl>
-                    <Input placeholder="name" {...field} />
+                    <Input placeholder="Название" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -107,11 +107,14 @@ const CourseForm = () => {
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>Описание</FormLabel>
                   <FormControl>
-                    <Input placeholder="Description" {...field} />
+                    <Textarea
+                      placeholder="Добавьте описание сюда"
+                      rows={5}
+                      {...field}
+                    />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -121,7 +124,7 @@ const CourseForm = () => {
               name="icon"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Icon</FormLabel>
+                  <FormLabel>Изображение</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="icon"
@@ -130,7 +133,6 @@ const CourseForm = () => {
                       {...fileRef}
                     />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -140,11 +142,10 @@ const CourseForm = () => {
               name="priceUSD"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Price USD</FormLabel>
+                  <FormLabel>Цена USD</FormLabel>
                   <FormControl>
-                    <Input placeholder="priceUSD" {...field} />
+                    <Input placeholder="Цена" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -155,18 +156,17 @@ const CourseForm = () => {
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Category</FormLabel>
+                  <FormLabel>Категория</FormLabel>
                   <FormControl>
-                    <Input placeholder="category" {...field} />
+                    <Input placeholder="Категория" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit">Add Course</Button>
+            <Button type="submit">Добавить Курс</Button>
           </form>
         </Form>
       )}

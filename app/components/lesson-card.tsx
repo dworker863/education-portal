@@ -16,12 +16,12 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson }) => {
   return (
     <div className="flex w-full gap-10 p-10 bg-white text-black rounded-lg">
       <div className="w-2/4">
-        <h2 className="mb-5 text-center">Content</h2>
+        <h2 className="mb-5 text-center">Теория</h2>
         <div className="mb-10">{lesson?.content}</div>
         {lesson?.video && <Video src={lesson?.video} />}
       </div>
       <div className="w-2/4">
-        <h2 className="mb-5 text-center">Exercise</h2>
+        <h2 className="mb-5 text-center">Упражнение</h2>
         <nav>
           <Button
             variant={tab === 'exercise' ? 'default' : 'secondary'}
@@ -30,7 +30,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson }) => {
             })}
             onClick={() => setTab('exercise')}
           >
-            Exercise
+            Задание
           </Button>
           <Button
             variant={tab === 'solution' ? 'default' : 'outline'}
@@ -39,7 +39,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson }) => {
             })}
             onClick={() => setTab('solution')}
           >
-            Solution
+            Решение
           </Button>
         </nav>
         <div className="h-[400px]" id="test">

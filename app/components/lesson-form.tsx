@@ -19,6 +19,7 @@ import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Button } from '@/app/components/button';
 import { FaPlus } from 'react-icons/fa';
+import { Textarea } from './textarea';
 
 type TLessonFormProps = {
   courseId?: string;
@@ -91,7 +92,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
         onClick={() => setShowForm(!showForm)}
       >
         <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Add New Lesson' : 'Hide'}</span>
+        <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
       </Button>
       {showForm && (
         <Form {...form}>
@@ -104,11 +105,10 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Название</FormLabel>
                   <FormControl>
-                    <Input placeholder="name" {...field} />
+                    <Input placeholder="Название" {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -118,11 +118,10 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               name="content"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Content</FormLabel>
+                  <FormLabel>Текст</FormLabel>
                   <FormControl>
-                    <Input placeholder="content" {...field} />
+                    <Textarea placeholder="Текст урока" rows={5} {...field} />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -132,7 +131,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               name="images"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Images</FormLabel>
+                  <FormLabel>Изображения</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Insert Image"
@@ -140,7 +139,6 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                       {...imagesRef}
                     />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -150,7 +148,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               name="video"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Video</FormLabel>
+                  <FormLabel>Видео</FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Insert video"
@@ -159,14 +157,13 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                       {...videoRef}
                     />
                   </FormControl>
-                  <FormDescription></FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit">Add Lesson</Button>
+            <Button type="submit">Добавить Урок</Button>
           </form>
         </Form>
       )}

@@ -21,6 +21,7 @@ import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from '@/app/components/textarea';
 import Dropzone from 'react-dropzone';
+import Thumbnails from './thumbnails';
 
 const CourseForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -159,9 +160,10 @@ const CourseForm = () => {
                             {/* <ul>{files}</ul> */}
                           </aside>
                           {field.value && (
-                            <p className="mt-2 text-sm text-gray-600">
-                              Загруженный файл: {field.value[0].name}
-                            </p>
+                            <Thumbnails
+                              thumbnails={field.value}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}

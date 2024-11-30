@@ -21,6 +21,7 @@ import SuccessMessage from './success-message';
 import { ModalContext } from './app-wrapper';
 import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
+import Thumbnails from './thumbnails';
 
 const SignupForm = () => {
   const context = useContext(ModalContext);
@@ -211,15 +212,8 @@ const SignupForm = () => {
                           <FaPlus size={20} color="#c2410c" />
                         </div>
                       </div>
-                      <aside>
-                        {/* <h4>Files</h4> */}
-                        {/* <ul>{files}</ul> */}
-                      </aside>
-                      {field.value && (
-                        <p className="mt-2 text-sm text-gray-600">
-                          Загруженный файл: {field.value[0].name}
-                        </p>
-                      )}
+
+                      {field.value && <Thumbnails thumbnails={field.value} />}
                     </section>
                   )}
                 </Dropzone>

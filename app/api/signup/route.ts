@@ -12,6 +12,8 @@ export async function POST(request: NextRequest) {
 
   const values = Object.fromEntries(formData.entries());
 
+  console.log('REGISTER ROUTE', values);
+
   const { data, ...parsedValues } = await registrationSchema.safeParse(values);
 
   if (parsedValues.success && data) {

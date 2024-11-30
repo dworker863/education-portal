@@ -38,12 +38,12 @@ const SignupForm = () => {
       firstName: '',
       lastName: '',
       birthDate: '',
-      file: null,
+      image: null,
     },
   });
 
   const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
-    console.log(values.file[0]);
+    console.log(values.image[0]);
 
     const formData = new FormData();
 
@@ -55,8 +55,8 @@ const SignupForm = () => {
       }
     }
 
-    if (values.file) {
-      formData.append('file', values.file[0]);
+    if (values.image) {
+      formData.append('image', values.image[0]);
     }
 
     const res = await fetch('api/signup', {
@@ -179,19 +179,19 @@ const SignupForm = () => {
             </FormItem>
           )}
         />
-        <FormField
+        <Controller
           control={form.control}
-          name="file"
+          name="image"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Аватар</FormLabel>
               <FormControl>
                 <Dropzone
                   onDrop={(acceptedFiles) => {
-                    form.setValue('file', acceptedFiles, {
+                    form.setValue('image', acceptedFiles, {
                       shouldValidate: true,
                     });
-                    console.log(form.getValues('file'));
+                    console.log(form.getValues('image'));
                   }}
                 >
                   {({ getRootProps, getInputProps }) => (
@@ -203,9 +203,8 @@ const SignupForm = () => {
                           type="file"
                           accept="image/*"
                           {...getInputProps()}
-                          // {...fileRef}
                         />
-                        <div className=" flex flex-col items-center gap-4 w-fit px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
+                        <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
                           <p className=" text-gray-500 text">
                             Загрузите изображение
                           </p>

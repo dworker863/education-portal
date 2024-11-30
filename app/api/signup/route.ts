@@ -35,8 +35,8 @@ export async function POST(request: NextRequest) {
         birthDate = new Date(values.birthDate as string).toISOString();
       }
 
-      if (data.file) {
-        uploadResult = await fileUpload(data.file);
+      if (data.image) {
+        uploadResult = await fileUpload(data.image);
 
         if (uploadResult instanceof Error) {
           return NextResponse.json({ error: uploadResult.message });

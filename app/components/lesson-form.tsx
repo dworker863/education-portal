@@ -10,7 +10,7 @@ import {
   FormMessage,
 } from '@/app/components/form';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { lessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
@@ -20,6 +20,7 @@ import SuccessMessage from './success-message';
 import { Button } from '@/app/components/button';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
+import Dropzone from 'react-dropzone';
 
 type TLessonFormProps = {
   courseId?: string;
@@ -37,8 +38,8 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
     defaultValues: {
       name: '',
       content: '',
-      images: [],
-      video: '',
+      images: null,
+      video: null,
       courseId,
     },
   });
@@ -126,36 +127,103 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                 </FormItem>
               )}
             />
-            <FormField
+            <Controller
               control={form.control}
               name="images"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Изображения</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Insert Image"
-                      type="file"
-                      {...imagesRef}
-                    />
+                    <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        form.setValue('images', acceptedFiles, {
+                          shouldValidate: true,
+                        });
+                        console.log(form.getValues('images'));
+                      }}
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <section className="container ">
+                          <div
+                            {...getRootProps({
+                              className: 'dropzone disabled',
+                            })}
+                          >
+                            <input
+                              type="file"
+                              accept="image/*"
+                              {...getInputProps()}
+                            />
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
+                              <p className=" text-gray-500 text">
+                                Загрузите изображение
+                              </p>
+                              <FaPlus size={20} color="#c2410c" />
+                            </div>
+                          </div>
+                          <aside>
+                            {/* <h4>Files</h4> */}
+                            {/* <ul>{files}</ul> */}
+                          </aside>
+                          {field.value && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              Загруженный файл: {field.value[0].name}
+                            </p>
+                          )}
+                        </section>
+                      )}
+                    </Dropzone>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
+            <Controller
               control={form.control}
               name="video"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Видео</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Insert video"
-                      type="file"
-                      accept="video/*"
-                      {...videoRef}
-                    />
+                    <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        form.setValue('video', acceptedFiles, {
+                          shouldValidate: true,
+                        });
+                        console.log(form.getValues('video'));
+                      }}
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <section className="container ">
+                          <div
+                            {...getRootProps({
+                              className: 'dropzone disabled',
+                            })}
+                          >
+                            <input
+                              type="file"
+                              accept="video/*"
+                              {...getInputProps()}
+                            />
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
+                              <p className=" text-gray-500 text">
+                                Загрузите видео
+                              </p>
+                              <FaPlus size={20} color="#c2410c" />
+                            </div>
+                          </div>
+                          <aside>
+                            {/* <h4>Files</h4> */}
+                            {/* <ul>{files}</ul> */}
+                          </aside>
+                          {field.value && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              Загруженный файл: {field.value[0].name}
+                            </p>
+                          )}
+                        </section>
+                      )}
+                    </Dropzone>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

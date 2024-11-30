@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { courseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +20,7 @@ import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from '@/app/components/textarea';
+import Dropzone from 'react-dropzone';
 
 const CourseForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +32,7 @@ const CourseForm = () => {
     defaultValues: {
       name: '',
       description: '',
-      icon: '',
+      icon: null,
       priceUSD: '',
       category: '',
     },
@@ -119,19 +120,52 @@ const CourseForm = () => {
                 </FormItem>
               )}
             />
-            <FormField
+            <Controller
               control={form.control}
               name="icon"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Изображение</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="icon"
-                      type="file"
-                      accept="image/*"
-                      {...fileRef}
-                    />
+                    <Dropzone
+                      onDrop={(acceptedFiles) => {
+                        form.setValue('icon', acceptedFiles, {
+                          shouldValidate: true,
+                        });
+                        console.log(form.getValues('icon'));
+                      }}
+                    >
+                      {({ getRootProps, getInputProps }) => (
+                        <section className="container ">
+                          <div
+                            {...getRootProps({
+                              className: 'dropzone disabled',
+                            })}
+                          >
+                            <input
+                              type="file"
+                              accept="image/*"
+                              {...getInputProps()}
+                            />
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
+                              <p className=" text-gray-500 text">
+                                Загрузите изображение
+                              </p>
+                              <FaPlus size={20} color="#c2410c" />
+                            </div>
+                          </div>
+                          <aside>
+                            {/* <h4>Files</h4> */}
+                            {/* <ul>{files}</ul> */}
+                          </aside>
+                          {field.value && (
+                            <p className="mt-2 text-sm text-gray-600">
+                              Загруженный файл: {field.value[0].name}
+                            </p>
+                          )}
+                        </section>
+                      )}
+                    </Dropzone>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

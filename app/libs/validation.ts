@@ -22,7 +22,7 @@ export const registrationSchema = z
       .refine((value) => !value || new Date(value) <= new Date(), {
         message: 'Дата рождения не может превышать сегодняшнюю дату',
       }),
-    file: z.optional(
+    image: z.optional(
       z
         .any()
         .refine(

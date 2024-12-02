@@ -21,6 +21,7 @@ import { Button } from '@/app/components/button';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
 import Dropzone from 'react-dropzone';
+import Thumbnails from './thumbnails';
 
 type TLessonFormProps = {
   courseId?: string;
@@ -161,20 +162,21 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
-                          <aside>
-                            {/* <h4>Files</h4> */}
-                            {/* <ul>{files}</ul> */}
-                          </aside>
                           {field.value && (
-                            <p className="mt-2 text-sm text-gray-600">
-                              Загруженный файл: {field.value[0].name}
-                            </p>
+                            <Thumbnails
+                              thumbnails={field.value}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
-                  <FormMessage />
+                  {form.formState.errors.images && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {form.formState.errors.images.message as string}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
@@ -212,20 +214,21 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
-                          <aside>
-                            {/* <h4>Files</h4> */}
-                            {/* <ul>{files}</ul> */}
-                          </aside>
                           {field.value && (
-                            <p className="mt-2 text-sm text-gray-600">
-                              Загруженный файл: {field.value[0].name}
-                            </p>
+                            <Thumbnails
+                              thumbnails={field.value}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
-                  <FormMessage />
+                  {form.formState.errors.video && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {form.formState.errors.video.message as string}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />

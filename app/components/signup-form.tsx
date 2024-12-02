@@ -212,13 +212,21 @@ const SignupForm = () => {
                           <FaPlus size={20} color="#c2410c" />
                         </div>
                       </div>
-
-                      {field.value && <Thumbnails thumbnails={field.value} />}
+                      {field.value && (
+                        <Thumbnails
+                          thumbnails={field.value}
+                          closeBtnHandler={form.setValue}
+                        />
+                      )}
                     </section>
                   )}
                 </Dropzone>
               </FormControl>
-              <FormMessage />
+              {form.formState.errors.image && (
+                <p className="text-red-500 text-sm mt-2">
+                  {form.formState.errors.image.message as string}
+                </p>
+              )}
             </FormItem>
           )}
         />

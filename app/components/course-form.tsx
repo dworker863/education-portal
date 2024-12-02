@@ -155,10 +155,6 @@ const CourseForm = () => {
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
-                          <aside>
-                            {/* <h4>Files</h4> */}
-                            {/* <ul>{files}</ul> */}
-                          </aside>
                           {field.value && (
                             <Thumbnails
                               thumbnails={field.value}
@@ -169,7 +165,11 @@ const CourseForm = () => {
                       )}
                     </Dropzone>
                   </FormControl>
-                  <FormMessage />
+                  {form.formState.errors.icon && (
+                    <p className="text-red-500 text-sm mt-2">
+                      {form.formState.errors.icon.message as string}
+                    </p>
+                  )}
                 </FormItem>
               )}
             />

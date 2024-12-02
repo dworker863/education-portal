@@ -164,6 +164,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                           </div>
                           {field.value && (
                             <Thumbnails
+                              field={field.name}
                               thumbnails={field.value}
                               closeBtnHandler={form.setValue}
                             />
@@ -216,6 +217,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                           </div>
                           {field.value && (
                             <Thumbnails
+                              field={field.name}
                               thumbnails={field.value}
                               closeBtnHandler={form.setValue}
                             />

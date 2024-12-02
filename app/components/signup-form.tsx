@@ -214,6 +214,7 @@ const SignupForm = () => {
                       </div>
                       {field.value && (
                         <Thumbnails
+                          field={field.name}
                           thumbnails={field.value}
                           closeBtnHandler={form.setValue}
                         />

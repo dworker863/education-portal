@@ -5,11 +5,16 @@ import { IoCloseSharp } from 'react-icons/io5';
 import { UseFormSetValue } from 'react-hook-form';
 
 type TThumbnailsProps = {
+  field: string;
   thumbnails: any[];
   closeBtnHandler: UseFormSetValue<any>;
 };
 
-const Thumbnails: FC<TThumbnailsProps> = ({ thumbnails, closeBtnHandler }) => {
+const Thumbnails: FC<TThumbnailsProps> = ({
+  thumbnails,
+  closeBtnHandler,
+  field,
+}) => {
   const [files, setFiles] = useState(thumbnails);
 
   return (
@@ -23,10 +28,10 @@ const Thumbnails: FC<TThumbnailsProps> = ({ thumbnails, closeBtnHandler }) => {
             className="absolute -top-1.5 -right-4 text-rose-600"
             variant="link"
             onClick={() => {
-              console.log('THUMBNAIL HANDLER');
+              console.log('THUMBNAIL HANDLER', files);
 
               setFiles(thumbnails.splice(index, 1));
-              closeBtnHandler('images', files);
+              closeBtnHandler(field, thumbnails);
             }}
           >
             <IoCloseSharp size={24} />

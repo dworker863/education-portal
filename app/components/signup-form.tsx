@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -27,6 +27,7 @@ import RequiredSign from './required-sign';
 const SignupForm = () => {
   const context = useContext(ModalContext);
   const router = useRouter();
+  const [isPending, startTransiton] = useTransition();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -45,38 +46,40 @@ const SignupForm = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
-    console.log(values.image[0]);
+    startTransiton(async () => {
+      console.log(values.image[0]);
 
-    const formData = new FormData();
+      const formData = new FormData();
 
-    for (const key in values) {
-      const value = values[key as keyof typeof values];
+      for (const key in values) {
+        const value = values[key as keyof typeof values];
 
-      if (key !== 'file' && value !== undefined) {
-        formData.append(key, value);
+        if (key !== 'file' && value !== undefined) {
+          formData.append(key, value);
+        }
       }
-    }
 
-    if (values.image) {
-      formData.append('image', values.image[0]);
-    }
+      if (values.image) {
+        formData.append('image', values.image[0]);
+      }
 
-    const res = await fetch('api/signup', {
-      method: 'POST',
-      body: formData,
+      const res = await fetch('api/signup', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setError(data.error);
+        setSuccess(null);
+      }
+
+      if (data.success) {
+        setSuccess(data.success);
+        setError(null);
+      }
     });
-
-    const data = await res.json();
-
-    if (data.error) {
-      setError(data.error);
-      setSuccess(null);
-    }
-
-    if (data.success) {
-      setSuccess(data.success);
-      setError(null);
-    }
   };
 
   return (
@@ -238,7 +241,7 @@ const SignupForm = () => {
 
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit" className="w-full">
+        <Button type="submit" className="w-full" disabled={isPending}>
           Зарегистрироваться
         </Button>
       </form>

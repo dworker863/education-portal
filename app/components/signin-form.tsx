@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState } from 'react';
+import { useContext, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from '../libs/validation';
@@ -25,10 +25,11 @@ import { ModalContext } from './app-wrapper';
 
 const SigninForm = () => {
   const context = useContext(ModalContext);
+  const searchParams = useSearchParams();
+  const [isPending, startTransiton] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
-  const searchParams = useSearchParams();
   const urlError =
     searchParams.get('error') === 'OAuthAccountNotLinked'
       ? 'Email уже используется другим провайдером'
@@ -44,27 +45,29 @@ const SigninForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    login(values)
-      .then((data) => {
-        if (!data) {
-          console.log('LOGIN REDIRECT');
-          context?.setIsModalOpen(false);
-        }
-        if (data?.success) {
-          setError(null);
-          setSuccess(data.success);
-        }
+    startTransiton(() => {
+      login(values)
+        .then((data) => {
+          if (!data) {
+            console.log('LOGIN REDIRECT');
+            context?.setIsModalOpen(false);
+          }
+          if (data?.success) {
+            setError(null);
+            setSuccess(data.success);
+          }
 
-        if (data?.twoFactor) {
-          setError(null);
-          setTwoFactor(data.twoFactor);
-          setSuccess('Код подтверждения отправлен на email');
-        }
-      })
-      .catch((error) => {
-        setSuccess('');
-        setError(error.message);
-      });
+          if (data?.twoFactor) {
+            setError(null);
+            setTwoFactor(data.twoFactor);
+            setSuccess('Код подтверждения отправлен на email');
+          }
+        })
+        .catch((error) => {
+          setSuccess('');
+          setError(error.message);
+        });
+    });
   };
 
   return (
@@ -125,7 +128,7 @@ const SigninForm = () => {
         )}
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
-        <Button className="w-full" type="submit">
+        <Button className="w-full" type="submit" disabled={isPending}>
           {!twoFactor ? 'Войти' : 'Подтвердить'}
         </Button>
       </form>

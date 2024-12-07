@@ -14,7 +14,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { lessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
-import { FC, useState } from 'react';
+import { FC, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Button } from '@/app/components/button';
@@ -30,6 +30,8 @@ type TLessonFormProps = {
 };
 
 const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
+  const [isPending, startTransiton] = useTransition();
+
   const [showForm, setShowForm] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState(null);
@@ -47,45 +49,47 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
-    const formData = new FormData();
+    startTransiton(async () => {
+      const formData = new FormData();
 
-    for (const key in values) {
-      const value = values[key as keyof typeof values];
+      for (const key in values) {
+        const value = values[key as keyof typeof values];
 
-      if (key !== 'images' && key !== 'video' && value !== undefined) {
-        formData.append(key, value);
+        if (key !== 'images' && key !== 'video' && value !== undefined) {
+          formData.append(key, value);
+        }
       }
-    }
 
-    if (values.images && values.images.length > 0) {
-      values.images.forEach((image) => {
-        formData.append('images', image);
+      if (values.images && values.images.length > 0) {
+        values.images.forEach((image) => {
+          formData.append('images', image);
+        });
+      }
+
+      if (values.video) {
+        formData.append('video', values.video[0]);
+      }
+
+      console.log('LESSON FORM', formData.getAll('images'));
+
+      const res = await fetch('/api/lesson', {
+        method: 'POST',
+        body: formData,
       });
-    }
 
-    if (values.video) {
-      formData.append('video', values.video[0]);
-    }
+      const data = await res.json();
 
-    console.log('LESSON FORM', formData.getAll('images'));
+      if (data.error) {
+        setError(data.error);
+        setSuccess(null);
+        return;
+      }
 
-    const res = await fetch('/api/lesson', {
-      method: 'POST',
-      body: formData,
+      if (data.success) {
+        setSuccess(data.success);
+        setError(null);
+      }
     });
-
-    const data = await res.json();
-
-    if (data.error) {
-      setError(data.error);
-      setSuccess(null);
-      return;
-    }
-
-    if (data.success) {
-      setSuccess(data.success);
-      setError(null);
-    }
   };
 
   return (
@@ -257,7 +261,9 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit">Добавить Урок</Button>
+            <Button type="submit" disabled={isPending}>
+              Добавить Урок
+            </Button>
           </form>
         </Form>
       )}

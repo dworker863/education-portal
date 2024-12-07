@@ -15,7 +15,7 @@ import {
 } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
@@ -25,6 +25,8 @@ import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
 
 const CourseForm = () => {
+  const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -40,40 +42,40 @@ const CourseForm = () => {
     },
   });
 
-  const fileRef = form.register('icon');
-
   const onSubmit = async (values: z.infer<typeof courseSchema>) => {
-    const formData = new FormData();
+    startTransiton(async () => {
+      const formData = new FormData();
 
-    for (const key in values) {
-      const value = values[key as keyof typeof values];
+      for (const key in values) {
+        const value = values[key as keyof typeof values];
 
-      if (key !== 'icon' && value !== undefined) {
-        formData.append(key, value);
+        if (key !== 'icon' && value !== undefined) {
+          formData.append(key, value);
+        }
       }
-    }
 
-    if (values.icon) {
-      formData.append('icon', values.icon[0]);
-    }
+      if (values.icon) {
+        formData.append('icon', values.icon[0]);
+      }
 
-    const res = await fetch('api/course', {
-      method: 'POST',
-      body: formData,
+      const res = await fetch('api/course', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        setSuccess(null);
+        setError(data.error);
+        return;
+      }
+
+      if (data.success) {
+        setError(null);
+        setSuccess(data.success);
+      }
     });
-
-    const data = await res.json();
-
-    if (data.error) {
-      setSuccess(null);
-      setError(data.error);
-      return;
-    }
-
-    if (data.success) {
-      setError(null);
-      setSuccess(data.success);
-    }
   };
 
   return (
@@ -209,7 +211,9 @@ const CourseForm = () => {
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit">Добавить Курс</Button>
+            <Button type="submit" disabled={isPending}>
+              Добавить Курс
+            </Button>
           </form>
         </Form>
       )}

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { exerciseSchema } from '../libs/validation';
@@ -27,6 +27,8 @@ type TExerciseProps = {
 };
 
 const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
+  const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -46,15 +48,17 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof exerciseSchema>) => {
-    addExercise(values)
-      .then((data) => {
-        setError(null);
-        setSuccess(data.success);
-      })
-      .catch((error) => {
-        setSuccess(null);
-        setError(error.message);
-      });
+    startTransiton(async () => {
+      addExercise(values)
+        .then((data) => {
+          setError(null);
+          setSuccess(data.success);
+        })
+        .catch((error) => {
+          setSuccess(null);
+          setError(error.message);
+        });
+    });
   };
 
   return (
@@ -180,7 +184,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
             />
             {error && <ErrorMessage message={error} />}
             {success && <ErrorMessage message={success} />}
-            <Button type="submit">Добавить Упражнение</Button>
+            <Button type="submit" disabled={isPending}>
+              Добавить Упражнение
+            </Button>
           </form>
         </Form>
       )}

@@ -20,6 +20,7 @@ import ErrorMessage from './error-message';
 import { addExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
+import RequiredSign from './required-sign';
 
 type TExerciseProps = {
   lessonId?: string;
@@ -80,6 +81,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -93,6 +95,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Задание</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Textarea placeholder="Задание" rows={5} {...field} />
                   </FormControl>
@@ -123,6 +126,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тест</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Textarea placeholder="Код теста" rows={5} {...field} />
                   </FormControl>
@@ -136,6 +140,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Решение</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Textarea placeholder="Код решения" rows={5} {...field} />
                   </FormControl>
@@ -162,6 +167,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Баллы</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input
                       placeholder="Колличество призовых баллов"

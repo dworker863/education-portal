@@ -22,6 +22,7 @@ import { FaPlus } from 'react-icons/fa';
 import { Textarea } from '@/app/components/textarea';
 import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
+import RequiredSign from './required-sign';
 
 const CourseForm = () => {
   const [error, setError] = useState<string | null>(null);
@@ -97,6 +98,7 @@ const CourseForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -110,6 +112,7 @@ const CourseForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Описание</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Textarea
                       placeholder="Добавьте описание сюда"
@@ -127,6 +130,7 @@ const CourseForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Изображение</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
@@ -180,6 +184,7 @@ const CourseForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Цена USD</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="Цена" {...field} />
                   </FormControl>
@@ -194,6 +199,7 @@ const CourseForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Категория</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="Категория" {...field} />
                   </FormControl>

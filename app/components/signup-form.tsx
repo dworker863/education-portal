@@ -22,6 +22,7 @@ import { ModalContext } from './app-wrapper';
 import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
 import Thumbnails from './thumbnails';
+import RequiredSign from './required-sign';
 
 const SignupForm = () => {
   const context = useContext(ModalContext);
@@ -89,6 +90,7 @@ const SignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="example@gmail.com" {...field} />
                   </FormControl>
@@ -115,6 +117,7 @@ const SignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Пароль</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="********" {...field} />
                   </FormControl>
@@ -131,6 +134,7 @@ const SignupForm = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Подтвердить пароль</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="********" {...field} />
                   </FormControl>

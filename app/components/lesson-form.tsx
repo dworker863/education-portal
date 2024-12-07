@@ -22,6 +22,7 @@ import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
 import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
+import RequiredSign from './required-sign';
 
 type TLessonFormProps = {
   courseId?: string;
@@ -109,6 +110,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -122,6 +124,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Текст</FormLabel>
+                  <RequiredSign />
                   <FormControl>
                     <Textarea placeholder="Текст урока" rows={5} {...field} />
                   </FormControl>

@@ -12,6 +12,8 @@ type TLessonCardProps = {
 };
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson }) => {
+  console.log(lesson);
+
   const [tab, setTab] = useState('exercise');
   return (
     <div className="flex w-full gap-10 p-10 bg-white text-black rounded-lg">

@@ -6,7 +6,15 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData.entries());
+    const images = formData.getAll('images');
+    const values: { [key: string]: FormDataEntryValue | FormDataEntryValue[] } =
+      Object.fromEntries(
+        [...formData.entries()].filter(([key]) => key !== 'images'),
+      );
+
+    values.images = images;
+
+    console.log('LESSON ROUTE: ', values);
 
     const { data, ...parsedValues } = lessonSchema.safeParse(values);
 
@@ -23,11 +31,30 @@ export async function POST(request: NextRequest) {
     let uploadImagesResult;
     let uploadVideoResult;
 
-    if (data.images) {
-      uploadImagesResult = await fileUpload(data.images);
+    if (data.images && data.images.length > 0) {
+      try {
+        uploadImagesResult = await Promise.all(
+          data.images.map(async (image: File) => {
+            return fileUpload(image);
+          }),
+        );
+        console.log('FILE UPLOAD:', uploadImagesResult);
 
-      if (uploadImagesResult instanceof Error) {
-        return NextResponse.json({ error: uploadImagesResult.message });
+        const hasError = uploadImagesResult.some(
+          (result) => result instanceof Error,
+        );
+
+        if (hasError) {
+          return NextResponse.json({
+            error: 'Ошибка при загрузке файлов',
+          });
+        }
+
+        uploadImagesResult = uploadImagesResult.filter(
+          (result) => typeof result === 'string',
+        );
+      } catch (error) {
+        return NextResponse.json({ error: 'Ошибка при загрузке файлов' });
       }
     }
 
@@ -43,7 +70,7 @@ export async function POST(request: NextRequest) {
       data: {
         name: data.name,
         content: data.content,
-        images: uploadImagesResult || null,
+        images: uploadImagesResult || [],
         video: uploadVideoResult || null,
         courseId: data.courseId,
       },

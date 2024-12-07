@@ -30,7 +30,7 @@ type TLessonFormProps = {
 
 const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
   const [showForm, setShowForm] = useState(false);
-
+  const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -45,9 +45,6 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
     },
   });
 
-  const imagesRef = form.register('images');
-  const videoRef = form.register('video');
-
   const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
     const formData = new FormData();
 
@@ -59,13 +56,17 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
       }
     }
 
-    if (values.images) {
-      formData.append('images', values.images[0]);
+    if (values.images && values.images.length > 0) {
+      values.images.forEach((image) => {
+        formData.append('images', image);
+      });
     }
 
     if (values.video) {
       formData.append('video', values.video[0]);
     }
+
+    console.log('LESSON FORM', formData.getAll('images'));
 
     const res = await fetch('/api/lesson', {
       method: 'POST',
@@ -137,10 +138,15 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                   <FormControl>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
-                        form.setValue('images', acceptedFiles, {
+                        setFiles((prevFiles) => [
+                          ...prevFiles,
+                          ...acceptedFiles,
+                        ]);
+                        form.setValue('images', [...files, ...acceptedFiles], {
                           shouldValidate: true,
                         });
                         console.log(form.getValues('images'));
+                        console.log(form.formState.errors);
                       }}
                     >
                       {({ getRootProps, getInputProps }) => (
@@ -153,6 +159,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                             <input
                               type="file"
                               accept="image/*"
+                              multiple
                               {...getInputProps()}
                             />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
@@ -165,7 +172,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                           {field.value && (
                             <Thumbnails
                               field={field.name}
-                              thumbnails={field.value}
+                              thumbnails={files}
                               closeBtnHandler={form.setValue}
                             />
                           )}
@@ -174,9 +181,20 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.images && (
-                    <p className="text-red-500 text-sm mt-2">
-                      {form.formState.errors.images.message as string}
-                    </p>
+                    <>
+                      {form.formState.errors.images.message && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {form.formState.errors.images.message}
+                        </p>
+                      )}
+
+                      {Array.isArray(form.formState.errors.images) &&
+                        form.formState.errors.images.map((error, index) => (
+                          <p key={index} className="text-red-500 text-sm mt-2">
+                            {`Файл ${index + 1}: ${error?.message}`}
+                          </p>
+                        ))}
+                    </>
                   )}
                 </FormItem>
               )}

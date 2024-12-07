@@ -108,7 +108,7 @@ model Lesson {
   id         String    @id @default(cuid())
   name       String
   content    String
-  images     String?
+  images     String[]  @default([])
   video      String?
   meta       String[]  @default([])
   course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)

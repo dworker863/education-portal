@@ -114,27 +114,26 @@ export const lessonSchema = z.object({
   content: z.string().min(1, { message: 'Введите текст урока' }),
   images: z.optional(
     z
-      .any()
-      .refine(
-        (file) => !file || file instanceof File || file[0] instanceof File,
-        {
-          message: 'Файл должен быть валидным',
-        },
-      )
-      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
-        message: 'Файл не должен быть пустым',
-      })
-      .refine(
-        (file) => {
-          if (!file) return true;
-          if (file instanceof File) {
-            return file.type && file.type.includes('image');
-          }
+      .array(
+        z
+          .any()
+          .refine((file) => !file || file instanceof File, {
+            message: 'Файл должен быть валидным',
+          })
+          .refine((file) => !file || file.size > 0, {
+            message: 'Файл не должен быть пустым',
+          })
+          .refine(
+            (file) => {
+              console.log('VALIDATION TYPE', file.type.includes('image'));
 
-          return file[0]?.type && file[0].type.includes('image');
-        },
-        { message: 'Вставьте изображение' },
-      ),
+              if (!file) return true;
+              return file.type && file.type.includes('image');
+            },
+            { message: 'Вставьте изображение' },
+          ),
+      )
+      .nullable(),
   ),
   video: z.optional(
     z

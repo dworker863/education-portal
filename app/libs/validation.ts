@@ -14,14 +14,7 @@ export const registrationSchema = z
     confirmPassword: z.string(),
     firstName: z.optional(z.string()),
     lastName: z.optional(z.string()),
-    birthDate: z
-      .optional(z.string())
-      .refine((value) => !value || !isNaN(Date.parse(value)), {
-        message: 'Неверная дата',
-      })
-      .refine((value) => !value || new Date(value) <= new Date(), {
-        message: 'Дата рождения не может превышать сегодняшнюю дату',
-      }),
+    birthDate: z.optional(z.date()),
     image: z.optional(
       z
         .any()

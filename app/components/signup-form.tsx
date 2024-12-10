@@ -23,6 +23,16 @@ import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
+import DatePicker from './date-pricker';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@radix-ui/react-popover';
+import { cn } from '../libs/cn';
+import { CalendarIcon } from 'lucide-react';
+import { Calendar } from './calendar';
+import { format } from 'date-fns';
 
 const SignupForm = () => {
   const context = useContext(ModalContext);
@@ -40,7 +50,7 @@ const SignupForm = () => {
       confirmPassword: '',
       firstName: '',
       lastName: '',
-      birthDate: '',
+      birthDate: undefined,
       image: null,
     },
   });
@@ -178,11 +188,40 @@ const SignupForm = () => {
           control={form.control}
           name="birthDate"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="flex flex-col">
               <FormLabel>Дата рождения</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
+              {/* <Input type="date" {...field} /> */}
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={'outline'}
+                      className={cn(
+                        'w-[240px] pl-3 text-left font-normal',
+                        !field.value && 'text-muted-foreground',
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, 'PPP')
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-white" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date('1900-01-01')
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
               <FormMessage />
             </FormItem>
           )}

@@ -12,9 +12,18 @@ export async function POST(request: NextRequest) {
 
   const values = Object.fromEntries(formData.entries());
 
-  console.log('REGISTER ROUTE', values);
+  const valuesToParse = {
+    ...values,
+    birthDate: values.birthDate
+      ? new Date(values.birthDate as string)
+      : undefined,
+  };
 
-  const { data, ...parsedValues } = await registrationSchema.safeParse(values);
+  console.log('REGISTER ROUTE', typeof values.birthDate);
+
+  const { data, ...parsedValues } = await registrationSchema.safeParse(
+    valuesToParse,
+  );
 
   if (parsedValues.success && data) {
     try {
@@ -28,12 +37,7 @@ export async function POST(request: NextRequest) {
 
       const hashedPassword = await bcrypt.hash(data.password, 10);
 
-      let birthDate;
       let uploadResult;
-
-      if (data.birthDate) {
-        birthDate = new Date(values.birthDate as string).toISOString();
-      }
 
       if (data.image) {
         uploadResult = await fileUpload(data.image);
@@ -50,7 +54,7 @@ export async function POST(request: NextRequest) {
           password: hashedPassword,
           firstName: data.firstName || null,
           lastName: data.lastName || null,
-          birthDate: birthDate || null,
+          birthDate: data.birthDate || null,
           image: uploadResult || null,
         },
       });

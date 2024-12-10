@@ -57,7 +57,7 @@ const SignupForm = () => {
 
   const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
     startTransiton(async () => {
-      console.log(values.image[0]);
+      console.log('SIGNUP FORM', typeof values.birthDate);
 
       const formData = new FormData();
 
@@ -118,7 +118,7 @@ const SignupForm = () => {
                 <FormItem>
                   <FormLabel>Имя пользователя</FormLabel>
                   <FormControl>
-                    <Input placeholder="username" {...field} />
+                    <Input placeholder="Имя пользователя" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -204,7 +204,7 @@ const SignupForm = () => {
                       {field.value ? (
                         format(field.value, 'PPP')
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Укажите дату</span>
                       )}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>

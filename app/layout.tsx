@@ -5,6 +5,7 @@ import { Session } from 'next-auth';
 import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import Overlay from './components/overlay';
+import Spinner from './components/spinner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn('bg-orange-700 text-white ', inter.className)}>
+        <Spinner />
         <AppWrapper>
           <Overlay>
             <div className="container mx-auto">{children}</div>

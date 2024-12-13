@@ -25,7 +25,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={cn('bg-orange-700 text-white ', inter.className)}>
-        <Spinner />
         <AppWrapper>
           <Overlay>
             <div className="container mx-auto">{children}</div>

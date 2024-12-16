@@ -71,7 +71,7 @@ export const newPasswordSchema = z
     path: ['confirmPassword'],
   });
 
-export const courseSchema = z.object({
+export const createCourseSchema = z.object({
   name: z.string().min(1, { message: 'Введите название курса' }),
   icon: z.optional(
     z
@@ -101,6 +101,8 @@ export const courseSchema = z.object({
   priceUSD: z.string().min(1, { message: 'Введите цену курса' }),
   category: z.string().min(1, { message: 'Введите категорию курса' }),
 });
+
+export const editCourseSchema = createCourseSchema.partial();
 
 export const lessonSchema = z.object({
   name: z.string().min(1, { message: 'Введите название урока' }),

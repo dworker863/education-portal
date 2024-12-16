@@ -29,23 +29,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           </div>
           <div>{course.description}</div>
         </div>
-        <div className="flex justify-between">
-          <div className="flex gap-2">
-            <Button
-              className="ml-4"
-              onClick={async () => await deleteCourse(course.id)}
-            >
-              <FaEdit size={22} color="#c2410c" />
-              <span className="ml-2 text-">Редактировать</span>
-            </Button>
-            <Button
-              className="ml-4"
-              onClick={async () => await deleteCourse(course.id)}
-            >
-              <FaTrash size={16} color="#c2410c" />
-              <span className="ml-2 text-">Удалить</span>
-            </Button>
-          </div>
+        <div className="flex justify-end">
           <span className="text-rose-600 text-lg font-bold">
             {course.priceUSD + '$'}
           </span>

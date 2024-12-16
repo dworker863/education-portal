@@ -2,12 +2,11 @@
 
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { courseSchema } from '../libs/validation';
+import { createCourseSchema, editCourseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -15,7 +14,7 @@ import {
 } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
-import { useState, useTransition } from 'react';
+import { FC, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
@@ -24,27 +23,39 @@ import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
 
-const CourseForm = () => {
+type TCourseFormProps = {
+  courseId?: string;
+  mode: 'create' | 'edit';
+};
+
+const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
   const [isPending, startTransiton] = useTransition();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
+  const schema = mode === 'create' ? createCourseSchema : editCourseSchema;
+  console.log(mode);
+  console.log(schema);
 
-  const form = useForm<z.infer<typeof courseSchema>>({
-    resolver: zodResolver(courseSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      description: '',
+      name: mode === 'create' ? '' : undefined,
+      description: mode === 'create' ? '' : undefined,
       icon: null,
-      priceUSD: '',
-      category: '',
+      priceUSD: mode === 'create' ? '' : undefined,
+      category: mode === 'create' ? '' : undefined,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof courseSchema>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
       const formData = new FormData();
+
+      if (courseId) {
+        formData.append('id', courseId);
+      }
 
       for (const key in values) {
         const value = values[key as keyof typeof values];
@@ -59,7 +70,7 @@ const CourseForm = () => {
       }
 
       const res = await fetch('api/course', {
-        method: 'POST',
+        method: mode === 'create' ? 'POST' : 'PATCH',
         body: formData,
       });
 
@@ -80,14 +91,16 @@ const CourseForm = () => {
 
   return (
     <>
-      <Button
-        className="mb-5"
-        variant="secondary"
-        onClick={() => setShowForm(!showForm)}
-      >
-        <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Добавить Курс' : 'Скрыть'}</span>
-      </Button>
+      {mode === 'create' ? (
+        <Button
+          className="mb-5"
+          variant="secondary"
+          onClick={() => setShowForm(!showForm)}
+        >
+          <FaPlus size={20} color="#c2410c" />
+          <span className="ml-2">{!showForm ? 'Добавить Курс' : 'Скрыть'}</span>
+        </Button>
+      ) : null}
       {showForm && (
         <Form {...form}>
           <form
@@ -212,7 +225,7 @@ const CourseForm = () => {
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button type="submit" disabled={isPending}>
-              Добавить Курс
+              {mode === 'create' ? 'Добавить Курс' : 'Редактировать'}
             </Button>
           </form>
         </Form>

@@ -1,5 +1,5 @@
 import { fileUpload } from '@/app/libs/utils/auth';
-import { courseSchema } from '@/app/libs/validation';
+import { createCourseSchema, editCourseSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -8,7 +8,9 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const values = Object.fromEntries(formData.entries());
 
-    const { data, ...parsedValues } = await courseSchema.safeParse(values);
+    const { data, ...parsedValues } = await createCourseSchema.safeParse(
+      values,
+    );
 
     if (!parsedValues.success) {
       return NextResponse.json({ error: parsedValues.error.issues[0].message });
@@ -40,7 +42,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: 'Course successfully added' });
+    return NextResponse.json({ success: 'Курс успешно добавлен' });
   } catch (error) {
     throw error;
   }
@@ -67,7 +69,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Курс не найден' }, { status: 404 });
     }
 
-    const { data, ...parsedValues } = await courseSchema.safeParse(values);
+    const { data, ...parsedValues } = await editCourseSchema.safeParse(values);
 
     if (!parsedValues.success) {
       return NextResponse.json({ error: parsedValues.error.issues[0].message });

@@ -25,7 +25,7 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
       from: 'Acme <onboarding@resend.dev>',
       to: email,
       subject: 'Reset Password',
-      html: `<p>Click <a href=${confirmLink}>here</a> to reset password</p>`,
+      html: `<p>Перейдите по <a href=${confirmLink}>ссылке</a> для сброса пароля</p>`,
     });
   } catch (error) {
     throw error;

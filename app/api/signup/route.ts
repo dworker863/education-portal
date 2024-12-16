@@ -8,8 +8,6 @@ import { sendVerificationEmail } from '@/app/libs/utils/mail';
 
 export async function POST(request: NextRequest) {
   const formData = await request.formData();
-  console.log(formData.entries());
-
   const values = Object.fromEntries(formData.entries());
 
   const valuesToParse = {
@@ -18,8 +16,6 @@ export async function POST(request: NextRequest) {
       ? new Date(values.birthDate as string)
       : undefined,
   };
-
-  console.log(valuesToParse);
 
   const { data, ...parsedValues } = await registrationSchema.safeParse(
     valuesToParse,

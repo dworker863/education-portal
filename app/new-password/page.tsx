@@ -5,7 +5,7 @@ import NewPasswordForm from '../components/new-password-form';
 
 export default function Page() {
   return (
-    <section className="h-screen flex items-center justify-center absolute w-full z-100">
+    <section className="h-screen flex items-center justify-center relative w-full z-100">
       <Modal
         type="new-password"
         headerLabel=""

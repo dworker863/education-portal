@@ -117,7 +117,7 @@ const NewPasswordForm = () => {
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Apply new password</Button>
+        <Button type="submit">Подтвердить</Button>
       </form>
     </Form>
   );

@@ -76,7 +76,101 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: 'Lesson successfully added' });
+    return NextResponse.json({ success: 'Урок успешно добавлен' });
+  } catch (error) {
+    throw error;
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const formData = await request.formData();
+    const images = formData.getAll('images');
+    const values: { [key: string]: FormDataEntryValue | FormDataEntryValue[] } =
+      Object.fromEntries(
+        [...formData.entries()].filter(([key]) => key !== 'images'),
+      );
+
+    values.images = images;
+    const lessonId = values.id;
+
+    if (!lessonId) {
+      return NextResponse.json(
+        { error: 'Не указан ID урока' },
+        { status: 400 },
+      );
+    }
+
+    const existingLesson = await prisma.lesson.findUnique({
+      where: { id: lessonId as string },
+    });
+
+    if (!existingLesson) {
+      return NextResponse.json({ error: 'Урок не найден' }, { status: 404 });
+    }
+
+    const { data, ...parsedValues } = await lessonSchema.safeParse(values);
+
+    if (!parsedValues.success) {
+      return NextResponse.json({ error: parsedValues.error.issues[0].message });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: 'Invalid data' });
+    }
+
+    let uploadImagesResult;
+    let uploadVideoResult;
+
+    if (data.images && data.images.length > 0) {
+      try {
+        uploadImagesResult = await Promise.all(
+          data.images.map(async (image: File) => {
+            return fileUpload(image);
+          }),
+        );
+        console.log('FILE UPLOAD:', uploadImagesResult);
+
+        const hasError = uploadImagesResult.some(
+          (result) => result instanceof Error,
+        );
+
+        if (hasError) {
+          return NextResponse.json({
+            error: 'Ошибка при загрузке файлов',
+          });
+        }
+
+        uploadImagesResult = uploadImagesResult.filter(
+          (result) => typeof result === 'string',
+        );
+      } catch (error) {
+        return NextResponse.json({ error: 'Ошибка при загрузке файлов' });
+      }
+    }
+
+    if (data.video) {
+      uploadVideoResult = await fileUpload(data.video);
+
+      if (uploadVideoResult instanceof Error) {
+        return NextResponse.json({ error: uploadVideoResult.message });
+      }
+    }
+
+    const updatedData = {
+      name: data.name || existingLesson.name,
+      content: data.content || existingLesson.content,
+      images: uploadImagesResult || existingLesson.images,
+      video: uploadVideoResult || existingLesson.video,
+      courseId: data.courseId || existingLesson.courseId,
+    };
+
+    await prisma.course.update({
+      where: { id: lessonId as string },
+      data: updatedData,
+    });
+
+    return NextResponse.json({ success: 'Курс успешно изменен' });
   } catch (error) {
     throw error;
   }

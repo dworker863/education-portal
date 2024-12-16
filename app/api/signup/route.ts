@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
       : undefined,
   };
 
-  console.log('REGISTER ROUTE', typeof values.birthDate);
+  console.log(valuesToParse);
 
   const { data, ...parsedValues } = await registrationSchema.safeParse(
     valuesToParse,

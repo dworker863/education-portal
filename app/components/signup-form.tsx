@@ -64,7 +64,7 @@ const SignupForm = () => {
       for (const key in values) {
         const value = values[key as keyof typeof values];
 
-        if (key !== 'file' && value !== undefined) {
+        if (key !== 'image' && value !== undefined) {
           formData.append(key, value);
         }
       }

@@ -1,7 +1,5 @@
-import { auth, signOut } from '@/auth';
-import Link from 'next/link';
+import { auth } from '@/auth';
 import Image from 'next/image';
-import CourseForm from './components/course-form';
 import TopLine from './components/top-line';
 import { getAllCourses } from './libs/utils/courses';
 import Courses from './components/courses';

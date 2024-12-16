@@ -6,6 +6,7 @@ import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import Overlay from './components/overlay';
 import Spinner from './components/spinner';
+import TopLine from './components/top-line';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -27,7 +28,10 @@ export default function RootLayout({
       <body className={cn('bg-orange-700 text-white ', inter.className)}>
         <AppWrapper>
           <Overlay>
-            <div className="container mx-auto">{children}</div>
+            <div className="container mx-auto">
+              <TopLine />
+              {children}
+            </div>
           </Overlay>
           {auth}
         </AppWrapper>

@@ -2,7 +2,7 @@ import { auth } from '@/auth';
 import Image from 'next/image';
 import TopLine from './components/top-line';
 import { getAllCourses } from './libs/utils/courses';
-import Courses from './components/courses';
+import Courses from './components/Courses';
 
 export default async function Home() {
   const session = await auth();
@@ -10,8 +10,6 @@ export default async function Home() {
 
   return (
     <main>
-      <TopLine />
-
       {session?.user?.image && (
         <Image
           src={session?.user?.image?.replace(/\\/gi, '/')}

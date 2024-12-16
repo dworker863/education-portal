@@ -6,13 +6,14 @@ import {
   CardFooter,
   CardHeader,
 } from '@/app/components/card';
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext, useEffect, useRef } from 'react';
 import ModalHeader from './modal-header';
 import { Button } from '@/app/components/button';
 import Link from 'next/link';
 import { IoCloseSharp } from 'react-icons/io5';
 import { ModalContext } from './app-wrapper';
 import Socials from './socials';
+import { useRouter } from 'next/navigation';
 
 type TModalProps = {
   type: 'login' | 'registration' | 'reset-password' | 'new-password';
@@ -32,19 +33,38 @@ const Modal: FC<TModalProps> = ({
   showSocials,
 }) => {
   const context = useContext(ModalContext);
+  const router = useRouter();
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  const modalClose = () => {
+    context?.setIsModalOpen(false);
+    router.back(); // Закрыть модальное окно, вернувшись на предыдущий маршрут
+  };
+
+  const handleOutsideClick = (event: MouseEvent) => {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+      modalClose();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
   if (!context?.isModalOpen && type !== 'new-password') return null;
 
   return (
-    <Card className="w-[500px] relative">
+    <Card ref={modalRef} className="w-[500px] relative">
       <CardHeader>
         <ModalHeader label={headerLabel} type={type} />
         <Button
           className="absolute right-0 top-0"
           variant="link"
-          onClick={() => {
-            context?.setIsModalOpen(false);
-          }}
+          onClick={modalClose}
         >
           <IoCloseSharp size={24} />
         </Button>

@@ -28,14 +28,14 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
                 </Link>
                 <Button className="ml-4" onClick={async () => {}}>
                   <FaEdit size={22} color="#c2410c" />
-                  <span className="ml-2 text-">Edit</span>
+                  <span className="ml-2 text-">Редактировать</span>
                 </Button>
                 <Button
                   className="ml-4"
                   onClick={async () => await deleteLesson(lesson.id)}
                 >
                   <FaTrash size={16} color="#c2410c" />
-                  <span className="ml-2 text-">Delete</span>
+                  <span className="ml-2 text-">Удалить</span>
                 </Button>
               </div>
             </li>

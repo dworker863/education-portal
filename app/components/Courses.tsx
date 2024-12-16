@@ -2,7 +2,6 @@
 
 import React, { FC, useState } from 'react';
 import CourseForm from './course-form';
-import { Button } from '@/app/components/button';
 import { ICourse } from '../interfaces/interfaces';
 import CourseCard from './course-card';
 

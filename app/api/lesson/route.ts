@@ -14,8 +14,6 @@ export async function POST(request: NextRequest) {
 
     values.images = images;
 
-    console.log('LESSON ROUTE: ', values);
-
     const { data, ...parsedValues } = createLessonSchema.safeParse(values);
 
     if (!parsedValues.success) {
@@ -85,6 +83,7 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const formData = await request.formData();
+
     const images = formData.getAll('images');
     const values: { [key: string]: FormDataEntryValue | FormDataEntryValue[] } =
       Object.fromEntries(
@@ -165,7 +164,9 @@ export async function PATCH(request: NextRequest) {
       courseId: data.courseId || existingLesson.courseId,
     };
 
-    await prisma.course.update({
+    console.log('LESSON ROUTE: ', updatedData);
+
+    await prisma.lesson.update({
       where: { id: lessonId as string },
       data: updatedData,
     });

@@ -110,6 +110,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
           <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
         </Button>
       ) : null}
+
       {showForm && (
         <Form {...form}>
           <form

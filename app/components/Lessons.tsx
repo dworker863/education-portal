@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/app/components/button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
+import LessonWrapper from './lesson-wrapper';
 
 type TLessonsProps = {
   courseId?: string;
@@ -15,8 +16,6 @@ type TLessonsProps = {
 };
 
 const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
-  const [showEditForm, setShowEditForm] = useState(false);
-
   return (
     <section>
       <LessonForm courseId={courseId} mode="create" />
@@ -24,26 +23,12 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
         {lessons.length > 0 &&
           lessons.map((lesson) => (
             <li key={lesson.id + lesson.name}>
-              <div className="flex items-center mb-5">
+              <div className="mb-5">
                 <Link href={`/course/${params.name}/${lesson.name}`}>
                   {lesson.name}
                 </Link>
-                <Button
-                  className="ml-4"
-                  onClick={() => setShowEditForm(!showEditForm)}
-                >
-                  <FaEdit size={22} color="#c2410c" />
-                  <span className="ml-2 text-">Редактировать</span>
-                </Button>
-                <Button
-                  className="ml-4"
-                  onClick={async () => await deleteLesson(lesson.id)}
-                >
-                  <FaTrash size={16} color="#c2410c" />
-                  <span className="ml-2 text-">Удалить</span>
-                </Button>
+                <LessonWrapper lessonId={lesson.id} />
               </div>
-              {showEditForm && <LessonForm mode="edit" lessonId={lesson.id} />}
             </li>
           ))}
       </ol>

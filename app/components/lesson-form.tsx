@@ -3,7 +3,6 @@
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -11,7 +10,7 @@ import {
 } from '@/app/components/form';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
-import { lessonSchema } from '../libs/validation';
+import { createLessonSchema, editLessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
 import { FC, useState, useTransition } from 'react';
@@ -25,32 +24,39 @@ import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
 
 type TLessonFormProps = {
+  mode: 'create' | 'edit';
   courseId?: string;
   exerciseId?: string;
+  lessonId?: string;
 };
 
-const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
+const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   const [isPending, startTransiton] = useTransition();
 
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const schema = mode === 'create' ? createLessonSchema : editLessonSchema;
 
-  const form = useForm<z.infer<typeof lessonSchema>>({
-    resolver: zodResolver(lessonSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      content: '',
+      name: mode === 'create' ? '' : undefined,
+      content: mode === 'create' ? '' : undefined,
       images: null,
       video: null,
       courseId,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof lessonSchema>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
       const formData = new FormData();
+
+      if (lessonId) {
+        formData.append('id', lessonId);
+      }
 
       for (const key in values) {
         const value = values[key as keyof typeof values];
@@ -73,7 +79,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
       console.log('LESSON FORM', formData.getAll('images'));
 
       const res = await fetch('/api/lesson', {
-        method: 'POST',
+        method: mode === 'create' ? 'POST' : 'PATCH',
         body: formData,
       });
 
@@ -94,14 +100,16 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
 
   return (
     <>
-      <Button
-        className="mb-5"
-        variant="secondary"
-        onClick={() => setShowForm(!showForm)}
-      >
-        <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
-      </Button>
+      {mode === 'create' ? (
+        <Button
+          className="mb-5"
+          variant="secondary"
+          onClick={() => setShowForm(!showForm)}
+        >
+          <FaPlus size={20} color="#c2410c" />
+          <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
+        </Button>
+      ) : null}
       {showForm && (
         <Form {...form}>
           <form
@@ -262,7 +270,7 @@ const LessonForm: FC<TLessonFormProps> = ({ courseId }) => {
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button type="submit" disabled={isPending}>
-              Добавить Урок
+              {mode === 'create' ? 'Добавить Урок' : 'Редактировать'}
             </Button>
           </form>
         </Form>

@@ -1,8 +1,7 @@
 import { auth } from '@/auth';
 import Image from 'next/image';
-import TopLine from './components/top-line';
 import { getAllCourses } from './libs/utils/courses';
-import Courses from './components/Courses';
+import Courses from './components/courses';
 
 export default async function Home() {
   const session = await auth();

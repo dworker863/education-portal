@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import LessonForm from './lesson-form';
 import { ILesson } from '../interfaces/interfaces';
 import Link from 'next/link';
@@ -15,18 +15,23 @@ type TLessonsProps = {
 };
 
 const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
+  const [showEditForm, setShowEditForm] = useState(false);
+
   return (
     <section>
-      <LessonForm courseId={courseId} />
+      <LessonForm courseId={courseId} mode="create" />
       <ol className="px-5 list-decimal">
         {lessons.length > 0 &&
           lessons.map((lesson) => (
             <li key={lesson.id + lesson.name}>
-              <div className="flex items-center">
+              <div className="flex items-center mb-5">
                 <Link href={`/course/${params.name}/${lesson.name}`}>
                   {lesson.name}
                 </Link>
-                <Button className="ml-4" onClick={async () => {}}>
+                <Button
+                  className="ml-4"
+                  onClick={() => setShowEditForm(!showEditForm)}
+                >
                   <FaEdit size={22} color="#c2410c" />
                   <span className="ml-2 text-">Редактировать</span>
                 </Button>
@@ -38,6 +43,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
                   <span className="ml-2 text-">Удалить</span>
                 </Button>
               </div>
+              {showEditForm && <LessonForm mode="edit" lessonId={lesson.id} />}
             </li>
           ))}
       </ol>

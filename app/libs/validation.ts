@@ -104,7 +104,7 @@ export const createCourseSchema = z.object({
 
 export const editCourseSchema = createCourseSchema.partial();
 
-export const lessonSchema = z.object({
+export const createLessonSchema = z.object({
   name: z.string().min(1, { message: 'Введите название урока' }),
   content: z.string().min(1, { message: 'Введите текст урока' }),
   images: z.optional(
@@ -156,6 +156,8 @@ export const lessonSchema = z.object({
   ),
   courseId: z.string(),
 });
+
+export const editLessonSchema = createLessonSchema.partial();
 
 export const exerciseSchema = z.object({
   name: z.string().min(1, { message: 'Введите название задания' }),

@@ -1,5 +1,5 @@
 import { fileUpload } from '@/app/libs/utils/auth';
-import { lessonSchema } from '@/app/libs/validation';
+import { createLessonSchema, editLessonSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 
     console.log('LESSON ROUTE: ', values);
 
-    const { data, ...parsedValues } = lessonSchema.safeParse(values);
+    const { data, ...parsedValues } = createLessonSchema.safeParse(values);
 
     if (!parsedValues.success) {
       return NextResponse.json({
@@ -109,7 +109,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Урок не найден' }, { status: 404 });
     }
 
-    const { data, ...parsedValues } = await lessonSchema.safeParse(values);
+    const { data, ...parsedValues } = await editLessonSchema.safeParse(values);
 
     if (!parsedValues.success) {
       return NextResponse.json({ error: parsedValues.error.issues[0].message });
@@ -170,7 +170,7 @@ export async function PATCH(request: NextRequest) {
       data: updatedData,
     });
 
-    return NextResponse.json({ success: 'Курс успешно изменен' });
+    return NextResponse.json({ success: 'Урок успешно изменен' });
   } catch (error) {
     throw error;
   }

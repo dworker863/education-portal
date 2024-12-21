@@ -5,6 +5,7 @@ import { Button } from './button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
 import LessonForm from './lesson-form';
+import { useRouter } from 'next/navigation';
 
 type TLessonFormWrapperProps = {
   lessonId: string;
@@ -12,6 +13,8 @@ type TLessonFormWrapperProps = {
 
 const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
   const [showEditForm, setShowEditForm] = useState(false);
+  const router = useRouter();
+
   return (
     <>
       <Button className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
@@ -20,7 +23,10 @@ const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
       </Button>
       <Button
         className="ml-4"
-        onClick={async () => await deleteLesson(lessonId)}
+        onClick={async () => {
+          await deleteLesson(lessonId);
+          router.refresh();
+        }}
       >
         <FaTrash size={16} color="#c2410c" />
         <span className="ml-2 text-">Удалить</span>

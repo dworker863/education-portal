@@ -22,6 +22,7 @@ import { Textarea } from './textarea';
 import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
+import { useRouter } from 'next/navigation';
 
 type TLessonFormProps = {
   mode: 'create' | 'edit';
@@ -32,6 +33,7 @@ type TLessonFormProps = {
 
 const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   const [isPending, startTransiton] = useTransition();
+  const router = useRouter();
 
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const [files, setFiles] = useState<File[]>([]);
@@ -95,6 +97,8 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
         setSuccess(data.success);
         setError(null);
       }
+
+      router.refresh();
     });
   };
 

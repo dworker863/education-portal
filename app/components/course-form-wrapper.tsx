@@ -3,13 +3,15 @@ import { Button } from './button';
 import { deleteCourse } from '../libs/server-actions/courses-actions';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import CourseForm from './course-form';
+import { useRouter } from 'next/navigation';
 
 type TCourseFormWrapperProps = {
   courseId: string;
 };
 
-const CourseFormWwrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
+const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
   const [showEditForm, setShowEditForm] = useState(false);
+  const router = useRouter();
   return (
     <>
       <div className="flex justify-between mb-5">
@@ -23,7 +25,10 @@ const CourseFormWwrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
           </Button>
           <Button
             className="ml-4"
-            onClick={async () => await deleteCourse(courseId)}
+            onClick={async () => {
+              await deleteCourse(courseId);
+              router.refresh();
+            }}
           >
             <FaTrash size={16} color="#c2410c" />
             <span className="ml-2 text-">Удалить</span>
@@ -35,4 +40,4 @@ const CourseFormWwrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
   );
 };
 
-export default CourseFormWwrapper;
+export default CourseFormWrapper;

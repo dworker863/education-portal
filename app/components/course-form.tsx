@@ -22,6 +22,7 @@ import { Textarea } from '@/app/components/textarea';
 import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
+import { useRouter } from 'next/navigation';
 
 type TCourseFormProps = {
   courseId?: string;
@@ -30,13 +31,12 @@ type TCourseFormProps = {
 
 const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
   const [isPending, startTransiton] = useTransition();
+  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const schema = mode === 'create' ? createCourseSchema : editCourseSchema;
-  console.log(mode);
-  console.log(schema);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
@@ -86,6 +86,8 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
         setError(null);
         setSuccess(data.success);
       }
+
+      router.refresh();
     });
   };
 

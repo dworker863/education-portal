@@ -6,11 +6,11 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
 import LessonForm from './lesson-form';
 
-type TLessonWrapperProps = {
+type TLessonFormWrapperProps = {
   lessonId: string;
 };
 
-const LessonWrapper: FC<TLessonWrapperProps> = ({ lessonId }) => {
+const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
   const [showEditForm, setShowEditForm] = useState(false);
   return (
     <>
@@ -32,4 +32,4 @@ const LessonWrapper: FC<TLessonWrapperProps> = ({ lessonId }) => {
   );
 };
 
-export default LessonWrapper;
+export default LessonFormWrapper;

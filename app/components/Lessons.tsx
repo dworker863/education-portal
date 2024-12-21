@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/app/components/button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
-import LessonWrapper from './lesson-wrapper';
+import LessonWrapper from './lesson-form-wrapper';
 
 type TLessonsProps = {
   courseId?: string;

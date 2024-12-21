@@ -25,6 +25,15 @@ export default auth((req) => {
 
   //   return Response.redirect(new URL('/signin', req.nextUrl));
   // }
+
+  if (
+    (pathname === '/signin' ||
+      pathname === '/signup' ||
+      pathname === '/reset-password') &&
+    !req.headers.get('referer')
+  ) {
+    return Response.redirect(new URL('/', req.nextUrl));
+  }
 });
 
 export const config = {

@@ -18,5 +18,19 @@ export interface ILesson {
   images: string | string[];
   video: string | null;
   courseId: string;
+  exercise: IExercise | null;
   exerciseId: string | null;
+}
+
+export interface IExercise {
+  id: string;
+  name: string;
+  task: string;
+  code: string | null;
+  test: string;
+  solution: string;
+  requiredRank: string | null;
+  prizePoints: number;
+  lessonId: string | null;
+  meta: String[];
 }

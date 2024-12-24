@@ -15,6 +15,9 @@ export const getLessonByName = async (name: string) => {
       where: {
         name,
       },
+      include: {
+        exercise: true,
+      },
     });
 
     return lesson;

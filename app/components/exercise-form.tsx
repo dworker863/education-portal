@@ -8,7 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,6 +20,8 @@ import { addExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
 import RequiredSign from './required-sign';
+import SuccessMessage from './success-message';
+import { useRouter } from 'next/navigation';
 
 type TExerciseProps = {
   lessonId?: string;
@@ -28,6 +29,7 @@ type TExerciseProps = {
 
 const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
   const [isPending, startTransiton] = useTransition();
+  const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -59,6 +61,8 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
           setError(error.message);
         });
     });
+
+    router.refresh();
   };
 
   return (
@@ -183,7 +187,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
               )}
             />
             {error && <ErrorMessage message={error} />}
-            {success && <ErrorMessage message={success} />}
+            {success && <SuccessMessage message={success} />}
             <Button type="submit" disabled={isPending}>
               Добавить Упражнение
             </Button>

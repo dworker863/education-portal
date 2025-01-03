@@ -15,8 +15,10 @@ type TEditorProps = {
 const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   useEffect(() => {
-    const exercisePath = `${userId}/lesson1.js`;
+    const exerciseFileName = exercise.name.split(' ').join('');
+    const exercisePath = `${userId}/${exerciseFileName}.js`;
     const solutionPath = 'solution.js';
+    const testPath = 'test.js';
 
     const runEmbed = async () => {
       try {
@@ -29,6 +31,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
               create: {
                 [exercisePath]: exercise.code || '',
                 [solutionPath]: exercise.solution,
+                [testPath]: `import {solution} from '/${exercisePath}' ${exercise.test}`,
               },
               destroy: [],
             });

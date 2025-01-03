@@ -1,12 +1,11 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import { IExercise, ILesson } from '../interfaces/interfaces';
 import { Button } from '@/app/components/button';
 import { cn } from '../libs/cn';
 import Video from './video';
-import Editor from './editor';
-import sdk from '@stackblitz/sdk';
+import EditorWrapper from './editor-wrapper';
 
 type TLessonCardProps = {
   lesson: ILesson | null;
@@ -14,16 +13,7 @@ type TLessonCardProps = {
 };
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
-  const [tab, setTab] = useState('exercise');
-
-  const runTest = () => {
-    const path = 'test-user/lesson1.js';
-    sdk.embedProjectId('test', 'education-portal-lesson-test').then((vm) => {
-      setTimeout(async () => {
-        vm.editor.openFile(path);
-      }, 2000);
-    });
-  };
+  const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
 
   return (
     <div className="flex w-full gap-10 p-10 bg-white text-black rounded-lg">
@@ -36,6 +26,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
         {exercise && (
           <>
             <h2 className="mb-5 text-center">Упражнение</h2>
+            <p>{exercise.task}</p>
             <nav>
               <Button
                 variant={tab === 'exercise' ? 'default' : 'secondary'}
@@ -56,28 +47,9 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
                 Решение
               </Button>
             </nav>
-            <div className="h-[400px]" id="test">
-              {tab === 'exercise' ? (
-                <Editor
-                  userId="test-user"
-                  mode="exercise"
-                  exercise={exercise}
-                />
-              ) : (
-                <Editor
-                  userId="test-user"
-                  mode="solution"
-                  exercise={exercise}
-                />
-              )}
+            <div id="test">
+              <EditorWrapper exercise={exercise} tab={tab} />
             </div>
-            <Button
-              variant="default"
-              className="mt-5 text-orange-600"
-              onClick={() => runTest()}
-            >
-              Проверить
-            </Button>
           </>
         )}
       </div>

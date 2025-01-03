@@ -26,7 +26,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
         {exercise && (
           <>
             <h2 className="mb-5 text-center">Упражнение</h2>
-            <p>{exercise.task}</p>
+            <p className="mb-5">{exercise.task}</p>
             <nav>
               <Button
                 variant={tab === 'exercise' ? 'default' : 'secondary'}

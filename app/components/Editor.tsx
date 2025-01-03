@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import sdk, { VM } from '@stackblitz/sdk';
 import { IExercise } from '../interfaces/interfaces';
 import { Button } from './button';
@@ -13,6 +13,7 @@ type TEditorProps = {
 };
 
 const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   useEffect(() => {
     const exercisePath = `${userId}/lesson1.js`;
     const solutionPath = 'solution.js';
@@ -21,31 +22,36 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
       try {
         // Встраиваем проект
 
-        if (mode === 'exercise') {
+        if (isFirstLoad) {
+          // Встраиваем проект только при первой загрузке
           setTimeout(() => {
-            // Then update the VM's file system :)
             vm.applyFsDiff({
               create: {
                 [exercisePath]: exercise.code || '',
+                [solutionPath]: exercise.solution,
               },
               destroy: [],
             });
 
-            vm.editor.openFile(exercisePath);
+            // После выполнения сбросим флаг
+            setIsFirstLoad(false);
           }, 2000);
         }
 
-        if (mode === 'solution') {
-          vm.applyFsDiff({
-            create: {
-              [solutionPath]: exercise.solution,
-            },
-            destroy: [],
-          });
+        if (mode === 'exercise') {
+          if (!isFirstLoad) {
+            vm.editor.openFile(exercisePath);
+          }
 
-          setTimeout(() => {
-            vm.editor.openFile(solutionPath);
-          }, 2000);
+          if (isFirstLoad) {
+            setTimeout(() => {
+              vm.editor.openFile(exercisePath);
+            }, 2000);
+          }
+        }
+
+        if (mode === 'solution') {
+          vm.editor.openFile(solutionPath);
         }
       } catch (error) {
         console.error('Error embedding project:', error);
@@ -53,7 +59,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
     };
 
     runEmbed();
-  }, [userId, mode, exercise]);
+  }, [userId, mode, exercise, vm, isFirstLoad]);
   return <></>;
 };
 

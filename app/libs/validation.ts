@@ -159,7 +159,7 @@ export const createLessonSchema = z.object({
 
 export const editLessonSchema = createLessonSchema.partial();
 
-export const exerciseSchema = z.object({
+export const createExerciseSchema = z.object({
   name: z.string().min(1, { message: 'Введите название задания' }),
   task: z.string().min(1, { message: 'Введите задание' }),
   code: z.optional(z.string()),
@@ -169,3 +169,5 @@ export const exerciseSchema = z.object({
   prizePoints: z.string().min(1, { message: 'Укажите баллы за задание' }),
   lessonId: z.string(),
 });
+
+export const editExerciseSchema = createExerciseSchema.partial();

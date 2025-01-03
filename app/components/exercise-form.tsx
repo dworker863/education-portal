@@ -3,7 +3,7 @@
 import { FC, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { exerciseSchema } from '../libs/validation';
+import { createExerciseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -22,7 +22,6 @@ import { Textarea } from './textarea';
 import RequiredSign from './required-sign';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
-import { cn } from '../libs/cn';
 
 type TExerciseProps = {
   lessonId?: string;
@@ -38,8 +37,8 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
 
-  const form = useForm<z.infer<typeof exerciseSchema>>({
-    resolver: zodResolver(exerciseSchema),
+  const form = useForm<z.infer<typeof createExerciseSchema>>({
+    resolver: zodResolver(createExerciseSchema),
     defaultValues: {
       name: '',
       task: '',
@@ -52,7 +51,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof exerciseSchema>) => {
+  const onSubmit = async (values: z.infer<typeof createExerciseSchema>) => {
     startTransiton(async () => {
       addExercise(values)
         .then((data) => {

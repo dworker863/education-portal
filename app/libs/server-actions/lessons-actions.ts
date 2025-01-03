@@ -7,7 +7,7 @@ export const deleteLesson = async (id: string) => {
   try {
     const lesson = await getLessonById(id);
 
-    if (!lesson) throw new Error('Course does not exists');
+    if (!lesson) throw new Error('Урока с таким ID не существует');
 
     await prisma.lesson.delete({
       where: {
@@ -15,7 +15,7 @@ export const deleteLesson = async (id: string) => {
       },
     });
 
-    return { success: 'Course successfully deleted' };
+    return { success: 'Урок успешно удален' };
   } catch (error) {
     throw error;
   }

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from '@/app/components/button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
-import LessonWrapper from './lesson-form-wrapper';
+import LessonFormWrapper from './lesson-form-wrapper';
 
 type TLessonsProps = {
   courseId?: string;
@@ -27,7 +27,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
                 <Link href={`/course/${params.name}/${lesson.name}`}>
                   {lesson.name}
                 </Link>
-                <LessonWrapper lessonId={lesson.id} />
+                <LessonFormWrapper lessonId={lesson.id} />
               </div>
             </li>
           ))}

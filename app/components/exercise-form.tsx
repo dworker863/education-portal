@@ -22,18 +22,21 @@ import { Textarea } from './textarea';
 import RequiredSign from './required-sign';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
+import { cn } from '../libs/cn';
 
 type TExerciseProps = {
   lessonId?: string;
+  exerciseId?: string;
+  mode: 'create' | 'edit';
 };
 
-const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
+const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   const [isPending, startTransiton] = useTransition();
   const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
 
   const form = useForm<z.infer<typeof exerciseSchema>>({
     resolver: zodResolver(exerciseSchema),
@@ -67,16 +70,18 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId }) => {
 
   return (
     <>
-      <Button
-        className="mb-5"
-        variant="secondary"
-        onClick={() => setShowForm(!showForm)}
-      >
-        <FaPlus size={20} color="#c2410c" />
-        <span className="ml-2">
-          {!showForm ? 'Добавить Упражнение' : 'Скрыть'}
-        </span>
-      </Button>
+      {mode === 'create' && (
+        <Button
+          className="mb-5"
+          variant="secondary"
+          onClick={() => setShowForm(!showForm)}
+        >
+          <FaPlus size={20} color="#c2410c" />
+          <span className="ml-2">
+            {!showForm ? 'Добавить Упражнение' : 'Скрыть'}
+          </span>
+        </Button>
+      )}
       {showForm && (
         <Form {...form}>
           <form

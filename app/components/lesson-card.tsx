@@ -1,11 +1,12 @@
 'use client';
 
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useState } from 'react';
 import { IExercise, ILesson } from '../interfaces/interfaces';
 import { Button } from '@/app/components/button';
 import { cn } from '../libs/cn';
 import Video from './video';
 import EditorWrapper from './editor-wrapper';
+import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TLessonCardProps = {
   lesson: ILesson | null;
@@ -47,7 +48,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
                 Решение
               </Button>
             </nav>
-            <div id="test">
+            <div className="mb-5" id="test">
               <EditorWrapper exercise={exercise} tab={tab} />
             </div>
           </>

@@ -1,8 +1,10 @@
+'use client';
+
 import sdk, { VM } from '@stackblitz/sdk';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useContext, useEffect, useState } from 'react';
 import Editor from './editor';
-import { Button } from './button';
 import { IExercise } from '../interfaces/interfaces';
+import { useSession } from 'next-auth/react';
 
 type TEditorWrapperProps = {
   exercise: IExercise;
@@ -10,6 +12,8 @@ type TEditorWrapperProps = {
 };
 
 const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
+  const { data: session } = useSession();
+  const userId = session?.user.id;
   const [vm, setVm] = useState<VM | null>(null);
 
   useEffect(() => {
@@ -31,25 +35,15 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
     runEmbed();
   }, []);
 
-  if (!vm) return null;
+  if (!vm || !userId) return null;
 
   return (
     <>
       <div className="h-[400px]">
         {tab === 'exercise' ? (
-          <Editor
-            userId="test-user"
-            mode="exercise"
-            exercise={exercise}
-            vm={vm}
-          />
+          <Editor userId={userId} mode="exercise" exercise={exercise} vm={vm} />
         ) : (
-          <Editor
-            userId="test-user"
-            mode="solution"
-            exercise={exercise}
-            vm={vm}
-          />
+          <Editor userId={userId} mode="solution" exercise={exercise} vm={vm} />
         )}
       </div>
     </>

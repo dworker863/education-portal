@@ -18,7 +18,7 @@ export interface ILesson {
   images: string | string[];
   video: string | null;
   courseId: string;
-  exercise: IExercise | null;
+  exercise?: IExercise | null;
   exerciseId: string | null;
 }
 

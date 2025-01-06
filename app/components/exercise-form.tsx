@@ -3,7 +3,7 @@
 import { FC, useState, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { createExerciseSchema } from '../libs/validation';
+import { createExerciseSchema, editExerciseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Form,
@@ -36,22 +36,23 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
+  const schema = mode === 'create' ? createExerciseSchema : editExerciseSchema;
 
-  const form = useForm<z.infer<typeof createExerciseSchema>>({
-    resolver: zodResolver(createExerciseSchema),
+  const form = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
-      task: '',
-      code: '',
-      test: '',
-      solution: '',
-      requiredRank: '',
-      prizePoints: '',
-      lessonId,
+      name: mode === 'create' ? '' : undefined,
+      task: mode === 'create' ? '' : undefined,
+      code: mode === 'create' ? '' : undefined,
+      test: mode === 'create' ? '' : undefined,
+      solution: mode === 'create' ? '' : undefined,
+      requiredRank: mode === 'create' ? '' : undefined,
+      prizePoints: mode === 'create' ? '' : undefined,
+      lessonId: mode === 'create' ? '' : undefined,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof createExerciseSchema>) => {
+  const onSubmit = async (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
       addExercise(values)
         .then((data) => {

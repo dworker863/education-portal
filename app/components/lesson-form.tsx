@@ -78,8 +78,6 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
         formData.append('video', values.video[0]);
       }
 
-      console.log('LESSON FORM', formData.getAll('images'));
-
       const res = await fetch('/api/lesson', {
         method: mode === 'create' ? 'POST' : 'PATCH',
         body: formData,
@@ -165,8 +163,6 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                         form.setValue('images', [...files, ...acceptedFiles], {
                           shouldValidate: true,
                         });
-                        console.log(form.getValues('images'));
-                        console.log(form.formState.errors);
                       }}
                     >
                       {({ getRootProps, getInputProps }) => (
@@ -231,7 +227,6 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                         form.setValue('video', acceptedFiles, {
                           shouldValidate: true,
                         });
-                        console.log(form.getValues('video'));
                       }}
                     >
                       {({ getRootProps, getInputProps }) => (

@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { Session } from 'next-auth';
 import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import Overlay from './components/overlay';
-import Spinner from './components/spinner';
 import TopLine from './components/top-line';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -19,7 +17,6 @@ export default function RootLayout({
   auth,
   children,
 }: Readonly<{
-  session: Session | null;
   auth: React.ReactNode;
   children: React.ReactNode;
 }>) {

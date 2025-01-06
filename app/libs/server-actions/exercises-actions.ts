@@ -52,11 +52,11 @@ export const addExercise = async (
 };
 
 export const editExercise = async (
-  exerciseId: string,
+  id: string,
   values: z.infer<typeof editExerciseSchema>,
 ) => {
   try {
-    const existingExercise = await getExerciseById(exerciseId);
+    const existingExercise = await getExerciseById(id);
 
     if (!existingExercise) {
       throw new Error('Упражнения с таким ID не существует');
@@ -87,12 +87,30 @@ export const editExercise = async (
 
     await prisma.exercise.update({
       where: {
-        id: exerciseId,
+        id,
       },
       data: updatedData,
     });
 
     return { success: 'Упражнение успешно изменено' };
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const deleteLesson = async (id: string) => {
+  try {
+    const lesson = await getExerciseById(id);
+
+    if (!lesson) throw new Error('Упражнения с таким ID не существует');
+
+    await prisma.lesson.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: 'Урок успешно удален' };
   } catch (error) {
     throw error;
   }

@@ -154,7 +154,6 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                         form.setValue('icon', acceptedFiles, {
                           shouldValidate: true,
                         });
-                        console.log(form.getValues('icon'));
                       }}
                     >
                       {({ getRootProps, getInputProps }) => (

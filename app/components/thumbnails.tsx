@@ -28,8 +28,6 @@ const Thumbnails: FC<TThumbnailsProps> = ({
             className="absolute -top-1.5 -right-4 text-rose-600"
             variant="link"
             onClick={() => {
-              console.log('THUMBNAIL HANDLER', files);
-
               setFiles(thumbnails.splice(index, 1));
               closeBtnHandler(field, thumbnails);
             }}

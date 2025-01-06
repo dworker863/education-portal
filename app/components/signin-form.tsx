@@ -49,7 +49,6 @@ const SigninForm = () => {
       login(values)
         .then((data) => {
           if (!data) {
-            console.log('LOGIN REDIRECT');
             context?.setIsModalOpen(false);
           }
           if (data?.success) {

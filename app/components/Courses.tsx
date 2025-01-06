@@ -1,12 +1,9 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import CourseForm from './course-form';
 import { ICourse } from '../interfaces/interfaces';
 import CourseCard from './course-card';
-import { deleteCourse } from '../libs/server-actions/courses-actions';
-import { Button } from './button';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 import CourseFormWrapper from './course-form-wrapper';
 
 type TCoursesProps = {

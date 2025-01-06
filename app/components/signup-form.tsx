@@ -1,7 +1,6 @@
 'use client';
 
-import { useContext, useState, useTransition } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { registrationSchema } from '../libs/validation';
@@ -18,12 +17,10 @@ import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
-import { ModalContext } from './app-wrapper';
 import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
-import DatePicker from './date-pricker';
 import {
   Popover,
   PopoverContent,
@@ -35,8 +32,6 @@ import { Calendar } from './calendar';
 import { format } from 'date-fns';
 
 const SignupForm = () => {
-  const context = useContext(ModalContext);
-  const router = useRouter();
   const [isPending, startTransiton] = useTransition();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -57,8 +52,6 @@ const SignupForm = () => {
 
   const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
     startTransiton(async () => {
-      console.log('SIGNUP FORM', typeof values.birthDate);
-
       const formData = new FormData();
 
       for (const key in values) {
@@ -190,7 +183,6 @@ const SignupForm = () => {
           render={({ field }) => (
             <FormItem className="flex flex-col">
               <FormLabel>Дата рождения</FormLabel>
-              {/* <Input type="date" {...field} /> */}
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -238,7 +230,6 @@ const SignupForm = () => {
                     form.setValue('image', acceptedFiles, {
                       shouldValidate: true,
                     });
-                    console.log(form.getValues('image'));
                   }}
                 >
                   {({ getRootProps, getInputProps }) => (

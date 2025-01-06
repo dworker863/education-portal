@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
             return fileUpload(image);
           }),
         );
-        console.log('FILE UPLOAD:', uploadImagesResult);
 
         const hasError = uploadImagesResult.some(
           (result) => result instanceof Error,
@@ -128,7 +127,6 @@ export async function PATCH(request: NextRequest) {
             return fileUpload(image);
           }),
         );
-        console.log('FILE UPLOAD:', uploadImagesResult);
 
         const hasError = uploadImagesResult.some(
           (result) => result instanceof Error,
@@ -163,8 +161,6 @@ export async function PATCH(request: NextRequest) {
       video: uploadVideoResult || existingLesson.video,
       courseId: data.courseId || existingLesson.courseId,
     };
-
-    console.log('LESSON ROUTE: ', updatedData);
 
     await prisma.lesson.update({
       where: { id: lessonId as string },

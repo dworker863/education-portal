@@ -12,13 +12,6 @@ type TOverlayProps = {
 const Overlay: FC<TOverlayProps> = ({ children }) => {
   const context = useContext(ModalContext);
 
-  const router = useRouter();
-
-  useEffect(() => {
-    router.prefetch('/signin');
-    router.prefetch('/signup');
-  }, [router]);
-
   return (
     <div
       className={cn('h-screen w-full  absolute z-50', {

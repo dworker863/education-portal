@@ -120,8 +120,6 @@ export const createLessonSchema = z.object({
           })
           .refine(
             (file) => {
-              console.log('VALIDATION TYPE', file.type.includes('image'));
-
               if (!file) return true;
               return file.type && file.type.includes('image');
             },

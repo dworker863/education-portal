@@ -1,4 +1,5 @@
 import { fileUpload } from '@/app/libs/utils/auth';
+import { getCourseByName } from '@/app/libs/utils/courses';
 import { createCourseSchema, editCourseSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
@@ -6,18 +7,27 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData.entries());
+    const values = Object.fromEntries(formData);
 
-    const { data, ...parsedValues } = await createCourseSchema.safeParse(
+    const existingCourse = await getCourseByName(values.name as string);
+
+    if (existingCourse) {
+      return NextResponse.json(
+        { error: 'Курс с таким названием уже существует' },
+        { status: 409 },
+      );
+    }
+
+    const { data, ...parsedResult } = await createCourseSchema.safeParse(
       values,
     );
 
-    if (!parsedValues.success) {
-      return NextResponse.json({ error: parsedValues.error.issues[0].message });
+    if (!parsedResult.success) {
+      return NextResponse.json({ error: parsedResult.error.issues[0].message });
     }
 
     if (!data) {
-      return NextResponse.json({ error: 'Invalid data' });
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
     let uploadResult;
@@ -26,7 +36,10 @@ export async function POST(request: NextRequest) {
       uploadResult = await fileUpload(data.icon);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message });
+        return NextResponse.json(
+          { error: uploadResult.message },
+          { status: 400 },
+        );
       }
     }
 
@@ -42,16 +55,20 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: 'Курс успешно добавлен' });
+    return NextResponse.json(
+      { success: 'Курс успешно добавлен' },
+      { status: 200 },
+    );
   } catch (error) {
-    throw error;
+    console.error('Ошибка при создании курса:', error);
+    return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }
 
 export async function PATCH(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData.entries());
+    const values = Object.fromEntries(formData);
     const courseId = values.id;
 
     if (!courseId) {
@@ -69,14 +86,17 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Курс не найден' }, { status: 404 });
     }
 
-    const { data, ...parsedValues } = await editCourseSchema.safeParse(values);
+    const { data, ...parsedResult } = await editCourseSchema.safeParse(values);
 
-    if (!parsedValues.success) {
-      return NextResponse.json({ error: parsedValues.error.issues[0].message });
+    if (!parsedResult.success) {
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
-      return NextResponse.json({ error: 'Invalid data' });
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
     let uploadResult;
@@ -85,25 +105,49 @@ export async function PATCH(request: NextRequest) {
       uploadResult = await fileUpload(data.icon);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message });
+        return NextResponse.json(
+          { error: 'Курс с таким названием уже существует' },
+          { status: 409 },
+        );
       }
     }
 
-    const updatedData = {
-      name: data.name || existingCourse.name,
-      description: data.description || existingCourse.description,
-      icon: uploadResult || existingCourse.icon,
-      priceUSD: data.priceUSD ? Number(data.priceUSD) : existingCourse.priceUSD,
-      category: data.category || existingCourse.category,
-    };
+    const fieldsToCheck = [
+      'name',
+      'description',
+      'priceUSD',
+      'category',
+    ] as const;
+
+    const updatedData: Record<string, any> = {};
+
+    fieldsToCheck.forEach((field) => {
+      if (data[field] && data[field] !== existingCourse[field]) {
+        updatedData[field] =
+          field === 'priceUSD' ? Number(data[field]) : data[field];
+      }
+    });
+
+    const course = await getCourseByName(updatedData.name);
+
+    if (course && courseId !== course.id) {
+      return NextResponse.json(
+        { error: 'Курс с таким названием уже существует' },
+        { status: 409 },
+      );
+    }
 
     await prisma.course.update({
       where: { id: courseId as string },
       data: updatedData,
     });
 
-    return NextResponse.json({ success: 'Курс успешно изменен' });
+    return NextResponse.json(
+      { success: 'Курс успешно изменен' },
+      { status: 200 },
+    );
   } catch (error) {
-    throw error;
+    console.error('Ошибка при обновлении курса:', error);
+    return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }

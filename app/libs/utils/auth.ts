@@ -32,11 +32,11 @@ export const getUserById = async (id: string) => {
 };
 
 export const fileUpload = async (file: File) => {
-  if (!file || file.size === 0) {
-    return new Error('No file uploaded');
-  }
-
   try {
+    if (!file || file.size === 0) {
+      return new Error('No file uploaded');
+    }
+
     const data = await file.arrayBuffer();
     const uploadPath = path.resolve('public/uploads', file.name);
 

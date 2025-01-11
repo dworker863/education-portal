@@ -23,7 +23,10 @@ export async function POST(request: NextRequest) {
     );
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
@@ -99,19 +102,6 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
-    let uploadResult;
-
-    if (data.icon) {
-      uploadResult = await fileUpload(data.icon);
-
-      if (uploadResult instanceof Error) {
-        return NextResponse.json(
-          { error: 'Курс с таким названием уже существует' },
-          { status: 409 },
-        );
-      }
-    }
-
     const fieldsToCheck = [
       'name',
       'description',
@@ -135,6 +125,19 @@ export async function PATCH(request: NextRequest) {
         { error: 'Курс с таким названием уже существует' },
         { status: 409 },
       );
+    }
+
+    if (data.icon) {
+      const uploadResult = await fileUpload(data.icon);
+
+      if (uploadResult instanceof Error) {
+        return NextResponse.json(
+          { error: uploadResult.message },
+          { status: 400 },
+        );
+      }
+
+      updatedData.icon = uploadResult;
     }
 
     await prisma.course.update({

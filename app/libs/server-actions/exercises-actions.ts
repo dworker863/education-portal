@@ -3,18 +3,24 @@
 import { createExerciseSchema, editExerciseSchema } from '../validation';
 import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
-import { getExerciseById } from '../utils/exercises';
+import { getExerciseById, getExerciseByName } from '../utils/exercises';
 
 export const addExercise = async (
   values: z.infer<typeof createExerciseSchema>,
 ) => {
   try {
-    const { data, ...parsedValues } = await createExerciseSchema.safeParse(
+    const existingExercise = await getExerciseByName(values.name);
+
+    if (existingExercise) {
+      throw new Error('Упражнение с таким названием уже существует');
+    }
+
+    const { data, ...parsedResult } = await createExerciseSchema.safeParse(
       values,
     );
 
-    if (!parsedValues.success) {
-      throw new Error(parsedValues.error?.issues[0].message);
+    if (!parsedResult.success) {
+      throw new Error(parsedResult.error?.issues[0].message);
     }
 
     if (!data) {
@@ -47,6 +53,7 @@ export const addExercise = async (
 
     return { success: 'Упражнение успешно добавлено' };
   } catch (error) {
+    console.error('Ошибка при создании упражнения: ', error);
     throw error;
   }
 };
@@ -56,34 +63,53 @@ export const editExercise = async (
   values: z.infer<typeof editExerciseSchema>,
 ) => {
   try {
+    if (!id) {
+      throw new Error('Не указан ID упражнения');
+    }
+
     const existingExercise = await getExerciseById(id);
 
     if (!existingExercise) {
-      throw new Error('Упражнения с таким ID не существует');
+      throw new Error('Упражнение не найдено');
     }
 
-    const { data, ...parsedValues } = await editExerciseSchema.safeParse(
+    const { data, ...parsedResult } = await editExerciseSchema.safeParse(
       values,
     );
 
-    if (!parsedValues.success) {
-      throw new Error(parsedValues.error?.issues[0].message);
+    if (!parsedResult.success) {
+      throw new Error(parsedResult.error?.issues[0].message);
     }
 
     if (!data) {
       throw new Error('Invalid data');
     }
 
-    const updatedData = {
-      name: data.name || existingExercise.name,
-      task: data.task || existingExercise.task,
-      code: data.code || existingExercise.code,
-      test: data.test || existingExercise.test,
-      solution: data.solution || existingExercise.solution,
-      requiredRank: data.requiredRank || 'D-',
-      prizePoints: Number(data.prizePoints),
-      lessonId: data.lessonId || existingExercise.lessonId,
-    };
+    const fieldsToCheck = [
+      'name',
+      'task',
+      'code',
+      'test',
+      'solution',
+      'requiredRank',
+      'prizePoints',
+      'lessonId',
+    ] as const;
+
+    const updatedData: Record<string, any> = {};
+
+    fieldsToCheck.forEach((field) => {
+      if (data[field] && data[field] !== existingExercise[field]) {
+        updatedData[field] =
+          field === 'prizePoints' ? Number(data[field]) : data[field];
+      }
+    });
+
+    const exercise = await getExerciseByName(updatedData.name);
+
+    if (exercise && id !== exercise.id) {
+      throw Error('Упражнение с таким названием уже существует');
+    }
 
     await prisma.exercise.update({
       where: {
@@ -94,17 +120,18 @@ export const editExercise = async (
 
     return { success: 'Упражнение успешно изменено' };
   } catch (error) {
+    console.error('Ошибка при обновлении упражнения: ', error);
     throw error;
   }
 };
 
-export const deleteLesson = async (id: string) => {
+export const deleteExercise = async (id: string) => {
   try {
-    const lesson = await getExerciseById(id);
+    const exercise = await getExerciseById(id);
 
-    if (!lesson) throw new Error('Упражнения с таким ID не существует');
+    if (!exercise) throw new Error('Упражнения с таким ID не существует');
 
-    await prisma.lesson.delete({
+    await prisma.exercise.delete({
       where: {
         id,
       },
@@ -112,6 +139,7 @@ export const deleteLesson = async (id: string) => {
 
     return { success: 'Урок успешно удален' };
   } catch (error) {
+    console.error('Ошибка при удалении упражнения: ', error);
     throw error;
   }
 };

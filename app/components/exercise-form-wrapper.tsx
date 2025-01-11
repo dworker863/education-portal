@@ -5,6 +5,7 @@ import React, { FC, useState } from 'react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import ExerciseForm from './exercise-form';
 import { Button } from './button';
+import { deleteExercise } from '../libs/server-actions/exercises-actions';
 
 type TExerciseFormWrapperProps = {
   exerciseId: string;
@@ -24,6 +25,7 @@ const ExerciseFormWrapper: FC<TExerciseFormWrapperProps> = ({ exerciseId }) => {
         <Button
           className="ml-4"
           onClick={async () => {
+            await deleteExercise(exerciseId);
             router.refresh();
           }}
         >

@@ -86,14 +86,14 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
       const data = await res.json();
 
       if (data.error) {
-        setError(data.error);
         setSuccess(null);
+        setError(data.error);
         return;
       }
 
       if (data.success) {
-        setSuccess(data.success);
         setError(null);
+        setSuccess(data.success);
       }
 
       router.refresh();

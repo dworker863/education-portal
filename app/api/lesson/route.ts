@@ -1,5 +1,5 @@
 import { fileUpload } from '@/app/libs/utils/auth';
-import { getLessonByName } from '@/app/libs/utils/lessons';
+import { getLessonById, getLessonByName } from '@/app/libs/utils/lessons';
 import { createLessonSchema, editLessonSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error('Ошибка при создании урока:', error);
+    console.error('Ошибка при создании урока: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }
@@ -116,9 +116,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const existingLesson = await prisma.lesson.findUnique({
-      where: { id: lessonId as string },
-    });
+    const existingLesson = await getLessonById(lessonId as string);
 
     if (!existingLesson) {
       return NextResponse.json({ error: 'Урок не найден' }, { status: 404 });
@@ -202,7 +200,7 @@ export async function PATCH(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error('Ошибка при обновлении урока:', error);
+    console.error('Ошибка при обновлении урока: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }

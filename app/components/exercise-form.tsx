@@ -16,7 +16,10 @@ import {
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
-import { addExercise } from '../libs/server-actions/exercises-actions';
+import {
+  addExercise,
+  editExercise,
+} from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
 import RequiredSign from './required-sign';
@@ -53,17 +56,33 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   });
 
   const onSubmit = async (values: z.infer<typeof schema>) => {
-    startTransiton(async () => {
-      addExercise(values)
-        .then((data) => {
-          setError(null);
-          setSuccess(data.success);
-        })
-        .catch((error) => {
-          setSuccess(null);
-          setError(error.message);
-        });
-    });
+    if (mode === 'create') {
+      startTransiton(async () => {
+        addExercise(values as z.infer<typeof createExerciseSchema>)
+          .then((data) => {
+            setError(null);
+            setSuccess(data.success);
+          })
+          .catch((error) => {
+            setSuccess(null);
+            setError(error.message);
+          });
+      });
+    }
+
+    if (exerciseId) {
+      startTransiton(async () => {
+        editExercise(exerciseId, values as z.infer<typeof editExerciseSchema>)
+          .then((data) => {
+            setError(null);
+            setSuccess(data.success);
+          })
+          .catch((error) => {
+            setSuccess(null);
+            setError(error.message);
+          });
+      });
+    }
 
     router.refresh();
   };

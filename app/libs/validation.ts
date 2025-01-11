@@ -165,7 +165,7 @@ export const createExerciseSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   requiredRank: z.optional(z.string()),
   prizePoints: z.string().min(1, { message: 'Укажите баллы за задание' }),
-  lessonId: z.string(),
+  lessonId: z.optional(z.string()),
 });
 
 export const editExerciseSchema = createExerciseSchema.partial();

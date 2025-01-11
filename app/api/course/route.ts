@@ -1,5 +1,5 @@
 import { fileUpload } from '@/app/libs/utils/auth';
-import { getCourseByName } from '@/app/libs/utils/courses';
+import { getCourseById, getCourseByName } from '@/app/libs/utils/courses';
 import { createCourseSchema, editCourseSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextRequest, NextResponse } from 'next/server';
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error('Ошибка при создании курса:', error);
+    console.error('Ошибка при создании курса: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }
@@ -81,9 +81,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    const existingCourse = await prisma.course.findUnique({
-      where: { id: courseId as string },
-    });
+    const existingCourse = await getCourseById(courseId as string);
 
     if (!existingCourse) {
       return NextResponse.json({ error: 'Курс не найден' }, { status: 404 });
@@ -150,7 +148,7 @@ export async function PATCH(request: NextRequest) {
       { status: 200 },
     );
   } catch (error) {
-    console.error('Ошибка при обновлении курса:', error);
+    console.error('Ошибка при обновлении курса: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }

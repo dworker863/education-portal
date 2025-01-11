@@ -13,3 +13,17 @@ export const getExerciseById = async (id: string) => {
     throw error;
   }
 };
+
+export const getExerciseByName = async (name: string) => {
+  try {
+    const exercise = await prisma.exercise.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    return exercise;
+  } catch (error) {
+    throw error;
+  }
+};

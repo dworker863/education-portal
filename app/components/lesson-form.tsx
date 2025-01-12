@@ -54,49 +54,55 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
-      const formData = new FormData();
+      try {
+        const formData = new FormData();
 
-      if (lessonId) {
-        formData.append('id', lessonId);
-      }
-
-      for (const key in values) {
-        const value = values[key as keyof typeof values];
-
-        if (key !== 'images' && key !== 'video' && value !== undefined) {
-          formData.append(key, value);
+        if (lessonId) {
+          formData.append('id', lessonId);
         }
-      }
 
-      if (values.images && values.images.length > 0) {
-        values.images.forEach((image) => {
-          formData.append('images', image);
+        for (const key in values) {
+          const value = values[key as keyof typeof values];
+
+          if (key !== 'images' && key !== 'video' && value !== undefined) {
+            formData.append(key, value);
+          }
+        }
+
+        if (values.images && values.images.length > 0) {
+          values.images.forEach((image) => {
+            formData.append('images', image);
+          });
+        }
+
+        if (values.video) {
+          formData.append('video', values.video[0]);
+        }
+
+        const res = await fetch('/api/lesson', {
+          method: mode === 'create' ? 'POST' : 'PATCH',
+          body: formData,
         });
-      }
 
-      if (values.video) {
-        formData.append('video', values.video[0]);
-      }
+        const data = await res.json();
 
-      const res = await fetch('/api/lesson', {
-        method: mode === 'create' ? 'POST' : 'PATCH',
-        body: formData,
-      });
+        if (data.error) {
+          setSuccess(null);
+          setError(data.error);
+          return;
+        }
 
-      const data = await res.json();
+        if (data.success) {
+          setError(null);
+          setSuccess(data.success);
+        }
 
-      if (data.error) {
+        router.refresh();
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        setError('Что-то пошло не так. Попробуйте снова.');
         setSuccess(null);
-        setError(data.error);
-        return;
       }
-
-      if (data.success) {
-        setError(null);
-        setSuccess(data.success);
-      }
-
-      router.refresh();
     });
   };
 

@@ -22,10 +22,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
 
     const runEmbed = async () => {
       try {
-        // Встраиваем проект
-
         if (isFirstLoad) {
-          // Встраиваем проект только при первой загрузке
           setTimeout(() => {
             vm.applyFsDiff({
               create: {
@@ -36,7 +33,6 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
               destroy: [],
             });
 
-            // После выполнения сбросим флаг
             setIsFirstLoad(false);
           }, 2000);
         }

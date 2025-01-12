@@ -106,7 +106,12 @@ export const login = async (
 };
 
 export const logout = async () => {
-  await signOut();
+  try {
+    await signOut();
+  } catch (error) {
+    console.error('Ошибка при обработке выходе из учетной записи: ', error);
+    throw error;
+  }
 };
 
 export const confirmVerification = async (token: string) => {

@@ -18,7 +18,7 @@ const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
         <div className="flex gap-2">
           <Button
             className="ml-4"
-            onClick={async () => setShowEditForm(!showEditForm)}
+            onClick={() => setShowEditForm(!showEditForm)}
           >
             <FaEdit size={22} color="#c2410c" />
             <span className="ml-2 text-">Редактировать</span>

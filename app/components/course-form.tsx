@@ -51,43 +51,49 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
-      const formData = new FormData();
+      try {
+        const formData = new FormData();
 
-      if (courseId) {
-        formData.append('id', courseId);
-      }
-
-      for (const key in values) {
-        const value = values[key as keyof typeof values];
-
-        if (key !== 'icon' && value !== undefined) {
-          formData.append(key, value);
+        if (courseId) {
+          formData.append('id', courseId);
         }
-      }
 
-      if (values.icon) {
-        formData.append('icon', values.icon[0]);
-      }
+        for (const key in values) {
+          const value = values[key as keyof typeof values];
 
-      const res = await fetch('api/course', {
-        method: mode === 'create' ? 'POST' : 'PATCH',
-        body: formData,
-      });
+          if (key !== 'icon' && value !== undefined) {
+            formData.append(key, value);
+          }
+        }
 
-      const data = await res.json();
+        if (values.icon) {
+          formData.append('icon', values.icon[0]);
+        }
 
-      if (data.error) {
+        const res = await fetch('api/course', {
+          method: mode === 'create' ? 'POST' : 'PATCH',
+          body: formData,
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+          setSuccess(null);
+          setError(data.error);
+          return;
+        }
+
+        if (data.success) {
+          setError(null);
+          setSuccess(data.success);
+        }
+
+        router.refresh();
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        setError('Что-то пошло не так. Попробуйте снова.');
         setSuccess(null);
-        setError(data.error);
-        return;
       }
-
-      if (data.success) {
-        setError(null);
-        setSuccess(data.success);
-      }
-
-      router.refresh();
     });
   };
 

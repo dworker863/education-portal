@@ -19,7 +19,6 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
   useEffect(() => {
     const runEmbed = async () => {
       try {
-        // Встраиваем проект
         const vm = await sdk.embedProjectId(
           'test',
           'education-portal-lesson-test',

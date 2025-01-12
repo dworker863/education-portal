@@ -49,7 +49,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof schema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
       const formData = new FormData();
 

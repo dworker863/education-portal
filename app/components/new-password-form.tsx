@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import {
@@ -26,13 +26,15 @@ import {
 } from '../libs/server-actions/auth-actions';
 
 const NewPasswordForm = () => {
-  const [error, setError] = useState<string | null>(null);
-  const [tokenError, setTokenError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [isPending, startTransiton] = useTransition();
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
   const email = searchParams.get('email');
+
+  const [error, setError] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     confirmResetPasswordToken(token)
@@ -51,31 +53,33 @@ const NewPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
-    if (!email) {
-      setSuccess(null);
-      setError('Invalid email');
-      return null;
-    }
-
-    if (!token) {
-      setSuccess(null);
-      setError('Invalid token');
-      return null;
-    }
-
-    addNewPassword(token, email, values)
-      .then((data) => {
-        setError(null);
-        setSuccess(data.success);
-      })
-      .catch((error) => {
+    startTransiton(() => {
+      if (!email) {
         setSuccess(null);
-        setError(error.message);
-      });
+        setError('Invalid email');
+        return;
+      }
 
-    setTimeout(() => {
-      router.push('/');
-    }, 1500);
+      if (!token) {
+        setSuccess(null);
+        setError('Invalid token');
+        return;
+      }
+
+      addNewPassword(token, email, values)
+        .then((data) => {
+          setError(null);
+          setSuccess(data.success);
+        })
+        .catch((error) => {
+          setSuccess(null);
+          setError(error.message);
+        });
+
+      setTimeout(() => {
+        router.push('/');
+      }, 1500);
+    });
   };
 
   if (tokenError) {
@@ -117,7 +121,9 @@ const NewPasswordForm = () => {
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Подтвердить</Button>
+        <Button type="submit" disabled={isPending}>
+          Подтвердить
+        </Button>
       </form>
     </Form>
   );

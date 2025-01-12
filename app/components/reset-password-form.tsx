@@ -14,12 +14,14 @@ import {
 } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { resetPassword } from '../libs/server-actions/auth-actions';
 
 const ResetPasswordForm = () => {
+  const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -28,15 +30,17 @@ const ResetPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof resetPasswordSchema>) => {
-    resetPassword(values)
-      .then((data) => {
-        setError(null);
-        setSuccess(data.success);
-      })
-      .catch((error) => {
-        setSuccess(null);
-        setError(error.message);
-      });
+    startTransiton(() => {
+      resetPassword(values)
+        .then((data) => {
+          setError(null);
+          setSuccess(data.success);
+        })
+        .catch((error) => {
+          setSuccess(null);
+          setError(error.message);
+        });
+    });
   };
 
   return (
@@ -57,7 +61,9 @@ const ResetPasswordForm = () => {
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit">Отправить</Button>
+        <Button type="submit" disabled={isPending}>
+          Отправить
+        </Button>
       </form>
     </Form>
   );

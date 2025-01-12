@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/app/components/button';
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useState, useTransition } from 'react';
 import { FaGithub } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
 import ErrorMessage from './error-message';
@@ -9,20 +9,25 @@ import SuccessMessage from './success-message';
 import { login } from '../libs/server-actions/auth-actions';
 
 const Socials = () => {
+  const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const onSubmit = async (provider: string) => {
-    login(undefined, provider)
-      .then((data) => {
-        if (data?.success) {
-          setError(null);
-          setSuccess(data.success);
-        }
-      })
-      .catch((error) => {
-        setSuccess(null);
-        setError(error.message);
-      });
+
+  const onSubmit = (provider: string) => {
+    startTransiton(() => {
+      login(undefined, provider)
+        .then((data) => {
+          if (data?.success) {
+            setError(null);
+            setSuccess(data.success);
+          }
+        })
+        .catch((error) => {
+          setSuccess(null);
+          setError(error.message);
+        });
+    });
   };
 
   return (
@@ -34,6 +39,7 @@ const Socials = () => {
         className="w-full"
         variant="outline"
         onClick={onSubmit.bind(null, 'google')}
+        disabled={isPending}
       >
         <FcGoogle className="w-5 h-5" />
       </Button>
@@ -42,6 +48,7 @@ const Socials = () => {
         className="w-full"
         variant="outline"
         onClick={onSubmit.bind(null, 'github')}
+        disabled={isPending}
       >
         <FaGithub />
       </Button>

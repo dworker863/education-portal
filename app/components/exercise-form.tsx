@@ -55,7 +55,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof schema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     if (mode === 'create') {
       startTransiton(async () => {
         addExercise(values as z.infer<typeof createExerciseSchema>)

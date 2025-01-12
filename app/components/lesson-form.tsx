@@ -37,8 +37,8 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
 
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const [files, setFiles] = useState<File[]>([]);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const schema = mode === 'create' ? createLessonSchema : editLessonSchema;
 
   const form = useForm<z.infer<typeof schema>>({
@@ -52,7 +52,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof schema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
       const formData = new FormData();
 

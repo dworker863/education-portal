@@ -7,7 +7,6 @@ import { z } from 'zod';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -21,8 +20,8 @@ import SuccessMessage from './success-message';
 import { resetPassword } from '../libs/server-actions/auth-actions';
 
 const ResetPasswordForm = () => {
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof resetPasswordSchema>>({
     resolver: zodResolver(resetPasswordSchema),
@@ -31,11 +30,11 @@ const ResetPasswordForm = () => {
   const onSubmit = (values: z.infer<typeof resetPasswordSchema>) => {
     resetPassword(values)
       .then((data) => {
-        setError('');
+        setError(null);
         setSuccess(data.success);
       })
       .catch((error) => {
-        setSuccess('');
+        setSuccess(null);
         setError(error.message);
       });
   };

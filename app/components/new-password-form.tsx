@@ -26,9 +26,9 @@ import {
 } from '../libs/server-actions/auth-actions';
 
 const NewPasswordForm = () => {
-  const [error, setError] = useState('');
-  const [tokenError, setTokenError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -37,11 +37,11 @@ const NewPasswordForm = () => {
   useEffect(() => {
     confirmResetPasswordToken(token)
       .then((data) => {
-        setTokenError('');
-        setSuccess(data.success);
+        setTokenError(null);
+        setSuccess(data?.success);
       })
       .catch((error) => {
-        setSuccess('');
+        setSuccess(null);
         setTokenError(error.message);
       });
   }, [token]);
@@ -52,24 +52,24 @@ const NewPasswordForm = () => {
 
   const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
     if (!email) {
-      setSuccess('');
+      setSuccess(null);
       setError('Invalid email');
       return null;
     }
 
     if (!token) {
-      setSuccess('');
+      setSuccess(null);
       setError('Invalid token');
       return null;
     }
 
     addNewPassword(token, email, values)
       .then((data) => {
-        setError('');
+        setError(null);
         setSuccess(data.success);
       })
       .catch((error) => {
-        setSuccess('');
+        setSuccess(null);
         setError(error.message);
       });
 

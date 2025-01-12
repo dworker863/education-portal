@@ -86,15 +86,16 @@ export const getResetPasswordTokenByToken = async (token: string) => {
 
     return resetPasswordToken;
   } catch (error) {
+    console.log('Ошибка при получении resetPassword-токена по токену: ', error);
     throw error;
   }
 };
 
 export const generateResetPasswordToken = async (email: string) => {
-  const token = uuidv4();
-  const expires = new Date(new Date().getTime() + 600 * 1000);
-
   try {
+    const token = uuidv4();
+    const expires = new Date(new Date().getTime() + 600 * 1000);
+
     const existingToken = await getResetPasswordTokenByEmail(email);
 
     if (existingToken) {
@@ -115,6 +116,7 @@ export const generateResetPasswordToken = async (email: string) => {
 
     return resetPasswordToken;
   } catch (error) {
+    console.log('Ошибка при генерации resetPassword-токена: ', error);
     throw error;
   }
 };

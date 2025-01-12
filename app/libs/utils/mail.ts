@@ -29,6 +29,7 @@ export const sendResetPasswordEmail = async (email: string, token: string) => {
       html: `<p>Перейдите по <a href=${confirmLink}>ссылке</a> для сброса пароля</p>`,
     });
   } catch (error) {
+    console.error('Ошибка при отправке resetPassword-токена: ', error);
     throw error;
   }
 };

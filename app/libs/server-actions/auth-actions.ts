@@ -18,7 +18,6 @@ import {
   generateTwoFactorToken,
   getResetPasswordTokenByToken,
   getTwoFactorTokenByToken,
-  getVerificationTokenByEmail,
   getVerificationTokenByToken,
 } from '../utils/tokens';
 
@@ -112,10 +111,14 @@ export const logout = async () => {
 
 export const confirmVerification = async (token: string) => {
   try {
+    if (!token) {
+      throw new Error('Токен не существует');
+    }
+
     const existingToken = await getVerificationTokenByToken(token);
 
     if (!existingToken) {
-      throw new Error('Токен не существует');
+      throw new Error('Token не найден');
     }
 
     const hasExprired = new Date(existingToken.expires) < new Date();
@@ -156,55 +159,62 @@ export const confirmVerification = async (token: string) => {
 export const resetPassword = async (
   values: z.infer<typeof resetPasswordSchema>,
 ) => {
-  const parsedValues = await resetPasswordSchema.safeParse(values);
+  try {
+    const parsedResult = await resetPasswordSchema.safeParse(values);
 
-  if (!parsedValues.success) {
-    throw new Error('Неверный email');
+    if (!parsedResult.success) {
+      throw new Error('Неверный email');
+    }
+
+    const { email } = parsedResult.data;
+
+    const existingUser = await getUserByEmail(email);
+
+    if (!existingUser) {
+      throw new Error('Пользователя с таким email не существует');
+    }
+
+    const resetPasswordToken = await generateResetPasswordToken(email);
+
+    await sendResetPasswordEmail(
+      resetPasswordToken.email,
+      resetPasswordToken.token,
+    );
+
+    return { success: 'Ссылка сброса пароля отправлена на ваш email' };
+  } catch (error) {
+    console.log('Ошибка при сбросе пароля: ', error);
+    throw error;
   }
-
-  const { email } = parsedValues.data;
-
-  const existingUser = await getUserByEmail(email);
-
-  if (!existingUser) {
-    throw new Error('Пользователя с таким email не существует');
-  }
-
-  const resetPasswordToken = await generateResetPasswordToken(email);
-  await sendResetPasswordEmail(
-    resetPasswordToken.email,
-    resetPasswordToken.token,
-  );
-
-  return { success: 'Ссылка сброса пароля отправлена на ваш email' };
 };
 
 export const confirmResetPasswordToken = async (token: string | null) => {
-  if (!token) {
-    throw new Error('Токен не существует');
-  }
-
-  const existingToken = await getResetPasswordTokenByToken(token);
-
-  if (!existingToken) {
-    throw new Error('Token не найден');
-  }
-
-  const hasExprired = new Date(existingToken.expires) < new Date();
-
-  if (hasExprired) {
-    throw new Error('Ссылка больше не действительна');
-  }
-
-  const existingUser = await getUserByEmail(existingToken.email);
-
-  if (!existingUser) {
-    throw new Error('Пользователя с таким email не существует');
-  }
-
   try {
+    if (!token) {
+      throw new Error('Токен не существует');
+    }
+
+    const existingToken = await getResetPasswordTokenByToken(token);
+
+    if (!existingToken) {
+      throw new Error('Token не найден');
+    }
+
+    const hasExprired = new Date(existingToken.expires) < new Date();
+
+    if (hasExprired) {
+      throw new Error('Ссылка больше не действительна');
+    }
+
+    const existingUser = await getUserByEmail(existingToken.email);
+
+    if (!existingUser) {
+      throw new Error('Пользователя с таким email не существует');
+    }
+
     return { success: 'Введите новый пароль' };
   } catch (error) {
+    console.log('Ошибка при обработке resetPassword-токена: ', error);
     throw error;
   }
 };
@@ -214,21 +224,21 @@ export const addNewPassword = async (
   email: string,
   values: z.infer<typeof newPasswordSchema>,
 ) => {
-  const parsedValues = await newPasswordSchema.safeParse(values);
-
-  if (!parsedValues.success) {
-    throw new Error(parsedValues.error?.issues[0].message);
-  }
-
-  const existingUser = await getUserByEmail(email);
-
-  if (!existingUser) {
-    throw new Error('Пользователя с таким email не существует');
-  }
-
-  const { password } = parsedValues.data;
-
   try {
+    const parsedResult = await newPasswordSchema.safeParse(values);
+
+    if (!parsedResult.success) {
+      throw new Error(parsedResult.error?.issues[0].message);
+    }
+
+    const existingUser = await getUserByEmail(email);
+
+    if (!existingUser) {
+      throw new Error('Пользователя с таким email не существует');
+    }
+
+    const { password } = parsedResult.data;
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await prisma.user.update({
@@ -252,6 +262,7 @@ export const addNewPassword = async (
 
     return { success: 'Пароль успешно изменен' };
   } catch (error) {
+    console.log('Ошибка при изменении пароля: ', error);
     throw error;
   }
 };

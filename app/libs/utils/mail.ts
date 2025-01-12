@@ -3,9 +3,9 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationEmail = async (email: string, token: string) => {
-  const confirmLink = `http://localhost:3000/api/verification?token=${token}`;
-
   try {
+    const confirmLink = `http://localhost:3000/api/verification?token=${token}`;
+
     await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to: email,
@@ -13,14 +13,15 @@ export const sendVerificationEmail = async (email: string, token: string) => {
       html: `<p>Перейдите по <a href=${confirmLink}>ссылке</a> для подтверждения email</p>`,
     });
   } catch (error) {
+    console.error('Ошибка при отправке email-токена: ', error);
     throw error;
   }
 };
 
 export const sendResetPasswordEmail = async (email: string, token: string) => {
-  const confirmLink = `http://localhost:3000/new-password?token=${token}&email=${email}`;
-
   try {
+    const confirmLink = `http://localhost:3000/new-password?token=${token}&email=${email}`;
+
     await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',
       to: email,

@@ -12,6 +12,7 @@ export const getVerificationTokenByEmail = async (email: string) => {
 
     return verificationToken;
   } catch (error) {
+    console.error('Ошибка при получении email-токена по email: ', error);
     throw error;
   }
 };
@@ -26,16 +27,16 @@ export const getVerificationTokenByToken = async (token: string) => {
 
     return verificationToken;
   } catch (error) {
+    console.error('Ошибка при получении email-токена по токену: ', error);
     throw error;
   }
 };
 
 export const generateVerificationToken = async (email: string) => {
-  const token = uuidv4();
-
-  const expires = new Date(new Date().getTime() + 600 * 1000);
-
   try {
+    const token = uuidv4();
+    const expires = new Date(new Date().getTime() + 600 * 1000);
+
     const existingToken = await getVerificationTokenByEmail(email);
 
     if (existingToken) {
@@ -56,6 +57,7 @@ export const generateVerificationToken = async (email: string) => {
 
     return verificationToken;
   } catch (error) {
+    console.error('Ошибка при генерации email-токена: ', error);
     throw error;
   }
 };

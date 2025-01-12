@@ -33,8 +33,8 @@ import { format } from 'date-fns';
 
 const SignupForm = () => {
   const [isPending, startTransiton] = useTransition();
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<null | string>(null);
+  const [success, setSuccess] = useState<null | string>(null);
 
   const form = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),
@@ -50,37 +50,43 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof registrationSchema>) => {
+  const onSubmit = (values: z.infer<typeof registrationSchema>) => {
     startTransiton(async () => {
-      const formData = new FormData();
+      try {
+        const formData = new FormData();
 
-      for (const key in values) {
-        const value = values[key as keyof typeof values];
+        for (const key in values) {
+          const value = values[key as keyof typeof values];
 
-        if (key !== 'image' && value !== undefined) {
-          formData.append(key, value);
+          if (key !== 'image' && value !== undefined) {
+            formData.append(key, value);
+          }
         }
-      }
 
-      if (values.image) {
-        formData.append('image', values.image[0]);
-      }
+        if (values.image) {
+          formData.append('image', values.image[0]);
+        }
 
-      const res = await fetch('api/signup', {
-        method: 'POST',
-        body: formData,
-      });
+        const res = await fetch('api/signup', {
+          method: 'POST',
+          body: formData,
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (data.error) {
-        setError(data.error);
+        if (data.error) {
+          setError(data.error);
+          setSuccess(null);
+        }
+
+        if (data.success) {
+          setSuccess(data.success);
+          setError(null);
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        setError('Что-то пошло не так. Попробуйте снова.');
         setSuccess(null);
-      }
-
-      if (data.success) {
-        setSuccess(data.success);
-        setError(null);
       }
     });
   };

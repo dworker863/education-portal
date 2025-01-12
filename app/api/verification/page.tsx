@@ -10,25 +10,25 @@ export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
-  const [success, setSuccess] = useState('');
-  const [error, setError] = useState('');
+  const [success, setSuccess] = useState<null | string>(null);
+  const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
     if (token) {
       confirmVerification(token)
         .then((data) => {
           if (data?.success) {
-            setError('');
+            setError(null);
             setSuccess(data?.success);
             router.push('/');
           }
         })
         .catch((error) => {
-          setSuccess('');
+          setSuccess(null);
           setError(error.message);
         });
     } else {
-      setSuccess('');
+      setSuccess(null);
       setError('Неверный токен');
     }
   }, [token, error, success, router]);

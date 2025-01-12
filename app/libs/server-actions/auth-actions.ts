@@ -18,6 +18,7 @@ import {
   generateTwoFactorToken,
   getResetPasswordTokenByToken,
   getTwoFactorTokenByToken,
+  getVerificationTokenByEmail,
   getVerificationTokenByToken,
 } from '../utils/tokens';
 
@@ -112,25 +113,25 @@ export const logout = async () => {
 };
 
 export const confirmVerification = async (token: string) => {
-  const existingToken = await getVerificationTokenByToken(token);
-
-  if (!existingToken) {
-    throw new Error('Токен не существует');
-  }
-
-  const hasExprired = new Date(existingToken.expires) < new Date();
-
-  if (hasExprired) {
-    throw new Error('Ссылка больше не действительна');
-  }
-
-  const existingUser = await getUserByEmail(existingToken.email);
-
-  if (!existingUser) {
-    throw new Error('Пользователя с таким email не существует');
-  }
-
   try {
+    const existingToken = await getVerificationTokenByToken(token);
+
+    if (!existingToken) {
+      throw new Error('Токен не существует');
+    }
+
+    const hasExprired = new Date(existingToken.expires) < new Date();
+
+    if (hasExprired) {
+      throw new Error('Ссылка больше не действительна');
+    }
+
+    const existingUser = await getVerificationTokenByEmail(existingToken.email);
+
+    if (!existingUser) {
+      throw new Error('Пользователя с таким email не существует');
+    }
+
     await prisma.user.update({
       where: {
         id: existingUser.id,
@@ -149,6 +150,7 @@ export const confirmVerification = async (token: string) => {
 
     return { success: 'Email подтвержден' };
   } catch (error) {
+    console.error('Ошибка при обработке email-токена: ', error);
     throw error;
   }
 };

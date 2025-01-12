@@ -17,6 +17,7 @@ export const deleteLesson = async (id: string) => {
 
     return { success: 'Урок успешно удален' };
   } catch (error) {
+    console.error('Ошибка при удалении урока: ', error);
     throw error;
   }
 };

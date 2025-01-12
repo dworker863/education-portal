@@ -17,6 +17,7 @@ export const deleteCourse = async (id: string) => {
 
     return { success: 'Курс успешно удален' };
   } catch (error) {
+    console.error('Ошибка при удалении курса: ', error);
     throw error;
   }
 };

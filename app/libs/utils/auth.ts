@@ -13,6 +13,7 @@ export const getUserByEmail = async (email: string) => {
 
     return user;
   } catch (error) {
+    console.error('Ошибка при получении пользователя по email: ', error);
     throw error;
   }
 };
@@ -27,6 +28,7 @@ export const getUserById = async (id: string) => {
 
     return user;
   } catch (error) {
+    console.error('Ошибка при получении пользователя по ID: ', error);
     throw error;
   }
 };
@@ -44,6 +46,7 @@ export const fileUpload = async (file: File) => {
 
     return path.join('/uploads', file.name);
   } catch (error) {
+    console.error('Ошибка при записи файла: ', error);
     throw error;
   }
 };

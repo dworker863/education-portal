@@ -13,23 +13,23 @@ export default {
     GitHub,
     Credentials({
       authorize: async (credentials) => {
-        const parsedCredentials = loginSchema.safeParse(credentials);
+        const parsedCredentials = await loginSchema.safeParse(credentials);
 
-        if (parsedCredentials.success) {
-          const { email, password } = parsedCredentials.data;
-
-          const user = await getUserByEmail(email);
-
-          if (!user || !user.password) return null;
-
-          const passwordMatch = await bcrypt.compare(password, user.password);
-
-          if (passwordMatch) {
-            const { password, ...userWithoutPassword } = user;
-            return userWithoutPassword;
-          }
-
+        if (!parsedCredentials.success) {
           return null;
+        }
+
+        const { email, password } = parsedCredentials.data;
+
+        const user = await getUserByEmail(email);
+
+        if (!user || !user.password) return null;
+
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (passwordMatch) {
+          const { password, ...userWithoutPassword } = user;
+          return userWithoutPassword;
         }
 
         return null;

@@ -129,6 +129,7 @@ export const getTwoFactorTokenByEmail = async (email: string) => {
 
     return twoFactorToken;
   } catch (error) {
+    console.error('Ошибка при получении twoFactor-токена email: ', error);
     throw error;
   }
 };
@@ -143,15 +144,16 @@ export const getTwoFactorTokenByToken = async (token: string) => {
 
     return twoFactorToken;
   } catch (error) {
+    console.error('Ошибка при получении twoFactor-токена по ID: ', error);
     throw error;
   }
 };
 
 export const generateTwoFactorToken = async (email: string) => {
-  const token = crypto.randomInt(100_000, 1000_000).toString();
-  const expires = new Date(new Date().getTime() + 600 * 1000);
-
   try {
+    const token = crypto.randomInt(100_000, 1000_000).toString();
+    const expires = new Date(new Date().getTime() + 600 * 1000);
+
     const existingToken = await prisma.twoFactorToken.findFirst({
       where: {
         email,
@@ -176,6 +178,7 @@ export const generateTwoFactorToken = async (email: string) => {
 
     return twoFactorToken;
   } catch (error) {
+    console.error('Ошибка при генерации twoFactor-токена: ', error);
     throw error;
   }
 };

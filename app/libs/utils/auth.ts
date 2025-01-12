@@ -63,6 +63,10 @@ export const getTwoFactorConfirmationByUserId = async (userId: string) => {
 
     return twoFactorConfirmation;
   } catch (error) {
+    console.error(
+      'Ошибка при получении twoFactor-подтверждения файла: ',
+      error,
+    );
     throw error;
   }
 };
@@ -86,6 +90,7 @@ export const checkCredentials = async (email: string, password: string) => {
 
     return existingUser;
   } catch (error) {
+    console.error('Ошибка при аутентификации пользователя: ', error);
     throw error;
   }
 };

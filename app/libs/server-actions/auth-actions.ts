@@ -26,86 +26,84 @@ export const login = async (
   values?: z.infer<typeof loginSchema>,
   provider: string = 'credentials',
 ) => {
-  const isLoggedIn = await auth();
+  try {
+    const isLoggedIn = await auth();
 
-  if (isLoggedIn) {
-    throw new Error('Вы уже авторизованы');
-  }
+    if (isLoggedIn) {
+      throw new Error('Вы уже авторизованы');
+    }
 
-  if (!values) {
-    await signIn(provider, {
-      redirectTo: '/',
-    });
-  }
-
-  const parsedCredentials = await loginSchema.safeParse(values);
-
-  if (parsedCredentials.success) {
-    try {
-      const { email, password, code } = parsedCredentials.data;
-      const existingUser = await checkCredentials(email, password);
-
-      if (existingUser && existingUser.emailVerified) {
-        if (code) {
-          const twoFactorToken = await getTwoFactorTokenByToken(code);
-
-          if (!twoFactorToken) {
-            throw new Error('Неверный код');
-          }
-
-          const hasExprired = new Date(twoFactorToken.expires) < new Date();
-
-          if (hasExprired) {
-            throw new Error('Код больше не действителен');
-          }
-
-          await prisma.twoFactorToken.delete({
-            where: {
-              id: twoFactorToken.id,
-            },
-          });
-
-          await prisma.twoFactorConfirmation.create({
-            data: {
-              userId: existingUser.id,
-            },
-          });
-        } else {
-          const twoFactorToken = await generateTwoFactorToken(email);
-          await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
-
-          return { twoFactor: true };
-        }
-      }
-
-      await signIn('credentials', {
-        email,
-        password,
+    if (!values) {
+      await signIn(provider, {
         redirectTo: '/',
       });
-    } catch (error) {
-      if (error instanceof AuthError) {
-        if (
-          error.type === 'AccessDenied' &&
-          error.cause?.err instanceof VerificationError
-        ) {
-          return { success: error.cause?.err.message };
-        }
-
-        switch (error.type) {
-          case 'CredentialsSignin':
-            throw new Error('Invalid credentials.');
-          default:
-            throw new Error('Something went wrong.');
-        }
-      }
-      throw error;
     }
+
+    const parsedCredentials = await loginSchema.safeParse(values);
+
+    if (!parsedCredentials.success) {
+      throw new Error(parsedCredentials.error.issues[0].message);
+    }
+
+    const { email, password, code } = parsedCredentials.data;
+    const existingUser = await checkCredentials(email, password);
+
+    if (existingUser && existingUser.emailVerified) {
+      if (code) {
+        const twoFactorToken = await getTwoFactorTokenByToken(code);
+
+        if (!twoFactorToken) {
+          throw new Error('Неверный код');
+        }
+
+        const hasExprired = new Date(twoFactorToken.expires) < new Date();
+
+        if (hasExprired) {
+          throw new Error('Код больше не действителен');
+        }
+
+        await prisma.twoFactorToken.delete({
+          where: {
+            id: twoFactorToken.id,
+          },
+        });
+
+        await prisma.twoFactorConfirmation.create({
+          data: {
+            userId: existingUser.id,
+          },
+        });
+      } else {
+        const twoFactorToken = await generateTwoFactorToken(email);
+        await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
+
+        return { twoFactor: true };
+      }
+    }
+
+    await signIn('credentials', {
+      email,
+      password,
+      redirectTo: '/',
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      if (
+        error.type === 'AccessDenied' &&
+        error.cause?.err instanceof VerificationError
+      ) {
+        return { success: error.cause?.err.message };
+      }
+
+      switch (error.type) {
+        case 'CredentialsSignin':
+          throw new Error('Invalid credentials.');
+        default:
+          throw new Error('Something went wrong.');
+      }
+    }
+    throw error;
   }
-
-  const errorMessage = JSON.parse(parsedCredentials.error?.message!)[0];
-
-  throw new Error(errorMessage);
 };
 
 export const logout = async () => {
@@ -126,7 +124,7 @@ export const confirmVerification = async (token: string) => {
       throw new Error('Ссылка больше не действительна');
     }
 
-    const existingUser = await getVerificationTokenByEmail(existingToken.email);
+    const existingUser = await getUserByEmail(existingToken.email);
 
     if (!existingUser) {
       throw new Error('Пользователя с таким email не существует');

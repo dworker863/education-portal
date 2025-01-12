@@ -42,6 +42,7 @@ export const sendTwoFactorToken = async (email: string, token: string) => {
       html: `<p>Введите этот код ${token}</p>`,
     });
   } catch (error) {
+    console.error('Ошибка при отправке twoFactor-токена: ', error);
     throw error;
   }
 };

@@ -52,12 +52,16 @@ export const {
   },
   events: {
     linkAccount: async ({ user }) => {
-      await prisma.user.update({
-        where: {
-          id: user.id,
-        },
-        data: { emailVerified: new Date() },
-      });
+      try {
+        await prisma.user.update({
+          where: {
+            id: user.id,
+          },
+          data: { emailVerified: new Date() },
+        });
+      } catch (error) {
+        console.error('Ошибка при обновлении пользователя:', error);
+      }
     },
   },
   callbacks: {
@@ -67,7 +71,7 @@ export const {
       const isLoggedIn = await auth();
 
       if (isLoggedIn) {
-        throw new Error('Вы уже авторизованы', {});
+        throw new Error('Вы уже авторизованы');
       }
 
       if (user.id && user.email) {
@@ -114,6 +118,7 @@ export const {
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
+
       return session;
     },
   },

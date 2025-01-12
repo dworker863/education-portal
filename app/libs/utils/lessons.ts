@@ -5,6 +5,7 @@ export const getAllLessons = async () => {
     const lessons = await prisma.lesson.findMany();
     return lessons;
   } catch (error) {
+    console.error('Ошибка при получении уроков: ', error);
     throw error;
   }
 };
@@ -22,6 +23,7 @@ export const getLessonByName = async (name: string) => {
 
     return lesson;
   } catch (error) {
+    console.error('Ошибка при получении урока по названию: ', error);
     throw error;
   }
 };
@@ -36,6 +38,7 @@ export const getLessonById = async (id: string) => {
 
     return lesson;
   } catch (error) {
+    console.error('Ошибка при получении урока по ID: ', error);
     throw error;
   }
 };

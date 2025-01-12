@@ -52,16 +52,12 @@ export const {
   },
   events: {
     linkAccount: async ({ user }) => {
-      try {
-        await prisma.user.update({
-          where: {
-            id: user.id,
-          },
-          data: { emailVerified: new Date() },
-        });
-      } catch (error) {
-        console.error('Ошибка при обновлении пользователя:', error);
-      }
+      await prisma.user.update({
+        where: {
+          id: user.id,
+        },
+        data: { emailVerified: new Date() },
+      });
     },
   },
   callbacks: {

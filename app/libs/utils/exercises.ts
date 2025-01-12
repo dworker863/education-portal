@@ -10,6 +10,7 @@ export const getExerciseById = async (id: string) => {
 
     return exercise;
   } catch (error) {
+    console.error('Ошибка при получении упражнения по ID: ', error);
     throw error;
   }
 };
@@ -24,6 +25,7 @@ export const getExerciseByName = async (name: string) => {
 
     return exercise;
   } catch (error) {
+    console.error('Ошибка при получении упражнения по названию: ', error);
     throw error;
   }
 };

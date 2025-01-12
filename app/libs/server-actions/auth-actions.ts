@@ -96,9 +96,9 @@ export const login = async (
 
       switch (error.type) {
         case 'CredentialsSignin':
-          throw new Error('Invalid credentials.');
+          throw new Error('Неверные имя пользователя или пароль');
         default:
-          throw new Error('Something went wrong.');
+          throw new Error('Что-то пошло не так');
       }
     }
     throw error;

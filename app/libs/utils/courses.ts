@@ -5,6 +5,7 @@ export const getAllCourses = async () => {
     const courses = await prisma.course.findMany();
     return courses;
   } catch (error) {
+    console.error('Ошибка при получении курсов: ', error);
     throw error;
   }
 };
@@ -19,6 +20,7 @@ export const getCourseByName = async (name: string) => {
 
     return course;
   } catch (error) {
+    console.error('Ошибка при получении курса по названию: ', error);
     throw error;
   }
 };
@@ -33,6 +35,7 @@ export const getCourseById = async (id: string) => {
 
     return course;
   } catch (error) {
+    console.error('Ошибка при получении курса по ID: ', error);
     throw error;
   }
 };

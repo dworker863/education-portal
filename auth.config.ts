@@ -6,7 +6,6 @@ import { loginSchema } from './app/libs/validation';
 import bcrypt from 'bcryptjs';
 import { getUserByEmail } from './app/libs/utils/auth';
 
-// Notice this is only an object, not a full Auth.js instance
 export default {
   providers: [
     Google,

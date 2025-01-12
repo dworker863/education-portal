@@ -1,9 +1,8 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import sdk, { VM } from '@stackblitz/sdk';
+import { VM } from '@stackblitz/sdk';
 import { IExercise } from '../interfaces/interfaces';
-import { Button } from './button';
 
 type TEditorProps = {
   userId: string;

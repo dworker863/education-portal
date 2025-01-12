@@ -1,12 +1,9 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import React, { FC } from 'react';
 import LessonForm from './lesson-form';
 import { ILesson } from '../interfaces/interfaces';
 import Link from 'next/link';
-import { Button } from '@/app/components/button';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import { deleteLesson } from '../libs/server-actions/lessons-actions';
 import LessonFormWrapper from './lesson-form-wrapper';
 
 type TLessonsProps = {

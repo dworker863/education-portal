@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/app/components/button';
-import React, { FormEvent, useState, useTransition } from 'react';
+import React, { useState, useTransition } from 'react';
 import { FaGithub } from 'react-icons/fa6';
 import { FcGoogle } from 'react-icons/fc';
 import ErrorMessage from './error-message';

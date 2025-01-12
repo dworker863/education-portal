@@ -1,8 +1,7 @@
 'use client';
 
-import React, { FC, useContext, useEffect } from 'react';
+import React, { FC, useContext } from 'react';
 import { ModalContext } from './app-wrapper';
-import { useRouter } from 'next/navigation';
 import { cn } from '../libs/cn';
 
 type TOverlayProps = {

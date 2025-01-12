@@ -6,7 +6,6 @@ import { Button } from '@/app/components/button';
 import { cn } from '../libs/cn';
 import Video from './video';
 import EditorWrapper from './editor-wrapper';
-import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TLessonCardProps = {
   lesson: ILesson | null;

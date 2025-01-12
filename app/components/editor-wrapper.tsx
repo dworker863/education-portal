@@ -1,7 +1,7 @@
 'use client';
 
 import sdk, { VM } from '@stackblitz/sdk';
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Editor from './editor';
 import { IExercise } from '../interfaces/interfaces';
 import { useSession } from 'next-auth/react';

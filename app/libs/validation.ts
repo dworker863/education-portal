@@ -58,7 +58,7 @@ export const resetPasswordSchema = z.object({
 export const newPasswordSchema = z
   .object({
     password: z
-      .string({ required_error: 'Введите пароль' })
+      .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
       .regex(
         /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
@@ -73,31 +73,25 @@ export const newPasswordSchema = z
 
 export const createCourseSchema = z.object({
   name: z.string().min(1, { message: 'Введите название курса' }),
-  icon: z.optional(
-    z
-      .any()
-      .refine(
-        (file) => !file || file instanceof File || file[0] instanceof File,
-        {
-          message: 'Файл должен быть валидным',
-        },
-      )
-      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
-        message: 'Файл не должен быть пустым',
-      })
-      .refine(
-        (file) => {
-          if (!file) return true;
-          if (file instanceof File) {
-            return file.type && file.type.includes('image');
-          }
-
-          return file[0]?.type && file[0].type.includes('image');
-        },
-        { message: 'Вставьте изображение' },
-      ),
-  ),
   description: z.string().min(1, { message: 'Введите описание курса' }),
+  icon: z
+    .any()
+    .refine((file) => file instanceof File || file[0] instanceof File, {
+      message: 'Файл должен быть валидным',
+    })
+    .refine((file) => file.size > 0 || file[0]?.size > 0, {
+      message: 'Файл не должен быть пустым',
+    })
+    .refine(
+      (file) => {
+        if (file instanceof File) {
+          return file.type && file.type.includes('image');
+        }
+
+        return file[0]?.type && file[0].type.includes('image');
+      },
+      { message: 'Вставьте изображение' },
+    ),
   priceUSD: z.string().min(1, { message: 'Введите цену курса' }),
   category: z.string().min(1, { message: 'Введите категорию курса' }),
 });

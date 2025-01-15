@@ -1,14 +1,35 @@
+export interface IUser {
+  id: string;
+  name: string | null;
+  email: string;
+  password: string | null;
+  emailVerified: Date | null;
+  image: string | null;
+  role: 'ADMIN' | 'USER';
+  firstName: string | null;
+  lastName: string | null;
+  birthDate: Date | null;
+  rating: number;
+  rank: string;
+  moneyUSD: number;
+  meta: JSON;
+  coursesInProgress?: ICourse[];
+  completedCourses?: ICourse[];
+  completedExercises?: IExercise[];
+}
+
 export interface ICourse {
   id: string;
   name: string;
   description: string;
-  icon: string | null;
+  icon: string;
+  priceUSD: number;
   certificateId: string | null;
   category: string;
-  priceUSD: number;
-  completedUsersCount: number;
-  usersIds: string[];
-  meta: string[];
+  meta: JSON;
+  lessons?: ILesson[];
+  usersInProgress?: IUser[];
+  completedUsers?: IUser[];
 }
 
 export interface ILesson {
@@ -17,9 +38,10 @@ export interface ILesson {
   content: string;
   images: string | string[];
   video: string | null;
+  meta: JSON;
+  course?: ICourse;
   courseId: string;
-  exercise?: IExercise | null;
-  exerciseId: string | null;
+  exercise?: IExercise;
 }
 
 export interface IExercise {
@@ -29,8 +51,10 @@ export interface IExercise {
   code: string | null;
   test: string;
   solution: string;
-  requiredRank: string | null;
+  requiredRank: string;
   prizePoints: number;
-  lessonId: string | null;
-  meta: String[];
+  meta: JSON;
+  lesson?: ILesson;
+  lessonId: string;
+  completedUsers?: IUser[];
 }

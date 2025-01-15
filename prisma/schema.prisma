@@ -26,8 +26,7 @@ model User {
   rating                Int                    @default(0)
   rank                  String                 @default("D-")
   moneyUSD              Int                    @default(0)
-  meta                  String[]               @default([])
-  completedExercisesIds String[]
+  meta                  Json                   @default("{}")
   accounts              Account[]
   coursesInProgress     Course[]               @relation("UsersInProgressCourses")
   completedCourses      Course[]               @relation("UsersCompletedCourses")
@@ -89,45 +88,42 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id                  String   @id @default(cuid())
-  name                String
-  description         String
-  icon                String
-  usersIds            String[] @default([])
-  priceUSD            Float
-  certificateId       String?
-  completedUsersCount Int
-  category            String
-  meta                String[] @default([])
-  lessons             Lesson[]
-  usersInProgress     User[]   @relation("UsersInProgressCourses")
-  completedUsers      User[]   @relation("UsersCompletedCourses")
+  id              String   @id @default(cuid())
+  name            String
+  description     String
+  icon            String
+  priceUSD        Float
+  certificateId   String?
+  category        String
+  meta            Json     @default("{}")
+  lessons         Lesson[]
+  usersInProgress User[]   @relation("UsersInProgressCourses")
+  completedUsers  User[]   @relation("UsersCompletedCourses")
 }
 
 model Lesson {
-  id         String    @id @default(cuid())
-  name       String
-  content    String
-  images     String[]  @default([])
-  video      String?
-  meta       String[]  @default([])
-  course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId   String
-  exercise   Exercise?
-  exerciseId String?
+  id       String    @id @default(cuid())
+  name     String
+  content  String
+  images   String[]  @default([])
+  video    String?
+  meta     Json      @default("{}")
+  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId String
+  exercise Exercise?
 }
 
 model Exercise {
-  id             String   @id @default(cuid())
+  id             String  @id @default(cuid())
   name           String
   task           String
   code           String?
   test           String
   solution       String
-  requiredRank   String?  @default("D-")
+  requiredRank   String  @default("D-")
   prizePoints    Int
-  meta           String[] @default([])
-  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
-  lessonId       String?  @unique
+  meta           Json    @default("{}")
+  lesson         Lesson? @relation(fields: [lessonId], references: [id])
+  lessonId       String? @unique
   completedUsers User[]
 }

@@ -53,7 +53,6 @@ export async function POST(request: NextRequest) {
         icon: uploadResult as string,
         priceUSD: Number(data.priceUSD),
         certificateId: 'test',
-        completedUsersCount: 0,
         category: data.category,
       },
     });

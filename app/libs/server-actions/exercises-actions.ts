@@ -27,29 +27,18 @@ export const addExercise = async (
       throw new Error('Invalid data');
     }
 
-    const exercise = await prisma.exercise.create({
+    await prisma.exercise.create({
       data: {
         name: data.name,
-        lessonId: data.lessonId,
         task: data.task,
         code: data.code || null,
         test: data.test,
         solution: data.solution,
         requiredRank: data.requiredRank || 'D-',
         prizePoints: Number(data.prizePoints),
+        lessonId: data.lessonId,
       },
     });
-
-    if (data.lessonId) {
-      await prisma.lesson.update({
-        where: {
-          id: data.lessonId,
-        },
-        data: {
-          exerciseId: exercise.id,
-        },
-      });
-    }
 
     return { success: 'Упражнение успешно добавлено' };
   } catch (error) {

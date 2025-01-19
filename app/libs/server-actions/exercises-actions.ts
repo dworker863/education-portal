@@ -36,7 +36,7 @@ export const addExercise = async (
         solution: data.solution,
         requiredRank: data.requiredRank || 'D-',
         prizePoints: Number(data.prizePoints),
-        lessonId: data.lessonId,
+        lessonId: data.lessonId || null,
       },
     });
 

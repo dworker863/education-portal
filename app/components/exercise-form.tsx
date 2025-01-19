@@ -51,7 +51,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
       solution: mode === 'create' ? '' : undefined,
       requiredRank: mode === 'create' ? '' : undefined,
       prizePoints: mode === 'create' ? '' : undefined,
-      lessonId: mode === 'create' ? '' : undefined,
+      lessonId: lessonId || undefined,
     },
   });
 

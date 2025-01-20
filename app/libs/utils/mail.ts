@@ -4,7 +4,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const sendVerificationEmail = async (email: string, token: string) => {
   try {
-    const confirmLink = `http://localhost:3000/api/verification?token=${token}`;
+    const confirmLink = `http://localhost:3000/verification?token=${token}`;
 
     await resend.emails.send({
       from: 'Acme <onboarding@resend.dev>',

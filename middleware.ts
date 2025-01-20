@@ -10,21 +10,12 @@ import {
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  const isLoggedIn = !!req.auth;
+  const session = req.auth;
   const pathname = req.nextUrl.pathname;
 
   const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
   const isAuthRoute = authRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.includes(pathname);
-
-  // if (isAuthRoute) {
-  //   if (isLoggedIn) {
-  //     return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
-  //   }
-  // } else if (!isPublicRoute && !isApiAuthRoute && !isLoggedIn) {
-
-  //   return Response.redirect(new URL('/signin', req.nextUrl));
-  // }
 
   if (
     (pathname === '/signin' ||
@@ -32,6 +23,14 @@ export default auth((req) => {
       pathname === '/reset-password') &&
     !req.headers.get('referer')
   ) {
+    return Response.redirect(new URL('/', req.nextUrl));
+  }
+
+  if (isAuthRoute) {
+    if (session) {
+      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
+    }
+  } else if (!isPublicRoute && !isApiAuthRoute && !session) {
     return Response.redirect(new URL('/', req.nextUrl));
   }
 });

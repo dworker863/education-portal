@@ -1,17 +1,24 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import React, { createContext, FC, useState } from 'react';
+import {
+  createContext,
+  Dispatch,
+  FC,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from 'react';
 
 type TModalContext = {
   isModalOpen: boolean;
-  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
 
 type TAppWrapperProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {

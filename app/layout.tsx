@@ -5,6 +5,7 @@ import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import Overlay from './components/overlay';
 import TopLine from './components/top-line';
+import SidebarWrapper from './components/sidebar-wrapper';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
       <body className={cn('bg-orange-700 text-white ', inter.className)}>
         <AppWrapper>
           <Overlay>
+            <SidebarWrapper />
             <div className="container mx-auto">
               <TopLine />
               {children}

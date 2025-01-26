@@ -39,16 +39,25 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
       <div>
         <h2 className="mb-4 text-rose-600">Инфо</h2>
         <div className="flex flex-col">
-          <p className="mb-2 text-sm">
-            Имя: <span className="text-orange-700">{user?.firstName}</span>
-          </p>
-          <p className="mb-2 text-sm">
-            Факмилия: <span className="text-orange-700">{user?.lastName}</span>
-          </p>
-          <p className="mb-2 text-sm">
-            Дата рождения:{' '}
-            <span className="text-orange-700">{user?.birthDate}</span>
-          </p>
+          {user?.firstName && (
+            <p className="mb-2 text-sm">
+              Имя: <span className="text-orange-700">{user?.firstName}</span>
+            </p>
+          )}
+          {user?.lastName && (
+            <p className="mb-2 text-sm">
+              Факмилия:{' '}
+              <span className="text-orange-700">{user?.lastName}</span>
+            </p>
+          )}
+          {user?.birthDate && (
+            <p className="mb-2 text-sm">
+              Дата рождения:{' '}
+              <span className="text-orange-700">
+                {new Date(user?.birthDate).toLocaleDateString()}
+              </span>
+            </p>
+          )}
           <p className="mb-2 text-sm">
             Ранг: <span className="text-orange-700">{user?.rank}</span>
           </p>

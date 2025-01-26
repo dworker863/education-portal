@@ -14,7 +14,7 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
   return (
     <div
       className={cn(
-        'absolute top-0 right-[-400px] flex flex-col w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
+        'absolute top-0 right-[-400px] -z-10 flex flex-col w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
         { '-translate-x-[400px]': showProfile },
       )}
     >

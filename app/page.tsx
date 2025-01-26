@@ -1,5 +1,3 @@
-import { auth } from '@/auth';
-import Image from 'next/image';
 import { getAllCourses } from './libs/utils/courses';
 import Courses from './components/courses';
 

@@ -1,3 +1,5 @@
+import { JsonValue } from '@prisma/client/runtime/library';
+
 export interface IUser {
   id: string;
   name: string | null;
@@ -12,7 +14,7 @@ export interface IUser {
   rating: number;
   rank: string;
   moneyUSD: number;
-  meta: JSON;
+  meta: JsonValue;
   coursesInProgress?: ICourse[];
   completedCourses?: ICourse[];
   completedExercises?: IExercise[];
@@ -26,7 +28,7 @@ export interface ICourse {
   priceUSD: number;
   certificateId: string | null;
   category: string;
-  meta: JSON;
+  meta: JsonValue;
   lessons?: ILesson[];
   usersInProgress?: IUser[];
   completedUsers?: IUser[];
@@ -38,7 +40,7 @@ export interface ILesson {
   content: string;
   images: string | string[];
   video: string | null;
-  meta: JSON;
+  meta: JsonValue;
   course?: ICourse;
   courseId: string;
   exercise?: IExercise;
@@ -53,7 +55,7 @@ export interface IExercise {
   solution: string;
   requiredRank: string;
   prizePoints: number;
-  meta: JSON;
+  meta: JsonValue;
   lesson?: ILesson;
   lessonId: string;
   completedUsers?: IUser[];

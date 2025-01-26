@@ -2,7 +2,7 @@
 
 import { FC, useEffect, useState } from 'react';
 import { VM } from '@stackblitz/sdk';
-import { IExercise } from '../interfaces/interfaces';
+import { IExercise } from '../libs/interfaces/interfaces';
 
 type TEditorProps = {
   userId: string;

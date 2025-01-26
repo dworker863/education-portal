@@ -51,6 +51,8 @@ const SignupForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registrationSchema>) => {
+    console.log(values);
+
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -72,6 +74,7 @@ const SignupForm = () => {
           body: formData,
         });
 
+        console.log(res);
         const data = await res.json();
 
         if (data.error) {

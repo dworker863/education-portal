@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import authConfig from './auth.config';
 import {
-  apiAuthPrefix,
+  apiAuthRoutes,
   authRoutes,
   DEFAULT_LOGIN_REDIRECT,
   publicRoutes,
@@ -13,26 +13,21 @@ export default auth((req) => {
   const session = req.auth;
   const pathname = req.nextUrl.pathname;
 
-  const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
-  const isAuthRoute = authRoutes.includes(pathname);
+  const isApiAuthRoute = apiAuthRoutes.includes(pathname);
   const isPublicRoute = publicRoutes.includes(pathname);
 
-  if (
-    (pathname === '/signin' ||
-      pathname === '/signup' ||
-      pathname === '/reset-password') &&
-    !req.headers.get('referer')
-  ) {
-    return Response.redirect(new URL('/', req.nextUrl));
-  }
+  // if (
+  //   (pathname === '/signin' ||
+  //     pathname === '/signup' ||
+  //     pathname === '/reset-password') &&
+  //   !req.headers.get('referer')
+  // ) {
+  //   return Response.redirect(new URL('/', req.nextUrl));
+  // }
 
-  if (isAuthRoute) {
-    if (session) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, req.nextUrl));
-    }
-  } else if (!isPublicRoute && !isApiAuthRoute && !session) {
-    return Response.redirect(new URL('/', req.nextUrl));
-  }
+  // if (!isPublicRoute && !isApiAuthRoute && !session) {
+  //   return Response.redirect(new URL('/', req.nextUrl));
+  // }
 });
 
 export const config = {

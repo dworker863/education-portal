@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FC, useState } from 'react';
-import { IExercise, ILesson } from '../interfaces/interfaces';
+import { IExercise, ILesson } from '../libs/interfaces/interfaces';
 import { Button } from '@/app/components/button';
 import { cn } from '../libs/cn';
 import Video from './video';

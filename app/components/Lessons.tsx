@@ -2,7 +2,7 @@
 
 import React, { FC } from 'react';
 import LessonForm from './lesson-form';
-import { ILesson } from '../interfaces/interfaces';
+import { ILesson } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import LessonFormWrapper from './lesson-form-wrapper';
 

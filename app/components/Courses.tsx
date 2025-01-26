@@ -2,7 +2,7 @@
 
 import React, { FC } from 'react';
 import CourseForm from './course-form';
-import { ICourse } from '../interfaces/interfaces';
+import { ICourse } from '../libs/interfaces/interfaces';
 import CourseCard from './course-card';
 import CourseFormWrapper from './course-form-wrapper';
 

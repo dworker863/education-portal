@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { ICourse } from '../interfaces/interfaces';
+import { ICourse } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import Image from 'next/image';
 

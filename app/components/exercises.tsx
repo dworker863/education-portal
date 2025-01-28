@@ -7,9 +7,20 @@ import { SelectContent } from '@radix-ui/react-select';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Checkbox } from './checkbox';
+import { ColumnDef } from '@tanstack/react-table';
+import ExercisesTable from './exercises-table';
+import { Button } from './button';
+import { ArrowUpDown } from 'lucide-react';
 
 type TExercisesProps = {
   showExercises: boolean;
+};
+
+type Payment = {
+  id: string;
+  amount: number;
+  status: 'pending' | 'processing' | 'success' | 'failed';
+  email: string;
 };
 
 const SelectSchema = z.object({
@@ -18,6 +29,74 @@ const SelectSchema = z.object({
     message: 'Укажите ранг',
   }),
 });
+
+const payments: Payment[] = [
+  {
+    id: '728ed52f',
+    amount: 100,
+    status: 'pending',
+    email: 'm@example.com',
+  },
+  {
+    id: '489e1d42',
+    amount: 125,
+    status: 'processing',
+    email: 'example@gmail.com',
+  },
+  // ...
+];
+
+const columns: ColumnDef<Payment>[] = [
+  {
+    accessorKey: 'status',
+    header: 'Status',
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Email
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+  },
+];
+
+const ranks = [
+  {
+    id: 'd-',
+    label: 'D-',
+  },
+  {
+    id: 'd',
+    label: 'D',
+  },
+  {
+    id: 'd+',
+    label: 'D+',
+  },
+  {
+    id: 'c-',
+    label: 'C-',
+  },
+  {
+    id: 'c',
+    label: 'C',
+  },
+  {
+    id: 'c+',
+    label: 'C+',
+  },
+] as const;
 
 const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
   const form = useForm<z.infer<typeof SelectSchema>>({
@@ -28,33 +107,6 @@ const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
     },
   });
 
-  const ranks = [
-    {
-      id: 'd-',
-      label: 'D-',
-    },
-    {
-      id: 'd',
-      label: 'D',
-    },
-    {
-      id: 'd+',
-      label: 'D+',
-    },
-    {
-      id: 'c-',
-      label: 'C-',
-    },
-    {
-      id: 'c',
-      label: 'C',
-    },
-    {
-      id: 'c+',
-      label: 'C+',
-    },
-  ] as const;
-
   const onSubmit = (values: z.infer<typeof SelectSchema>) => {
     console.log(values);
   };
@@ -62,14 +114,14 @@ const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
   return (
     <div
       className={cn(
-        'absolute top-0 right-[-400px] -z-10 flex flex-col w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
-        { '-translate-x-[400px]': showExercises },
+        'absolute top-0 left-full -z-10 flex flex-col w-svw h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
+        { '-translate-x-full': showExercises },
       )}
     >
       <h2>Exercises</h2>
       <Form {...form}>
         <form
-          className="w-2/3 space-y-6"
+          className="mb-5 w-2/3 space-y-6"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormField
@@ -82,7 +134,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
-                  <FormControl>
+                  <FormControl className="w-[300px]">
                     <SelectTrigger>
                       <SelectValue placeholder="Выберите язык программирования" />
                     </SelectTrigger>
@@ -143,6 +195,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
           />
         </form>
       </Form>
+      <ExercisesTable columns={columns} data={payments} />
     </div>
   );
 };

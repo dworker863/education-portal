@@ -5,6 +5,16 @@ import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
 import { getExerciseById, getExerciseByName } from '../utils/exercises';
 
+export const getAllExercises = async () => {
+  try {
+    const exercises = await prisma.exercise.findMany();
+    return exercises;
+  } catch (error) {
+    console.error('Ошибка при получении упражнений: ', error);
+    throw error;
+  }
+};
+
 export const addExercise = async (
   values: z.infer<typeof createExerciseSchema>,
 ) => {

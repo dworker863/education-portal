@@ -1,15 +1,5 @@
 import { prisma } from '@/prisma/prisma';
 
-export const getAllLessons = async () => {
-  try {
-    const lessons = await prisma.lesson.findMany();
-    return lessons;
-  } catch (error) {
-    console.error('Ошибка при получении уроков: ', error);
-    throw error;
-  }
-};
-
 export const getLessonByName = async (name: string) => {
   try {
     const lesson = await prisma.lesson.findFirst({

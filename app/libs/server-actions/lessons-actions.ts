@@ -3,6 +3,16 @@
 import { prisma } from '@/prisma/prisma';
 import { getLessonById } from '../utils/lessons';
 
+export const getAllLessons = async () => {
+  try {
+    const lessons = await prisma.lesson.findMany();
+    return lessons;
+  } catch (error) {
+    console.error('Ошибка при получении уроков: ', error);
+    throw error;
+  }
+};
+
 export const deleteLesson = async (id: string) => {
   try {
     const lesson = await getLessonById(id);

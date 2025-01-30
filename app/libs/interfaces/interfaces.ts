@@ -57,6 +57,6 @@ export interface IExercise {
   prizePoints: number;
   meta: JsonValue;
   lesson?: ILesson;
-  lessonId: string;
+  lessonId: string | null;
   completedUsers?: IUser[];
 }

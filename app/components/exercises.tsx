@@ -3,13 +3,14 @@ import { cn } from '../libs/cn';
 import ExercisesTable from './exercises-table';
 import { Button } from './button';
 import ExercisesFilters from './exercises-filters';
-import { payments } from '../libs/utils/static-data';
+import { IExercise } from '../libs/interfaces/interfaces';
 
 type TExercisesProps = {
+  exercises: IExercise[] | null;
   showExercises: boolean;
 };
 
-const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
+const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
   const [showFilters, setShowFilters] = useState(false);
 
   return (
@@ -19,16 +20,22 @@ const Exercises: FC<TExercisesProps> = ({ showExercises }) => {
         { '-translate-x-full': showExercises },
       )}
     >
-      <h2>Exercises</h2>
-      <Button
-        className="mr-auto my-4 bg-orange-700"
-        variant="outline"
-        onClick={() => setShowFilters(!showFilters)}
-      >
-        Фильтр
-      </Button>
-      {showFilters && <ExercisesFilters />}
-      <ExercisesTable data={payments} />
+      <h2 className="text-orange-700">Exercises</h2>
+      {exercises && exercises.length > 0 ? (
+        <>
+          <Button
+            className="mr-auto my-4 bg-orange-700"
+            variant="outline"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            Фильтр
+          </Button>
+          {showFilters && <ExercisesFilters />}
+          <ExercisesTable data={exercises} />
+        </>
+      ) : (
+        'Подходящих упражнений не найдено'
+      )}
     </div>
   );
 };

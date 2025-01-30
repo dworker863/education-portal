@@ -1,15 +1,5 @@
 import { prisma } from '@/prisma/prisma';
 
-export const getAllCourses = async () => {
-  try {
-    const courses = await prisma.course.findMany();
-    return courses;
-  } catch (error) {
-    console.error('Ошибка при получении курсов: ', error);
-    throw error;
-  }
-};
-
 export const getCourseByName = async (name: string) => {
   try {
     const course = await prisma.course.findFirst({

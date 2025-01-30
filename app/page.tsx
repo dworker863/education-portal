@@ -1,5 +1,5 @@
-import { getAllCourses } from './libs/utils/courses';
 import Courses from './components/courses';
+import { getAllCourses } from './libs/server-actions/courses-actions';
 
 export default async function Home() {
   const courses = await getAllCourses();

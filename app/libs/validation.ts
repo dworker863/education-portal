@@ -163,3 +163,10 @@ export const createExerciseSchema = z.object({
 });
 
 export const editExerciseSchema = createExerciseSchema.partial();
+
+export const SelectSchema = z.object({
+  language: z.string(),
+  rank: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'Укажите ранг',
+  }),
+});

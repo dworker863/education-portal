@@ -1,5 +1,15 @@
 import { prisma } from '@/prisma/prisma';
 
+export const getAllExercises = async () => {
+  try {
+    const courses = await prisma.exercise.findMany();
+    return courses;
+  } catch (error) {
+    console.error('Ошибка при получении упражнений: ', error);
+    throw error;
+  }
+};
+
 export const getExerciseById = async (id: string) => {
   try {
     const exercise = await prisma.exercise.findUnique({

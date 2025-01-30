@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { Button } from './button';
 import { TfiPencilAlt } from 'react-icons/tfi';

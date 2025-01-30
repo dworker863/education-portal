@@ -26,13 +26,39 @@ import {
   DropdownMenuTrigger,
 } from './dropdown-menu';
 import { Button } from './button';
+import { ArrowUpDown } from 'lucide-react';
+import { Payment } from '../libs/utils/static-data';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+interface DataTableProps<TData> {
   data: TData[];
 }
 
-const ExercisesTable: FC<DataTableProps<any, any>> = ({ columns, data }) => {
+const columns: ColumnDef<Payment>[] = [
+  {
+    accessorKey: 'status',
+    header: 'Status',
+  },
+  {
+    accessorKey: 'email',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Email
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: 'amount',
+    header: 'Amount',
+  },
+];
+
+const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

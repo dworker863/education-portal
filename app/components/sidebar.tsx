@@ -49,7 +49,7 @@ const Sidebar = () => {
   return (
     <div className="fixed right-0">
       <Profile showProfile={showProfile} />
-      <Exercises exercises={exercises} showExercises={showExercises} />
+      {exercises && exercises?.length > 0 && <Exercises exercises={exercises} showExercises={showExercises} />}
       <Achievements showAchievements={showAchievements} />
       <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
@@ -59,11 +59,7 @@ const Sidebar = () => {
           <TfiPencilAlt className="hover:scale-125" size={22} color="#E11D48" />
         </Button>
         <Button className="mb-1" onClick={showAchievementsHandler}>
-          <GrAchievement
-            className="hover:scale-125"
-            size={22}
-            color="#E11D48"
-          />
+          <GrAchievement className="hover:scale-125" size={22} color="#E11D48" />
         </Button>
       </div>
     </div>

@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useState } from 'react';
 import {
   ColumnDef,
@@ -10,21 +12,9 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from './table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
 import { Input } from './input';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from './dropdown-menu';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
 import { Button } from './button';
 import { ArrowUpDown } from 'lucide-react';
 import { IExercise } from '../libs/interfaces/interfaces';
@@ -43,10 +33,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
       accessorKey: 'name',
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Название
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -57,11 +44,19 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
       accessorKey: 'task',
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Задание
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+    },
+    {
+      accessorKey: 'language',
+      header: ({ column }) => {
+        return (
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Язык программирования
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -71,10 +66,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
       accessorKey: 'requiredRank',
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Ранг
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -85,10 +77,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
       accessorKey: 'prizePoints',
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-          >
+          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Баллы
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -119,9 +108,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
         <Input
           placeholder="Название..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
+          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
           className="max-w-sm mr-6 text-primary"
         />
         <DropdownMenu>
@@ -140,9 +127,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
+                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -151,20 +136,15 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="w-[800px] rounded-md border">
+      <div className="w-[1000px] rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                    <TableHead className="text-center" key={header.id}>
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
                   );
                 })}
@@ -174,26 +154,17 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell className="pl-6" key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
+                    <TableCell className="text-center" key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   No results.
                 </TableCell>
               </TableRow>

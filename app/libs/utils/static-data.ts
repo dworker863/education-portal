@@ -1,50 +1,50 @@
 export const ranks = [
   {
-    id: 'd-',
+    id: 'D-',
     label: 'D-',
   },
   {
-    id: 'd',
+    id: 'D',
     label: 'D',
   },
   {
-    id: 'd+',
+    id: 'D+',
     label: 'D+',
   },
   {
-    id: 'c-',
+    id: 'C-',
     label: 'C-',
   },
   {
-    id: 'c',
+    id: 'C',
     label: 'C',
   },
   {
-    id: 'c+',
+    id: 'C+',
     label: 'C+',
   },
   {
-    id: 'b-',
+    id: 'B-',
     label: 'B-',
   },
   {
-    id: 'b',
+    id: 'B',
     label: 'B',
   },
   {
-    id: 'b+',
+    id: 'B+',
     label: 'B+',
   },
   {
-    id: 'a-',
+    id: 'A-',
     label: 'A-',
   },
   {
-    id: 'a',
+    id: 'A',
     label: 'A',
   },
   {
-    id: 'a+',
+    id: 'A+',
     label: 'A+',
   },
 ] as const;

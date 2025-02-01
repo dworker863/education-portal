@@ -1,3 +1,5 @@
+'use client';
+
 import { FC, useState } from 'react';
 import { cn } from '../libs/cn';
 import ExercisesTable from './exercises-table';
@@ -6,12 +8,13 @@ import ExercisesFilters from './exercises-filters';
 import { IExercise } from '../libs/interfaces/interfaces';
 
 type TExercisesProps = {
-  exercises: IExercise[] | null;
+  exercises: IExercise[];
   showExercises: boolean;
 };
 
 const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
   const [showFilters, setShowFilters] = useState(false);
+  const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
 
   return (
     <div
@@ -21,20 +24,25 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
       )}
     >
       <h2 className="text-rose-600">Exercises</h2>
-      {exercises && exercises.length > 0 ? (
+      {filteredExercises && filteredExercises.length > 0 ? (
         <>
+          <Button className="mr-auto my-4 bg-orange-700" variant="outline" onClick={() => setShowFilters(!showFilters)}>
+            {!showFilters ? 'Фильтр' : 'Скрыть'}
+          </Button>
+          {showFilters && <ExercisesFilters exercises={exercises} filterExercises={setFilteredExercises} />}
+          <ExercisesTable data={filteredExercises} />
+        </>
+      ) : (
+        <>
+          <p>Подходящих упражнений не найдено</p>
           <Button
             className="mr-auto my-4 bg-orange-700"
             variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
+            onClick={() => setFilteredExercises(exercises)}
           >
-            {!showFilters ? 'Фильтр' : 'Скрыть'}
+            Сбросить фильтр
           </Button>
-          {showFilters && <ExercisesFilters />}
-          <ExercisesTable data={exercises} />
         </>
-      ) : (
-        'Подходящих упражнений не найдено'
       )}
     </div>
   );

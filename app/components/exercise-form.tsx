@@ -84,7 +84,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
       });
     }
 
-    router.refresh();
+    setTimeout(() => {
+      router.refresh();
+    }, 1500);
   };
 
   return (
@@ -213,7 +215,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button type="submit" disabled={isPending}>
-              Добавить Упражнение
+              {mode === 'create'
+                ? 'Добавить Упражнение'
+                : 'Редактировать Упражнение'}
             </Button>
           </form>
         </Form>

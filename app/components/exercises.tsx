@@ -20,7 +20,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
         { '-translate-x-full': showExercises },
       )}
     >
-      <h2 className="text-orange-700">Exercises</h2>
+      <h2 className="text-rose-600">Exercises</h2>
       {exercises && exercises.length > 0 ? (
         <>
           <Button
@@ -28,7 +28,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
             variant="outline"
             onClick={() => setShowFilters(!showFilters)}
           >
-            Фильтр
+            {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
           {showFilters && <ExercisesFilters />}
           <ExercisesTable data={exercises} />

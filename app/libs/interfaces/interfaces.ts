@@ -43,7 +43,7 @@ export interface ILesson {
   meta: JsonValue;
   course?: ICourse;
   courseId: string;
-  exercise?: IExercise;
+  exercise?: IExercise | null;
 }
 
 export interface IExercise {
@@ -53,6 +53,7 @@ export interface IExercise {
   code: string | null;
   test: string;
   solution: string;
+  language: string;
   requiredRank: string;
   prizePoints: number;
   meta: JsonValue;

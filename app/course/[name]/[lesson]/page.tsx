@@ -18,8 +18,8 @@ export default async function Lesson({
       <div className="flex w-full gap-10 p-5">
         <div className="w-2/4"></div>
         <div className="w-2/4">
-          {lesson?.exerciseId && (
-            <ExerciseFormWrapper exerciseId={lesson?.exerciseId} />
+          {lesson?.exercise?.id && (
+            <ExerciseFormWrapper exerciseId={lesson?.exercise?.id} />
           )}
         </div>
       </div>

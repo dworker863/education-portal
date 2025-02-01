@@ -120,6 +120,7 @@ model Exercise {
   code           String?
   test           String
   solution       String
+  language       String  @default("JavaScript")
   requiredRank   String  @default("D-")
   prizePoints    Int
   meta           Json    @default("{}")

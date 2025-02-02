@@ -1,16 +1,13 @@
+import Exercise from '@/app/components/exercise';
+import { getExerciseByName } from '@/app/libs/utils/exercises';
 import React from 'react';
 
-const Exercise = ({ params }: { params: { name: string } }) => {
-  console.log(params);
-
+const ExercisePage = async ({ params }: { params: { name: string } }) => {
   const { name } = params;
   const title = name.replace(/([A-Z])/g, ' $1').trim();
+  const exercise = await getExerciseByName(title);
 
-  return (
-    <div>
-      <h1>{title}</h1>
-    </div>
-  );
+  return <div>{exercise && <Exercise exercise={exercise} />}</div>;
 };
 
-export default Exercise;
+export default ExercisePage;

@@ -77,7 +77,7 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
             render={() => (
               <FormItem>
                 <div className="mb-2">
-                  <FormLabel className="text-base">Ранг</FormLabel>
+                  <FormLabel className="text-base">Уровень</FormLabel>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
                   {ranks.map((rank) => (

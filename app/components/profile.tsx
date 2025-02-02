@@ -21,14 +21,7 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
       <div className="mb-10">
         <div className="flex gap-4 ">
           <div className="w-20 rounded-full overflow-hidden">
-            {user?.image && (
-              <Image
-                src={user?.image?.replace(/\\/gi, '/')}
-                alt="avatar"
-                width={100}
-                height={100}
-              />
-            )}
+            {user?.image && <Image src={user?.image?.replace(/\\/gi, '/')} alt="avatar" width={100} height={100} />}
           </div>
           <div className="flex flex-col">
             <p className="text-sm text-orange-700">{user?.name}</p>
@@ -46,20 +39,16 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
           )}
           {user?.lastName && (
             <p className="mb-2 text-sm">
-              Факмилия:{' '}
-              <span className="text-orange-700">{user?.lastName}</span>
+              Факмилия: <span className="text-orange-700">{user?.lastName}</span>
             </p>
           )}
           {user?.birthDate && (
             <p className="mb-2 text-sm">
-              Дата рождения:{' '}
-              <span className="text-orange-700">
-                {new Date(user?.birthDate).toLocaleDateString()}
-              </span>
+              Дата рождения: <span className="text-orange-700">{new Date(user?.birthDate).toLocaleDateString()}</span>
             </p>
           )}
           <p className="mb-2 text-sm">
-            Ранг: <span className="text-orange-700">{user?.rank}</span>
+            Уровень: <span className="text-orange-700">{user?.rank}</span>
           </p>
           <p className="mb-2 text-sm">
             Рейтинг: <span className="text-orange-700">{user?.rating}</span>

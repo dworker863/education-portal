@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { cn } from '../libs/cn';
 import ExercisesTable from './exercises-table';
 import { Button } from './button';
@@ -10,9 +10,10 @@ import { IExercise } from '../libs/interfaces/interfaces';
 type TExercisesProps = {
   exercises: IExercise[];
   showExercises: boolean;
+  setShowExercises: Dispatch<SetStateAction<boolean>>;
 };
 
-const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
+const Exercises: FC<TExercisesProps> = ({ showExercises, exercises, setShowExercises }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
 
@@ -30,7 +31,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises }) => {
             {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
           {showFilters && <ExercisesFilters exercises={exercises} filterExercises={setFilteredExercises} />}
-          <ExercisesTable data={filteredExercises} />
+          <ExercisesTable data={filteredExercises} setShowExercises={setShowExercises} />
         </>
       ) : (
         <>

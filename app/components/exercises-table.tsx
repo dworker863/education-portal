@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -18,12 +18,14 @@ import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMe
 import { Button } from './button';
 import { ArrowUpDown } from 'lucide-react';
 import { IExercise } from '../libs/interfaces/interfaces';
+import Link from 'next/link';
 
 interface DataTableProps<TData> {
   data: TData[];
+  setShowExercises: Dispatch<SetStateAction<boolean>>;
 }
 
-const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
+const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -114,7 +116,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="mr-auto bg-orange-700">
-              Columns
+              Столбцы
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -157,7 +159,12 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data }) => {
                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell className="text-center" key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      <Link
+                        href={`/exercises/${row.original.name.split(' ').join('')}`}
+                        onClick={() => setShowExercises(false)}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Link>
                     </TableCell>
                   ))}
                 </TableRow>

@@ -21,9 +21,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
           lessons.map((lesson) => (
             <li key={lesson.id + lesson.name}>
               <div className="mb-5">
-                <Link href={`/course/${params.name}/${lesson.name}`}>
-                  {lesson.name}
-                </Link>
+                <Link href={`/courses/${params.name}/${lesson.name}`}>{lesson.name}</Link>
                 <LessonFormWrapper lessonId={lesson.id} />
               </div>
             </li>

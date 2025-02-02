@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { createLessonSchema, editLessonSchema } from '../libs/validation';
@@ -109,12 +102,8 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   return (
     <>
       {mode === 'create' ? (
-        <Button
-          className="mb-5"
-          variant="secondary"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <FaPlus size={20} color="#c2410c" />
+        <Button variant="custom" className="mb-5" onClick={() => setShowForm(!showForm)}>
+          <FaPlus size={20} />
           <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
         </Button>
       ) : null}
@@ -162,10 +151,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   <FormControl>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
-                        setFiles((prevFiles) => [
-                          ...prevFiles,
-                          ...acceptedFiles,
-                        ]);
+                        setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
                         form.setValue('images', [...files, ...acceptedFiles], {
                           shouldValidate: true,
                         });
@@ -178,25 +164,14 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input
-                              type="file"
-                              accept="image/*"
-                              multiple
-                              {...getInputProps()}
-                            />
+                            <input type="file" accept="image/*" multiple {...getInputProps()} />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">
-                                Загрузите изображение
-                              </p>
+                              <p className=" text-gray-500 text">Загрузите изображение</p>
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails
-                              field={field.name}
-                              thumbnails={files}
-                              closeBtnHandler={form.setValue}
-                            />
+                            <Thumbnails field={field.name} thumbnails={files} closeBtnHandler={form.setValue} />
                           )}
                         </section>
                       )}
@@ -205,9 +180,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   {form.formState.errors.images && (
                     <>
                       {form.formState.errors.images.message && (
-                        <p className="text-red-500 text-sm mt-2">
-                          {form.formState.errors.images.message}
-                        </p>
+                        <p className="text-red-500 text-sm mt-2">{form.formState.errors.images.message}</p>
                       )}
 
                       {Array.isArray(form.formState.errors.images) &&
@@ -242,33 +215,21 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input
-                              type="file"
-                              accept="video/*"
-                              {...getInputProps()}
-                            />
+                            <input type="file" accept="video/*" {...getInputProps()} />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">
-                                Загрузите видео
-                              </p>
+                              <p className=" text-gray-500 text">Загрузите видео</p>
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails
-                              field={field.name}
-                              thumbnails={field.value}
-                              closeBtnHandler={form.setValue}
-                            />
+                            <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.video && (
-                    <p className="text-red-500 text-sm mt-2">
-                      {form.formState.errors.video.message as string}
-                    </p>
+                    <p className="text-red-500 text-sm mt-2">{form.formState.errors.video.message as string}</p>
                   )}
                 </FormItem>
               )}

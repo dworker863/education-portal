@@ -26,6 +26,14 @@ body {
   }
 }
 
+@layer custom {
+  :root {
+    --custom-background: rgb(30 41 59);
+    --custom-primary: rgb(194 65 12);
+    --custom-secondary: rgb(225 29 72);
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -123,8 +131,7 @@ body {
   width: 0.1;
   border: 40px solid transparent;
   border-radius: 5px;
-  animation: loader 2s ease-in infinite reverse,
-    spin 0.8s linear infinite reverse;
+  animation: loader 2s ease-in infinite reverse, spin 0.8s linear infinite reverse;
 }
 
 .dizzy-gillespie::after {

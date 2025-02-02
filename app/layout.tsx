@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('bg-orange-700 text-white ', inter.className)}>
+      <body className={cn('bg-customBackground text-white ', inter.className)}>
         <AppWrapper>
           <Overlay>
             <Sidebar />

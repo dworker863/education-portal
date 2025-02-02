@@ -18,18 +18,19 @@ const ExerciseFormWrapper: FC<TExerciseFormWrapperProps> = ({ exerciseId }) => {
   return (
     <div>
       <div className="flex mb-5">
-        <Button className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
-          <FaEdit size={22} color="#c2410c" />
+        <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
+          <FaEdit size={22} />
           <span className="ml-2 text-">Редактировать</span>
         </Button>
         <Button
+          variant="custom"
           className="ml-4"
           onClick={async () => {
             await deleteExercise(exerciseId);
             router.refresh();
           }}
         >
-          <FaTrash size={16} color="#c2410c" />
+          <FaTrash size={16} />
           <span className="ml-2 text-">Удалить</span>
         </Button>
       </div>

@@ -17,23 +17,22 @@ const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
 
   return (
     <>
-      <Button className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
-        <FaEdit size={22} color="#c2410c" />
+      <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
+        <FaEdit size={22} />
         <span className="ml-2 text-">Редактировать</span>
       </Button>
       <Button
+        variant="custom"
         className="ml-4"
         onClick={async () => {
           await deleteLesson(lessonId);
           router.refresh();
         }}
       >
-        <FaTrash size={16} color="#c2410c" />
+        <FaTrash size={16} />
         <span className="ml-2 text-">Удалить</span>
       </Button>
-      <div className="mt-5">
-        {showEditForm && <LessonForm mode="edit" lessonId={lessonId} />}
-      </div>
+      <div className="mt-5">{showEditForm && <LessonForm mode="edit" lessonId={lessonId} />}</div>
     </>
   );
 };

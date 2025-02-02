@@ -5,21 +5,11 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createExerciseSchema, editExerciseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
-import {
-  addExercise,
-  editExercise,
-} from '../libs/server-actions/exercises-actions';
+import { addExercise, editExercise } from '../libs/server-actions/exercises-actions';
 import { FaPlus } from 'react-icons/fa';
 import { Textarea } from './textarea';
 import RequiredSign from './required-sign';
@@ -92,15 +82,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   return (
     <>
       {mode === 'create' && (
-        <Button
-          className="mb-5"
-          variant="secondary"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <FaPlus size={20} color="#c2410c" />
-          <span className="ml-2">
-            {!showForm ? 'Добавить Упражнение' : 'Скрыть'}
-          </span>
+        <Button variant="custom" className="mb-5" onClick={() => setShowForm(!showForm)}>
+          <FaPlus size={20} />
+          <span className="ml-2">{!showForm ? 'Добавить Упражнение' : 'Скрыть'}</span>
         </Button>
       )}
       {showForm && (
@@ -144,11 +128,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
                 <FormItem>
                   <FormLabel>Код</FormLabel>
                   <FormControl>
-                    <Textarea
-                      placeholder="Начальный код упражнения"
-                      rows={5}
-                      {...field}
-                    />
+                    <Textarea placeholder="Начальный код упражнения" rows={5} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -203,10 +183,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
                   <FormLabel>Баллы</FormLabel>
                   <RequiredSign />
                   <FormControl>
-                    <Input
-                      placeholder="Колличество призовых баллов"
-                      {...field}
-                    />
+                    <Input placeholder="Колличество призовых баллов" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -215,9 +192,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button type="submit" disabled={isPending}>
-              {mode === 'create'
-                ? 'Добавить Упражнение'
-                : 'Редактировать Упражнение'}
+              {mode === 'create' ? 'Добавить Упражнение' : 'Редактировать Упражнение'}
             </Button>
           </form>
         </Form>

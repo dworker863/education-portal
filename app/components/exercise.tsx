@@ -4,7 +4,6 @@ import { FC, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
-import { cn } from '../libs/cn';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -25,19 +24,15 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
       </p>
       <nav>
         <Button
-          variant={tab === 'exercise' ? 'default' : 'secondary'}
-          className={cn('rounded-es-none rounded-ee-none', {
-            'text-orange-600': tab === 'exercise',
-          })}
+          variant={tab === 'exercise' ? 'custom' : 'default'}
+          className="rounded-es-none rounded-ee-none"
           onClick={() => setTab('exercise')}
         >
           Задание
         </Button>
         <Button
-          variant={tab === 'solution' ? 'default' : 'outline'}
-          className={cn('rounded-es-none rounded-ee-none', {
-            'text-orange-600': tab === 'solution',
-          })}
+          variant={tab === 'solution' ? 'custom' : 'default'}
+          className="rounded-es-none rounded-ee-none"
           onClick={() => setTab('solution')}
         >
           Решение

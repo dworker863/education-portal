@@ -27,7 +27,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises, setShowExerc
       <h2 className="text-rose-600">Exercises</h2>
       {filteredExercises && filteredExercises.length > 0 ? (
         <>
-          <Button className="mr-auto my-4 bg-orange-700" variant="outline" onClick={() => setShowFilters(!showFilters)}>
+          <Button className="mr-auto my-4" variant="custom" onClick={() => setShowFilters(!showFilters)}>
             {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
           {showFilters && <ExercisesFilters exercises={exercises} filterExercises={setFilteredExercises} />}
@@ -36,11 +36,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises, setShowExerc
       ) : (
         <>
           <p>Подходящих упражнений не найдено</p>
-          <Button
-            className="mr-auto my-4 bg-orange-700"
-            variant="outline"
-            onClick={() => setFilteredExercises(exercises)}
-          >
+          <Button className="mr-auto my-4" variant="custom" onClick={() => setFilteredExercises(exercises)}>
             Сбросить фильтр
           </Button>
         </>

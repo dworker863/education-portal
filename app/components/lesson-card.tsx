@@ -10,7 +10,7 @@ type TLessonCardProps = {
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, exercise }) => {
   return (
-    <div className="flex w-full gap-10 p-10 bg-white text-black rounded-lg">
+    <div className="flex w-full gap-10 p-10 bg-primary text-background rounded-lg">
       <div className="w-2/4">
         <h2 className="mb-5 text-center">Теория</h2>
         <div className="mb-10">{lesson?.content}</div>

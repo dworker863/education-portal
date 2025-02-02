@@ -4,14 +4,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { createCourseSchema, editCourseSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import { FC, useState, useTransition } from 'react';
@@ -100,12 +93,8 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
   return (
     <>
       {mode === 'create' ? (
-        <Button
-          className="mb-5"
-          variant="secondary"
-          onClick={() => setShowForm(!showForm)}
-        >
-          <FaPlus size={20} color="#c2410c" />
+        <Button variant="custom" className="mb-5" onClick={() => setShowForm(!showForm)}>
+          <FaPlus size={20} />
           <span className="ml-2">{!showForm ? 'Добавить Курс' : 'Скрыть'}</span>
         </Button>
       ) : null}
@@ -137,11 +126,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                   <FormLabel>Описание</FormLabel>
                   <RequiredSign />
                   <FormControl>
-                    <Textarea
-                      placeholder="Добавьте описание сюда"
-                      rows={5}
-                      {...field}
-                    />
+                    <Textarea placeholder="Добавьте описание сюда" rows={5} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -169,33 +154,21 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input
-                              type="file"
-                              accept="image/*"
-                              {...getInputProps()}
-                            />
+                            <input type="file" accept="image/*" {...getInputProps()} />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">
-                                Загрузите изображение
-                              </p>
+                              <p className=" text-gray-500 text">Загрузите изображение</p>
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails
-                              field={field.name}
-                              thumbnails={field.value}
-                              closeBtnHandler={form.setValue}
-                            />
+                            <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.icon && (
-                    <p className="text-red-500 text-sm mt-2">
-                      {form.formState.errors.icon.message as string}
-                    </p>
+                    <p className="text-red-500 text-sm mt-2">{form.formState.errors.icon.message as string}</p>
                   )}
                 </FormItem>
               )}

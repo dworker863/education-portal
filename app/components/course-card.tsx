@@ -10,7 +10,7 @@ type TCourseCardProps = {
 const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   return (
     <Link href={`/courses/${course.name}`}>
-      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-white text-black ">
+      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary text-background ">
         <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
         <div className="flex gap-10 mb-8">
           <div>
@@ -19,7 +19,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           <div>{course.description}</div>
         </div>
         <div className="flex justify-end">
-          <span className="text-rose-600 text-lg font-bold">{course.priceUSD + '$'}</span>
+          <span className="text-customSecondary text-lg font-bold">{course.priceUSD + '$'}</span>
         </div>
       </div>
     </Link>

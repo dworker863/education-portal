@@ -24,7 +24,7 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
             {user?.image && <Image src={user?.image?.replace(/\\/gi, '/')} alt="avatar" width={100} height={100} />}
           </div>
           <div className="flex flex-col">
-            <p className="text-sm text-orange-700">{user?.name}</p>
+            <p className="text-sm text-customPrimary">{user?.name}</p>
             <p className="max-w-36 text-xs">{user?.email}</p>
           </div>
         </div>
@@ -34,27 +34,28 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
         <div className="flex flex-col">
           {user?.firstName && (
             <p className="mb-2 text-sm">
-              Имя: <span className="text-orange-700">{user?.firstName}</span>
+              Имя: <span className="text-customPrimary">{user?.firstName}</span>
             </p>
           )}
           {user?.lastName && (
             <p className="mb-2 text-sm">
-              Факмилия: <span className="text-orange-700">{user?.lastName}</span>
+              Факмилия: <span className="text-customPrimary">{user?.lastName}</span>
             </p>
           )}
           {user?.birthDate && (
             <p className="mb-2 text-sm">
-              Дата рождения: <span className="text-orange-700">{new Date(user?.birthDate).toLocaleDateString()}</span>
+              Дата рождения:{' '}
+              <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
             </p>
           )}
           <p className="mb-2 text-sm">
-            Уровень: <span className="text-orange-700">{user?.rank}</span>
+            Уровень: <span className="text-customPrimary">{user?.rank}</span>
           </p>
           <p className="mb-2 text-sm">
-            Рейтинг: <span className="text-orange-700">{user?.rating}</span>
+            Рейтинг: <span className="text-customPrimary">{user?.rating}</span>
           </p>
           <p className="mb-2 text-sm">
-            Баланс: <span className="text-orange-700">{user?.moneyUSD}</span>
+            Баланс: <span className="text-customPrimary">{user?.moneyUSD}</span>
           </p>
         </div>
       </div>

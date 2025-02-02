@@ -30,7 +30,7 @@ const Profile: FC<TProfile> = ({ showProfile }) => {
         </div>
       </div>
       <div>
-        <h2 className="mb-4 text-rose-600">Инфо</h2>
+        <h2 className="mb-4 text-customSecondary">Инфо</h2>
         <div className="flex flex-col">
           {user?.firstName && (
             <p className="mb-2 text-sm">

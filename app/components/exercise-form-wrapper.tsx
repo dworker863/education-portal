@@ -20,7 +20,7 @@ const ExerciseFormWrapper: FC<TExerciseFormWrapperProps> = ({ exerciseId }) => {
       <div className="flex mb-5">
         <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
           <FaEdit size={22} />
-          <span className="ml-2 text-">Редактировать</span>
+          <span className="ml-2">Редактировать</span>
         </Button>
         <Button
           variant="custom"
@@ -31,7 +31,7 @@ const ExerciseFormWrapper: FC<TExerciseFormWrapperProps> = ({ exerciseId }) => {
           }}
         >
           <FaTrash size={16} />
-          <span className="ml-2 text-">Удалить</span>
+          <span className="ml-2">Удалить</span>
         </Button>
       </div>
       {showEditForm && <ExerciseForm mode="edit" exerciseId={exerciseId} />}

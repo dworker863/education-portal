@@ -4,8 +4,7 @@ import * as React from 'react';
 import * as SliderPrimitive from '@radix-ui/react-slider';
 import { cn } from '../libs/cn';
 
-interface DualRangeSliderProps
-  extends React.ComponentProps<typeof SliderPrimitive.Root> {
+interface DualRangeSliderProps extends React.ComponentProps<typeof SliderPrimitive.Root> {
   labelPosition?: 'top' | 'bottom';
   label?: (value: number | undefined) => React.ReactNode;
 }
@@ -15,21 +14,16 @@ const Slider = React.forwardRef<
   // React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root>,
   DualRangeSliderProps
 >(({ className, label, labelPosition = 'top', ...props }, ref) => {
-  const initialValue = Array.isArray(props.value)
-    ? props.value
-    : [props.min, props.max];
+  const initialValue = Array.isArray(props.value) ? props.value : [props.min, props.max];
 
   return (
     <SliderPrimitive.Root
       ref={ref}
-      className={cn(
-        'relative flex w-full touch-none select-none items-center',
-        className,
-      )}
+      className={cn('relative flex w-full touch-none select-none items-center', className)}
       {...props}
     >
       <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20">
-        <SliderPrimitive.Range className="absolute h-full bg-rose-600" />
+        <SliderPrimitive.Range className="absolute h-full bg-customSecondary" />
       </SliderPrimitive.Track>
       {initialValue.map((value, index) => (
         <>

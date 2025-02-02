@@ -15,7 +15,7 @@ const ExercisesSlider: FC<TExercisesSliderProps> = ({ range, setRange }) => {
         <span className="text-sm">Max: {range[1]}</span>
       </div>
       <Slider
-        className="bg-orange-700"
+        className="bg-customPrimary"
         defaultValue={range}
         value={range}
         onValueChange={(newValue) => setRange(newValue)}

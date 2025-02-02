@@ -4,14 +4,7 @@ import { useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { registrationSchema } from '../libs/validation';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
@@ -21,11 +14,7 @@ import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@radix-ui/react-popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { cn } from '../libs/cn';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
@@ -96,7 +85,7 @@ const SignupForm = () => {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="space-y-8 text-primary-foreground" onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 space-y-6">
             <FormField
@@ -197,16 +186,9 @@ const SignupForm = () => {
                   <FormControl>
                     <Button
                       variant={'outline'}
-                      className={cn(
-                        'w-[240px] pl-3 text-left font-normal',
-                        !field.value && 'text-muted-foreground',
-                      )}
+                      className={cn('w-[240px] pl-3 text-left font-normal', !field.value && 'text-muted-foreground')}
                     >
-                      {field.value ? (
-                        format(field.value, 'PPP')
-                      ) : (
-                        <span>Укажите дату</span>
-                      )}
+                      {field.value ? format(field.value, 'PPP') : <span>Укажите дату</span>}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </FormControl>
@@ -216,9 +198,7 @@ const SignupForm = () => {
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
-                    disabled={(date) =>
-                      date > new Date() || date < new Date('1900-01-01')
-                    }
+                    disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                     initialFocus
                   />
                 </PopoverContent>
@@ -243,36 +223,22 @@ const SignupForm = () => {
                 >
                   {({ getRootProps, getInputProps }) => (
                     <section className="container ">
-                      <div
-                        {...getRootProps({ className: 'dropzone disabled' })}
-                      >
-                        <input
-                          type="file"
-                          accept="image/*"
-                          {...getInputProps()}
-                        />
-                        <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                          <p className=" text-gray-500 text">
-                            Загрузите изображение
-                          </p>
+                      <div {...getRootProps({ className: 'dropzone disabled' })}>
+                        <input type="file" accept="image/*" {...getInputProps()} />
+                        <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
+                          <p className=" text-muted-foreground text">Загрузите изображение</p>
                           <FaPlus size={20} color="#c2410c" />
                         </div>
                       </div>
                       {field.value && (
-                        <Thumbnails
-                          field={field.name}
-                          thumbnails={field.value}
-                          closeBtnHandler={form.setValue}
-                        />
+                        <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
                       )}
                     </section>
                   )}
                 </Dropzone>
               </FormControl>
               {form.formState.errors.image && (
-                <p className="text-red-500 text-sm mt-2">
-                  {form.formState.errors.image.message as string}
-                </p>
+                <p className="text-customSecondary text-sm mt-2">{form.formState.errors.image.message as string}</p>
               )}
             </FormItem>
           )}

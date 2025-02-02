@@ -10,22 +10,15 @@ type TThumbnailsProps = {
   closeBtnHandler: UseFormSetValue<any>;
 };
 
-const Thumbnails: FC<TThumbnailsProps> = ({
-  thumbnails,
-  closeBtnHandler,
-  field,
-}) => {
+const Thumbnails: FC<TThumbnailsProps> = ({ thumbnails, closeBtnHandler, field }) => {
   const [files, setFiles] = useState(thumbnails);
 
   return (
     <div className="mt-5">
       {thumbnails.map((thumbnail, index) => (
-        <div
-          key={URL.createObjectURL(thumbnail) + index}
-          className="w-fit relative "
-        >
+        <div key={URL.createObjectURL(thumbnail) + index} className="w-fit relative ">
           <Button
-            className="absolute -top-1.5 -right-4 text-rose-600"
+            className="absolute -top-1.5 -right-4 text-customSecondary"
             variant="link"
             onClick={() => {
               setFiles(thumbnails.splice(index, 1));
@@ -35,12 +28,7 @@ const Thumbnails: FC<TThumbnailsProps> = ({
             <IoCloseSharp size={24} />
           </Button>
           {URL.createObjectURL(thumbnail) && (
-            <Image
-              src={URL.createObjectURL(thumbnail)}
-              alt=""
-              width={100}
-              height={100}
-            />
+            <Image src={URL.createObjectURL(thumbnail)} alt="" width={100} height={100} />
           )}
         </div>
       ))}

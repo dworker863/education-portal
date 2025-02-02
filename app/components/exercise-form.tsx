@@ -90,7 +90,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -191,7 +191,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit" disabled={isPending}>
+            <Button variant="custom" type="submit" disabled={isPending}>
               {mode === 'create' ? 'Добавить Упражнение' : 'Редактировать Упражнение'}
             </Button>
           </form>

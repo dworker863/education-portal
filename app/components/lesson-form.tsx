@@ -111,7 +111,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -165,9 +165,9 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                             })}
                           >
                             <input type="file" accept="image/*" multiple {...getInputProps()} />
-                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">Загрузите изображение</p>
-                              <FaPlus size={20} color="#c2410c" />
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
+                              <p className=" text-muted-foreground">Загрузите изображение</p>
+                              <FaPlus className="text-customPrimary" size={20} />
                             </div>
                           </div>
                           {field.value && (
@@ -180,12 +180,12 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   {form.formState.errors.images && (
                     <>
                       {form.formState.errors.images.message && (
-                        <p className="text-red-500 text-sm mt-2">{form.formState.errors.images.message}</p>
+                        <p className="text-customSecondary text-sm mt-2">{form.formState.errors.images.message}</p>
                       )}
 
                       {Array.isArray(form.formState.errors.images) &&
                         form.formState.errors.images.map((error, index) => (
-                          <p key={index} className="text-red-500 text-sm mt-2">
+                          <p key={index} className="text-customSecondary text-sm mt-2">
                             {`Файл ${index + 1}: ${error?.message}`}
                           </p>
                         ))}
@@ -216,9 +216,9 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                             })}
                           >
                             <input type="file" accept="video/*" {...getInputProps()} />
-                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">Загрузите видео</p>
-                              <FaPlus size={20} color="#c2410c" />
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customSecondary rounded-lg cursor-pointer text-base text-muted-foreground ">
+                              <p className=" text-muted-foreground text">Загрузите видео</p>
+                              <FaPlus className="text-customPrimary" size={20} />
                             </div>
                           </div>
                           {field.value && (
@@ -229,14 +229,14 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.video && (
-                    <p className="text-red-500 text-sm mt-2">{form.formState.errors.video.message as string}</p>
+                    <p className="text-customSecondary text-sm mt-2">{form.formState.errors.video.message as string}</p>
                   )}
                 </FormItem>
               )}
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit" disabled={isPending}>
+            <Button variant="custom" type="submit" disabled={isPending}>
               {mode === 'create' ? 'Добавить Урок' : 'Редактировать'}
             </Button>
           </form>

@@ -115,7 +115,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="custom" className="mr-auto bg-orange-700">
+            <Button variant="custom" className="mr-auto">
               Столбцы
             </Button>
           </DropdownMenuTrigger>

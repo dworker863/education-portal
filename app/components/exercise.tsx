@@ -17,10 +17,10 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
       <h2 className="mb-5 text-center">{exercise.name}</h2>
       <p className="mb-5">{exercise.task}</p>
       <p>
-        Необходимый Уровень: <span className="text-rose-600">{exercise?.requiredRank}</span>
+        Необходимый Уровень: <span className="text-customSecondary font-semibold">{exercise?.requiredRank}</span>
       </p>
       <p className="mb-5">
-        Баллы: <span className="text-rose-600">{exercise?.prizePoints}</span>
+        Баллы: <span className="text-customSecondary font-semibold">{exercise?.prizePoints}</span>
       </p>
       <nav>
         <Button

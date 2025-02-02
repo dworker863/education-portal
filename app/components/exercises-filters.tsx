@@ -90,7 +90,7 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
                           <FormItem key={rank.id} className="flex flex-row items-start space-x-2 space-y-0">
                             <FormControl>
                               <Checkbox
-                                className="w-5 h-5 bg-orange-700 data-[state=checked]:bg-orange-700"
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
                                 checked={field.value?.includes(rank.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
@@ -111,14 +111,14 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
           />
         </div>
         <ExercisesSlider range={range} setRange={setRange} />
-        <Button variant="outline" className="mr-5 bg-orange-700">
+        <Button variant="custom" className="mr-5">
           Применить
         </Button>
         {exercises !== filteredExercises && (
           <Button
             type="button"
-            className="mr-auto my-4 bg-orange-700"
-            variant="outline"
+            className="mr-auto my-4"
+            variant="custom"
             onClick={() => {
               filterExercises(exercises);
               setFilteredExercises(exercises);

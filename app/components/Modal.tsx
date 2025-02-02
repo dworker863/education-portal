@@ -1,11 +1,6 @@
 'use client';
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from '@/app/components/card';
+import { Card, CardContent, CardFooter, CardHeader } from '@/app/components/card';
 import React, { FC, useContext, useEffect, useRef } from 'react';
 import ModalHeader from './modal-header';
 import { Button } from '@/app/components/button';
@@ -24,14 +19,7 @@ type TModalProps = {
   showSocials?: boolean;
 };
 
-const Modal: FC<TModalProps> = ({
-  children,
-  type,
-  headerLabel,
-  backButtonLabel,
-  backButtonHref,
-  showSocials,
-}) => {
+const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, backButtonHref, showSocials }) => {
   const context = useContext(ModalContext);
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -58,15 +46,11 @@ const Modal: FC<TModalProps> = ({
   if (!context?.isModalOpen && type !== 'new-password') return null;
 
   return (
-    <Card ref={modalRef} className="w-[500px] relative">
+    <Card ref={modalRef} className="relative w-[500px] bg-primary ">
       <CardHeader>
         <ModalHeader label={headerLabel} type={type} />
-        <Button
-          className="absolute right-0 top-0"
-          variant="link"
-          onClick={modalClose}
-        >
-          <IoCloseSharp size={24} />
+        <Button className="absolute right-0 top-0" variant="link" onClick={modalClose}>
+          <IoCloseSharp className="text-customPrimary" size={24} />
         </Button>
       </CardHeader>
       <CardContent>{children}</CardContent>
@@ -76,7 +60,7 @@ const Modal: FC<TModalProps> = ({
         </CardFooter>
       )}
       <CardFooter>
-        <Button variant="link" className="font-normal w-full" size="sm" asChild>
+        <Button variant="link" className="w-full text-primary-foreground font-normal" size="sm" asChild>
           <Link href={backButtonHref}>{backButtonLabel}</Link>
         </Button>
       </CardFooter>

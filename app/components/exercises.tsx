@@ -24,7 +24,7 @@ const Exercises: FC<TExercisesProps> = ({ showExercises, exercises, setShowExerc
         { '-translate-x-full': showExercises },
       )}
     >
-      <h2 className="text-rose-600">Exercises</h2>
+      <h2 className="text-customSecondary">Exercises</h2>
       {filteredExercises && filteredExercises.length > 0 ? (
         <>
           <Button className="mr-auto my-4" variant="custom" onClick={() => setShowFilters(!showFilters)}>

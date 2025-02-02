@@ -101,7 +101,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-white text-black"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -155,8 +155,8 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                             })}
                           >
                             <input type="file" accept="image/*" {...getInputProps()} />
-                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-orange-700 rounded-lg cursor-pointer text-base text-gray-500 ">
-                              <p className=" text-gray-500 text">Загрузите изображение</p>
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base">
+                              <p className="text-muted-foreground">Загрузите изображение</p>
                               <FaPlus size={20} color="#c2410c" />
                             </div>
                           </div>
@@ -168,7 +168,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.icon && (
-                    <p className="text-red-500 text-sm mt-2">{form.formState.errors.icon.message as string}</p>
+                    <p className="text-customSecondary text-sm mt-2">{form.formState.errors.icon.message as string}</p>
                   )}
                 </FormItem>
               )}
@@ -204,7 +204,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
             />
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
-            <Button type="submit" disabled={isPending}>
+            <Button variant="custom" type="submit" disabled={isPending}>
               {mode === 'create' ? 'Добавить Курс' : 'Редактировать'}
             </Button>
           </form>

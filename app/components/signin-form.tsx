@@ -5,14 +5,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { loginSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
@@ -30,9 +23,7 @@ const SigninForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
   const urlError =
-    searchParams.get('error') === 'OAuthAccountNotLinked'
-      ? 'Email уже используется другим провайдером'
-      : '';
+    searchParams.get('error') === 'OAuthAccountNotLinked' ? 'Email уже используется другим провайдером' : '';
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -70,7 +61,7 @@ const SigninForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 text-primary-foreground">
         {!twoFactor && (
           <>
             <FormField
@@ -95,12 +86,7 @@ const SigninForm = () => {
                   <FormControl>
                     <Input placeholder="********" {...field} />
                   </FormControl>
-                  <Button
-                    className="px-0 font-normal"
-                    variant="link"
-                    size="sm"
-                    asChild
-                  >
+                  <Button className="px-0 text-primary-foreground font-normal" variant="link" size="sm" asChild>
                     <Link href="/reset-password">Забыли пароль?</Link>
                   </Button>
                   <FormMessage />
@@ -126,7 +112,7 @@ const SigninForm = () => {
         )}
         {(error || urlError) && <ErrorMessage message={error || urlError} />}
         {success && <SuccessMessage message={success} />}
-        <Button className="w-full" type="submit" disabled={isPending}>
+        <Button variant="custom" className="w-full" type="submit" disabled={isPending}>
           {!twoFactor ? 'Войти' : 'Подтвердить'}
         </Button>
       </form>

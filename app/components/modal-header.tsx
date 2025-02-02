@@ -8,7 +8,7 @@ type TModalHeader = {
 const ModalHeader: FC<TModalHeader> = ({ type, label }) => {
   return (
     <div className="w-full flex flex-col gap-y-4 items-center justify-center">
-      <h1 className="text-3xl font-semibold">
+      <h1 className="text-3xl text-primary-foreground font-semibold">
         {type === 'login' && 'Войти'}
         {type === 'registration' && 'Регистрация'}
         {type === 'reset-password' && 'Сменить пароль'}

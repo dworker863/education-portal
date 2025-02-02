@@ -19,7 +19,7 @@ const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
     <>
       <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
         <FaEdit size={22} />
-        <span className="ml-2 text-">Редактировать</span>
+        <span className="ml-2">Редактировать</span>
       </Button>
       <Button
         variant="custom"
@@ -30,7 +30,7 @@ const LessonFormWrapper: FC<TLessonFormWrapperProps> = ({ lessonId }) => {
         }}
       >
         <FaTrash size={16} />
-        <span className="ml-2 text-">Удалить</span>
+        <span className="ml-2">Удалить</span>
       </Button>
       <div className="mt-5">{showEditForm && <LessonForm mode="edit" lessonId={lessonId} />}</div>
     </>

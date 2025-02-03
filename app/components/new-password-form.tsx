@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -20,10 +12,7 @@ import { Button } from '@/app/components/button';
 import { useEffect, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
-import {
-  addNewPassword,
-  confirmResetPasswordToken,
-} from '../libs/server-actions/auth-actions';
+import { addNewPassword, confirmResetPasswordToken } from '../libs/server-actions/auth-actions';
 
 const NewPasswordForm = () => {
   const [isPending, startTransiton] = useTransition();
@@ -92,7 +81,7 @@ const NewPasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="space-y-8 text-primary-foreground" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="password"
@@ -121,7 +110,7 @@ const NewPasswordForm = () => {
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit" disabled={isPending}>
+        <Button variant="custom" type="submit" disabled={isPending}>
           Подтвердить
         </Button>
       </form>

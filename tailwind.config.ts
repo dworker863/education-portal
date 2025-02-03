@@ -22,6 +22,7 @@ const config: Config = {
         customBackground: 'var(--custom-background)',
         customPrimary: 'var(--custom-primary)',
         customSecondary: 'var(--custom-secondary)',
+        customHover: 'var(--custom-hover)',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: {

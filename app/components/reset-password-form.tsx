@@ -4,14 +4,7 @@ import { useForm } from 'react-hook-form';
 import { resetPasswordSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/app/components/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import { useState, useTransition } from 'react';
@@ -45,7 +38,7 @@ const ResetPasswordForm = () => {
 
   return (
     <Form {...form}>
-      <form className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
+      <form className="space-y-8 text-primary-foreground" onSubmit={form.handleSubmit(onSubmit)}>
         <FormField
           control={form.control}
           name="email"
@@ -61,7 +54,7 @@ const ResetPasswordForm = () => {
         />
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit" disabled={isPending}>
+        <Button variant="custom" type="submit" disabled={isPending}>
           Отправить
         </Button>
       </form>

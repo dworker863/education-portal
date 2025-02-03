@@ -216,7 +216,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                             })}
                           >
                             <input type="file" accept="video/*" {...getInputProps()} />
-                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customSecondary rounded-lg cursor-pointer text-base text-muted-foreground ">
+                            <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
                               <p className=" text-muted-foreground text">Загрузите видео</p>
                               <FaPlus className="text-customPrimary" size={20} />
                             </div>

@@ -35,7 +35,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
       accessorKey: 'name',
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Название
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -46,7 +46,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
       accessorKey: 'task',
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Задание
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -57,7 +57,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
       accessorKey: 'language',
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Язык программирования
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -68,7 +68,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
       accessorKey: 'requiredRank',
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Уровень
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -79,7 +79,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
       accessorKey: 'prizePoints',
       header: ({ column }) => {
         return (
-          <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
             Баллы
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
@@ -142,7 +142,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow className="text-primary-foreground" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead className="text-center" key={header.id}>

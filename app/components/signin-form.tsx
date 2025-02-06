@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
 import ErrorMessage from './error-message';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import SuccessMessage from './success-message';
 import Link from 'next/link';
 import { login } from '../libs/server-actions/auth-actions';
@@ -18,7 +18,9 @@ import { ModalContext } from './app-wrapper';
 const SigninForm = () => {
   const context = useContext(ModalContext);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [twoFactor, setTwoFactor] = useState(false);
@@ -44,6 +46,9 @@ const SigninForm = () => {
           if (data?.success) {
             setError(null);
             setSuccess(data.success);
+            setTimeout(() => {
+              router.push('/');
+            }, 1500);
           }
 
           if (data?.twoFactor) {

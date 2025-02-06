@@ -19,9 +19,12 @@ import { cn } from '../libs/cn';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
 import { format } from 'date-fns';
+import { useRouter } from 'next/navigation';
 
 const SignupForm = () => {
+  const router = useRouter();
   const [isPending, startTransiton] = useTransition();
+
   const [error, setError] = useState<null | string>(null);
   const [success, setSuccess] = useState<null | string>(null);
 
@@ -69,11 +72,15 @@ const SignupForm = () => {
         if (data.error) {
           setError(data.error);
           setSuccess(null);
+          return;
         }
 
         if (data.success) {
           setSuccess(data.success);
           setError(null);
+          setTimeout(() => {
+            router.push('/');
+          }, 1500);
         }
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -227,7 +234,7 @@ const SignupForm = () => {
                         <input type="file" accept="image/*" {...getInputProps()} />
                         <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
                           <p className=" text-muted-foreground text">Загрузите изображение</p>
-                          <FaPlus size={20} color="#c2410c" />
+                          <FaPlus className="text-customPrimary" size={20} />
                         </div>
                       </div>
                       {field.value && (
@@ -238,7 +245,7 @@ const SignupForm = () => {
                 </Dropzone>
               </FormControl>
               {form.formState.errors.image && (
-                <p className="text-customSecondary text-sm mt-2">{form.formState.errors.image.message as string}</p>
+                <p className="text-destructive text-sm mt-2">{form.formState.errors.image.message as string}</p>
               )}
             </FormItem>
           )}

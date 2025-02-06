@@ -15,9 +15,7 @@ export const getAllExercises = async () => {
   }
 };
 
-export const addExercise = async (
-  values: z.infer<typeof createExerciseSchema>,
-) => {
+export const addExercise = async (values: z.infer<typeof createExerciseSchema>) => {
   try {
     const existingExercise = await getExerciseByName(values.name);
 
@@ -25,9 +23,7 @@ export const addExercise = async (
       throw new Error('Упражнение с таким названием уже существует');
     }
 
-    const { data, ...parsedResult } = await createExerciseSchema.safeParse(
-      values,
-    );
+    const { data, ...parsedResult } = await createExerciseSchema.safeParse(values);
 
     if (!parsedResult.success) {
       throw new Error(parsedResult.error?.issues[0].message);
@@ -44,8 +40,9 @@ export const addExercise = async (
         code: data.code || null,
         test: data.test,
         solution: data.solution,
+        language: data.language,
         requiredRank: data.requiredRank || 'D-',
-        prizePoints: Number(data.prizePoints),
+        prizePoints: data.prizePoints,
         lessonId: data.lessonId || null,
       },
     });
@@ -57,10 +54,7 @@ export const addExercise = async (
   }
 };
 
-export const editExercise = async (
-  id: string,
-  values: z.infer<typeof editExerciseSchema>,
-) => {
+export const editExercise = async (id: string, values: z.infer<typeof editExerciseSchema>) => {
   try {
     if (!id) {
       throw new Error('Не указан ID упражнения');
@@ -72,9 +66,7 @@ export const editExercise = async (
       throw new Error('Упражнение не найдено');
     }
 
-    const { data, ...parsedResult } = await editExerciseSchema.safeParse(
-      values,
-    );
+    const { data, ...parsedResult } = await editExerciseSchema.safeParse(values);
 
     if (!parsedResult.success) {
       throw new Error(parsedResult.error?.issues[0].message);
@@ -90,6 +82,7 @@ export const editExercise = async (
       'code',
       'test',
       'solution',
+      'language',
       'requiredRank',
       'prizePoints',
       'lessonId',
@@ -99,15 +92,16 @@ export const editExercise = async (
 
     fieldsToCheck.forEach((field) => {
       if (data[field] && data[field] !== existingExercise[field]) {
-        updatedData[field] =
-          field === 'prizePoints' ? Number(data[field]) : data[field];
+        updatedData[field] = field === 'prizePoints' ? Number(data[field]) : data[field];
       }
     });
 
-    const exercise = await getExerciseByName(updatedData.name);
+    if (updatedData.name) {
+      const exercise = await getExerciseByName(updatedData.name);
 
-    if (exercise && id !== exercise.id) {
-      throw Error('Упражнение с таким названием уже существует');
+      if (exercise && id !== exercise.id) {
+        throw Error('Упражнение с таким названием уже существует');
+      }
     }
 
     await prisma.exercise.update({

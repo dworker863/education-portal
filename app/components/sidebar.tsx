@@ -55,14 +55,14 @@ const Sidebar = () => {
       <Achievements showAchievements={showAchievements} />
       <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
-          <FaUser className="hover:scale-125" size={22} color="#E11D48" />
+          <FaUser className="text-customSecondary hover:scale-125" size={22} />
         </Button>
 
         <Button className="mb-2" onClick={showExercisesHandler}>
-          <TfiPencilAlt className="hover:scale-125" size={22} color="#E11D48" />
+          <TfiPencilAlt className="text-customSecondary hover:scale-125" size={22} />
         </Button>
         <Button className="mb-1" onClick={showAchievementsHandler}>
-          <GrAchievement className="hover:scale-125" size={22} color="#E11D48" />
+          <GrAchievement className="text-customSecondary hover:scale-125" size={22} />
         </Button>
       </div>
     </div>

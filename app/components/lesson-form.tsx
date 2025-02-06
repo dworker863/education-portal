@@ -88,9 +88,10 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
         if (data.success) {
           setError(null);
           setSuccess(data.success);
+          setTimeout(() => {
+            router.refresh();
+          }, 1500);
         }
-
-        router.refresh();
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
         setError('Что-то пошло не так. Попробуйте снова.');
@@ -120,7 +121,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -134,7 +135,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Текст</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Textarea placeholder="Текст урока" rows={5} {...field} />
                   </FormControl>
@@ -180,12 +181,12 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   {form.formState.errors.images && (
                     <>
                       {form.formState.errors.images.message && (
-                        <p className="text-customSecondary text-sm mt-2">{form.formState.errors.images.message}</p>
+                        <p className="text-destructive text-sm mt-2">{form.formState.errors.images.message}</p>
                       )}
 
                       {Array.isArray(form.formState.errors.images) &&
                         form.formState.errors.images.map((error, index) => (
-                          <p key={index} className="text-customSecondary text-sm mt-2">
+                          <p key={index} className="text-destructive text-sm mt-2">
                             {`Файл ${index + 1}: ${error?.message}`}
                           </p>
                         ))}
@@ -229,7 +230,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.video && (
-                    <p className="text-customSecondary text-sm mt-2">{form.formState.errors.video.message as string}</p>
+                    <p className="text-destructive text-sm mt-2">{form.formState.errors.video.message as string}</p>
                   )}
                 </FormItem>
               )}

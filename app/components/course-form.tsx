@@ -37,7 +37,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
       name: mode === 'create' ? '' : undefined,
       description: mode === 'create' ? '' : undefined,
       icon: null,
-      priceUSD: mode === 'create' ? '' : undefined,
+      priceUSD: mode === 'create' ? 0 : undefined,
       category: mode === 'create' ? '' : undefined,
     },
   });
@@ -79,9 +79,10 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
         if (data.success) {
           setError(null);
           setSuccess(data.success);
+          setTimeout(() => {
+            router.refresh();
+          }, 1500);
         }
-
-        router.refresh();
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
         setError('Что-то пошло не так. Попробуйте снова.');
@@ -110,7 +111,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -124,7 +125,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Описание</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Textarea placeholder="Добавьте описание сюда" rows={5} {...field} />
                   </FormControl>
@@ -138,7 +139,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Изображение</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
@@ -157,7 +158,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                             <input type="file" accept="image/*" {...getInputProps()} />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base">
                               <p className="text-muted-foreground">Загрузите изображение</p>
-                              <FaPlus size={20} color="#c2410c" />
+                              <FaPlus className="text-customPrimary" size={20} />
                             </div>
                           </div>
                           {field.value && (
@@ -168,7 +169,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.icon && (
-                    <p className="text-customSecondary text-sm mt-2">{form.formState.errors.icon.message as string}</p>
+                    <p className="text-destructive text-sm mt-2">{form.formState.errors.icon.message as string}</p>
                   )}
                 </FormItem>
               )}
@@ -179,9 +180,16 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Цена USD</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Input placeholder="Цена" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Цена"
+                      {...field}
+                      {...form.register('priceUSD', {
+                        valueAsNumber: true,
+                      })}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -194,7 +202,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Категория</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input placeholder="Категория" {...field} />
                   </FormControl>

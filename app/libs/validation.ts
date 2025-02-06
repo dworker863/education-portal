@@ -7,10 +7,7 @@ export const registrationSchema = z
     password: z
       .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
-      .regex(
-        /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
-        'Пароль должен содержать как буквы, так и цифры',
-      ),
+      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/, 'Пароль должен содержать как буквы, так и цифры'),
     confirmPassword: z.string(),
     firstName: z.optional(z.string()),
     lastName: z.optional(z.string()),
@@ -18,12 +15,9 @@ export const registrationSchema = z
     image: z.optional(
       z
         .any()
-        .refine(
-          (file) => !file || file instanceof File || file[0] instanceof File,
-          {
-            message: 'Файл должен быть валидным',
-          },
-        )
+        .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+          message: 'Файл должен быть валидным',
+        })
         .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
           message: 'Файл не должен быть пустым',
         })
@@ -60,10 +54,7 @@ export const newPasswordSchema = z
     password: z
       .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
-      .regex(
-        /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
-        'Пароль должен содержать как буквы, так и цифры',
-      ),
+      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/, 'Пароль должен содержать как буквы, так и цифры'),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -76,10 +67,11 @@ export const createCourseSchema = z.object({
   description: z.string().min(1, { message: 'Введите описание курса' }),
   icon: z
     .any()
-    .refine((file) => file instanceof File || file[0] instanceof File, {
+    .refine((file) => file, { message: 'Вставьте изображение для курса' })
+    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
       message: 'Файл должен быть валидным',
     })
-    .refine((file) => file.size > 0 || file[0]?.size > 0, {
+    .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
       message: 'Файл не должен быть пустым',
     })
     .refine(
@@ -88,15 +80,36 @@ export const createCourseSchema = z.object({
           return file.type && file.type.includes('image');
         }
 
-        return file[0]?.type && file[0].type.includes('image');
+        return file && file[0]?.type && file[0].type.includes('image');
       },
       { message: 'Вставьте изображение' },
     ),
-  priceUSD: z.string().min(1, { message: 'Введите цену курса' }),
+  priceUSD: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Введите цену курса' }),
   category: z.string().min(1, { message: 'Введите категорию курса' }),
 });
 
-export const editCourseSchema = createCourseSchema.partial();
+export const editCourseSchema = createCourseSchema
+  .extend({
+    icon: z
+      .any()
+      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+        message: 'Файл должен быть валидным',
+      })
+      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+        message: 'Файл не должен быть пустым',
+      })
+      .refine(
+        (file) => {
+          if (file instanceof File) {
+            return file.type && file.type.includes('image');
+          }
+
+          return !file || (file[0]?.type && file[0].type.includes('image'));
+        },
+        { message: 'Вставьте изображение' },
+      ),
+  })
+  .partial();
 
 export const createLessonSchema = z.object({
   name: z.string().min(1, { message: 'Введите название урока' }),
@@ -125,12 +138,9 @@ export const createLessonSchema = z.object({
   video: z.optional(
     z
       .any()
-      .refine(
-        (file) => !file || file instanceof File || file[0] instanceof File,
-        {
-          message: 'Файл должен быть валидным',
-        },
-      )
+      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+        message: 'Файл должен быть валидным',
+      })
       .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
         message: 'Файл не должен быть пустым',
       })
@@ -157,8 +167,9 @@ export const createExerciseSchema = z.object({
   code: z.optional(z.string()),
   test: z.string().min(1, { message: 'Введите код теста' }),
   solution: z.string().min(1, { message: 'Укажите решение' }),
+  language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),
-  prizePoints: z.string().min(1, { message: 'Укажите баллы за задание' }),
+  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   lessonId: z.optional(z.string()),
 });
 

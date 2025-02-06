@@ -39,8 +39,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
       code: mode === 'create' ? '' : undefined,
       test: mode === 'create' ? '' : undefined,
       solution: mode === 'create' ? '' : undefined,
+      language: mode === 'create' ? '' : undefined,
       requiredRank: mode === 'create' ? '' : undefined,
-      prizePoints: mode === 'create' ? '' : undefined,
+      prizePoints: mode === 'create' ? 0 : undefined,
       lessonId: lessonId || undefined,
     },
   });
@@ -66,6 +67,9 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
           .then((data) => {
             setError(null);
             setSuccess(data.success);
+            setTimeout(() => {
+              router.refresh();
+            }, 1500);
           })
           .catch((error) => {
             setSuccess(null);
@@ -73,10 +77,6 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
           });
       });
     }
-
-    setTimeout(() => {
-      router.refresh();
-    }, 1500);
   };
 
   return (
@@ -99,7 +99,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Название</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input placeholder="Название" {...field} />
                   </FormControl>
@@ -113,7 +113,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Задание</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Textarea placeholder="Задание" rows={5} {...field} />
                   </FormControl>
@@ -140,7 +140,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Тест</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Textarea placeholder="Код теста" rows={5} {...field} />
                   </FormControl>
@@ -154,9 +154,23 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Решение</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Textarea placeholder="Код решения" rows={5} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Язык</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Textarea placeholder="Язык программирования" rows={5} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -181,9 +195,14 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Баллы</FormLabel>
-                  <RequiredSign />
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Input placeholder="Колличество призовых баллов" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="Колличество призовых баллов"
+                      {...field}
+                      {...form.register('prizePoints', { valueAsNumber: true })}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

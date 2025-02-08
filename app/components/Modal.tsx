@@ -29,19 +29,19 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     router.back(); // Закрыть модальное окно, вернувшись на предыдущий маршрут
   };
 
-  const handleOutsideClick = (event: MouseEvent) => {
-    if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-      modalClose();
-    }
-  };
+  // const handleOutsideClick = (event: MouseEvent) => {
+  //   if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+  //     modalClose();
+  //   }
+  // };
 
-  useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
+  // useEffect(() => {
+  //   document.addEventListener('mousedown', handleOutsideClick);
 
-    return () => {
-      document.removeEventListener('mousedown', handleOutsideClick);
-    };
-  }, []);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleOutsideClick);
+  //   };
+  // }, []);
 
   if (!context?.isModalOpen && type !== 'new-password') return null;
 

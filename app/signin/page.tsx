@@ -1,10 +1,10 @@
 'use client';
 
 import Modal from '@/app/components/modal';
-import SignupForm from '@/app/components/signup-form';
 import { useContext, useEffect } from 'react';
 import { ModalContext } from '../components/app-wrapper';
 import { OverlayContext } from '../components/overlay';
+import SigninForm from '../components/signin-form';
 
 const SignUp = () => {
   const modalContext = useContext(ModalContext);
@@ -21,15 +21,15 @@ const SignUp = () => {
   }, [modalContext, overlayContext]);
 
   return (
-    <div className="flex align-middle justify-center w-full h-full">
+    <div className="flex items-center justify-center w-full h-full -translate-y-16">
       <Modal
-        type="registration"
-        headerLabel="Создать аккаунт"
-        backButtonLabel="Уже есть аккаунт?"
-        backButtonHref="/signin"
+        type="login"
+        headerLabel="Добро пожаловать"
+        backButtonLabel="Нет аккаунта?"
+        backButtonHref="/signup"
         showSocials
       >
-        <SignupForm />
+        <SigninForm />
       </Modal>
     </div>
   );

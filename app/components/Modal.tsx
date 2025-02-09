@@ -48,7 +48,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
   if (!context?.isModalOpen && type !== 'new-password') return null;
 
   return (
-    <Card ref={modalRef} className="relative w-[500px] bg-primary ">
+    <Card ref={modalRef} className="relative w-[500px] bg-primary h-min">
       <CardHeader>
         <ModalHeader label={headerLabel} type={type} />
         <Button className="absolute right-0 top-0" variant="link" onClick={modalClose}>

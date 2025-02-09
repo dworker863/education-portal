@@ -27,7 +27,7 @@ export default function RootLayout({
         <AppWrapper>
           <Overlay>
             <Sidebar />
-            <div className="container mx-auto">
+            <div className="container mx-auto h-screen">
               <TopLine />
               {children}
             </div>

@@ -3,7 +3,7 @@
 import { getSession, signOut } from 'next-auth/react';
 import React, { useContext, useEffect, useState } from 'react';
 import { ModalContext } from './app-wrapper';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Session } from 'next-auth';
 
 const TopLine = () => {

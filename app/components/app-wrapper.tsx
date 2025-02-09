@@ -1,16 +1,9 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import {
-  createContext,
-  Dispatch,
-  FC,
-  ReactNode,
-  SetStateAction,
-  useState,
-} from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
 
-type TModalContext = {
+export type TModalContext = {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 };
@@ -26,9 +19,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ children }) => {
 
   return (
     <SessionProvider>
-      <ModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>
-        {children}
-      </ModalContext.Provider>
+      <ModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>{children}</ModalContext.Provider>
     </SessionProvider>
   );
 };

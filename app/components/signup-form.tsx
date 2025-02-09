@@ -218,6 +218,7 @@ const SignupForm = () => {
                       selected={field.value}
                       month={field.value}
                       onSelect={field.onChange}
+                      onMonthChange={field.onChange}
                       locale={ru}
                       disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
                       initialFocus
@@ -236,7 +237,7 @@ const SignupForm = () => {
             >
               <FormControl className="w-[85px] text-primary bg-primary-foreground">
                 <SelectTrigger>
-                  <SelectValue placeholder="Выберите язык программирования" />
+                  <SelectValue placeholder="Год" />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>

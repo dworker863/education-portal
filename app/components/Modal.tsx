@@ -26,22 +26,24 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
 
   const modalClose = () => {
     context?.setIsModalOpen(false);
-    router.back(); // Закрыть модальное окно, вернувшись на предыдущий маршрут
+    router.back();
   };
 
-  // const handleOutsideClick = (event: MouseEvent) => {
-  //   if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-  //     modalClose();
-  //   }
-  // };
+  const handleOutsideClick = (event: MouseEvent) => {
+    const isSelectElement = (event.target as HTMLElement).closest('span');
 
-  // useEffect(() => {
-  //   document.addEventListener('mousedown', handleOutsideClick);
+    if (modalRef.current && !modalRef.current.contains(event.target as Node) && !isSelectElement) {
+      modalClose();
+    }
+  };
 
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleOutsideClick);
-  //   };
-  // }, []);
+  useEffect(() => {
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, []);
 
   if (!context?.isModalOpen && type !== 'new-password') return null;
 

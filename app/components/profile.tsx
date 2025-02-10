@@ -1,20 +1,27 @@
+'use client';
+
 import { FC } from 'react';
 import { cn } from '../libs/cn';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 
 type TProfile = {
-  showProfile: boolean;
+  mode: 'component' | 'page';
+  showProfile?: boolean;
 };
 
-const Profile: FC<TProfile> = ({ showProfile }) => {
+const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const { data: session } = useSession();
   const user = session?.user;
 
   return (
     <div
       className={cn(
-        'absolute top-0 right-[-400px] -z-10 flex flex-col w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
+        ' flex flex-col ',
+        {
+          'absolute top-0 right-[-400px] -z-10 w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
+            mode === 'component',
+        },
         { '-translate-x-[400px]': showProfile },
       )}
     >

@@ -25,7 +25,7 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
   const form = useForm<z.infer<typeof SelectSchema>>({
     resolver: zodResolver(SelectSchema),
     defaultValues: {
-      language: '',
+      language: 'JavaScript',
       rank: ['D-'],
     },
   });

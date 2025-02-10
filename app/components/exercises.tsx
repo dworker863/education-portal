@@ -9,18 +9,23 @@ import { IExercise } from '../libs/interfaces/interfaces';
 
 type TExercisesProps = {
   exercises: IExercise[];
-  showExercises: boolean;
-  setShowExercises: Dispatch<SetStateAction<boolean>>;
+  mode: 'component' | 'page';
+  showExercises?: boolean;
+  setShowExercises?: Dispatch<SetStateAction<boolean>>;
 };
 
-const Exercises: FC<TExercisesProps> = ({ showExercises, exercises, setShowExercises }) => {
+const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setShowExercises }) => {
   const [showFilters, setShowFilters] = useState(false);
   const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
 
   return (
     <div
       className={cn(
-        'absolute top-0 left-full -z-10 flex flex-col w-svw h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform',
+        'flex flex-col w-svw h-svh ',
+        {
+          'absolute top-0 left-full -z-10 px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
+            mode === 'component',
+        },
         { '-translate-x-full': showExercises },
       )}
     >

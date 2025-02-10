@@ -47,10 +47,15 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed right-0">
-      <Profile showProfile={showProfile} />
+    <div className="fixed right-0 z-50">
+      <Profile mode="component" showProfile={showProfile} />
       {exercises && exercises?.length > 0 && (
-        <Exercises exercises={exercises} showExercises={showExercises} setShowExercises={setShowExercises} />
+        <Exercises
+          exercises={exercises}
+          mode="component"
+          showExercises={showExercises}
+          setShowExercises={setShowExercises}
+        />
       )}
       <Achievements showAchievements={showAchievements} />
       <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">

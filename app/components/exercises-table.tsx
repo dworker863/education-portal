@@ -22,7 +22,7 @@ import Link from 'next/link';
 
 interface DataTableProps<TData> {
   data: TData[];
-  setShowExercises: Dispatch<SetStateAction<boolean>>;
+  setShowExercises?: Dispatch<SetStateAction<boolean>>;
 }
 
 const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => {
@@ -161,7 +161,7 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
                     <TableCell className="text-center" key={cell.id}>
                       <Link
                         href={`/exercises/${row.original.name.split(' ').join('')}`}
-                        onClick={() => setShowExercises(false)}
+                        onClick={() => setShowExercises && setShowExercises(false)}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Link>

@@ -61,3 +61,15 @@ export interface IExercise {
   lessonId: string | null;
   completedUsers?: IUser[];
 }
+
+export interface IAchievement {
+  id: string;
+  name: string;
+  task: string;
+  language?: string;
+  requiredRank: string;
+  discount: number;
+  meta: JsonValue;
+  course?: ICourse;
+  courseId: string | null;
+}

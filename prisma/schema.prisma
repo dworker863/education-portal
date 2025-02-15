@@ -88,17 +88,18 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id              String   @id @default(cuid())
+  id              String       @id @default(cuid())
   name            String
   description     String
   icon            String
   priceUSD        Float
   certificateId   String?
   category        String
-  meta            Json     @default("{}")
+  meta            Json         @default("{}")
   lessons         Lesson[]
-  usersInProgress User[]   @relation("UsersInProgressCourses")
-  completedUsers  User[]   @relation("UsersCompletedCourses")
+  usersInProgress User[]       @relation("UsersInProgressCourses")
+  completedUsers  User[]       @relation("UsersCompletedCourses")
+  Achievements    Achievement?
 }
 
 model Lesson {
@@ -127,4 +128,16 @@ model Exercise {
   lesson         Lesson? @relation(fields: [lessonId], references: [id])
   lessonId       String? @unique
   completedUsers User[]
+}
+
+model Achievement {
+  id           String  @id @default(cuid())
+  name         String
+  task         String
+  language     String?
+  requiredRank String  @default("D-")
+  discount     Int
+  meta         Json    @default("{}")
+  course       Course? @relation(fields: [courseId], references: [id])
+  courseId     String? @unique
 }

@@ -181,3 +181,12 @@ export const SelectSchema = z.object({
     message: 'Укажите ранг',
   }),
 });
+
+export const createAchievementSchema = z.object({
+  name: z.string().min(1, { message: 'Введите название достижения' }),
+  task: z.string().min(1, { message: 'Введите описание' }),
+  language: z.optional(z.string()),
+  requiredRank: z.optional(z.string()),
+  discount: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  courseName: z.string().min(1, { message: 'Укажите курс, на который распространяется призовой бонус' }),
+});

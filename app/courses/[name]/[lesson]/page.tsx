@@ -1,13 +1,11 @@
+import Breadcrumbs from '@/app/components/breadcrumbs';
 import ExerciseForm from '@/app/components/exercise-form';
 import ExerciseFormWrapper from '@/app/components/exercise-form-wrapper';
 import LessonCard from '@/app/components/lesson-card';
 import { getLessonByName } from '@/app/libs/utils/lessons';
+import { headers } from 'next/headers';
 
-export default async function Lesson({
-  params,
-}: {
-  params: { lesson: string };
-}) {
+export default async function Lesson({ params }: { params: { lesson: string } }) {
   const lesson = await getLessonByName(params.lesson);
 
   return (
@@ -17,11 +15,7 @@ export default async function Lesson({
       {lesson && <LessonCard lesson={lesson} exercise={lesson.exercise} />}
       <div className="flex w-full gap-10 p-5">
         <div className="w-2/4"></div>
-        <div className="w-2/4">
-          {lesson?.exercise?.id && (
-            <ExerciseFormWrapper exerciseId={lesson?.exercise?.id} />
-          )}
-        </div>
+        <div className="w-2/4">{lesson?.exercise?.id && <ExerciseFormWrapper exerciseId={lesson?.exercise?.id} />}</div>
       </div>
     </>
   );

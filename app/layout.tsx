@@ -6,6 +6,7 @@ import { cn } from './libs/cn';
 import TopLine from './components/top-line';
 import Sidebar from './components/sidebar';
 import Overlay from './components/overlay';
+import Breadcrumbs from './components/breadcrumbs';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -29,6 +30,7 @@ export default function RootLayout({
             <Sidebar />
             <div className="container mx-auto h-screen">
               <TopLine />
+              <Breadcrumbs />
               {children}
             </div>
           </Overlay>

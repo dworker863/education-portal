@@ -20,7 +20,7 @@
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-select": "^2.1.5",
     "@radix-ui/react-slider": "^1.2.2",
-    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.2",
     "@stackblitz/sdk": "^1.11.0",
     "@tanstack/react-table": "^8.20.6",
     "@types/bcryptjs": "^2.4.6",

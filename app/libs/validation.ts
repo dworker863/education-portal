@@ -185,6 +185,25 @@ export const SelectSchema = z.object({
 export const createAchievementSchema = z.object({
   name: z.string().min(1, { message: 'Введите название достижения' }),
   task: z.string().min(1, { message: 'Введите описание' }),
+  icon: z
+    .any()
+    .refine((file) => file, { message: 'Вставьте иконку достижения' })
+    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
+      message: 'Файл должен быть валидным',
+    })
+    .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
+      message: 'Файл не должен быть пустым',
+    })
+    .refine(
+      (file) => {
+        if (file instanceof File) {
+          return file.type && file.type.includes('image');
+        }
+
+        return file && file[0]?.type && file[0].type.includes('image');
+      },
+      { message: 'Вставьте изображение' },
+    ),
   language: z.optional(z.string()),
   requiredRank: z.optional(z.string()),
   discount: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),

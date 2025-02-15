@@ -195,7 +195,6 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                 </FormItem>
               )}
             />
-
             <FormField
               control={form.control}
               name="category"

@@ -134,6 +134,7 @@ model Achievement {
   id           String  @id @default(cuid())
   name         String
   task         String
+  icon         String
   language     String?
   requiredRank String  @default("D-")
   discount     Int

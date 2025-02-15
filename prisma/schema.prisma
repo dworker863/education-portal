@@ -139,6 +139,6 @@ model Achievement {
   requiredRank String  @default("D-")
   discount     Int
   meta         Json    @default("{}")
-  course       Course? @relation(fields: [courseId], references: [id])
-  courseId     String? @unique
+  course       Course  @relation(fields: [courseId], references: [id])
+  courseId     String  @unique
 }

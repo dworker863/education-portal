@@ -209,3 +209,5 @@ export const createAchievementSchema = z.object({
   discount: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   courseName: z.string().min(1, { message: 'Укажите курс, на который распространяется призовой бонус' }),
 });
+
+export const editAchievementSchema = createAchievementSchema.partial();

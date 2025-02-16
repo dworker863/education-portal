@@ -99,8 +99,6 @@ export async function PATCH(request: NextRequest) {
       const course = await getCourseByName(updatedData.name);
 
       if (course && courseId !== course.id) {
-        console.log(courseId);
-
         return NextResponse.json({ error: 'Курс с таким названием уже существует' }, { status: 409 });
       }
     }

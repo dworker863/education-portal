@@ -1,6 +1,6 @@
-import { getAchievementByName } from '@/app/libs/utils/achievements';
+import { getAchievementById, getAchievementByName } from '@/app/libs/utils/achievements';
 import { fileUpload } from '@/app/libs/utils/auth';
-import { createAchievementSchema } from '@/app/libs/validation';
+import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from '@/app/libs/utils/courses';
@@ -60,6 +60,82 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: 'Достижение успешно добавлено' }, { status: 200 });
   } catch (error) {
     console.error('Ошибка при создании достижения: ', error);
+    return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  try {
+    const formData = await request.formData();
+    const values = Object.fromEntries(formData);
+    const achievementId = values.id;
+
+    if (!achievementId) {
+      return NextResponse.json({ error: 'Не указан ID курса' }, { status: 400 });
+    }
+
+    const existingAchievement = await getAchievementById(values.id as string);
+
+    if (!existingAchievement) {
+      return NextResponse.json({ error: 'Достижение не найдено' }, { status: 404 });
+    }
+
+    const existingCourse = await getCourseByName(values.courseName as string);
+
+    if (!existingCourse) {
+      return NextResponse.json({ error: 'Курса с таким названием не существует' }, { status: 404 });
+    }
+
+    const { data, ...parsedResult } = editAchievementSchema.safeParse({
+      ...values,
+      discount: values.discount ? Number(values.discount) : null,
+    });
+
+    if (!parsedResult.success) {
+      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+    }
+
+    if (!data) {
+      return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    }
+
+    const fieldsToCheck = ['name', 'task', 'language', 'requiredRank', 'discount', 'courseId'] as const;
+
+    const updatedData: Record<string, any> = {};
+
+    delete data.courseName;
+    const dataToCheck = { ...data, courseId: existingCourse.id };
+
+    fieldsToCheck.forEach((field) => {
+      if (dataToCheck[field] && dataToCheck[field] !== existingAchievement[field]) {
+        updatedData[field] = dataToCheck[field];
+      }
+    });
+
+    if (updatedData.name) {
+      const achievement = await getAchievementByName(updatedData.name);
+
+      if (achievement && achievementId !== achievement.id) {
+        return NextResponse.json({ error: 'Достижение с таким названием уже существует' }, { status: 409 });
+      }
+    }
+
+    if (data.icon) {
+      const uploadResult = await fileUpload(data.icon);
+
+      if (uploadResult instanceof Error) {
+        return NextResponse.json({ error: uploadResult.message }, { status: 400 });
+      }
+
+      updatedData.icon = uploadResult;
+    }
+
+    await prisma.achievement.update({
+      where: { id: achievementId as string },
+      data: updatedData,
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении достижения: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
   }
 }

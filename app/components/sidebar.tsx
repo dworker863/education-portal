@@ -72,7 +72,12 @@ const Sidebar = () => {
         />
       )}
       {achievements && achievements.length > 0 && (
-        <Achievements showAchievements={showAchievements} achievements={achievements} />
+        <Achievements
+          achievements={achievements}
+          mode="component"
+          showAchievements={showAchievements}
+          setShowAchievements={setShowAchievements}
+        />
       )}
       <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>

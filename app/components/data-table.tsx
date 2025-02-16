@@ -16,77 +16,20 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '.
 import { Input } from './input';
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
 import { Button } from './button';
-import { ArrowUpDown } from 'lucide-react';
-import { IExercise } from '../libs/interfaces/interfaces';
+import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 
 interface DataTableProps<TData> {
+  mode: 'exercises' | 'achievements';
   data: TData[];
-  setShowExercises?: Dispatch<SetStateAction<boolean>>;
+  setShowComponent?: Dispatch<SetStateAction<boolean>>;
+  columns: ColumnDef<IExercise>[] | ColumnDef<IAchievement>[];
 }
 
-const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => {
+const DataTable: FC<DataTableProps<any>> = ({ mode, data, setShowComponent, columns }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-
-  const columns: ColumnDef<IExercise>[] = [
-    {
-      accessorKey: 'name',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Название
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: 'task',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Задание
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: 'language',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Язык программирования
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: 'requiredRank',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Уровень
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: 'prizePoints',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Баллы
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-  ];
 
   const table = useReactTable({
     data,
@@ -160,8 +103,8 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
                   {row.getVisibleCells().map((cell) => (
                     <TableCell className="text-center" key={cell.id}>
                       <Link
-                        href={`/exercises/${row.original.name.split(' ').join('')}`}
-                        onClick={() => setShowExercises && setShowExercises(false)}
+                        href={`/${mode}/${row.original.name.split(' ').join('')}`}
+                        onClick={() => setShowComponent && setShowComponent(false)}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Link>
@@ -183,4 +126,4 @@ const ExercisesTable: FC<DataTableProps<any>> = ({ data, setShowExercises }) => 
   );
 };
 
-export default ExercisesTable;
+export default DataTable;

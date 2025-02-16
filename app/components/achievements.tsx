@@ -1,12 +1,17 @@
+'use client';
+
 import { FC } from 'react';
 import { cn } from '../libs/cn';
-import AchievementsForm from './achievements-form';
+import AchievementForm from './achievement-form';
+import AchievementFormWrapper from './achievement-form-wrapper';
+import { IAchievement } from '../libs/interfaces/interfaces';
 
 type TAchievementsProps = {
   showAchievements: boolean;
+  achievements: IAchievement[];
 };
 
-const Achievements: FC<TAchievementsProps> = ({ showAchievements }) => {
+const Achievements: FC<TAchievementsProps> = ({ showAchievements, achievements }) => {
   return (
     <div
       className={cn(
@@ -15,7 +20,18 @@ const Achievements: FC<TAchievementsProps> = ({ showAchievements }) => {
       )}
     >
       <h2 className="text-customSecondary">Achievements</h2>
-      <AchievementsForm />
+      <section className="py-5">
+        <AchievementForm mode="create" />
+        <section>
+          {achievements.length > 0 &&
+            achievements.map((achievement) => (
+              <div key={achievement.id}>
+                <AchievementFormWrapper achievementId={achievement.id} />
+              </div>
+            ))}
+          <br />
+        </section>
+      </section>
     </div>
   );
 };

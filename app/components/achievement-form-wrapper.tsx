@@ -1,19 +1,20 @@
 'use client';
 
-import React, { FC, useState } from 'react';
+import { FC, useState } from 'react';
 import { Button } from './button';
-import { deleteCourse } from '../libs/server-actions/courses-actions';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import CourseForm from './course-form';
+import { deleteAchievement } from '../libs/server-actions/achievements-actions';
 import { useRouter } from 'next/navigation';
+import AchievementsForm from './achievement-form';
 
-type TCourseFormWrapperProps = {
-  courseId: string;
+type TAchievementFormWrapperProps = {
+  achievementId: string;
 };
 
-const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
-  const [showEditForm, setShowEditForm] = useState(false);
+const AchievementFormWrapper: FC<TAchievementFormWrapperProps> = ({ achievementId }) => {
   const router = useRouter();
+  const [showEditForm, setShowEditForm] = useState(false);
+
   return (
     <>
       <div className="flex justify-between mb-5">
@@ -26,7 +27,7 @@ const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
             variant="custom"
             className="ml-4"
             onClick={async () => {
-              await deleteCourse(courseId);
+              await deleteAchievement(achievementId);
               router.refresh();
             }}
           >
@@ -35,9 +36,9 @@ const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
           </Button>
         </div>
       </div>
-      {showEditForm && <CourseForm mode="edit" courseId={courseId} />}
+      {showEditForm && <AchievementsForm mode="edit" achievementId={achievementId} />}
     </>
   );
 };
 
-export default CourseFormWrapper;
+export default AchievementFormWrapper;

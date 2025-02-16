@@ -67,7 +67,7 @@ export interface IAchievement {
   name: string;
   task: string;
   icon: string;
-  language?: string;
+  language: string | null;
   requiredRank: string;
   discount: number;
   meta: JsonValue;

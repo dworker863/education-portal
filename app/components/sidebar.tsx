@@ -8,11 +8,14 @@ import { GrAchievement } from 'react-icons/gr';
 import Profile from './profile';
 import Achievements from './achievements';
 import Exercises from './exercises';
-import { IExercise } from '../libs/interfaces/interfaces';
+import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import { getAllExercises } from '../libs/server-actions/exercises-actions';
+import { getAllAchievements } from '../libs/server-actions/achievements-actions';
+import AchievementForm from './achievement-form';
 
 const Sidebar = () => {
   const [exercises, setExercises] = useState<IExercise[] | null>(null);
+  const [achievements, setAchievements] = useState<IAchievement[] | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showExercises, setShowExercises] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
@@ -21,6 +24,17 @@ const Sidebar = () => {
     getAllExercises()
       .then((data) => {
         setExercises(data);
+      })
+      .catch((error) => {
+        console.log('Что-то пошло не так');
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    getAllAchievements()
+      .then((data) => {
+        setAchievements(data);
       })
       .catch((error) => {
         console.log('Что-то пошло не так');
@@ -57,7 +71,9 @@ const Sidebar = () => {
           setShowExercises={setShowExercises}
         />
       )}
-      <Achievements showAchievements={showAchievements} />
+      {achievements && achievements.length > 0 && (
+        <Achievements showAchievements={showAchievements} achievements={achievements} />
+      )}
       <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
           <FaUser className="text-customSecondary hover:scale-125" size={22} />

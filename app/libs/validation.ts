@@ -175,7 +175,7 @@ export const createExerciseSchema = z.object({
 
 export const editExerciseSchema = createExerciseSchema.partial();
 
-export const SelectSchema = z.object({
+export const exercisesFiltersSchema = z.object({
   language: z.string(),
   rank: z.array(z.string()).refine((value) => value.some((item) => item), {
     message: 'Укажите ранг',
@@ -208,6 +208,13 @@ export const createAchievementSchema = z.object({
   requiredRank: z.optional(z.string()),
   discount: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   courseName: z.string().min(1, { message: 'Укажите курс, на который распространяется призовой бонус' }),
+});
+
+export const achievementsFiltersSchema = z.object({
+  language: z.string(),
+  rank: z.array(z.string()).refine((value) => value.some((item) => item), {
+    message: 'Укажите ранг',
+  }),
 });
 
 export const editAchievementSchema = createAchievementSchema.partial();

@@ -1,15 +1,16 @@
 import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { Slider } from './slider';
 
-type TExercisesSliderProps = {
+type TRangeSliderProps = {
+  title: string;
   range: number[];
   setRange: Dispatch<SetStateAction<number[]>>;
 };
 
-const ExercisesSlider: FC<TExercisesSliderProps> = ({ range, setRange }) => {
+const RangeSlider: FC<TRangeSliderProps> = ({ title, range, setRange }) => {
   return (
     <div className="w-[200px] mb-5">
-      <h2 className="mb-1">Баллы</h2>
+      <h2 className="mb-1">{title}</h2>
       <div className="flex justify-between">
         <span className="text-sm">Min: {range[0]}</span>
         <span className="text-sm">Max: {range[1]}</span>
@@ -27,4 +28,4 @@ const ExercisesSlider: FC<TExercisesSliderProps> = ({ range, setRange }) => {
   );
 };
 
-export default ExercisesSlider;
+export default RangeSlider;

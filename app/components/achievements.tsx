@@ -1,14 +1,13 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction } from 'react';
+import { Dispatch, FC, SetStateAction, useState } from 'react';
 import { cn } from '../libs/cn';
-import AchievementForm from './achievement-form';
-import AchievementFormWrapper from './achievement-form-wrapper';
 import { IAchievement } from '../libs/interfaces/interfaces';
 import DataTable from './data-table';
 import { Button } from './button';
 import { ArrowUpDown } from 'lucide-react';
 import { ColumnDef } from '@tanstack/react-table';
+import AchievementsFilters from './achievements-filters';
 
 type TAchievementsProps = {
   mode: 'component' | 'page';
@@ -18,6 +17,9 @@ type TAchievementsProps = {
 };
 
 const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowAchievements, achievements }) => {
+  const [showFilters, setShowFilters] = useState(false);
+  const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
+
   const columns: ColumnDef<IAchievement>[] = [
     {
       accessorKey: 'name',
@@ -88,20 +90,29 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
       )}
     >
       {mode === 'component' && <h2 className="text-customSecondary">Achievements</h2>}
-      <section className="py-5">
-        {achievements.length > 0 &&
-          achievements.map((achievement) => (
-            <div key={achievement.id}>
-              <DataTable
-                mode="achievements"
-                data={achievements}
-                columns={columns}
-                setShowComponent={setShowAchievements}
-              />
-            </div>
-          ))}
-        <br />
-      </section>
+      {filteredAchievements && filteredAchievements.length > 0 ? (
+        <>
+          <Button className="mr-auto my-4" variant="custom" onClick={() => setShowFilters(!showFilters)}>
+            {!showFilters ? 'Фильтр' : 'Скрыть'}
+          </Button>
+          {showFilters && (
+            <AchievementsFilters achievements={achievements} filterAchievements={setFilteredAchievements} />
+          )}
+          <DataTable
+            mode="achievements"
+            data={filteredAchievements}
+            setShowComponent={setShowAchievements}
+            columns={columns}
+          />
+        </>
+      ) : (
+        <>
+          <p>Подходящих достижений не найдено</p>
+          <Button className="mr-auto my-4" variant="custom" onClick={() => setFilteredAchievements(achievements)}>
+            Сбросить фильтр
+          </Button>
+        </>
+      )}
     </div>
   );
 };

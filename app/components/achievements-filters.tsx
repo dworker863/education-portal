@@ -1,48 +1,50 @@
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { FC, Dispatch, SetStateAction, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { Dispatch, FC, SetStateAction, useState } from 'react';
+import { IAchievement } from '../libs/interfaces/interfaces';
+import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Checkbox } from './checkbox';
-import { ranks } from '../libs/utils/static-data';
-import { exercisesFiltersSchema } from '../libs/validation';
-import RangeSlider from './range-slider';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
-import { IExercise } from '../libs/interfaces/interfaces';
+import RangeSlider from './range-slider';
+import { ranks } from '../libs/utils/static-data';
 
-type TExercisesFiltersProps = {
-  exercises: IExercise[];
-  filterExercises: Dispatch<SetStateAction<IExercise[]>>;
+type TAchievementsFiltersProps = {
+  achievements: IAchievement[];
+  filterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
 };
 
-const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercises }) => {
+const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
   const [range, setRange] = useState([20, 80]);
-  const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
+  const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
-  const form = useForm<z.infer<typeof exercisesFiltersSchema>>({
-    resolver: zodResolver(exercisesFiltersSchema),
+  const form = useForm<z.infer<typeof achievementsFiltersSchema>>({
+    resolver: zodResolver(achievementsFiltersSchema),
     defaultValues: {
       language: 'JavaScript',
       rank: ['D-'],
     },
   });
 
-  const onSubmit = (values: z.infer<typeof exercisesFiltersSchema>) => {
-    const result = exercises.filter((exercise) => {
+  const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
+    const result = achievements.filter((achievements) => {
       return (
-        exercise.language === values.language &&
-        values.rank.includes(exercise.requiredRank) &&
-        range[0] <= exercise.prizePoints &&
-        exercise.prizePoints <= range[1]
+        achievements.language === values.language &&
+        values.rank.includes(achievements.requiredRank) &&
+        range[0] <= achievements.discount &&
+        achievements.discount <= range[1]
       );
     });
 
-    setFilteredExercises(result);
-    filterExercises(result);
+    setFilteredAchievements(result);
+    filterAchievements(result);
   };
+
+  console.log('ACHIEVEMENT FILTERS');
 
   return (
     <Form {...form}>
@@ -110,18 +112,18 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
             )}
           />
         </div>
-        <RangeSlider title="Баллы" range={range} setRange={setRange} />
+        <RangeSlider title="Скидка" range={range} setRange={setRange} />
         <Button variant="custom" className="mr-5">
           Применить
         </Button>
-        {exercises !== filteredExercises && (
+        {achievements !== filteredAchievements && (
           <Button
             type="button"
             className="mr-auto my-4"
             variant="custom"
             onClick={() => {
-              filterExercises(exercises);
-              setFilteredExercises(exercises);
+              filterAchievements(achievements);
+              setFilteredAchievements(achievements);
             }}
           >
             Сбросить фильтр
@@ -132,4 +134,4 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
   );
 };
 
-export default ExercisesFilters;
+export default AchievementsFilters;

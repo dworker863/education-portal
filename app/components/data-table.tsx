@@ -48,7 +48,7 @@ const DataTable: FC<DataTableProps<any>> = ({ mode, data, setShowComponent, colu
   });
 
   return (
-    <>
+    <div className="mb-4">
       <div className="flex items-center py-4">
         <Input
           placeholder="Название..."
@@ -122,7 +122,7 @@ const DataTable: FC<DataTableProps<any>> = ({ mode, data, setShowComponent, colu
           </TableBody>
         </Table>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -19,7 +19,7 @@ const AchievementFormWrapper: FC<TAchievementFormWrapperProps> = ({ achievementI
     <>
       <div className="flex justify-between mb-5">
         <div className="flex gap-2">
-          <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
+          <Button variant="custom" onClick={() => setShowEditForm(!showEditForm)}>
             <FaEdit size={22} />
             <span className="ml-2">Редактировать</span>
           </Button>

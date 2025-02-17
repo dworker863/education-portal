@@ -4,7 +4,11 @@ import { prisma } from '@/prisma/prisma';
 
 export const getAllAchievements = async () => {
   try {
-    const achievement = await prisma.achievement.findMany();
+    const achievement = await prisma.achievement.findMany({
+      include: {
+        course: true,
+      },
+    });
 
     return achievement;
   } catch (error) {

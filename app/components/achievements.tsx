@@ -12,7 +12,7 @@ import { ColumnDef } from '@tanstack/react-table';
 
 type TAchievementsProps = {
   mode: 'component' | 'page';
-  showAchievements: boolean;
+  showAchievements?: boolean;
   setShowAchievements?: Dispatch<SetStateAction<boolean>>;
   achievements: IAchievement[];
 };
@@ -87,24 +87,20 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
         { '-translate-x-full': showAchievements },
       )}
     >
-      <h2 className="text-customSecondary">Achievements</h2>
+      {mode === 'component' && <h2 className="text-customSecondary">Achievements</h2>}
       <section className="py-5">
-        <AchievementForm mode="create" />
-        <section>
-          {achievements.length > 0 &&
-            achievements.map((achievement) => (
-              <div key={achievement.id}>
-                <AchievementFormWrapper achievementId={achievement.id} />
-                <DataTable
-                  mode="achievements"
-                  data={achievements}
-                  columns={columns}
-                  setShowComponent={setShowAchievements}
-                />
-              </div>
-            ))}
-          <br />
-        </section>
+        {achievements.length > 0 &&
+          achievements.map((achievement) => (
+            <div key={achievement.id}>
+              <DataTable
+                mode="achievements"
+                data={achievements}
+                columns={columns}
+                setShowComponent={setShowAchievements}
+              />
+            </div>
+          ))}
+        <br />
       </section>
     </div>
   );

@@ -1,21 +1,14 @@
 import NextAuth from 'next-auth';
 import authConfig from './auth.config';
-import {
-  apiAuthRoutes,
-  authRoutes,
-  DEFAULT_LOGIN_REDIRECT,
-  publicRoutes,
-} from './app/libs/routes';
+import { apiAuthRoutes, authRoutes, DEFAULT_LOGIN_REDIRECT, publicRoutes } from './app/libs/routes';
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
-  const session = req.auth;
-  const pathname = req.nextUrl.pathname;
-
-  const isApiAuthRoute = apiAuthRoutes.includes(pathname);
-  const isPublicRoute = publicRoutes.includes(pathname);
-
+  // const session = req.auth;
+  // const pathname = req.nextUrl.pathname;
+  // const isApiAuthRoute = apiAuthRoutes.includes(pathname);
+  // const isPublicRoute = publicRoutes.includes(pathname);
   // if (
   //   (pathname === '/signin' ||
   //     pathname === '/signup' ||
@@ -24,7 +17,6 @@ export default auth((req) => {
   // ) {
   //   return Response.redirect(new URL('/', req.nextUrl));
   // }
-
   // if (!isPublicRoute && !isApiAuthRoute && !session) {
   //   return Response.redirect(new URL('/', req.nextUrl));
   // }

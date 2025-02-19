@@ -70,6 +70,8 @@ export async function PATCH(request: Request) {
     const values = Object.fromEntries(formData);
     const achievementId = values.id;
 
+    console.log(values);
+
     if (!achievementId) {
       return NextResponse.json({ error: 'Не указан ID курса' }, { status: 400 });
     }
@@ -80,10 +82,14 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Достижение не найдено' }, { status: 404 });
     }
 
-    const existingCourse = await getCourseByName(values.courseName as string);
+    let existingCourse;
 
-    if (!existingCourse) {
-      return NextResponse.json({ error: 'Курса с таким названием не существует' }, { status: 404 });
+    if (values.courseName) {
+      existingCourse = await getCourseByName(values.courseName as string);
+
+      if (!existingCourse) {
+        return NextResponse.json({ error: 'Курса с таким названием не существует' }, { status: 404 });
+      }
     }
 
     const { data, ...parsedResult } = editAchievementSchema.safeParse({
@@ -104,7 +110,7 @@ export async function PATCH(request: Request) {
     const updatedData: Record<string, any> = {};
 
     delete data.courseName;
-    const dataToCheck = { ...data, courseId: existingCourse.id };
+    const dataToCheck = { ...data, courseId: existingCourse?.id };
 
     fieldsToCheck.forEach((field) => {
       if (dataToCheck[field] && dataToCheck[field] !== existingAchievement[field]) {
@@ -130,10 +136,15 @@ export async function PATCH(request: Request) {
       updatedData.icon = uploadResult;
     }
 
+    console.log(existingAchievement);
+    console.log(updatedData);
+
     await prisma.achievement.update({
       where: { id: achievementId as string },
       data: updatedData,
     });
+
+    return NextResponse.json({ success: 'Достижение успешно обновлено' }, { status: 200 });
   } catch (error) {
     console.error('Ошибка при обновлении достижения: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });

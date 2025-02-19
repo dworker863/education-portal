@@ -17,7 +17,7 @@ const Achievement: FC<TAchievementProps> = ({ achievement }) => {
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{achievement?.requiredRank}</span>
       </p>
       <p className="mb-5">
-        Баллы: <span className="text-customSecondary font-semibold">{achievement?.discount}</span>
+        Скидка: <span className="text-customSecondary font-semibold">{achievement?.discount}%</span>
       </p>
       <p className="mb-5">
         Курс: <span className="text-customSecondary font-semibold">{achievement?.course?.name}</span>

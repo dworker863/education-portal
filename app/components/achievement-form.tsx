@@ -66,7 +66,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           formData.append('icon', values.icon[0]);
         }
 
-        const res = await fetch('api/course', {
+        const res = await fetch('/api/achievement', {
           method: mode === 'create' ? 'POST' : 'PATCH',
           body: formData,
         });
@@ -229,6 +229,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Курс</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input placeholder="Курс, на который распространяется призовой бонус" {...field} />
                   </FormControl>

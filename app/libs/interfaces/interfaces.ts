@@ -62,6 +62,10 @@ export interface IExercise {
   completedUsers?: IUser[];
 }
 
+export interface ICoursePartial {
+  name: string;
+}
+
 export interface IAchievement {
   id: string;
   name: string;
@@ -71,6 +75,6 @@ export interface IAchievement {
   requiredRank: string;
   discount: number;
   meta: JsonValue;
-  course?: ICourse;
+  course?: ICoursePartial;
   courseId: string | null;
 }

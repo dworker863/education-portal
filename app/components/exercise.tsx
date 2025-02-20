@@ -4,6 +4,7 @@ import { FC, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
+import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -41,6 +42,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
       <div className="mb-5" id="test">
         <EditorWrapper exercise={exercise} tab={tab} />
       </div>
+      <ExerciseFormWrapper exerciseId={exercise.id} />
     </>
   );
 };

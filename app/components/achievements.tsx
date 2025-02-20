@@ -33,17 +33,6 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
       },
     },
     {
-      accessorKey: 'task',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Задание
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
       accessorKey: 'language',
       header: ({ column }) => {
         return (
@@ -74,6 +63,22 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
+      },
+    },
+    {
+      id: 'courseName',
+      header: ({ column }) => {
+        return (
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Курсы
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      accessorFn: (row) => row.course?.name,
+      cell: ({ row }) => {
+        const courseName = row.original.course?.name;
+        return <div>{courseName || 'Нет курса'}</div>;
       },
     },
   ];

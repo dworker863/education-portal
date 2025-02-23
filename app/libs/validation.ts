@@ -211,10 +211,19 @@ export const createAchievementSchema = z.object({
 });
 
 export const achievementsFiltersSchema = z.object({
-  language: z.string(),
-  rank: z.array(z.string()).refine((value) => value.some((item) => item), {
-    message: 'Укажите ранг',
-  }),
+  language: z.optional(z.string()),
+  rank: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: 'Укажите ранг',
+    })
+    .optional(),
+  courseName: z
+    .array(z.string())
+    .refine((value) => value.some((item) => item), {
+      message: 'Укажите курс',
+    })
+    .optional(),
 });
 
 export const editAchievementSchema = createAchievementSchema

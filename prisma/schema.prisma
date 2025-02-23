@@ -131,14 +131,14 @@ model Exercise {
 }
 
 model Achievement {
-  id           String  @id @default(cuid())
+  id           String @id @default(cuid())
   name         String
   task         String
   icon         String
-  language     String?
-  requiredRank String  @default("D-")
+  language     String @default("JavaScript")
+  requiredRank String @default("D-")
   discount     Int
-  meta         Json    @default("{}")
-  course       Course  @relation(fields: [courseId], references: [id])
-  courseId     String  @unique
+  meta         Json   @default("{}")
+  course       Course @relation(fields: [courseId], references: [id])
+  courseId     String @unique
 }

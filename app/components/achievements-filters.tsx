@@ -27,24 +27,39 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     defaultValues: {
       language: 'JavaScript',
       rank: ['D-'],
+      courseName: ['test'],
     },
   });
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
-    const result = achievements.filter((achievements) => {
+    const result = achievements.filter((achievement) => {
+      console.log('LANGUAGE: ', achievement.language === values.language);
+
+      if (values.rank) {
+        console.log('RANK: ', values.rank.includes(achievement.requiredRank));
+      }
+
+      if (achievement.course && values.courseName) {
+        console.log('COURSE: ', values.courseName.includes(achievement.course?.name));
+      }
+
       return (
-        achievements.language === values.language &&
-        values.rank.includes(achievements.requiredRank) &&
-        range[0] <= achievements.discount &&
-        achievements.discount <= range[1]
+        achievement.language === values.language &&
+        values.rank &&
+        values.rank.includes(achievement.requiredRank) &&
+        achievement.course &&
+        values.courseName &&
+        values.courseName.includes(achievement.course?.name) &&
+        range[0] <= achievement.discount &&
+        achievement.discount <= range[1]
       );
     });
 
     setFilteredAchievements(result);
     filterAchievements(result);
-  };
 
-  console.log('ACHIEVEMENT FILTERS');
+    console.log('ACHIEVEMENT FILTERS: ', result);
+  };
 
   return (
     <Form {...form}>
@@ -82,26 +97,72 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                   <FormLabel className="text-base">Уровень</FormLabel>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                  {ranks.map((rank) => (
+                  {ranks.map((rank, index) => (
                     <FormField
-                      key={rank.id}
+                      key={rank.id + index}
                       control={form.control}
                       name="rank"
                       render={({ field }) => {
+                        const value = field.value || [];
+
                         return (
-                          <FormItem key={rank.id} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
                             <FormControl>
                               <Checkbox
                                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={field.value?.includes(rank.id)}
+                                checked={value.includes(rank.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...field.value, rank.id])
-                                    : field.onChange(field.value?.filter((value) => value !== rank.id));
+                                    ? field.onChange([...value, rank.id])
+                                    : field.onChange(value.filter((value) => value !== rank.id));
                                 }}
                               />
                             </FormControl>
                             <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="mb-10">
+          <FormField
+            control={form.control}
+            name="courseName"
+            render={() => (
+              <FormItem>
+                <div className="mb-2">
+                  <FormLabel className="text-base">Курсы</FormLabel>
+                </div>
+                <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                  {achievements.map(({ course }, index) => (
+                    <FormField
+                      key={course ? index + course?.name : index}
+                      control={form.control}
+                      name="courseName"
+                      render={({ field }) => {
+                        const value = field.value || [];
+                        return (
+                          <FormItem
+                            key={course ? index + course?.name : index}
+                            className="flex flex-row items-start space-x-2 space-y-0"
+                          >
+                            <FormControl>
+                              <Checkbox
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                                checked={course && value.includes(course?.name)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...value, course?.name])
+                                    : field.onChange(value.filter((value) => value !== course?.name));
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal leading-[18px]">{course?.name}</FormLabel>
                           </FormItem>
                         );
                       }}

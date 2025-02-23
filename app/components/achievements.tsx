@@ -75,7 +75,6 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
           </Button>
         );
       },
-      accessorFn: (row) => row.course?.name,
       cell: ({ row }) => {
         const courseName = row.original.course?.name;
         return <div>{courseName || 'Нет курса'}</div>;

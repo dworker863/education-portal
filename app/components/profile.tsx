@@ -46,7 +46,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           )}
           {user?.lastName && (
             <p className="mb-2 text-sm">
-              Факмилия: <span className="text-customPrimary">{user?.lastName}</span>
+              Фамилия: <span className="text-customPrimary">{user?.lastName}</span>
             </p>
           )}
           {user?.birthDate && (

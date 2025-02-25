@@ -33,16 +33,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
     const result = achievements.filter((achievement) => {
-      console.log('LANGUAGE: ', achievement.language === values.language);
-
-      if (values.rank) {
-        console.log('RANK: ', values.rank.includes(achievement.requiredRank));
-      }
-
-      if (achievement.course && values.courseName) {
-        console.log('COURSE: ', values.courseName.includes(achievement.course?.name));
-      }
-
       return (
         achievement.language === values.language &&
         values.rank &&
@@ -57,8 +47,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
 
     setFilteredAchievements(result);
     filterAchievements(result);
-
-    console.log('ACHIEVEMENT FILTERS: ', result);
   };
 
   return (

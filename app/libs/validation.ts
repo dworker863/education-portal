@@ -248,3 +248,31 @@ export const editAchievementSchema = createAchievementSchema
       ),
   })
   .partial();
+
+export const editUserSchema = z.object({
+  username: z.optional(z.string()),
+  firstName: z.optional(z.string()),
+  lastName: z.optional(z.string()),
+  birthDate: z.optional(z.date()),
+  image: z.optional(
+    z
+      .any()
+      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+        message: 'Файл должен быть валидным',
+      })
+      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+        message: 'Файл не должен быть пустым',
+      })
+      .refine(
+        (file) => {
+          if (!file) return true;
+          if (file instanceof File) {
+            return file.type && file.type.includes('image');
+          }
+
+          return file[0]?.type && file[0].type.includes('image');
+        },
+        { message: 'Вставьте изображение' },
+      ),
+  ),
+});

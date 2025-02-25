@@ -249,7 +249,7 @@ export const editAchievementSchema = createAchievementSchema
   })
   .partial();
 
-export const editUserSchema = z.object({
+export const editProfileSchema = z.object({
   username: z.optional(z.string()),
   firstName: z.optional(z.string()),
   lastName: z.optional(z.string()),

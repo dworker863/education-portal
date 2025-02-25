@@ -1,5 +1,5 @@
 import { fileUpload, getUserById } from '@/app/libs/utils/auth';
-import { editUserSchema } from '@/app/libs/validation';
+import { editProfileSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextResponse } from 'next/server';
 
@@ -19,7 +19,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 400 });
     }
 
-    const { data, ...parsedResult } = await editUserSchema.safeParse(values);
+    const { data, ...parsedResult } = await editProfileSchema.safeParse(values);
 
     if (!parsedResult.success) {
       return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });

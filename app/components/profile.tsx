@@ -4,6 +4,8 @@ import { FC } from 'react';
 import { cn } from '../libs/cn';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
+import { Button } from './button';
+import { MdModeEditOutline } from 'react-icons/md';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -26,8 +28,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       )}
     >
       <div className="mb-10">
-        <div className="flex gap-4 ">
-          <div className="w-20 rounded-full overflow-hidden">
+        <div className="flex gap-8 ">
+          <div className="w-20 ml-[10px] rounded-full overflow-hidden">
             {user?.image && <Image src={user?.image?.replace(/\\/gi, '/')} alt="avatar" width={100} height={100} />}
           </div>
           <div className="flex flex-col">
@@ -35,25 +37,43 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             <p className="max-w-36 text-xs">{user?.email}</p>
           </div>
         </div>
+        <Button className="mt-4" variant="custom" onClick={() => {}}>
+          Изменить
+        </Button>
       </div>
       <div>
         <h2 className="mb-4 text-customSecondary">Инфо</h2>
-        <div className="flex flex-col">
+        <div className="flex flex-col space-y-4">
           {user?.firstName && (
-            <p className="mb-2 text-sm">
-              Имя: <span className="text-customPrimary">{user?.firstName}</span>
-            </p>
+            <div className="flex items-center">
+              <p className="text-sm">
+                Имя: <span className="text-customPrimary">{user?.firstName}</span>
+              </p>
+              <Button variant="customLink" size="icon" onClick={() => {}}>
+                <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
+              </Button>
+            </div>
           )}
           {user?.lastName && (
-            <p className="mb-2 text-sm">
-              Фамилия: <span className="text-customPrimary">{user?.lastName}</span>
-            </p>
+            <div className="flex items-center">
+              <p className="text-sm">
+                Фамилия: <span className="text-customPrimary ">{user?.lastName}</span>
+              </p>
+              <Button variant="customLink" size="icon" onClick={() => {}}>
+                <MdModeEditOutline className="hover:scale-125" size={20} />
+              </Button>
+            </div>
           )}
           {user?.birthDate && (
-            <p className="mb-2 text-sm">
-              Дата рождения:{' '}
-              <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
-            </p>
+            <div className="flex items-center">
+              <p className="text-sm">
+                Дата рождения:{' '}
+                <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
+              </p>
+              <Button variant="customLink" size="icon" onClick={() => {}}>
+                <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
+              </Button>
+            </div>
           )}
           <p className="mb-2 text-sm">
             Уровень: <span className="text-customPrimary">{user?.rank}</span>

@@ -9,11 +9,13 @@ import { Input } from './input';
 import { Button } from './button';
 
 type TEditProfileFormProps = {
-  name?: 'username' | 'firstName' | 'lastName';
+  fieldName?: 'username' | 'firstName' | 'lastName';
 };
 
-const EditProfileForm: FC<TEditProfileFormProps> = ({ name }) => {
-  const [startTransition, isPending] = useTransition();
+const EditProfileForm: FC<TEditProfileFormProps> = ({ fieldName }) => {
+  const [isPending, startTransition] = useTransition();
+
+  const label = fieldName === 'firstName' ? 'Имя' : fieldName === 'lastName' ? 'Фамилия' : 'Ник';
 
   const form = useForm<z.infer<typeof editProfileSchema>>({
     defaultValues: {
@@ -31,16 +33,16 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ name }) => {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        {name && (
+      <form className="space-y-8 text-primary-foreground" onSubmit={form.handleSubmit(onSubmit)}>
+        {fieldName && (
           <FormField
             control={form.control}
-            name={name}
+            name={fieldName}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{name}</FormLabel>
+                <FormLabel>{label}</FormLabel>
                 <FormControl>
-                  <Input placeholder={name} {...field} />
+                  <Input placeholder={label} {...field} />
                 </FormControl>
               </FormItem>
             )}

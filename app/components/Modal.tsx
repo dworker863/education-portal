@@ -11,7 +11,7 @@ import Socials from './socials';
 import { useRouter } from 'next/navigation';
 
 type TModalProps = {
-  type: 'login' | 'registration' | 'reset-password' | 'new-password';
+  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile';
   children: React.ReactNode;
   headerLabel: string;
   backButtonLabel: string;

@@ -1,11 +1,13 @@
 'use client';
 
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { cn } from '../libs/cn';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
+import { useRouter } from 'next/navigation';
+import { ModalContext } from './app-wrapper';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -13,7 +15,10 @@ type TProfile = {
 };
 
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
+  const context = useContext(ModalContext);
   const { data: session } = useSession();
+  const router = useRouter();
+
   const user = session?.user;
 
   return (
@@ -37,7 +42,14 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             <p className="max-w-36 text-xs">{user?.email}</p>
           </div>
         </div>
-        <Button className="mt-4" variant="custom" onClick={() => {}}>
+        <Button
+          className="mt-4"
+          variant="custom"
+          onClick={() => {
+            context?.setIsModalOpen(true);
+            router.push('/edit-profile');
+          }}
+        >
           Изменить
         </Button>
       </div>
@@ -49,7 +61,14 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               <p className="text-sm">
                 Имя: <span className="text-customPrimary">{user?.firstName}</span>
               </p>
-              <Button variant="customLink" size="icon" onClick={() => {}}>
+              <Button
+                variant="customLink"
+                size="icon"
+                onClick={() => {
+                  context?.setIsModalOpen(true);
+                  router.push('/edit-profile?field=firstName');
+                }}
+              >
                 <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
               </Button>
             </div>
@@ -59,7 +78,14 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               <p className="text-sm">
                 Фамилия: <span className="text-customPrimary ">{user?.lastName}</span>
               </p>
-              <Button variant="customLink" size="icon" onClick={() => {}}>
+              <Button
+                variant="customLink"
+                size="icon"
+                onClick={() => {
+                  context?.setIsModalOpen(true);
+                  router.push('/edit-profile?field=lastName');
+                }}
+              >
                 <MdModeEditOutline className="hover:scale-125" size={20} />
               </Button>
             </div>
@@ -70,7 +96,14 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 Дата рождения:{' '}
                 <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
               </p>
-              <Button variant="customLink" size="icon" onClick={() => {}}>
+              <Button
+                variant="customLink"
+                size="icon"
+                onClick={() => {
+                  context?.setIsModalOpen(true);
+                  router.push('/edit-profile');
+                }}
+              >
                 <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
               </Button>
             </div>

@@ -16,11 +16,13 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  auth,
   children,
+  auth,
+  profile,
 }: Readonly<{
-  auth: React.ReactNode;
   children: React.ReactNode;
+  auth: React.ReactNode;
+  profile: React.ReactNode;
 }>) {
   return (
     <html lang="en">
@@ -35,6 +37,7 @@ export default function RootLayout({
             </div>
           </Overlay>
           {auth}
+          {profile}
         </AppWrapper>
       </body>
     </html>

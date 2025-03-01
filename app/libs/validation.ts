@@ -275,4 +275,5 @@ export const editProfileSchema = z.object({
         { message: 'Вставьте изображение' },
       ),
   ),
+  code: z.string({ message: 'Неверный код подтвеждения' }).optional(),
 });

@@ -47,7 +47,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           variant="custom"
           onClick={() => {
             context?.setIsModalOpen(true);
-            router.push('/edit-profile');
+            router.push(`/edit-profile?email=${user?.email}&type=image`);
           }}
         >
           Изменить
@@ -66,7 +66,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 size="icon"
                 onClick={() => {
                   context?.setIsModalOpen(true);
-                  router.push('/edit-profile?field=firstName');
+                  router.push(`/edit-profile?email=${user?.email}&field=firstName`);
                 }}
               >
                 <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
@@ -83,7 +83,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 size="icon"
                 onClick={() => {
                   context?.setIsModalOpen(true);
-                  router.push('/edit-profile?field=lastName');
+                  router.push(`/edit-profile?email=${user?.email}&field=lastName`);
                 }}
               >
                 <MdModeEditOutline className="hover:scale-125" size={20} />
@@ -93,7 +93,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           {user?.birthDate && (
             <div className="flex items-center">
               <p className="text-sm">
-                Дата рождения:{' '}
+                Дата рождения:
                 <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
               </p>
               <Button
@@ -101,7 +101,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 size="icon"
                 onClick={() => {
                   context?.setIsModalOpen(true);
-                  router.push('/edit-profile');
+                  router.push(`/edit-profile?email=${user?.email}&type=birthDate`);
                 }}
               >
                 <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />

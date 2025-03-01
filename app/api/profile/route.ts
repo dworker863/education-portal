@@ -1,4 +1,6 @@
-import { fileUpload, getUserById } from '@/app/libs/utils/auth';
+import { fileUpload, getUserByEmail } from '@/app/libs/utils/auth';
+import { sendTwoFactorToken } from '@/app/libs/utils/mail';
+import { generateTwoFactorToken, getTwoFactorTokenByToken } from '@/app/libs/utils/tokens';
 import { editProfileSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';
 import { NextResponse } from 'next/server';
@@ -7,13 +9,13 @@ export async function PATCH(request: Request) {
   try {
     const formData = await request.formData();
     const values = Object.fromEntries(formData);
-    const userId = values.id;
+    const email = values.email;
 
-    if (!userId) {
-      return NextResponse.json({ error: 'Не указан ID пользователя' }, { status: 400 });
+    if (!email) {
+      return NextResponse.json({ error: 'Не указан email пользователя' }, { status: 400 });
     }
 
-    const existingUser = await getUserById(userId as string);
+    const existingUser = await getUserByEmail(email as string);
 
     if (!existingUser) {
       return NextResponse.json({ error: 'Пользователь не найден' }, { status: 400 });
@@ -27,6 +29,37 @@ export async function PATCH(request: Request) {
 
     if (!data) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
+    }
+
+    if (data.code) {
+      const twoFactorToken = await getTwoFactorTokenByToken(data.code);
+
+      if (!twoFactorToken) {
+        return NextResponse.json({ error: 'Неверный код' }, { status: 400 });
+      }
+
+      const hasExprired = new Date(twoFactorToken.expires) < new Date();
+
+      if (hasExprired) {
+        return NextResponse.json({ error: 'Код больше не действителен' }, { status: 400 });
+      }
+
+      await prisma.twoFactorToken.delete({
+        where: {
+          id: twoFactorToken.id,
+        },
+      });
+
+      await prisma.twoFactorConfirmation.create({
+        data: {
+          userId: existingUser.id,
+        },
+      });
+    } else {
+      const twoFactorToken = await generateTwoFactorToken(email as string);
+      await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
+
+      return NextResponse.json({ twoFactor: true }, { status: 200 });
     }
 
     const fieldsToCheck = ['username', 'firstName', 'lastName', 'birthDate'] as const;
@@ -50,7 +83,7 @@ export async function PATCH(request: Request) {
     }
 
     await prisma.user.update({
-      where: { id: userId as string },
+      where: { email: email as string },
       data: updatedData,
     });
 

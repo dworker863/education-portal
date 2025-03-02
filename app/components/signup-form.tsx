@@ -41,7 +41,7 @@ const SignupForm = () => {
     resolver: zodResolver(registrationSchema),
     defaultValues: {
       email: '',
-      username: '',
+      name: '',
       password: '',
       confirmPassword: '',
       firstName: '',
@@ -119,7 +119,7 @@ const SignupForm = () => {
             />
             <FormField
               control={form.control}
-              name="username"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Имя пользователя</FormLabel>

@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const registrationSchema = z
   .object({
     email: z.string().email({ message: 'Неверный email' }),
-    username: z.optional(z.string()),
+    name: z.optional(z.string()),
     password: z
       .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
@@ -250,7 +250,7 @@ export const editAchievementSchema = createAchievementSchema
   .partial();
 
 export const editProfileSchema = z.object({
-  username: z.optional(z.string()),
+  name: z.optional(z.string()),
   firstName: z.optional(z.string()),
   lastName: z.optional(z.string()),
   birthDate: z.optional(z.date()),

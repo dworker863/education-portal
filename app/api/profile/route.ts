@@ -49,12 +49,6 @@ export async function PATCH(request: Request) {
           id: twoFactorToken.id,
         },
       });
-
-      await prisma.twoFactorConfirmation.create({
-        data: {
-          userId: existingUser.id,
-        },
-      });
     } else {
       const twoFactorToken = await generateTwoFactorToken(email as string);
       await sendTwoFactorToken(twoFactorToken.email, twoFactorToken.token);
@@ -62,7 +56,7 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ twoFactor: true }, { status: 200 });
     }
 
-    const fieldsToCheck = ['username', 'firstName', 'lastName', 'birthDate'] as const;
+    const fieldsToCheck = ['name', 'firstName', 'lastName', 'birthDate'] as const;
 
     const updatedData: Record<string, any> = {};
 

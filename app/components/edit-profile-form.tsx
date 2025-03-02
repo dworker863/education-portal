@@ -23,7 +23,7 @@ import { useRouter } from 'next/navigation';
 
 type TEditProfileFormProps = {
   email: string;
-  fieldName?: 'username' | 'firstName' | 'lastName';
+  fieldName?: 'name' | 'firstName' | 'lastName';
   type?: 'birthDate' | 'image';
 };
 
@@ -41,7 +41,7 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) 
 
   const form = useForm<z.infer<typeof editProfileSchema>>({
     defaultValues: {
-      username: undefined,
+      name: undefined,
       firstName: undefined,
       lastName: undefined,
       birthDate: undefined,

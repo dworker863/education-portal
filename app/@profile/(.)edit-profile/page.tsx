@@ -6,7 +6,7 @@ const SignUp = ({
   searchParams,
 }: {
   searchParams: {
-    field: 'username' | 'firstName' | 'lastName' | undefined;
+    field: 'name' | 'firstName' | 'lastName' | undefined;
     type: 'birthDate' | 'image' | undefined;
     email: string;
   };

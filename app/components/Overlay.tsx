@@ -26,8 +26,8 @@ const Overlay: FC<TOverlayProps> = ({ children }) => {
   return (
     <OverlayContext.Provider value={{ active, setActive }}>
       <div
-        className={cn('h-screen w-full absolute z-30', {
-          'bg-black opacity-50 -50': active,
+        className={cn('h-screen w-full absolute z-50', {
+          'bg-black opacity-50 z-30': active,
         })}
       >
         {children}

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useState, useTransition } from 'react';
+import { FC, useContext, useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { editProfileSchema } from '../libs/validation';
@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
+import { ModalContext } from './app-wrapper';
 
 type TEditProfileFormProps = {
   email: string;
@@ -28,6 +29,7 @@ type TEditProfileFormProps = {
 };
 
 const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) => {
+  const context = useContext(ModalContext);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -95,7 +97,8 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) 
           setSuccess(data.success);
           setError(null);
           setTimeout(() => {
-            router.push('/');
+            context?.setIsModalOpen(false);
+            router.back();
           }, 1500);
         }
       } catch (error) {
@@ -248,7 +251,7 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) 
         )}
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit" className="w-full bg-customPrimary" disabled={isPending}>
+        <Button variant="custom" type="submit" className="w-full" disabled={isPending}>
           {!twoFactor ? 'Изменить' : 'Подтвердить'}
         </Button>
       </form>

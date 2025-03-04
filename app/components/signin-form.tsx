@@ -42,13 +42,12 @@ const SigninForm = () => {
         .then((data) => {
           if (!data) {
             context?.setIsModalOpen(false);
+            router.back();
           }
+
           if (data?.success) {
             setError(null);
             setSuccess(data.success);
-            setTimeout(() => {
-              router.push('/');
-            }, 1500);
           }
 
           if (data?.twoFactor) {

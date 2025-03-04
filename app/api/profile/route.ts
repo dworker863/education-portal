@@ -81,7 +81,7 @@ export async function PATCH(request: Request) {
       data: updatedData,
     });
 
-    return NextResponse.json({ success: 'Профиль успешно изменен' }, { status: 200 });
+    return NextResponse.json({ success: 'Профиль будет обновлен после следующего входа' }, { status: 200 });
   } catch (error) {
     console.error('Ошибка при обновлении профиля пользователя: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });

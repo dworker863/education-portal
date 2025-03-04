@@ -1,13 +1,14 @@
 'use client';
 
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { cn } from '../libs/cn';
-import { useSession } from 'next-auth/react';
+import { getSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
+import { Session } from 'next-auth';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -16,10 +17,21 @@ type TProfile = {
 
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const context = useContext(ModalContext);
-  const { data: session } = useSession();
   const router = useRouter();
 
+  const [session, setSession] = useState<Session | null>(null);
+
   const user = session?.user;
+
+  useEffect(() => {
+    const handleReload = async () => {
+      const data = await getSession();
+      setSession(data);
+    };
+
+    handleReload();
+    console.log('PROFILE: ', context?.isModalOpen);
+  }, [context]);
 
   return (
     <div

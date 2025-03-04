@@ -87,7 +87,8 @@ const SignupForm = () => {
           setSuccess(data.success);
           setError(null);
           setTimeout(() => {
-            router.push('/');
+            context?.setIsModalOpen(false);
+            router.back();
           }, 1500);
         }
       } catch (error) {

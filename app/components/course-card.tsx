@@ -13,10 +13,10 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary">
         <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
         <div className="flex gap-10 mb-8">
-          <div>
+          <div className="w-[300px] flex-shrink-0">
             {course.icon && <Image src={course.icon.replace(/\\/gi, '/')} alt="avatar" width={300} height={300} />}
           </div>
-          <div>{course.description}</div>
+          <div className="flex-grow">{course.description}</div>
         </div>
         <div className="flex justify-end">
           <span className="text-customSecondary text-lg font-semibold">{course.priceUSD + '$'}</span>

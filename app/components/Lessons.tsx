@@ -5,6 +5,7 @@ import LessonForm from './lesson-form';
 import { ILesson } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import LessonFormWrapper from './lesson-form-wrapper';
+import slugify from 'slugify';
 
 type TLessonsProps = {
   courseId?: string;
@@ -18,14 +19,17 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
       <LessonForm courseId={courseId} mode="create" />
       <ol className="px-5 list-decimal">
         {lessons.length > 0 &&
-          lessons.map((lesson) => (
-            <li key={lesson.id + lesson.name}>
-              <div className="mb-5">
-                <Link href={`/courses/${params.name}/${lesson.name}`}>{lesson.name}</Link>
-                <LessonFormWrapper lessonId={lesson.id} />
-              </div>
-            </li>
-          ))}
+          lessons.map((lesson) => {
+            const slug = slugify(lesson.name, { locale: 'ru' });
+            return (
+              <li key={lesson.id + lesson.name}>
+                <div className="mb-5">
+                  <Link href={`/courses/${params.name}/${slug}`}>{lesson.name}</Link>
+                  <LessonFormWrapper lessonId={lesson.id} />
+                </div>
+              </li>
+            );
+          })}
       </ol>
     </section>
   );

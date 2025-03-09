@@ -139,6 +139,6 @@ model Achievement {
   requiredRank String @default("D-")
   discount     Int
   meta         Json   @default("{}")
-  course       Course @relation(fields: [courseId], references: [id])
+  course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId     String @unique
 }

@@ -31,12 +31,11 @@ model User {
   coursesInProgress     Course[]               @relation("UsersInProgressCourses")
   completedCourses      Course[]               @relation("UsersCompletedCourses")
   completedExercises    Exercise[]
+  completedTests        Test[]
   TwoFactorConfirmation TwoFactorConfirmation?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Test      Test?    @relation(fields: [testId], references: [id])
-  testId    String?
 }
 
 model Account {
@@ -101,7 +100,7 @@ model Course {
   lessons         Lesson[]
   usersInProgress User[]       @relation("UsersInProgressCourses")
   completedUsers  User[]       @relation("UsersCompletedCourses")
-  Achievements    Achievement?
+  achievement     Achievement?
 }
 
 model Lesson {
@@ -114,7 +113,7 @@ model Lesson {
   course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String
   exercise Exercise?
-  Test     Test?
+  test     Test?
 }
 
 model Exercise {

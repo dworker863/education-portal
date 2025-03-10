@@ -18,6 +18,7 @@ export interface IUser {
   coursesInProgress?: ICourse[];
   completedCourses?: ICourse[];
   completedExercises?: IExercise[];
+  completedTests?: ITest[];
 }
 
 export interface ICourse {
@@ -44,6 +45,7 @@ export interface ILesson {
   course?: ICourse;
   courseId: string;
   exercise?: IExercise | null;
+  test?: ITest | null;
 }
 
 export interface IExercise {

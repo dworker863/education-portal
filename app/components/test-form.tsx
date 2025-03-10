@@ -1,136 +1,172 @@
 'use client';
 
-import { Form, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { createTestSchema } from '../libs/validation';
-import { FormControl, FormField, FormItem, FormLabel } from './form';
+import { createTestSchema, editTestSchema } from '../libs/validation';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Input } from './input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Textarea } from './textarea';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Button } from './button';
-import { startTransition, useState, useTransition } from 'react';
+import { FC, useState, useTransition } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import RequiredSign from './required-sign';
 
-const TestForm = () => {
+type TTestFormProps = {
+  testId?: string;
+  lessonId?: string;
+  mode: 'create' | 'edit';
+};
+
+const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
   const [isPending, startTransition] = useTransition();
+  const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const schema = mode === 'create' ? createTestSchema : editTestSchema;
 
-  const form = useForm<z.infer<typeof createTestSchema>>({
+  const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(createTestSchema),
     defaultValues: {
-      name: '',
-      task: '',
+      name: mode === 'create' ? '' : undefined,
+      task: mode === 'create' ? '' : undefined,
       variants: [],
-      solution: '',
-      language: '',
-      requiredRank: '',
-      prizePoints: 0,
+      solution: mode === 'create' ? '' : undefined,
+      language: mode === 'create' ? '' : undefined,
+      requiredRank: mode === 'create' ? '' : undefined,
+      prizePoints: mode === 'create' ? 0 : undefined,
+      lessonId: lessonId || undefined,
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createTestSchema>) => {
+  const onSubmit = (values: z.infer<typeof schema>) => {
     console.log(values);
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Название</FormLabel>
-              <FormControl>
-                <Input placeholder="Название" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="task"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Задание</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Задание" rows={5} {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="variants"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Варианты ответа:</FormLabel>
-              {[...Array(4)].map((_, index) => (
-                <Input key={index} {...form.register(`variants.${index}`)} placeholder={`Вариант ${index + 1}`} />
-              ))}
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="solution"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ответ</FormLabel>
-              <FormControl>
-                <Textarea placeholder="Ответ" rows={5} {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="language"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ответ</FormLabel>
-              <FormControl>
-                <Input placeholder="Язык программирования" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="requiredRank"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ответ</FormLabel>
-              <FormControl>
-                <Input placeholder="Необходимый уровень" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="prizePoints"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Ответ</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Колличество призовых баллов"
-                  {...form.register('prizePoints', { valueAsNumber: true })}
-                />
-              </FormControl>
-            </FormItem>
-          )}
-        />
-        {error && <ErrorMessage message={error} />}
-        {success && <SuccessMessage message={success} />}
-        <Button variant="custom" type="submit" disabled={isPending}>
-          Добавить Упражнение
+    <>
+      {mode === 'create' && (
+        <Button variant="custom" className="ml-5 mb-5" onClick={() => setShowForm(!showForm)}>
+          <FaPlus size={20} />
+          <span className="ml-2">{!showForm ? 'Добавить Тест' : 'Скрыть'}</span>
         </Button>
-      </form>
-    </Form>
+      )}
+      {showForm && (
+        <Form {...form}>
+          <form
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Название</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Input placeholder="Название" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="task"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Задание</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Textarea placeholder="Задание" rows={5} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="variants"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Варианты ответа:</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  {[...Array(4)].map((_, index) => (
+                    <Input key={index} {...form.register(`variants.${index}`)} placeholder={`Вариант ${index + 1}`} />
+                  ))}
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="solution"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Ответ</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Textarea placeholder="Ответ" rows={5} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="language"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Язык</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Input placeholder="Язык программирования" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="requiredRank"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Уровень</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Необходимый уровень" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="prizePoints"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Баллы</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Input
+                      placeholder="Колличество призовых баллов"
+                      {...form.register('prizePoints', { valueAsNumber: true })}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {error && <ErrorMessage message={error} />}
+            {success && <SuccessMessage message={success} />}
+            <Button variant="custom" type="submit" disabled={isPending}>
+              {mode === 'create' ? 'Добавить Тест' : 'Редактировать Тест'}
+            </Button>
+          </form>
+        </Form>
+      )}
+    </>
   );
 };
 

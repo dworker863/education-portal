@@ -182,6 +182,17 @@ export const exercisesFiltersSchema = z.object({
   }),
 });
 
+export const createTestSchema = z.object({
+  name: z.string().min(1, { message: 'Введите название задания' }),
+  task: z.string().min(1, { message: 'Введите задание' }),
+  variants: z.array(z.string()).nonempty(),
+  solution: z.string().min(1, { message: 'Укажите решение' }),
+  language: z.string().min(1, { message: 'Укажите язык программирования' }),
+  requiredRank: z.optional(z.string()),
+  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  lessonId: z.optional(z.string()),
+});
+
 export const createAchievementSchema = z.object({
   name: z.string().min(1, { message: 'Введите название достижения' }),
   task: z.string().min(1, { message: 'Введите описание' }),

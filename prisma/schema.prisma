@@ -35,6 +35,8 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Test      Test?    @relation(fields: [testId], references: [id])
+  testId    String?
 }
 
 model Account {
@@ -112,6 +114,7 @@ model Lesson {
   course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId String
   exercise Exercise?
+  Test     Test?
 }
 
 model Exercise {
@@ -127,6 +130,21 @@ model Exercise {
   meta           Json    @default("{}")
   lesson         Lesson? @relation(fields: [lessonId], references: [id])
   lessonId       String? @unique
+  completedUsers User[]
+}
+
+model Test {
+  id             String   @id @default(cuid())
+  name           String
+  task           String
+  variants       String[]
+  solution       String
+  language       String   @default("JavaScript")
+  requiredRank   String   @default("D-")
+  prizePoints    Int
+  meta           Json     @default("{}")
+  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId       String?  @unique
   completedUsers User[]
 }
 

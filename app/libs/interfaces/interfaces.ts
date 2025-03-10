@@ -62,6 +62,21 @@ export interface IExercise {
   completedUsers?: IUser[];
 }
 
+export interface ITest {
+  id: string;
+  name: string;
+  task: string;
+  variants: string[];
+  solution: string;
+  language: string;
+  requiredRank: string;
+  prizePoints: number;
+  meta: JsonValue;
+  lesson?: ILesson;
+  lessonId: string | null;
+  completedUsers?: IUser[];
+}
+
 export interface ICoursePartial {
   name: string;
 }

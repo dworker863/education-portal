@@ -26,7 +26,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn('bg-customBackground text-primary-foreground overflow-x-hidden', inter.className)}>
+      <body
+        className={cn('bg-customBackground text-primary-foreground overflow-x-hidden line-numbers', inter.className)}
+      >
         <AppWrapper>
           <Overlay>
             <Sidebar />

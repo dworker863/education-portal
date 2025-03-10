@@ -148,6 +148,24 @@ body {
   background-color: white;
 }
 
+.lesson-p {
+  color: chocolate;
+}
+
+.line-numbers.language-javascript {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.line-numbers .line-numbers-rows {
+  border-right: none !important;
+}
+
+.line-numbers .line-numbers-rows span {
+  color: #999;
+}
+
 @-webkit-keyframes loader {
   0% {
     border-bottom-color: transparent;

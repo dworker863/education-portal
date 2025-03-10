@@ -130,7 +130,7 @@ export const deleteExercise = async (id: string) => {
       },
     });
 
-    return { success: 'Урок успешно удален' };
+    return { success: 'Упражнение успешно удалено' };
   } catch (error) {
     console.error('Ошибка при удалении упражнения: ', error);
     throw error;

@@ -5,6 +5,7 @@ import { Button } from './button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 import TestForm from './test-form';
+import { deleteTest } from '../libs/server-actions/tests-actions';
 
 type TTestFormWrapperProps = {
   testId: string;
@@ -24,7 +25,7 @@ const TestFormWrapper: FC<TTestFormWrapperProps> = ({ testId }) => {
           variant="custom"
           className="ml-4"
           onClick={async () => {
-            await deleteExercise(exerciseId);
+            await deleteTest(testId);
             router.refresh();
           }}
         >

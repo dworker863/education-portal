@@ -23,7 +23,7 @@ type TExerciseProps = {
 };
 
 const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
-  const [isPending, startTransiton] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +48,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     if (mode === 'create') {
-      startTransiton(async () => {
+      startTransition(async () => {
         addExercise(values as z.infer<typeof createExerciseSchema>)
           .then((data) => {
             setError(null);
@@ -62,7 +62,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
     }
 
     if (exerciseId) {
-      startTransiton(async () => {
+      startTransition(async () => {
         editExercise(exerciseId, values as z.infer<typeof editExerciseSchema>)
           .then((data) => {
             setError(null);

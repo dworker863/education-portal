@@ -13,6 +13,8 @@ import { Button } from './button';
 import { FC, useState, useTransition } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import RequiredSign from './required-sign';
+import { useRouter } from 'next/navigation';
+import { addTest, editTest } from '../libs/server-actions/tests-actions';
 
 type TTestFormProps = {
   testId?: string;
@@ -22,6 +24,8 @@ type TTestFormProps = {
 
 const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -42,7 +46,36 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log(values);
+    if (mode === 'create') {
+      startTransition(async () => {
+        addTest(values as z.infer<typeof createTestSchema>)
+          .then((data) => {
+            setError(null);
+            setSuccess(data.success);
+          })
+          .catch((error) => {
+            setSuccess(null);
+            setError(error.message);
+          });
+      });
+    }
+
+    if (testId) {
+      startTransition(async () => {
+        editTest(testId, values as z.infer<typeof editTestSchema>)
+          .then((data) => {
+            setError(null);
+            setSuccess(data.success);
+            setTimeout(() => {
+              router.refresh();
+            }, 1500);
+          })
+          .catch((error) => {
+            setSuccess(null);
+            setError(error.message);
+          });
+      });
+    }
   };
 
   return (

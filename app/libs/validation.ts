@@ -185,7 +185,7 @@ export const exercisesFiltersSchema = z.object({
 export const createTestSchema = z.object({
   name: z.string().min(1, { message: 'Введите название задания' }),
   task: z.string().min(1, { message: 'Введите задание' }),
-  variants: z.array(z.string()).nonempty(),
+  variants: z.array(z.string()).min(4, { message: 'Список вариантов ответа должен содержать не менее 4 элементов' }),
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),

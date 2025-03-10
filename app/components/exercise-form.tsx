@@ -170,7 +170,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
                   <FormLabel>Язык</FormLabel>
                   {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Textarea placeholder="Язык программирования" rows={5} {...field} />
+                    <Input placeholder="Язык программирования" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -200,7 +200,6 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
                     <Input
                       type="number"
                       placeholder="Колличество призовых баллов"
-                      {...field}
                       {...form.register('prizePoints', { valueAsNumber: true })}
                     />
                   </FormControl>

@@ -31,6 +31,7 @@ body {
     --custom-background: rgb(30 41 59);
     --custom-primary: rgb(194 65 12);
     --custom-secondary: rgb(225 29 72);
+    --custom-third: rgb(100, 149, 237, 50%);
     --custom-hover: rgb(41 37 36);
   }
 }
@@ -148,8 +149,72 @@ body {
   background-color: white;
 }
 
+.lesson-h1 {
+  margin-bottom: 30px;
+  font-size: 20px;
+  text-align: center;
+  color: var(--custom-secondary);
+  opacity: 80%;
+}
+
+.lesson-h2 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: var(--custom-secondary);
+  opacity: 80%;
+}
+
+.lesson-h3 {
+  margin-bottom: 10px;
+  color: var(--custom-primary);
+}
+
 .lesson-p {
-  color: chocolate;
+  margin-bottom: 10px;
+}
+
+.lesson-ul {
+  list-style-type: none;
+  margin-bottom: 20px;
+}
+
+.lesson-ul li {
+  position: relative;
+  margin-bottom: 10px;
+  padding-left: 20px;
+}
+
+.lesson-ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  background-color: var(--custom-primary);
+  border-radius: 50%;
+}
+
+.lesson-ol {
+  margin-bottom: 20px;
+  padding-left: 20px;
+  list-style-type: decimal;
+}
+
+.lesson-ol li {
+  margin-bottom: 10px;
+}
+
+.lesson-code {
+  color: var(--custom-third);
+  font-style: italic;
+}
+
+.code-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 .line-numbers.language-javascript {
@@ -164,6 +229,44 @@ body {
 
 .line-numbers .line-numbers-rows span {
   color: #999;
+}
+
+.lesson-note {
+  padding: 30px;
+  border-radius: 5px;
+  background-color: var(--custom-background);
+}
+
+.lesson-note-title {
+  display: flex;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: var(--custom-primary);
+}
+
+.lesson-exclamation-circle {
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+  background-color: transparent;
+  border: 2px solid var(--custom-primary);
+  border-radius: 50%; /* Создает круг */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
+  color: var(--custom-primary);
+}
+
+.lesson-exclamation-circle::before {
+  content: '!';
+  font-family: Arial, sans-serif;
+  position: absolute;
+  font-size: 22px;
+  font-weight: bold;
+  line-height: 1;
 }
 
 @-webkit-keyframes loader {

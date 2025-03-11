@@ -32,11 +32,11 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
   const schema = mode === 'create' ? createTestSchema : editTestSchema;
 
   const form = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(createTestSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       name: mode === 'create' ? '' : undefined,
       task: mode === 'create' ? '' : undefined,
-      variants: [],
+      variants: mode === 'create' ? ['', '', '', ''] : undefined,
       solution: mode === 'create' ? '' : undefined,
       language: mode === 'create' ? '' : undefined,
       requiredRank: mode === 'create' ? '' : undefined,
@@ -52,6 +52,9 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
           .then((data) => {
             setError(null);
             setSuccess(data.success);
+            setTimeout(() => {
+              router.refresh();
+            }, 1500);
           })
           .catch((error) => {
             setSuccess(null);
@@ -77,6 +80,8 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
       });
     }
   };
+
+  console.log(form.formState.errors.variants);
 
   return (
     <>
@@ -128,7 +133,17 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
                   <FormLabel>Варианты ответа:</FormLabel>
                   {mode === 'create' && <RequiredSign />}
                   {[...Array(4)].map((_, index) => (
-                    <Input key={index} {...form.register(`variants.${index}`)} placeholder={`Вариант ${index + 1}`} />
+                    <div key={index}>
+                      <FormControl>
+                        <Input
+                          {...form.register(`variants.${index}`, { required: true })}
+                          placeholder={`Вариант ${index + 1}`}
+                        />
+                      </FormControl>
+                      <p className="text-destructive text-xs my-2">
+                        {form.formState.errors.variants?.[index]?.message}
+                      </p>
+                    </div>
                   ))}
                 </FormItem>
               )}
@@ -183,6 +198,7 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
                   {mode === 'create' && <RequiredSign />}
                   <FormControl>
                     <Input
+                      type="number"
                       placeholder="Колличество призовых баллов"
                       {...form.register('prizePoints', { valueAsNumber: true })}
                     />

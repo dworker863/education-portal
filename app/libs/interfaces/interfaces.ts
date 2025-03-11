@@ -33,6 +33,7 @@ export interface ICourse {
   lessons?: ILesson[];
   usersInProgress?: IUser[];
   completedUsers?: IUser[];
+  achievement?: IAchievement | null;
 }
 
 export interface ILesson {

@@ -20,7 +20,7 @@ export default async function Lesson({ params }: { params: { lesson: string } })
       <h1 className="mb-5 text-center text-xl uppercase">{lessonName}</h1>
       <ExerciseForm lessonId={lesson?.id} mode="create" />
       <TestForm lessonId={lesson?.id} mode="create" />
-      {lesson && <LessonCard lesson={lesson} exercise={lesson.exercise} />}
+      {lesson && <LessonCard lesson={lesson} exercise={lesson.exercise} test={lesson.test} />}
       <div className="flex w-full gap-10 p-5">
         <div className="w-2/4"></div>
         <div className="w-2/4">

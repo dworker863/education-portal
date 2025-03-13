@@ -182,7 +182,7 @@ export const exercisesFiltersSchema = z.object({
   }),
 });
 
-export const createTestSchema = z.object({
+const baseTestSchema = z.object({
   name: z.string().min(1, { message: 'Введите название задания' }),
   task: z.string().min(1, { message: 'Введите задание' }),
   variants: z.array(z.string().min(1, { message: 'Вариант не может быть пустым' })),
@@ -193,9 +193,17 @@ export const createTestSchema = z.object({
   lessonId: z.optional(z.string()),
 });
 
-export const editTestSchema = createTestSchema
+export const createTestSchema = baseTestSchema.refine(
+  (data) => data.variants.some((variant) => variant === data.solution),
+  {
+    message: 'Решение должно совпадать с одним из вариантов',
+    path: ['solution'],
+  },
+);
+
+export const editTestSchema = baseTestSchema
   .extend({
-    variants: z.array(z.string()),
+    variants: z.array(z.string()).optional(), // Делаем variants необязательным
   })
   .partial();
 

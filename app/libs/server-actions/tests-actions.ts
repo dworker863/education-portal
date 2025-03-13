@@ -106,7 +106,14 @@ export const editTest = async (id: string, values: z.infer<typeof editTestSchema
       }
     });
 
-    console.log('UPDATED_DATA: ', updatedData.variants);
+    if (
+      updatedData.variants &&
+      !updatedData.variants.some(
+        (variant: string) => variant === existingTest.solution || variant === updatedData.solution,
+      )
+    ) {
+      throw Error('Решение должно совпадать с одним из вариантов');
+    }
 
     if (updatedData.name) {
       const test = await getTestByName(updatedData.name);

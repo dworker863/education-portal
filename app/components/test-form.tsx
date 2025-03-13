@@ -46,6 +46,12 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
   });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
+    console.log('TEST FORM: ', values);
+
+    if (values.variants) {
+      values.variants = values.variants.every((variant) => variant === '') ? undefined : values.variants;
+    }
+
     if (mode === 'create') {
       startTransition(async () => {
         addTest(values as z.infer<typeof createTestSchema>)

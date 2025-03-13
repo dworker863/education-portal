@@ -54,6 +54,8 @@ export const addTest = async (values: z.infer<typeof createTestSchema>) => {
 };
 
 export const editTest = async (id: string, values: z.infer<typeof editTestSchema>) => {
+  console.log('SERVER ACTION: ', values);
+
   try {
     if (!id) {
       throw new Error('Не указан ID теста');
@@ -89,10 +91,22 @@ export const editTest = async (id: string, values: z.infer<typeof editTestSchema
     const updatedData: Record<string, any> = {};
 
     fieldsToCheck.forEach((field) => {
-      if (data[field] && data[field] !== existingTest[field]) {
+      if (field === 'variants' && data.variants) {
+        updatedData.variants = existingTest.variants.map((variant, index) => {
+          if (!data.variants?.[index]) {
+            return variant;
+          }
+
+          return data.variants?.[index] !== variant ? data.variants?.[index] : variant;
+        });
+      }
+
+      if (data[field] && data[field] !== existingTest[field] && field !== 'variants') {
         updatedData[field] = field === 'prizePoints' ? Number(data[field]) : data[field];
       }
     });
+
+    console.log('UPDATED_DATA: ', updatedData.variants);
 
     if (updatedData.name) {
       const test = await getTestByName(updatedData.name);
@@ -102,7 +116,7 @@ export const editTest = async (id: string, values: z.infer<typeof editTestSchema
       }
     }
 
-    await prisma.exercise.update({
+    await prisma.test.update({
       where: {
         id,
       },
@@ -118,11 +132,11 @@ export const editTest = async (id: string, values: z.infer<typeof editTestSchema
 
 export const deleteTest = async (id: string) => {
   try {
-    const exercise = await getTestById(id);
+    const test = await getTestById(id);
 
-    if (!exercise) throw new Error('Теста с таким ID не существует');
+    if (!test) throw new Error('Теста с таким ID не существует');
 
-    await prisma.exercise.delete({
+    await prisma.test.delete({
       where: {
         id,
       },

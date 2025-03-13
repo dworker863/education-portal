@@ -193,7 +193,11 @@ export const createTestSchema = z.object({
   lessonId: z.optional(z.string()),
 });
 
-export const editTestSchema = createTestSchema.partial();
+export const editTestSchema = createTestSchema
+  .extend({
+    variants: z.array(z.string()),
+  })
+  .partial();
 
 export const createAchievementSchema = z.object({
   name: z.string().min(1, { message: 'Введите название достижения' }),

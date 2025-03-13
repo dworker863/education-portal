@@ -81,8 +81,6 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
     }
   };
 
-  console.log(form.formState.errors.variants);
-
   return (
     <>
       {mode === 'create' && (

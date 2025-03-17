@@ -104,16 +104,16 @@ model Course {
 }
 
 model Lesson {
-  id       String    @id @default(cuid())
-  name     String
-  content  String
-  images   String[]  @default([])
-  video    String?
-  meta     Json      @default("{}")
-  course   Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId String
-  exercise Exercise?
-  test     Test?
+  id        String     @id @default(cuid())
+  name      String
+  content   String
+  images    String[]   @default([])
+  video     String?
+  meta      Json       @default("{}")
+  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId  String
+  exercises Exercise[]
+  tests     Test[]
 }
 
 model Exercise {
@@ -128,7 +128,7 @@ model Exercise {
   prizePoints    Int
   meta           Json    @default("{}")
   lesson         Lesson? @relation(fields: [lessonId], references: [id])
-  lessonId       String? @unique
+  lessonId       String?
   completedUsers User[]
 }
 
@@ -143,7 +143,7 @@ model Test {
   prizePoints    Int
   meta           Json     @default("{}")
   lesson         Lesson?  @relation(fields: [lessonId], references: [id])
-  lessonId       String?  @unique
+  lessonId       String?
   completedUsers User[]
 }
 

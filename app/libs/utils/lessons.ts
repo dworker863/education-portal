@@ -7,8 +7,8 @@ export const getLessonByName = async (name: string) => {
         name,
       },
       include: {
-        exercise: true,
-        test: true,
+        exercises: true,
+        tests: true,
       },
     });
 

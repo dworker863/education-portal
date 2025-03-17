@@ -45,8 +45,8 @@ export interface ILesson {
   meta: JsonValue;
   course?: ICourse;
   courseId: string;
-  exercise?: IExercise | null;
-  test?: ITest | null;
+  exercises: IExercise[];
+  tests: ITest[];
 }
 
 export interface IExercise {

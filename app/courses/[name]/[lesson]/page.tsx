@@ -20,12 +20,12 @@ export default async function Lesson({ params }: { params: { lesson: string } })
       <h1 className="mb-5 text-center text-xl uppercase">{lessonName}</h1>
       <ExerciseForm lessonId={lesson?.id} mode="create" />
       <TestForm lessonId={lesson?.id} mode="create" />
-      {lesson && <LessonCard lesson={lesson} exercise={lesson.exercise} test={lesson.test} />}
+      {lesson && <LessonCard lesson={lesson} exercises={lesson.exercises} tests={lesson.tests} />}
       <div className="flex w-full gap-10 p-5">
         <div className="w-2/4"></div>
         <div className="w-2/4">
-          {lesson?.exercise?.id && <ExerciseFormWrapper exerciseId={lesson?.exercise?.id} />}
-          {lesson?.test?.id && <TestFormWrapper testId={lesson?.test?.id} />}
+          {/* {lesson?.exercise?.id && <ExerciseFormWrapper exerciseId={lesson?.exercise?.id} />}
+          {lesson?.test?.id && <TestFormWrapper testId={lesson?.test?.id} />} */}
         </div>
       </div>
     </>

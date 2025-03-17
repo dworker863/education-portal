@@ -13,9 +13,10 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 
 type TTestProps = {
   test: ITest;
+  active: boolean;
 };
 
-const Test: FC<TTestProps> = ({ test }) => {
+const Test: FC<TTestProps> = ({ test, active }) => {
   // const [result, setResult] = useState<string | null>(null);
   const [buttonTypes, setButtonTypes] = useState<('custom' | 'customSuccess' | 'customFail')[]>(
     Array(test.variants.length).fill('custom'),
@@ -39,6 +40,10 @@ const Test: FC<TTestProps> = ({ test }) => {
     setButtonTypes(newButtonTypes);
   };
 
+  if (!active) {
+    return null;
+  }
+
   return (
     <>
       <h2 className="mb-5 text-center">Практика</h2>
@@ -58,7 +63,7 @@ const Test: FC<TTestProps> = ({ test }) => {
             key={index + variant}
             size="lg"
             onClick={() => handleClick(index, variant)}
-            // disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
+            disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
           >
             {buttonTypes[index] === 'customFail' && <SlClose className="mr-2" size={20} />}
             {buttonTypes[index] === 'customSuccess' && <GoIssueClosed className="mr-2" size={20} />}

@@ -10,6 +10,8 @@ const buttonVariants = cva(
       variant: {
         custom: 'bg-customPrimary text-primary-foreground shadow hover:bg-customHover hover:text-customPrimary',
         customSuccess: 'bg-emerald-500/15 text-emerald-500 shadow',
+        customCircle:
+          'absolute top-1/2 flex items-center justify-center w-10 h-10 rounded-full bg-customPrimary text-primary-foreground shadow hover:bg-customHover hover:text-customPrimary',
         customFail: 'bg-destructive/15 text-destructive shadow',
         default: 'bg-primary text-primary-foreground shadow hover:bg-primary/90',
         destructive: 'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',

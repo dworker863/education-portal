@@ -269,6 +269,10 @@ body {
   line-height: 1;
 }
 
+.lesson-answer {
+  margin-bottom: 40px;
+}
+
 @-webkit-keyframes loader {
   0% {
     border-bottom-color: transparent;

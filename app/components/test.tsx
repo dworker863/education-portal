@@ -1,11 +1,15 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { ITest } from '../libs/interfaces/interfaces';
 import { Button } from './button';
-import { IoMdClose } from 'react-icons/io';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
+import DOMPurify from 'dompurify';
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css'; // Базовая тема
+import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для нумерации строк
+import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 
 type TTestProps = {
   test: ITest;
@@ -16,6 +20,12 @@ const Test: FC<TTestProps> = ({ test }) => {
   const [buttonTypes, setButtonTypes] = useState<('custom' | 'customSuccess' | 'customFail')[]>(
     Array(test.variants.length).fill('custom'),
   );
+  const containerRef = useRef<HTMLDivElement>(null);
+  const task = test?.task ? DOMPurify.sanitize(test?.task) : '';
+
+  useEffect(() => {
+    Prism.highlightAll();
+  });
 
   const handleClick = (index: number, variant: string) => {
     const newButtonTypes = [...buttonTypes];
@@ -31,14 +41,15 @@ const Test: FC<TTestProps> = ({ test }) => {
 
   return (
     <>
-      <h2 className="mb-5 text-center">{test.name}</h2>
-      <p className="mb-5">{test.task}</p>
-      <p>
+      <h2 className="mb-5 text-center">Практика</h2>
+      <h1 className="lesson-h1">{test.name}</h1>
+      <p className="lesson-p">
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{test.requiredRank}</span>
       </p>
-      <p className="mb-5">
+      <p className="lesson-p">
         Баллы: <span className="text-customSecondary font-semibold">{test.prizePoints}</span>
       </p>
+      <p ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
       <div className="flex justify-between">
         {test.variants.map((variant, index) => (
           <Button
@@ -47,7 +58,7 @@ const Test: FC<TTestProps> = ({ test }) => {
             key={index + variant}
             size="lg"
             onClick={() => handleClick(index, variant)}
-            disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
+            // disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
           >
             {buttonTypes[index] === 'customFail' && <SlClose className="mr-2" size={20} />}
             {buttonTypes[index] === 'customSuccess' && <GoIssueClosed className="mr-2" size={20} />}

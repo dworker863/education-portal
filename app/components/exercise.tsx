@@ -8,10 +8,15 @@ import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TExerciseProps = {
   exercise: IExercise;
+  active: boolean;
 };
 
-const Exercise: FC<TExerciseProps> = ({ exercise }) => {
+const Exercise: FC<TExerciseProps> = ({ exercise, active }) => {
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
+
+  if (!active) {
+    return null;
+  }
 
   return (
     <>

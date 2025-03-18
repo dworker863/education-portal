@@ -12,9 +12,6 @@ export default async function Lesson({ params }: { params: { lesson: string } })
   const lessonName = cyrillicToTranslit.reverse(params.lesson).replace('-', ' ');
   const lesson = await getLessonByName(lessonName);
 
-  console.log(lessonName);
-  console.log(params.lesson);
-
   return (
     <>
       <h1 className="mb-5 text-center text-xl uppercase">{lessonName}</h1>

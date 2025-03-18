@@ -24,6 +24,8 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
   const [practiceActive, setPracticeActive] = useState(0);
 
+  const practics = [...tests, ...exercises];
+
   useEffect(() => {
     Prism.highlightAll();
   });
@@ -36,18 +38,21 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
         {lesson?.video && <Video src={lesson?.video} />}
       </div>
       <div className="w-2/4">
-        {lesson?.tests &&
-          lesson?.tests.length > 0 &&
-          lesson.tests.map((test, index) => (
-            <div className="relative" key={test.name + index}>
-              <Test test={test} active={index === practiceActive} />
+        {practics.length > 0 &&
+          practics.map((practice, index) => (
+            <div className="relative" key={practice.name + index}>
+              {'variants' in practice ? (
+                <Test test={practice} active={index === practiceActive} />
+              ) : (
+                <Exercise exercise={practice} active={index === practiceActive} />
+              )}
               {index === practiceActive && (
                 <Button
                   variant="customCircle"
                   onClick={() => setPracticeActive(index + 1)}
                   className="right-2"
                   size="icon"
-                  disabled={practiceActive + 1 >= lesson?.tests.length}
+                  disabled={practiceActive + 1 >= practics.length}
                 >
                   <GrNext size={20} />
                 </Button>

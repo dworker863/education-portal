@@ -1,9 +1,10 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { FC, useRef, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
+import DOMPurify from 'dompurify';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -11,10 +12,12 @@ type TExerciseProps = {
 
 const Exercise: FC<TExerciseProps> = ({ exercise }) => {
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
+  const containerRef = useRef<HTMLDivElement>(null);
+  const task = exercise?.task ? DOMPurify.sanitize(exercise?.task) : '';
 
   return (
     <>
-      <p className="mb-5">{exercise.task}</p>
+      <div ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
       <p>
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{exercise.requiredRank}</span>
       </p>
@@ -37,7 +40,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
           Решение
         </Button>
       </nav>
-      <div className="mb-5" id="test">
+      <div className="mb-5" id={exercise.id}>
         <EditorWrapper exercise={exercise} tab={tab} />
       </div>
     </>

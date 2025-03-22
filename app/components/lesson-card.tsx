@@ -26,6 +26,7 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
+
   const [practiceActive, setPracticeActive] = useState(0);
 
   const practics = [...exercises, ...tests];

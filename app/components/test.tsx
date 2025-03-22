@@ -47,7 +47,7 @@ const Test: FC<TTestProps> = ({ test }) => {
       <p className="lesson-p">
         Баллы: <span className="text-customSecondary font-semibold">{test.prizePoints}</span>
       </p>
-      <p ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
+      <div ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
       <div className="flex justify-between gap-3 flex-wrap">
         {test.variants.map((variant, index) => (
           <Button

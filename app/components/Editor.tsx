@@ -28,7 +28,9 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
               create: {
                 [exercisePath]: exercise.code || '',
                 [solutionPath]: exercise.solution,
-                [testPath]: `import {solution} from '/${exercisePath}' ${exercise.test}`,
+                [testPath]: `import {solution} from '/${exercisePath}';
+                import { assert } from 'chai';
+                ${exercise.test}`,
               },
               destroy: [],
             });

@@ -19,9 +19,13 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
   useEffect(() => {
     const runEmbed = async () => {
       try {
-        const vm = await sdk.embedProjectId('test', 'education-portal-lesson-test', {
-          view: 'editor',
-        });
+        const vm = await sdk.embedProjectId(
+          exercise.id,
+          `${exercise.language.toLowerCase()}-${exercise.name.toLowerCase()}`,
+          {
+            view: 'editor',
+          },
+        );
 
         setVm(vm);
       } catch (error) {

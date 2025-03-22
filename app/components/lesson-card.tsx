@@ -12,6 +12,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css'; // Стили дл
 import Test from './test';
 import { Button } from './button';
 import { GrNext } from 'react-icons/gr';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
 
 type TLessonCardProps = {
   lesson: ILesson | null;
@@ -24,7 +25,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
   const [practiceActive, setPracticeActive] = useState(0);
 
-  const practics = [...tests, ...exercises];
+  const practics = [...exercises, ...tests];
 
   useEffect(() => {
     Prism.highlightAll();
@@ -37,41 +38,31 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
         <div ref={containerRef} className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
         {lesson?.video && <Video src={lesson?.video} />}
       </div>
+
       <div className="w-2/4">
-        {practics.length > 0 &&
-          practics.map((practice, index) => (
-            <div className="relative" key={practice.name + index}>
-              {'variants' in practice ? (
-                <Test test={practice} active={index === practiceActive} />
-              ) : (
-                <Exercise exercise={practice} active={index === practiceActive} />
-              )}
-              {index === practiceActive && (
-                <Button
-                  variant="customCircle"
-                  onClick={() => setPracticeActive(index + 1)}
-                  className="right-2"
-                  size="icon"
-                  disabled={practiceActive + 1 >= practics.length}
-                >
-                  <GrNext size={20} />
-                </Button>
-              )}
-              {index === practiceActive && (
-                <Button
-                  variant="customCircle"
-                  onClick={() => setPracticeActive(index - 1)}
-                  className="left-2 rotate-180"
-                  size="icon"
-                  disabled={practiceActive - 1 < 0}
-                >
-                  <GrNext size={20} />
-                </Button>
-              )}
-            </div>
-          ))}
+        <h2 className="mb-5 text-center">Практика</h2>
+        <Carousel className="w-full">
+          <CarouselContent>
+            {practics.length > 0 &&
+              practics.map((practice, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-1">
+                    {'variants' in practice ? (
+                      <Test key={index + practice.name} test={practice} />
+                    ) : (
+                      <Exercise key={index + practice.name} exercise={practice} />
+                    )}
+                  </div>
+                </CarouselItem>
+              ))}
+          </CarouselContent>
+          <CarouselPrevious variant="customCircle" />
+          <CarouselNext variant="customCircle" />
+        </Carousel>
       </div>
-      {/* <div className="w-2/4">{exercise ? <Exercise exercise={exercise} /> : test ? <Test test={test} /> : ''}</div> */}
+      {/* {tests.length > 0 && tests.map((test, index) => <Test key={index + test.name} test={test} />)}
+      {exercises.length > 0 &&
+        exercises.map((exercise, index) => <Exercise key={index + exercise.name} exercise={exercise} />)} */}
     </div>
   );
 };

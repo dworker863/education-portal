@@ -4,23 +4,16 @@ import { FC, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
-import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TExerciseProps = {
   exercise: IExercise;
-  active: boolean;
 };
 
-const Exercise: FC<TExerciseProps> = ({ exercise, active }) => {
+const Exercise: FC<TExerciseProps> = ({ exercise }) => {
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
-
-  if (!active) {
-    return null;
-  }
 
   return (
     <>
-      <h2 className="mb-5 text-center">{exercise.name}</h2>
       <p className="mb-5">{exercise.task}</p>
       <p>
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{exercise.requiredRank}</span>

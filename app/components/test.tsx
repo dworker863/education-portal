@@ -13,11 +13,9 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 
 type TTestProps = {
   test: ITest;
-  active: boolean;
 };
 
-const Test: FC<TTestProps> = ({ test, active }) => {
-  // const [result, setResult] = useState<string | null>(null);
+const Test: FC<TTestProps> = ({ test }) => {
   const [buttonTypes, setButtonTypes] = useState<('custom' | 'customSuccess' | 'customFail')[]>(
     Array(test.variants.length).fill('custom'),
   );
@@ -40,13 +38,8 @@ const Test: FC<TTestProps> = ({ test, active }) => {
     setButtonTypes(newButtonTypes);
   };
 
-  if (!active) {
-    return null;
-  }
-
   return (
     <>
-      <h2 className="mb-5 text-center">Практика</h2>
       <h1 className="lesson-h1">{test.name}</h1>
       <p className="lesson-p">
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{test.requiredRank}</span>
@@ -55,7 +48,7 @@ const Test: FC<TTestProps> = ({ test, active }) => {
         Баллы: <span className="text-customSecondary font-semibold">{test.prizePoints}</span>
       </p>
       <p ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-3 flex-wrap">
         {test.variants.map((variant, index) => (
           <Button
             className="min-w-[150px]"

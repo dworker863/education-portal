@@ -1,7 +1,7 @@
 'use client';
 
 import sdk, { VM } from '@stackblitz/sdk';
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import Editor from './editor';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { useSession } from 'next-auth/react';
@@ -19,11 +19,9 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
   useEffect(() => {
     const runEmbed = async () => {
       try {
-        const vm = await sdk.embedProjectId(
-          'test',
-          'education-portal-lesson-test',
-          { view: 'editor' },
-        );
+        const vm = await sdk.embedProjectId('test', 'education-portal-lesson-test', {
+          view: 'editor',
+        });
 
         setVm(vm);
       } catch (error) {
@@ -32,6 +30,10 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
     };
 
     runEmbed();
+
+    return () => {
+      console.log('UNMOUNTED');
+    };
   }, []);
 
   if (!vm || !userId) return null;

@@ -13,6 +13,7 @@ type TEditorProps = {
 
 const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
+
   useEffect(() => {
     const exerciseFileName = exercise.name.split(' ').join('');
     const exercisePath = `${userId}/${exerciseFileName}.js`;

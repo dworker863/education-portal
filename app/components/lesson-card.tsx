@@ -11,8 +11,11 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css'; // Стили для нумерации строк
 import Test from './test';
 import { Button } from './button';
-import { GrNext } from 'react-icons/gr';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
+import TestFormWrapper from './test-form-wrapper';
+import ExerciseFormWrapper from './exercise-form-wrapper';
 
 type TLessonCardProps = {
   lesson: ILesson | null;
@@ -52,17 +55,21 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
                     ) : (
                       <Exercise key={index + practice.name} exercise={practice} />
                     )}
+                    <div className="flex justify-center mt-20">
+                      {'variants' in practice ? (
+                        <TestFormWrapper testId={practice.id} />
+                      ) : (
+                        <ExerciseFormWrapper exerciseId={practice?.id} />
+                      )}
+                    </div>
                   </div>
                 </CarouselItem>
               ))}
           </CarouselContent>
-          <CarouselPrevious variant="customCircle" />
-          <CarouselNext variant="customCircle" />
+          {practics.length > 1 && <CarouselPrevious variant="customCircle" />}
+          {practics.length > 1 && <CarouselNext variant="customCircle" />}
         </Carousel>
       </div>
-      {/* {tests.length > 0 && tests.map((test, index) => <Test key={index + test.name} test={test} />)}
-      {exercises.length > 0 &&
-        exercises.map((exercise, index) => <Exercise key={index + exercise.name} exercise={exercise} />)} */}
     </div>
   );
 };

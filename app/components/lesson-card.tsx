@@ -10,8 +10,6 @@ import 'prismjs/themes/prism-tomorrow.css'; // Базовая тема
 import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для нумерации строк
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css'; // Стили для нумерации строк
 import Test from './test';
-import { Button } from './button';
-import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
 import TestFormWrapper from './test-form-wrapper';
@@ -26,8 +24,6 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
-
-  const [practiceActive, setPracticeActive] = useState(0);
 
   const practics = [...exercises, ...tests];
 

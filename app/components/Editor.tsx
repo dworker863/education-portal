@@ -18,7 +18,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
     const exerciseFileName = exercise.name.split(' ').join('');
     const exercisePath = `${userId}/${exerciseFileName}.js`;
     const solutionPath = 'solution.js';
-    const testPath = 'test.js';
+    const testPath = `test.js`;
 
     const runEmbed = async () => {
       try {
@@ -30,6 +30,9 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
                 [solutionPath]: exercise.solution,
                 [testPath]: `import {solution} from '/${exercisePath}';
                 import { assert } from 'chai';
+
+                const exerciseName = '${exercise.name}';
+                const userId = '${userId}';
                 ${exercise.test}`,
               },
               destroy: [],

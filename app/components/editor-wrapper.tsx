@@ -7,6 +7,7 @@ import { IExercise } from '../libs/interfaces/interfaces';
 import { useSession } from 'next-auth/react';
 
 type TEditorWrapperProps = {
+  userId: string;
   exercise: IExercise;
   tab: 'exercise' | 'solution';
 };

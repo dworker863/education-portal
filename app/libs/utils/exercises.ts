@@ -29,3 +29,19 @@ export const getExerciseByName = async (name: string) => {
     throw error;
   }
 };
+
+export function calculateRank(rating: number): string {
+  if (rating >= 6000) return 'S';
+  if (rating >= 5000) return 'A+';
+  if (rating >= 4300) return 'A';
+  if (rating >= 3700) return 'A-';
+  if (rating >= 3100) return 'B+';
+  if (rating >= 2600) return 'B';
+  if (rating >= 2100) return 'B-';
+  if (rating >= 1600) return 'C+';
+  if (rating >= 1200) return 'C';
+  if (rating >= 800) return 'C-';
+  if (rating >= 400) return 'D+';
+  if (rating >= 200) return 'D';
+  return 'D-';
+}

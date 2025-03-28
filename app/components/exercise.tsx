@@ -7,31 +7,37 @@ import EditorWrapper from './editor-wrapper';
 import DOMPurify from 'dompurify';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
+import { completeExercise } from '../libs/server-actions/user-actions';
+import { useSession } from 'next-auth/react';
 
 type TExerciseProps = {
   exercise: IExercise;
 };
 
 const Exercise: FC<TExerciseProps> = ({ exercise }) => {
+  const { data: session } = useSession();
+  const userId = session?.user.id as string;
   const containerRef = useRef<HTMLDivElement>(null);
+
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const task = exercise?.task ? DOMPurify.sanitize(exercise?.task) : '';
 
-  const checkExercise = () => {
-    fetch(`https://67e2eeaf97fc65f535382fe2.mockapi.io/test-result`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('Полученные данные:', data);
-        if (data[0].failed > 0) {
-          setIsPassed('failed');
-        } else {
-          setIsPassed('success');
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  const checkExercise = async () => {
+    try {
+      const response = await fetch('https://67e2eeaf97fc65f535382fe2.mockapi.io/test-result');
+      const data = await response.json();
+      console.log('Полученные данные:', data);
+
+      if (data[0].failed > 0) {
+        setIsPassed('failed');
+      } else {
+        setIsPassed('success');
+        await completeExercise(userId, exercise.id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -60,7 +66,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
         </Button>
       </nav>
       <div className="mb-5" id={exercise.id}>
-        <EditorWrapper exercise={exercise} tab={tab} />
+        <EditorWrapper userId={userId} exercise={exercise} tab={tab} />
       </div>
       <div className="flex gap-4">
         <Button

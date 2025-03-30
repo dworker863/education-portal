@@ -4,6 +4,8 @@ import { prisma } from '@/prisma/prisma';
 import { calculateRank } from '../utils/exercises';
 
 export const completeExercise = async (userId: string, exerciseId: string) => {
+  console.log('COMPLETE EXERCISE');
+
   try {
     return await prisma.$transaction(async (prisma) => {
       const existingExercise = await prisma.exercise.findUnique({
@@ -14,7 +16,7 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
       });
 
       if (!existingExercise) {
-        return { error: 'Упражнения с таким ID не существует' };
+        throw Error('Упражнения с таким ID не существует');
       }
 
       const existingUser = await prisma.user.findUnique({
@@ -32,7 +34,7 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
       });
 
       if (!existingUser) {
-        return { error: 'Пользователя с таким ID не существует' };
+        throw Error('Пользователя с таким ID не существует');
       }
 
       const newRating =
@@ -41,21 +43,20 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
           : existingUser.rating + existingExercise.prizePoints;
       const newRank = calculateRank(newRating);
 
-      await prisma.user.update({
+      const updatedUser = await prisma.user.update({
         where: { id: userId },
         data: {
+          rating: newRating,
+          rank: newRank,
           completedExercises: {
             connect: {
               id: exerciseId,
-              NOT: {
-                completedUsers: { some: { id: userId } },
-              },
             },
           },
         },
       });
 
-      return { success: 'Рейтинг успешно обновлен' };
+      return { user: updatedUser, success: 'Рейтинг успешно обновлен' };
     });
   } catch (error) {
     console.error('Ошибка при обновлении рейтинга пользователя: ', error);

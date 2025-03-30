@@ -4,24 +4,29 @@ import { prisma } from './prisma/prisma';
 import authConfig from './auth.config';
 import { VerificationError } from './app/libs/errors';
 import { sendVerificationEmail } from './app/libs/utils/mail';
-import {
-  getTwoFactorConfirmationByUserId,
-  getUserById,
-} from './app/libs/utils/auth';
+import { getTwoFactorConfirmationByUserId, getUserById } from './app/libs/utils/auth';
 import { generateVerificationToken } from './app/libs/utils/tokens';
+import { JsonValue } from '@prisma/client/runtime/library';
+import { ICourse, IExercise, ITest } from './app/libs/interfaces/interfaces';
 
 declare module 'next-auth' {
   interface Session {
     user: {
+      id: string;
+      password: string | null;
+      emailVerified: Date | null;
       role: 'ADMIN' | 'USER';
-      password: string;
-      firstName: string;
-      lastName: string;
-      birthDate: string;
-      rating: string;
+      firstName: string | null;
+      lastName: string | null;
+      birthDate: Date | null;
+      rating: number;
       rank: string;
       moneyUSD: number;
-      meta: string[];
+      meta: JsonValue;
+      coursesInProgress?: ICourse[];
+      completedCourses?: ICourse[];
+      completedExercises?: IExercise[];
+      completedTests?: ITest[];
     } & DefaultSession['user'];
 
     /**
@@ -73,19 +78,12 @@ export const {
         if (!existingUser?.emailVerified) {
           const verificationToken = await generateVerificationToken(user.email);
 
-          await sendVerificationEmail(
-            verificationToken.email,
-            verificationToken.token,
-          );
+          await sendVerificationEmail(verificationToken.email, verificationToken.token);
 
-          throw new VerificationError(
-            'Ссылка подтверждения отправлена на указанный email',
-          );
+          throw new VerificationError('Ссылка подтверждения отправлена на указанный email');
         }
 
-        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(
-          existingUser.id,
-        );
+        const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
 
         if (!twoFactorConfirmation) {
           return false;
@@ -100,9 +98,17 @@ export const {
 
       return true;
     },
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, trigger, session }) => {
       if (user) {
         token = { ...token, user: { ...user } };
+      }
+
+      // Ручное обновление сессии
+      if (trigger === 'update' && session?.user) {
+        token.user = {
+          ...(token.user || {}),
+          ...session.user,
+        };
       }
 
       return token;
@@ -111,6 +117,8 @@ export const {
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
+
+      console.log('AUTH SESSION: ', session);
 
       return session;
     },

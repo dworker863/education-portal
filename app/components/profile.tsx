@@ -2,7 +2,7 @@
 
 import { FC, useContext, useEffect, useState } from 'react';
 import { cn } from '../libs/cn';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
@@ -18,15 +18,17 @@ type TProfile = {
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const context = useContext(ModalContext);
   const router = useRouter();
+  const session = useSession();
 
-  const [session, setSession] = useState<Session | null>(null);
+  const [authSession, setAuthSession] = useState<Session | null>(null);
+  console.log('PROFILE: ', session);
 
-  const user = session?.user;
+  const user = session?.data?.user || authSession?.user;
 
   useEffect(() => {
     const handleReload = async () => {
       const data = await getSession();
-      setSession(data);
+      setAuthSession(data);
     };
 
     handleReload();

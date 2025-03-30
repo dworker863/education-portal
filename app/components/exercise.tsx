@@ -8,15 +8,16 @@ import DOMPurify from 'dompurify';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import { completeExercise } from '../libs/server-actions/user-actions';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 
 type TExerciseProps = {
   exercise: IExercise;
 };
 
 const Exercise: FC<TExerciseProps> = ({ exercise }) => {
-  const { data: session } = useSession();
-  const userId = session?.user.id as string;
+  // const { data: session } = useSession();
+  const session = useSession();
+  const userId = session?.data?.user.id as string;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
@@ -33,7 +34,17 @@ const Exercise: FC<TExerciseProps> = ({ exercise }) => {
         setIsPassed('failed');
       } else {
         setIsPassed('success');
-        await completeExercise(userId, exercise.id);
+        console.log('EXERCISE SESSION: ', session);
+
+        const { user } = await completeExercise(userId, exercise.id);
+        console.log(user);
+
+        const result = await session.update({
+          user: {
+            rating: user.rating || 0,
+          },
+        });
+        console.log('UPDATE RESULT: ', result);
       }
     } catch (error) {
       console.log(error);

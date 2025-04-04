@@ -13,9 +13,11 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 
 type TTestProps = {
   test: ITest;
+  setPassedExercises: React.Dispatch<React.SetStateAction<string[]>>;
+  passedExercises: string[];
 };
 
-const Test: FC<TTestProps> = ({ test }) => {
+const Test: FC<TTestProps> = ({ test, passedExercises, setPassedExercises }) => {
   const [buttonTypes, setButtonTypes] = useState<('custom' | 'customSuccess' | 'customFail')[]>(
     Array(test.variants.length).fill('custom'),
   );
@@ -31,6 +33,7 @@ const Test: FC<TTestProps> = ({ test }) => {
 
     if (variant === test.solution) {
       newButtonTypes[index] = 'customSuccess';
+      setPassedExercises([...passedExercises, test.id]);
     } else {
       newButtonTypes[index] = 'customFail';
     }

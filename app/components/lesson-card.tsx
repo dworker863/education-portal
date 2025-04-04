@@ -14,9 +14,14 @@ import Test from './test';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
 import TestFormWrapper from './test-form-wrapper';
 import ExerciseFormWrapper from './exercise-form-wrapper';
+import { Button } from './button';
+import { GoIssueClosed } from 'react-icons/go';
+import { SlClose } from 'react-icons/sl';
+import ErrorMessage from './error-message';
+import { checkLesson } from '../libs/utils/lessons';
 
 type TLessonCardProps = {
-  lesson: ILesson | null;
+  lesson: ILesson;
   exercises: IExercise[];
   tests: ITest[];
 };
@@ -25,11 +30,25 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
 
+  const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
+  const [passedExercises, setPassedExercises] = useState<string[]>([]);
+
   const practics = [...exercises, ...tests];
+  const exercisesIds = exercises.map((exercise) => exercise.id);
 
   useEffect(() => {
     Prism.highlightAll();
   });
+
+  const handleCheckLesson = () => {
+    const result = checkLesson(passedExercises, exercisesIds);
+
+    if (result) {
+      setIsPassed('success');
+    } else {
+      setIsPassed('failed');
+    }
+  };
 
   return (
     <div className="flex w-full gap-10 p-10 bg-primary text-primary-foreground rounded-lg">
@@ -37,6 +56,29 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
         <h2 className="mb-5 text-center">Теория</h2>
         <div ref={containerRef} className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
         {lesson?.video && <Video src={lesson?.video} />}
+        <Button
+          variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+          onClick={() => handleCheckLesson()}
+        >
+          {isPassed === 'success' && (
+            <>
+              <GoIssueClosed className="mr-2" size={20} />
+              Пройдено
+            </>
+          )}
+          {isPassed === 'failed' && (
+            <>
+              <SlClose className="mr-2" size={20} />
+              Не Пройдено
+            </>
+          )}
+          {isPassed === 'default' && 'Следующий урок'}
+        </Button>
+        {isPassed === 'failed' && (
+          <div className="mt-4">
+            <ErrorMessage message="Чтобы перейти к следующему уроку Вы должны успешно выполнить 75% упражнений" />
+          </div>
+        )}
       </div>
 
       <div className="w-2/4">
@@ -48,9 +90,19 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
                 <CarouselItem key={index}>
                   <div className="p-1">
                     {'variants' in practice ? (
-                      <Test key={index + practice.name} test={practice} />
+                      <Test
+                        key={index + practice.name}
+                        test={practice}
+                        passedExercises={passedExercises}
+                        setPassedExercises={setPassedExercises}
+                      />
                     ) : (
-                      <Exercise key={index + practice.name} exercise={practice} />
+                      <Exercise
+                        key={index + practice.name}
+                        exercise={practice}
+                        passedExercises={passedExercises}
+                        setPassedExercises={setPassedExercises}
+                      />
                     )}
                     <div className="flex justify-center mt-20">
                       {'variants' in practice ? (

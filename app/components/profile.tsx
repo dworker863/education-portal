@@ -128,6 +128,16 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           <p className="mb-2 text-sm">
             Рейтинг: <span className="text-customPrimary">{user?.rating}</span>
           </p>
+          {user?.coursesInProgress && (
+            <p className="mb-2 text-sm">
+              Изучаемые курсы: <span className="text-customPrimary">{user?.rating}</span>
+            </p>
+          )}
+          {user?.completedCourses && (
+            <p className="mb-2 text-sm">
+              Завершенные курсы: <span className="text-customPrimary">{user?.rating}</span>
+            </p>
+          )}
           <p className="mb-2 text-sm">
             Баланс: <span className="text-customPrimary">{user?.moneyUSD}</span>
           </p>

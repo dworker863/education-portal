@@ -104,10 +104,10 @@ export const {
       }
 
       // Ручное обновление сессии
-      if (trigger === 'update' && session?.user) {
+      if (trigger === 'update' && session) {
         token.user = {
           ...(token.user || {}),
-          ...session.user,
+          ...session,
         };
       }
 

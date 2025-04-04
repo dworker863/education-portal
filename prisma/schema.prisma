@@ -32,6 +32,7 @@ model User {
   completedCourses      Course[]               @relation("UsersCompletedCourses")
   completedExercises    Exercise[]
   completedTests        Test[]
+  courseProgress        UserCourseProgress[]
   TwoFactorConfirmation TwoFactorConfirmation?
 
   createdAt DateTime @default(now())
@@ -89,31 +90,34 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id              String       @id @default(cuid())
+  id              String               @id @default(cuid())
   name            String
   description     String
   icon            String
   priceUSD        Float
   certificateId   String?
   category        String
-  meta            Json         @default("{}")
+  meta            Json                 @default("{}")
   lessons         Lesson[]
-  usersInProgress User[]       @relation("UsersInProgressCourses")
-  completedUsers  User[]       @relation("UsersCompletedCourses")
+  usersInProgress User[]               @relation("UsersInProgressCourses")
+  completedUsers  User[]               @relation("UsersCompletedCourses")
   achievement     Achievement?
+  userProgress    UserCourseProgress[]
 }
 
 model Lesson {
-  id        String     @id @default(cuid())
-  name      String
-  content   String
-  images    String[]   @default([])
-  video     String?
-  meta      Json       @default("{}")
-  course    Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId  String
-  exercises Exercise[]
-  tests     Test[]
+  id                String               @id @default(cuid())
+  name              String
+  content           String
+  images            String[]             @default([])
+  video             String?
+  meta              Json                 @default("{}")
+  course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId          String
+  exercises         Exercise[]
+  tests             Test[]
+  completedByUsers  UserCourseProgress[] @relation("CompletedLessons")
+  currentInProgress UserCourseProgress?
 }
 
 model Exercise {
@@ -158,4 +162,25 @@ model Achievement {
   meta         Json   @default("{}")
   course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId     String @unique
+}
+
+model UserCourseProgress {
+  id               String    @id @default(cuid())
+  user             User      @relation(fields: [userId], references: [id])
+  userId           String
+  course           Course    @relation(fields: [courseId], references: [id])
+  courseId         String
+  completedLessons Lesson[]  @relation("CompletedLessons")
+  currentLesson    Lesson?   @relation(fields: [currentLessonId], references: [id])
+  currentLessonId  String?   @unique
+  progress         Float     @default(0) // 0-100%
+  lastAccessedAt   DateTime  @default(now())
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  isCompleted      Boolean   @default(false)
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([progress])
 }

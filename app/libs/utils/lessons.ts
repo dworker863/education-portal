@@ -33,3 +33,13 @@ export const getLessonById = async (id: string) => {
     throw error;
   }
 };
+
+export const checkLesson = (passedExercises: string[], totalExercises: string[]) => {
+  const result = (passedExercises.length / totalExercises.length) * 100;
+
+  if (result < 75) {
+    return false;
+  } else {
+    return true;
+  }
+};

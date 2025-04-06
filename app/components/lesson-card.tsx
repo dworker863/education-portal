@@ -19,6 +19,8 @@ import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import ErrorMessage from './error-message';
 import { checkLesson } from '../libs/utils/lessons';
+import { updateCourseProgress } from '../libs/server-actions/progress-action';
+import { useSession } from 'next-auth/react';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -29,6 +31,9 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
+  const session = useSession();
+  const userId = session?.data?.user.id as string;
+  const courseId = lesson.courseId;
 
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const [passedExercises, setPassedExercises] = useState<string[]>([]);
@@ -40,13 +45,23 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
     Prism.highlightAll();
   });
 
+  console.log('LESSON CARD LESSON: ', lesson);
+
   const handleCheckLesson = () => {
     const result = checkLesson(passedExercises, exercisesIds);
 
-    if (result) {
-      setIsPassed('success');
-    } else {
+    if (!result) {
       setIsPassed('failed');
+    } else {
+      updateCourseProgress(userId, lesson.courseId, lesson.id)
+        .then((data) => {
+          console.log(data?.result);
+
+          setIsPassed('success');
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 

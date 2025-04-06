@@ -34,7 +34,6 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExer
       if (data[0].failed > 0) {
         setIsPassed('failed');
       } else {
-        setIsPassed('success');
         setPassedExercises([...passedExercises, exercise.id]);
         console.log('EXERCISE SESSION: ', session);
 
@@ -45,6 +44,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExer
           rating: user.rating || 0,
         });
         console.log('UPDATE RESULT: ', result);
+        setIsPassed('success');
       }
     } catch (error) {
       console.log(error);

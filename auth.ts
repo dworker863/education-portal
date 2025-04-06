@@ -118,8 +118,6 @@ export const {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
 
-      console.log('AUTH SESSION: ', session);
-
       return session;
     },
   },

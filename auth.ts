@@ -23,7 +23,6 @@ declare module 'next-auth' {
       rank: string;
       moneyUSD: number;
       meta: JsonValue;
-      coursesInProgress?: ICourse[];
       completedCourses?: ICourse[];
       completedExercises?: IExercise[];
       completedTests?: ITest[];
@@ -114,9 +113,32 @@ export const {
       return token;
     },
     session: async ({ token, session }) => {
+      const userId = (token.user as any)?.id;
+      console.log('SESSION TOKEN: ', token);
+
+      if (userId) {
+        const fullUser = await prisma.user.findUnique({
+          where: { id: userId },
+          include: {
+            completedExercises: true,
+            completedCourses: true,
+            completedTests: true,
+          },
+        });
+
+        if (fullUser) {
+          session.user = {
+            ...session.user,
+            ...fullUser,
+          };
+        }
+      }
+
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
+
+      console.log('SESSION: ', session);
 
       return session;
     },

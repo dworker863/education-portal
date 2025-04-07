@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma/prisma';
+import { IExercise } from '../interfaces/interfaces';
 
 export const getLessonByName = async (name: string) => {
   try {

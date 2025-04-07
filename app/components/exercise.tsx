@@ -7,8 +7,8 @@ import EditorWrapper from './editor-wrapper';
 import DOMPurify from 'dompurify';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
-import { completeExercise } from '../libs/server-actions/user-actions';
 import { useSession } from 'next-auth/react';
+import { completeExercise } from '../libs/server-actions/exercises-actions';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -34,7 +34,6 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExer
       if (data[0].failed > 0) {
         setIsPassed('failed');
       } else {
-        setPassedExercises([...passedExercises, exercise.id]);
         console.log('EXERCISE SESSION: ', session);
 
         const { user } = await completeExercise(userId, exercise.id);
@@ -44,6 +43,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExer
           rating: user.rating || 0,
         });
         console.log('UPDATE RESULT: ', result);
+        setPassedExercises([...passedExercises, exercise.id]);
         setIsPassed('success');
       }
     } catch (error) {

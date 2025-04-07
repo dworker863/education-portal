@@ -1,4 +1,5 @@
 import { prisma } from '@/prisma/prisma';
+import { IExercise } from '../interfaces/interfaces';
 
 export const getExerciseById = async (id: string) => {
   try {
@@ -28,6 +29,25 @@ export const getExerciseByName = async (name: string) => {
     console.error('Ошибка при получении упражнения по названию: ', error);
     throw error;
   }
+};
+
+export const checkCompletedExercises = (
+  userCompletedExercises: IExercise[] | undefined,
+  courseExercises: IExercise[],
+) => {
+  console.log('checkCompletedExercises: ', userCompletedExercises);
+
+  if (!userCompletedExercises) {
+    return [];
+  }
+
+  const matchedExercises = courseExercises.filter((courseExercise) => {
+    return userCompletedExercises.some((userExercise) => userExercise.id === courseExercise.id);
+  });
+
+  const matchedExercisesIds = matchedExercises.map((matchedExercise) => matchedExercise.id);
+
+  return matchedExercisesIds;
 };
 
 export function calculateRank(rating: number): string {

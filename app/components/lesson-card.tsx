@@ -21,6 +21,7 @@ import ErrorMessage from './error-message';
 import { checkLesson } from '../libs/utils/lessons';
 import { updateCourseProgress } from '../libs/server-actions/progress-action';
 import { useSession } from 'next-auth/react';
+import { checkCompletedExercises } from '../libs/utils/exercises';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -33,7 +34,6 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
   const session = useSession();
   const userId = session?.data?.user.id as string;
-  const courseId = lesson.courseId;
 
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const [passedExercises, setPassedExercises] = useState<string[]>([]);
@@ -45,7 +45,11 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
     Prism.highlightAll();
   });
 
-  console.log('LESSON CARD LESSON: ', lesson);
+  useEffect(() => {
+    const lessonCompletedExercises = checkCompletedExercises(session?.data?.user.completedExercises, exercises);
+
+    setPassedExercises(lessonCompletedExercises);
+  }, [exercises, session?.data?.user.completedExercises]);
 
   const handleCheckLesson = () => {
     const result = checkLesson(passedExercises, exercisesIds);

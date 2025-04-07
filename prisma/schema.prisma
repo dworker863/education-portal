@@ -28,7 +28,6 @@ model User {
   moneyUSD              Int                    @default(0)
   meta                  Json                   @default("{}")
   accounts              Account[]
-  coursesInProgress     Course[]               @relation("UsersInProgressCourses")
   completedCourses      Course[]               @relation("UsersCompletedCourses")
   completedExercises    Exercise[]
   completedTests        Test[]
@@ -90,19 +89,18 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id              String               @id @default(cuid())
-  name            String
-  description     String
-  icon            String
-  priceUSD        Float
-  certificateId   String?
-  category        String
-  meta            Json                 @default("{}")
-  lessons         Lesson[]
-  usersInProgress User[]               @relation("UsersInProgressCourses")
-  completedUsers  User[]               @relation("UsersCompletedCourses")
-  achievement     Achievement?
-  userProgress    UserCourseProgress[]
+  id             String               @id @default(cuid())
+  name           String
+  description    String
+  icon           String
+  priceUSD       Float
+  certificateId  String?
+  category       String
+  meta           Json                 @default("{}")
+  lessons        Lesson[]
+  completedUsers User[]               @relation("UsersCompletedCourses")
+  achievement    Achievement?
+  userProgress   UserCourseProgress[]
 }
 
 model Lesson {

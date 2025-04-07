@@ -171,13 +171,13 @@ model UserCourseProgress {
   course           Course    @relation(fields: [courseId], references: [id])
   courseId         String
   completedLessons Lesson[]  @relation("CompletedLessons")
-  currentLesson    Lesson?   @relation(fields: [currentLessonId], references: [id])
-  currentLessonId  String?   @unique
+  currentLesson    Lesson    @relation(fields: [currentLessonId], references: [id])
+  currentLessonId  String    @unique
   progress         Float     @default(0) // 0-100%
   lastAccessedAt   DateTime  @default(now())
   startedAt        DateTime  @default(now())
   completedAt      DateTime?
-  isCompleted      Boolean   @default(false)
+  meta             Json      @default("{}")
 
   @@unique([userId, courseId])
   @@index([userId])

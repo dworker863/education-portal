@@ -9,6 +9,8 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
 import { Session } from 'next-auth';
+import { getUserCoursesProgress } from '../libs/server-actions/progress-action';
+import { IUserCourseProgress } from '../libs/interfaces/interfaces';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -21,7 +23,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const session = useSession();
 
   const [authSession, setAuthSession] = useState<Session | null>(null);
-  console.log('PROFILE: ', session);
+  const [userCourses, setUserCourses] = useState<IUserCourseProgress[] | null>(null);
 
   const user = session?.data?.user || authSession?.user;
 
@@ -32,8 +34,28 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     };
 
     handleReload();
-    console.log('PROFILE: ', context?.isModalOpen);
   }, [context]);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const getUserCourses = async () => {
+      const userCoursesProgress = await getUserCoursesProgress(user.id);
+      console.log('PROFILE PROGRESS: ', userCoursesProgress);
+
+      if (userCoursesProgress) {
+        setUserCourses(userCoursesProgress);
+      }
+    };
+
+    getUserCourses();
+  }, [user]);
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <div
@@ -128,9 +150,17 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           <p className="mb-2 text-sm">
             Рейтинг: <span className="text-customPrimary">{user?.rating}</span>
           </p>
-          {user?.coursesInProgress && (
+          {userCourses && (
             <p className="mb-2 text-sm">
-              Изучаемые курсы: <span className="text-customPrimary">{user?.rating}</span>
+              Изучаемые курсы:
+              {userCourses.map((courseProgress, index) => (
+                <span
+                  key={courseProgress.course?.name ? courseProgress.course?.name + index : index}
+                  className="text-customPrimary"
+                >
+                  {courseProgress.course?.name && courseProgress.course?.name + courseProgress.progress}
+                </span>
+              ))}
             </p>
           )}
           {user?.completedCourses && (

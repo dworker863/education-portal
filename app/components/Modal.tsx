@@ -31,8 +31,10 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
 
   const handleOutsideClick = (event: MouseEvent) => {
     const isSelectElement = (event.target as HTMLElement).closest('span');
+    const isRoleElement = (event.target as HTMLElement).matches('div[role="option"]');
+    console.log('MODAL TARGET: ', event.target);
 
-    if (modalRef.current && !modalRef.current.contains(event.target as Node) && !isSelectElement) {
+    if (modalRef.current && !modalRef.current.contains(event.target as Node) && !isSelectElement && !isRoleElement) {
       modalClose();
     }
   };

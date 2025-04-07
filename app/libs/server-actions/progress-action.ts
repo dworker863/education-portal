@@ -108,16 +108,22 @@ import { calculateCourseProgress } from '../utils/progress';
 
 // 5. Расчет прогресса в реальном времени
 
-export const getCourseProgress = async (userId: string, courseId: string) => {
+export const getUserCoursesProgress = async (userId: string) => {
   try {
-    const progress = await prisma.userCourseProgress.findUnique({
+    const progress = await prisma.userCourseProgress.findMany({
       where: {
-        userId_courseId: {
-          userId,
-          courseId,
+        userId,
+      },
+      include: {
+        course: {
+          select: {
+            name: true,
+          },
         },
       },
     });
+
+    console.log(progress);
 
     return progress;
   } catch (error) {
@@ -138,6 +144,7 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
         create: {
           userId,
           courseId,
+          currentLessonId: lessonId,
         },
         update: {
           currentLessonId: lessonId,

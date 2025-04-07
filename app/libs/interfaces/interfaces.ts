@@ -96,3 +96,18 @@ export interface IAchievement {
   course?: ICoursePartial;
   courseId: string | null;
 }
+
+export interface IUserCourseProgress {
+  id: string;
+  user?: IUser;
+  course?: ICourse | ICoursePartial;
+  courseId: string;
+  completedLessons?: ILesson[];
+  currentLesson?: ILesson;
+  currentLessonId: string;
+  progress: number;
+  lastAccessedAt: Date;
+  startedAt: Date;
+  completedAt: Date | null;
+  meta: JsonValue;
+}

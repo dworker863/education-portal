@@ -116,6 +116,8 @@ model Lesson {
   tests             Test[]
   completedByUsers  UserCourseProgress[] @relation("CompletedLessons")
   currentInProgress UserCourseProgress?
+
+  @@index([courseId])
 }
 
 model Exercise {
@@ -178,6 +180,7 @@ model UserCourseProgress {
   meta             Json      @default("{}")
 
   @@unique([userId, courseId])
+  @@index([userId, courseId])
   @@index([userId])
   @@index([courseId])
   @@index([progress])

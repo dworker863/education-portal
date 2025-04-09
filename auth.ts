@@ -114,7 +114,6 @@ export const {
     },
     session: async ({ token, session }) => {
       const userId = (token.user as any)?.id;
-      console.log('SESSION TOKEN: ', token);
 
       if (userId) {
         const fullUser = await prisma.user.findUnique({
@@ -137,8 +136,6 @@ export const {
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
-
-      console.log('SESSION: ', session);
 
       return session;
     },

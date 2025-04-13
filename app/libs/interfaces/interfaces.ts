@@ -15,7 +15,6 @@ export interface IUser {
   rank: string;
   moneyUSD: number;
   meta: JsonValue;
-  completedCourses?: ICourse[];
   completedExercises?: IExercise[];
   completedTests?: ITest[];
 }
@@ -30,7 +29,6 @@ export interface ICourse {
   category: string;
   meta: JsonValue;
   lessons?: ILesson[];
-  completedUsers?: IUser[];
   achievement?: IAchievement | null;
 }
 

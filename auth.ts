@@ -7,7 +7,7 @@ import { sendVerificationEmail } from './app/libs/utils/mail';
 import { getTwoFactorConfirmationByUserId, getUserById } from './app/libs/utils/auth';
 import { generateVerificationToken } from './app/libs/utils/tokens';
 import { JsonValue } from '@prisma/client/runtime/library';
-import { ICourse, IExercise, ITest } from './app/libs/interfaces/interfaces';
+import { IExercise, ITest } from './app/libs/interfaces/interfaces';
 
 declare module 'next-auth' {
   interface Session {
@@ -23,7 +23,6 @@ declare module 'next-auth' {
       rank: string;
       moneyUSD: number;
       meta: JsonValue;
-      completedCourses?: ICourse[];
       completedExercises?: IExercise[];
       completedTests?: ITest[];
     } & DefaultSession['user'];
@@ -120,7 +119,6 @@ export const {
           where: { id: userId },
           include: {
             completedExercises: true,
-            completedCourses: true,
             completedTests: true,
           },
         });

@@ -26,6 +26,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const [userCourses, setUserCourses] = useState<IUserCourseProgress[] | null>(null);
 
   const user = session?.data?.user || authSession?.user;
+  const completedCourses = userCourses?.filter((course) => course.completedAt);
 
   useEffect(() => {
     const handleReload = async () => {
@@ -56,8 +57,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   if (!user) {
     return null;
   }
-
-  console.log(user?.completedCourses);
 
   return (
     <div
@@ -168,12 +167,12 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               ))}
             </p>
           )}
-          {user?.completedCourses && user?.completedCourses.length > 0 && (
+          {completedCourses && completedCourses.length > 0 && (
             <p className="mb-2 text-sm">
               Завершенные курсы:
-              {user?.completedCourses.map((course, index) => (
-                <span key={course.name + index} className="text-customPrimary">
-                  {course.name}
+              {completedCourses.map((courseProgress, index) => (
+                <span key={courseProgress.id + index} className="text-customPrimary">
+                  {courseProgress.course?.name}
                 </span>
               ))}
             </p>

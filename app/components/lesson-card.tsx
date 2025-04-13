@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
 import { IExercise, ILesson, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
@@ -36,31 +36,33 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
   const userId = session?.data?.user.id as string;
 
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
-  const [passedExercises, setPassedExercises] = useState<string[]>([]);
+  const [passedTasks, setPassedTasks] = useState<string[]>([]);
 
-  const practics = [...exercises, ...tests];
-  const exercisesIds = exercises.map((exercise) => exercise.id);
+  const tasks = useMemo(() => [...exercises, ...tests], [exercises, tests]);
+  const completedTasks = useMemo(
+    () => [...(session?.data?.user.completedExercises || []), ...(session?.data?.user.completedTests || [])],
+    [session?.data?.user.completedExercises, session?.data?.user.completedTests],
+  );
+  const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 
   useEffect(() => {
     Prism.highlightAll();
   });
 
   useEffect(() => {
-    const lessonCompletedExercises = checkCompletedExercises(session?.data?.user.completedExercises, exercises);
+    const lessonCompletedExercises = checkCompletedExercises(completedTasks, tasks);
 
-    setPassedExercises(lessonCompletedExercises);
-  }, [exercises, session?.data?.user.completedExercises]);
+    setPassedTasks(lessonCompletedExercises);
+  }, [tasks, completedTasks]);
 
   const handleCheckLesson = () => {
-    const result = checkLesson(passedExercises, exercisesIds);
+    const result = checkLesson(passedTasks, tasksIds);
 
     if (!result) {
       setIsPassed('failed');
     } else {
       updateCourseProgress(userId, lesson.courseId, lesson.id)
         .then((data) => {
-          console.log(data?.result);
-
           setIsPassed('success');
         })
         .catch((error) => {
@@ -104,38 +106,38 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
         <h2 className="mb-5 text-center">Практика</h2>
         <Carousel className="w-full">
           <CarouselContent>
-            {practics.length > 0 &&
-              practics.map((practice, index) => (
+            {tasks.length > 0 &&
+              tasks.map((task, index) => (
                 <CarouselItem key={index}>
                   <div className="p-1">
-                    {'variants' in practice ? (
+                    {'variants' in task ? (
                       <Test
-                        key={index + practice.name}
-                        test={practice}
-                        passedExercises={passedExercises}
-                        setPassedExercises={setPassedExercises}
+                        key={index + task.name}
+                        test={task}
+                        passedTasks={passedTasks}
+                        setPassedTasks={setPassedTasks}
                       />
                     ) : (
                       <Exercise
-                        key={index + practice.name}
-                        exercise={practice}
-                        passedExercises={passedExercises}
-                        setPassedExercises={setPassedExercises}
+                        key={index + task.name}
+                        exercise={task}
+                        passedTasks={passedTasks}
+                        setPassedTasks={setPassedTasks}
                       />
                     )}
                     <div className="flex justify-center mt-20">
-                      {'variants' in practice ? (
-                        <TestFormWrapper testId={practice.id} />
+                      {'variants' in task ? (
+                        <TestFormWrapper testId={task.id} />
                       ) : (
-                        <ExerciseFormWrapper exerciseId={practice?.id} />
+                        <ExerciseFormWrapper exerciseId={task?.id} />
                       )}
                     </div>
                   </div>
                 </CarouselItem>
               ))}
           </CarouselContent>
-          {practics.length > 1 && <CarouselPrevious variant="customCircle" />}
-          {practics.length > 1 && <CarouselNext variant="customCircle" />}
+          {tasks.length > 1 && <CarouselPrevious variant="customCircle" />}
+          {tasks.length > 1 && <CarouselNext variant="customCircle" />}
         </Carousel>
       </div>
     </div>

@@ -175,6 +175,7 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
         existingUser.completedExercises.length > 0
           ? existingUser.rating
           : existingUser.rating + existingExercise.prizePoints;
+
       const newRank = calculateRank(newRating);
 
       const updatedUser = await prisma.user.update({

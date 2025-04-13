@@ -12,11 +12,11 @@ import { completeExercise } from '../libs/server-actions/exercises-actions';
 
 type TExerciseProps = {
   exercise: IExercise;
-  setPassedExercises: React.Dispatch<React.SetStateAction<string[]>>;
-  passedExercises: string[];
+  setPassedTasks: React.Dispatch<React.SetStateAction<string[]>>;
+  passedTasks: string[];
 };
 
-const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExercises }) => {
+const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks }) => {
   const session = useSession();
   const userId = session?.data?.user.id as string;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -43,7 +43,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedExercises, setPassedExer
           rating: user.rating || 0,
         });
         console.log('UPDATE RESULT: ', result);
-        setPassedExercises([...passedExercises, exercise.id]);
+        setPassedTasks([...passedTasks, exercise.id]);
         setIsPassed('success');
       }
     } catch (error) {

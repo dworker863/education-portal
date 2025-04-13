@@ -57,6 +57,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     return null;
   }
 
+  console.log(user?.completedCourses);
+
   return (
     <div
       className={cn(
@@ -92,58 +94,60 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       <div>
         <h2 className="mb-4 text-customSecondary">Инфо</h2>
         <div className="flex flex-col space-y-4">
-          {user?.firstName && (
-            <div className="flex items-center">
-              <p className="text-sm">
-                Имя: <span className="text-customPrimary">{user?.firstName}</span>
-              </p>
-              <Button
-                variant="customLink"
-                size="icon"
-                onClick={() => {
-                  context?.setIsModalOpen(true);
-                  router.push(`/edit-profile?email=${user?.email}&field=firstName`);
-                }}
-              >
-                <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
-              </Button>
-            </div>
-          )}
-          {user?.lastName && (
-            <div className="flex items-center">
-              <p className="text-sm">
-                Фамилия: <span className="text-customPrimary ">{user?.lastName}</span>
-              </p>
-              <Button
-                variant="customLink"
-                size="icon"
-                onClick={() => {
-                  context?.setIsModalOpen(true);
-                  router.push(`/edit-profile?email=${user?.email}&field=lastName`);
-                }}
-              >
-                <MdModeEditOutline className="hover:scale-125" size={20} />
-              </Button>
-            </div>
-          )}
-          {user?.birthDate && (
-            <div className="flex items-center">
-              <p className="text-sm">
-                Дата рождения:
-                <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
-              </p>
-              <Button
-                variant="customLink"
-                size="icon"
-                onClick={() => {
-                  context?.setIsModalOpen(true);
-                  router.push(`/edit-profile?email=${user?.email}&type=birthDate`);
-                }}
-              >
-                <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
-              </Button>
-            </div>
-          )}
+          <div className="flex flex-col space-y-0">
+            {user?.firstName && (
+              <div className="flex items-center">
+                <p className="text-sm">
+                  Имя: <span className="text-customPrimary">{user?.firstName}</span>
+                </p>
+                <Button
+                  variant="customLink"
+                  size="icon"
+                  onClick={() => {
+                    context?.setIsModalOpen(true);
+                    router.push(`/edit-profile?email=${user?.email}&field=firstName`);
+                  }}
+                >
+                  <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
+                </Button>
+              </div>
+            )}
+            {user?.lastName && (
+              <div className="flex items-center">
+                <p className="text-sm">
+                  Фамилия: <span className="text-customPrimary ">{user?.lastName}</span>
+                </p>
+                <Button
+                  variant="customLink"
+                  size="icon"
+                  onClick={() => {
+                    context?.setIsModalOpen(true);
+                    router.push(`/edit-profile?email=${user?.email}&field=lastName`);
+                  }}
+                >
+                  <MdModeEditOutline className="hover:scale-125" size={20} />
+                </Button>
+              </div>
+            )}
+            {user?.birthDate && (
+              <div className="flex items-center">
+                <p className="text-sm">
+                  Дата рождения:
+                  <span className="text-customPrimary">{new Date(user?.birthDate).toLocaleDateString()}</span>
+                </p>
+                <Button
+                  variant="customLink"
+                  size="icon"
+                  onClick={() => {
+                    context?.setIsModalOpen(true);
+                    router.push(`/edit-profile?email=${user?.email}&type=birthDate`);
+                  }}
+                >
+                  <MdModeEditOutline className="text-customSecondary hover:scale-125" size={20} />
+                </Button>
+              </div>
+            )}
+          </div>
           <p className="mb-2 text-sm">
             Уровень: <span className="text-customPrimary">{user?.rank}</span>
           </p>
@@ -156,16 +160,22 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               {userCourses.map((courseProgress, index) => (
                 <span
                   key={courseProgress.course?.name ? courseProgress.course?.name + index : index}
-                  className="text-customPrimary"
+                  className="text-customPrimary ml-1"
                 >
-                  {courseProgress.course?.name && courseProgress.course?.name + courseProgress.progress}
+                  {courseProgress.course?.name && courseProgress.course?.name}
+                  <span className="text-customSecondary"> ({courseProgress.progress}%)</span>
                 </span>
               ))}
             </p>
           )}
-          {user?.completedCourses && (
+          {user?.completedCourses && user?.completedCourses.length > 0 && (
             <p className="mb-2 text-sm">
-              Завершенные курсы: <span className="text-customPrimary">{user?.rating}</span>
+              Завершенные курсы:
+              {user?.completedCourses.map((course, index) => (
+                <span key={course.name + index} className="text-customPrimary">
+                  {course.name}
+                </span>
+              ))}
             </p>
           )}
           <p className="mb-2 text-sm">

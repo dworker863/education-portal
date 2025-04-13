@@ -1,5 +1,5 @@
 import { prisma } from '@/prisma/prisma';
-import { IExercise } from '../interfaces/interfaces';
+import { IExercise, ITest } from '../interfaces/interfaces';
 
 export const getExerciseById = async (id: string) => {
   try {
@@ -32,20 +32,23 @@ export const getExerciseByName = async (name: string) => {
 };
 
 export const checkCompletedExercises = (
-  userCompletedExercises: IExercise[] | undefined,
-  courseExercises: IExercise[],
+  userCompletedExercises: (IExercise | ITest)[],
+  lessonExercises: (IExercise | ITest)[],
 ) => {
-  console.log('checkCompletedExercises: ', userCompletedExercises);
+  console.log('userCompletedExercises: ', userCompletedExercises);
+  console.log('lessonExercises: ', lessonExercises);
 
-  if (!userCompletedExercises) {
+  if (userCompletedExercises.length === 0) {
     return [];
   }
 
-  const matchedExercises = courseExercises.filter((courseExercise) => {
-    return userCompletedExercises.some((userExercise) => userExercise.id === courseExercise.id);
+  const matchedExercises = lessonExercises.filter((lessonExercise) => {
+    return userCompletedExercises.some((userExercise) => userExercise.id === lessonExercise.id);
   });
 
   const matchedExercisesIds = matchedExercises.map((matchedExercise) => matchedExercise.id);
+
+  console.log('matchedExercisesIds: ', matchedExercisesIds);
 
   return matchedExercisesIds;
 };

@@ -4,6 +4,7 @@ import { createTestSchema, editTestSchema } from '../validation';
 import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
 import { getTestById, getTestByName } from '../utils/tests';
+import { calculateRank } from '../utils/exercises';
 
 export const getAllTests = async () => {
   try {
@@ -152,6 +153,66 @@ export const deleteTest = async (id: string) => {
     return { success: 'Тест успешно удален' };
   } catch (error) {
     console.error('Ошибка при удалении теста: ', error);
+    throw error;
+  }
+};
+
+export const completeTest = async (userId: string, testId: string) => {
+  console.log('COMPLETE EXERCISE');
+
+  try {
+    return await prisma.$transaction(async (prisma) => {
+      const existingTest = await prisma.test.findUnique({
+        where: {
+          id: testId,
+        },
+        select: { prizePoints: true },
+      });
+
+      if (!existingTest) {
+        throw Error('Теста с таким ID не существует');
+      }
+
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+        select: {
+          rating: true,
+          completedTests: {
+            where: {
+              id: testId,
+            },
+          },
+        },
+      });
+
+      if (!existingUser) {
+        throw Error('Пользователя с таким ID не существует');
+      }
+
+      const newRating =
+        existingUser.completedTests.length > 0 ? existingUser.rating : existingUser.rating + existingTest.prizePoints;
+
+      const newRank = calculateRank(newRating);
+
+      const updatedUser = await prisma.user.update({
+        where: { id: userId },
+        data: {
+          rating: newRating,
+          rank: newRank,
+          completedTests: {
+            connect: {
+              id: testId,
+            },
+          },
+        },
+      });
+
+      return { user: updatedUser, success: 'Рейтинг успешно обновлен' };
+    });
+  } catch (error) {
+    console.error('Ошибка при обновлении рейтинга пользователя: ', error);
     throw error;
   }
 };

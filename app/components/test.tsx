@@ -10,6 +10,8 @@ import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css'; // Базовая тема
 import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для нумерации строк
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
+import { completeTest } from '../libs/server-actions/tests-actions';
+import { useSession } from 'next-auth/react';
 
 type TTestProps = {
   test: ITest;
@@ -18,6 +20,9 @@ type TTestProps = {
 };
 
 const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
+  const session = useSession();
+  const userId = session?.data?.user.id as string;
+
   const [buttonTypes, setButtonTypes] = useState<('custom' | 'customSuccess' | 'customFail')[]>(
     Array(test.variants.length).fill('custom'),
   );
@@ -28,14 +33,22 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
     Prism.highlightAll();
   });
 
-  const handleClick = (index: number, variant: string) => {
+  const handleClick = async (index: number, variant: string) => {
     const newButtonTypes = [...buttonTypes];
 
-    if (variant === test.solution) {
+    if (variant !== test.solution) {
+      newButtonTypes[index] = 'customFail';
+    } else {
+      const { user } = await completeTest(userId, test.id);
+      console.log(user);
+
+      const result = await session.update({
+        rating: user.rating || 0,
+      });
+
+      console.log('UPDATE RESULT: ', result);
       newButtonTypes[index] = 'customSuccess';
       setPassedTasks([...passedTasks, test.id]);
-    } else {
-      newButtonTypes[index] = 'customFail';
     }
 
     setButtonTypes(newButtonTypes);

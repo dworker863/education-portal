@@ -153,7 +153,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           <p className="mb-2 text-sm">
             Рейтинг: <span className="text-customPrimary">{user?.rating}</span>
           </p>
-          {userCourses && (
+          {userCourses && userCourses.length > 0 && (
             <p className="mb-2 text-sm">
               Изучаемые курсы:
               {userCourses.map((courseProgress, index) => (

@@ -6,6 +6,14 @@ export const getCourseByName = async (name: string) => {
       where: {
         name,
       },
+      include: {
+        lessons: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     return course;

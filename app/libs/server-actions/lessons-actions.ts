@@ -13,6 +13,21 @@ export const getAllLessons = async () => {
   }
 };
 
+export const getPartialLessons = async () => {
+  try {
+    const lessons = await prisma.lesson.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return lessons;
+  } catch (error) {
+    console.error('Ошибка при получении уроков: ', error);
+    throw error;
+  }
+};
+
 export const deleteLesson = async (id: string) => {
   try {
     const lesson = await getLessonById(id);

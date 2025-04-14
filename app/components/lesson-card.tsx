@@ -1,7 +1,7 @@
 'use client';
 
 import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
-import { IExercise, ILesson, ITest } from '../libs/interfaces/interfaces';
+import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
 import DOMPurify from 'dompurify';
@@ -22,14 +22,18 @@ import { checkLesson } from '../libs/utils/lessons';
 import { updateCourseProgress } from '../libs/server-actions/progress-action';
 import { useSession } from 'next-auth/react';
 import { checkCompletedExercises } from '../libs/utils/exercises';
+import { useRouter } from 'next/navigation';
+import slugify from 'slugify';
 
 type TLessonCardProps = {
   lesson: ILesson;
+  lessons: ILessonPartial[];
   exercises: IExercise[];
   tests: ITest[];
 };
 
-const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
+const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
+  const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
   const session = useSession();
@@ -44,6 +48,13 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
     [session?.data?.user.completedExercises, session?.data?.user.completedTests],
   );
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
+
+  const lessonIndex = lessons.findIndex((partialLesson) => partialLesson.name === lesson.name);
+  const nextLessonName = lessonIndex !== -1 && slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
+
+  const prevLessonName = lessonIndex !== 0 && slugify(lessons[lessonIndex - 1].name, { locale: 'ru' });
+
+  console.log('NEXT LESSON NAME: ', nextLessonName);
 
   useEffect(() => {
     Prism.highlightAll();
@@ -61,10 +72,10 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
     if (!result) {
       setIsPassed('failed');
     } else {
+      setIsPassed('success');
+      router.push(`./${nextLessonName}`);
       updateCourseProgress(userId, lesson.courseId, lesson.id)
-        .then((data) => {
-          setIsPassed('success');
-        })
+        .then((data) => {})
         .catch((error) => {
           console.log(error);
         });
@@ -77,24 +88,29 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, exercises, tests }) => {
         <h2 className="mb-5 text-center">Теория</h2>
         <div ref={containerRef} className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
         {lesson?.video && <Video src={lesson?.video} />}
-        <Button
-          variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-          onClick={() => handleCheckLesson()}
-        >
-          {isPassed === 'success' && (
-            <>
-              <GoIssueClosed className="mr-2" size={20} />
-              Пройдено
-            </>
-          )}
-          {isPassed === 'failed' && (
-            <>
-              <SlClose className="mr-2" size={20} />
-              Не Пройдено
-            </>
-          )}
-          {isPassed === 'default' && 'Следующий урок'}
-        </Button>
+        <div className="flex justify-between">
+          <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
+            Предыдущий урок
+          </Button>
+          <Button
+            variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+            onClick={() => handleCheckLesson()}
+          >
+            {isPassed === 'success' && (
+              <>
+                <GoIssueClosed className="mr-2" size={20} />
+                Пройдено
+              </>
+            )}
+            {isPassed === 'failed' && (
+              <>
+                <SlClose className="mr-2" size={20} />
+                Не Пройдено
+              </>
+            )}
+            {isPassed === 'default' && 'Следующий урок'}
+          </Button>
+        </div>
         {isPassed === 'failed' && (
           <div className="mt-4">
             <ErrorMessage message="Чтобы перейти к следующему уроку Вы должны успешно выполнить 75% упражнений" />

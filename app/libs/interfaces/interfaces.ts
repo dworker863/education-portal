@@ -32,6 +32,10 @@ export interface ICourse {
   achievement?: IAchievement | null;
 }
 
+export interface ICoursePartial {
+  name: string;
+}
+
 export interface ILesson {
   id: string;
   name: string;
@@ -43,6 +47,11 @@ export interface ILesson {
   courseId: string;
   exercises: IExercise[];
   tests: ITest[];
+}
+
+export interface ILessonPartial {
+  id: string;
+  name: string;
 }
 
 export interface IExercise {
@@ -74,10 +83,6 @@ export interface ITest {
   lesson?: ILesson;
   lessonId: string | null;
   completedUsers?: IUser[];
-}
-
-export interface ICoursePartial {
-  name: string;
 }
 
 export interface IAchievement {

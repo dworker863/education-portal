@@ -11,6 +11,8 @@ import { ModalContext } from './app-wrapper';
 import { Session } from 'next-auth';
 import { getUserCoursesProgress } from '../libs/server-actions/progress-action';
 import { IUserCourseProgress } from '../libs/interfaces/interfaces';
+import Link from 'next/link';
+import slugify from 'slugify';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -156,15 +158,31 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           {userCourses && userCourses.length > 0 && (
             <p className="mb-2 text-sm">
               Изучаемые курсы:
-              {userCourses.map((courseProgress, index) => (
-                <span
-                  key={courseProgress.course?.name ? courseProgress.course?.name + index : index}
-                  className="text-customPrimary ml-1"
-                >
-                  {courseProgress.course?.name && courseProgress.course?.name}
-                  <span className="text-customSecondary"> ({courseProgress.progress}%)</span>
-                </span>
-              ))}
+              {userCourses.map((courseProgress, index) => {
+                const lessonName =
+                  courseProgress?.currentLesson?.name && slugify(courseProgress?.currentLesson.name, { locale: 'ru' });
+
+                return (
+                  <div
+                    className="flex flex-col mb-4"
+                    key={courseProgress.course?.name ? courseProgress.course?.name + index : index}
+                  >
+                    <Link href={`/courses/${courseProgress.course?.name}`}>
+                      <span className="ml-1 text-customPrimary hover:text-customBackground ">
+                        {courseProgress.course?.name && courseProgress.course?.name}
+                        <span className="text-customSecondary"> ({courseProgress.progress}% )</span>
+                      </span>
+                    </Link>
+                    {courseProgress?.currentLesson && (
+                      <Link href={`/courses/${courseProgress.course?.name}/${lessonName}`}>
+                        <span className="text-customPrimary hover:text-customBackground">
+                          {courseProgress?.currentLesson.name}
+                        </span>
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
             </p>
           )}
           {completedCourses && completedCourses.length > 0 && (

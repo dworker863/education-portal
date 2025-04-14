@@ -11,6 +11,13 @@ export const getUserCoursesProgress = async (userId: string) => {
       include: {
         course: {
           select: {
+            id: true,
+            name: true,
+          },
+        },
+        currentLesson: {
+          select: {
+            id: true,
             name: true,
           },
         },

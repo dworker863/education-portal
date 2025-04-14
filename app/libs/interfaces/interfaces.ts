@@ -33,6 +33,7 @@ export interface ICourse {
 }
 
 export interface ICoursePartial {
+  id: string;
   name: string;
 }
 
@@ -104,7 +105,7 @@ export interface IUserCourseProgress {
   course?: ICourse | ICoursePartial;
   courseId: string;
   completedLessons?: ILesson[];
-  currentLesson?: ILesson;
+  currentLesson?: ILesson | ILessonPartial;
   currentLessonId: string;
   progress: number;
   lastAccessedAt: Date;

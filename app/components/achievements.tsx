@@ -75,10 +75,10 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
           </Button>
         );
       },
-      cell: ({ row }) => {
-        const courseName = row.original.course?.name;
-        return <div>{courseName || 'Нет курса'}</div>;
-      },
+      // cell: ({ row }) => {
+      //   const courseName = row.original.course?.name;
+      //   return <div>{courseName || 'Нет курса'}</div>;
+      // },
     },
   ];
 

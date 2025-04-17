@@ -89,27 +89,31 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
         <div ref={containerRef} className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
         {lesson?.video && <Video src={lesson?.video} />}
         <div className="flex justify-between">
-          <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
-            Предыдущий урок
-          </Button>
-          <Button
-            variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-            onClick={() => handleCheckLesson()}
-          >
-            {isPassed === 'success' && (
-              <>
-                <GoIssueClosed className="mr-2" size={20} />
-                Пройдено
-              </>
-            )}
-            {isPassed === 'failed' && (
-              <>
-                <SlClose className="mr-2" size={20} />
-                Не Пройдено
-              </>
-            )}
-            {isPassed === 'default' && 'Следующий урок'}
-          </Button>
+          {prevLessonName && (
+            <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
+              Предыдущий урок
+            </Button>
+          )}
+          {nextLessonName && (
+            <Button
+              variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+              onClick={() => handleCheckLesson()}
+            >
+              {isPassed === 'success' && (
+                <>
+                  <GoIssueClosed className="mr-2" size={20} />
+                  Пройдено
+                </>
+              )}
+              {isPassed === 'failed' && (
+                <>
+                  <SlClose className="mr-2" size={20} />
+                  Не Пройдено
+                </>
+              )}
+              {isPassed === 'default' && 'Следующий урок'}
+            </Button>
+          )}
         </div>
         {isPassed === 'failed' && (
           <div className="mt-4">

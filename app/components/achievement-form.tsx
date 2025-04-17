@@ -228,10 +228,10 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               name="courseName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Курс</FormLabel>
+                  <FormLabel>Курсы</FormLabel>
                   {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Input placeholder="Курс, на который распространяется призовой бонус" {...field} />
+                    <Input placeholder="Курсы, на которые распространяется призовой бонус" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

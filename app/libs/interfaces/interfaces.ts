@@ -29,7 +29,8 @@ export interface ICourse {
   category: string;
   meta: JsonValue;
   lessons?: ILesson[];
-  achievement?: IAchievement | null;
+  achievementTarget?: IAchievement[] | IAchievementPartial[];
+  achievementPrize?: IAchievement[] | IAchievementPartial[];
 }
 
 export interface ICoursePartial {
@@ -71,6 +72,11 @@ export interface IExercise {
   completedUsers?: IUser[];
 }
 
+export interface IExercisePartial {
+  id: string;
+  name: string;
+}
+
 export interface ITest {
   id: string;
   name: string;
@@ -86,6 +92,11 @@ export interface ITest {
   completedUsers?: IUser[];
 }
 
+export interface ITestPartial {
+  id: string;
+  name: string;
+}
+
 export interface IAchievement {
   id: string;
   name: string;
@@ -95,8 +106,15 @@ export interface IAchievement {
   requiredRank: string;
   discount: number;
   meta: JsonValue;
-  course?: ICoursePartial;
-  courseId: string | null;
+  targetCourses?: ICoursePartial[] | ICourse[];
+  prizeCourses?: ICoursePartial[] | ICourse[];
+  startedAt: Date;
+  completedAt: Date | null;
+}
+
+export interface IAchievementPartial {
+  id: string;
+  name: string;
 }
 
 export interface IUserCourseProgress {

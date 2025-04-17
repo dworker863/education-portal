@@ -88,17 +88,18 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id            String               @id @default(cuid())
-  name          String
-  description   String
-  icon          String
-  priceUSD      Float
-  certificateId String?
-  category      String
-  meta          Json                 @default("{}")
-  lessons       Lesson[]
-  achievement   Achievement?
-  userProgress  UserCourseProgress[]
+  id                 String               @id @default(cuid())
+  name               String
+  description        String
+  icon               String
+  priceUSD           Float
+  certificateId      String?
+  category           String
+  meta               Json                 @default("{}")
+  lessons            Lesson[]
+  achievementsTarget Achievement[]        @relation("targetCourses")
+  achievementsPrize  Achievement[]        @relation("prizeCourses")
+  userProgress       UserCourseProgress[]
 }
 
 model Lesson {
@@ -150,16 +151,18 @@ model Test {
 }
 
 model Achievement {
-  id           String @id @default(cuid())
-  name         String
-  task         String
-  icon         String
-  language     String @default("JavaScript")
-  requiredRank String @default("D-")
-  discount     Int
-  meta         Json   @default("{}")
-  course       Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  courseId     String @unique
+  id            String    @id @default(cuid())
+  name          String
+  task          String
+  icon          String
+  language      String    @default("JavaScript")
+  requiredRank  String    @default("D-")
+  discount      Int
+  meta          Json      @default("{}")
+  targetCourses Course[]  @relation("targetCourses")
+  prizeCourses  Course[]  @relation("prizeCourses")
+  startedAt     DateTime  @default(now())
+  completedAt   DateTime?
 }
 
 model UserCourseProgress {

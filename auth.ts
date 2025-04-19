@@ -7,7 +7,13 @@ import { sendVerificationEmail } from './app/libs/utils/mail';
 import { getTwoFactorConfirmationByUserId, getUserById } from './app/libs/utils/auth';
 import { generateVerificationToken } from './app/libs/utils/tokens';
 import { JsonValue } from '@prisma/client/runtime/library';
-import { IExercise, ITest } from './app/libs/interfaces/interfaces';
+import {
+  IDiscount,
+  IExercise,
+  ITest,
+  IUserAchievementProgress,
+  IUserCourseProgress,
+} from './app/libs/interfaces/interfaces';
 
 declare module 'next-auth' {
   interface Session {
@@ -25,6 +31,9 @@ declare module 'next-auth' {
       meta: JsonValue;
       completedExercises?: IExercise[];
       completedTests?: ITest[];
+      discount?: IDiscount[];
+      courseProgress?: IUserCourseProgress[];
+      achievementsProgress?: IUserAchievementProgress[];
     } & DefaultSession['user'];
 
     /**

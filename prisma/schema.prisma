@@ -25,14 +25,14 @@ model User {
   birthDate             DateTime?
   rating                Int                       @default(0)
   rank                  String                    @default("D-")
-  moneyUSD              Int                       @default(0)
+  moneyUSD              Float                     @default(0)
   meta                  Json                      @default("{}")
   accounts              Account[]
   completedExercises    Exercise[]
   completedTests        Test[]
   discount              Discount[]
-  courseProgress        UserCourseProgress[]
-  achievementProgress   UserAchievementProgress[]
+  coursesProgress       UserCourseProgress[]
+  achievementsProgress  UserAchievementProgress[]
   TwoFactorConfirmation TwoFactorConfirmation?
 
   createdAt DateTime @default(now())
@@ -99,8 +99,8 @@ model Course {
   category      String
   meta          Json                 @default("{}")
   lessons       Lesson[]
-  userProgress  UserCourseProgress[]
-  discount      Discount[]
+  usersProgress UserCourseProgress[]
+  discounts     Discount[]
 }
 
 model Lesson {

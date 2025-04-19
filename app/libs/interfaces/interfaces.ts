@@ -17,6 +17,9 @@ export interface IUser {
   meta: JsonValue;
   completedExercises?: IExercise[];
   completedTests?: ITest[];
+  discount?: IDiscount[];
+  courseProgress?: IUserCourseProgress[];
+  achievementsProgress?: IUserAchievementProgress[];
 }
 
 export interface ICourse {
@@ -29,8 +32,8 @@ export interface ICourse {
   category: string;
   meta: JsonValue;
   lessons?: ILesson[];
-  achievementTarget?: IAchievement[] | IAchievementPartial[];
-  achievementPrize?: IAchievement[] | IAchievementPartial[];
+  usersProgress?: IUserCourseProgress[];
+  discounts?: IDiscount[];
 }
 
 export interface ICoursePartial {
@@ -47,8 +50,10 @@ export interface ILesson {
   meta: JsonValue;
   course?: ICourse;
   courseId: string;
-  exercises: IExercise[];
-  tests: ITest[];
+  exercises?: IExercise[];
+  tests?: ITest[];
+  completedByUsers?: IUserCourseProgress[];
+  currentInProgress?: IUserCourseProgress | null;
 }
 
 export interface ILessonPartial {
@@ -87,7 +92,7 @@ export interface ITest {
   requiredRank: string;
   prizePoints: number;
   meta: JsonValue;
-  lesson?: ILesson;
+  lesson?: ILesson | null;
   lessonId: string | null;
   completedUsers?: IUser[];
 }
@@ -102,19 +107,30 @@ export interface IAchievement {
   name: string;
   task: string;
   icon: string;
-  language: string | null;
-  requiredRank: string;
-  discount: number;
+  criteria: JsonValue;
+  reward: JsonValue;
   meta: JsonValue;
-  targetCourses?: ICoursePartial[] | ICourse[];
-  prizeCourses?: ICoursePartial[] | ICourse[];
-  startedAt: Date;
-  completedAt: Date | null;
+  startDate: Date;
+  endDate: Date | null;
+  usersProgress?: IUserAchievementProgress[];
 }
 
 export interface IAchievementPartial {
   id: string;
   name: string;
+}
+
+export interface IDiscount {
+  id: string;
+  code: string;
+  user?: IUser;
+  percent: number;
+  courses?: ICourse[];
+  minAmountToActivate: number;
+  maxAmountToActivate: number;
+  meta: JsonValue;
+  validFrom: Date;
+  validUntil: Date | null;
 }
 
 export interface IUserCourseProgress {
@@ -127,6 +143,19 @@ export interface IUserCourseProgress {
   currentLessonId: string;
   progress: number;
   lastAccessedAt: Date;
+  startedAt: Date;
+  completedAt: Date | null;
+  meta: JsonValue;
+}
+
+export interface IUserAchievementProgress {
+  id: string;
+  user?: IUser;
+  userId: string;
+  achievement?: IAchievement;
+  achievementId: string;
+  progress: number;
+  stepsCompleted: JsonValue;
   startedAt: Date;
   completedAt: Date | null;
   meta: JsonValue;

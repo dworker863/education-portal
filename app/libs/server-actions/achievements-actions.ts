@@ -6,8 +6,7 @@ export const getAllAchievements = async () => {
   try {
     const achievement = await prisma.achievement.findMany({
       include: {
-        targetCourses: true,
-        prizeCourses: true,
+        usersProgress: true,
       },
     });
 

@@ -160,3 +160,47 @@ export interface IUserAchievementProgress {
   completedAt: Date | null;
   meta: JsonValue;
 }
+
+export type TAchievementCriteria = {
+  type:
+    | 'EXERCISE_COMPLETION'
+    | 'COURSE_COMPLETION'
+    | 'COURSE_REGISTRATION'
+    | 'STREAK'
+    | 'SOCIAL_ACTIVITY'
+    | 'PARTICIPATION_LIMIT'
+    | 'SUBSCRIPTION'
+    | 'COMBINATION';
+  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSUBSCRIPTION;
+};
+
+export type TExerciseCompletion = {
+  count: number;
+  exerciseIds?: string[];
+  language?: string;
+  rank?: string;
+  prizePoints?: string;
+};
+
+export type TCourseCompletion = {
+  courseId?: string[];
+  minPrize?: number;
+  maxPrize?: number;
+};
+
+export type TCourseRegistration = {
+  courseId?: string[];
+  minPrize?: number;
+  maxPrize?: number;
+};
+
+export type TParticipationLimit = {
+  maxParticipants: 1000;
+  currentParticipants: 0;
+};
+
+export type TSUBSCRIPTION = {
+  tier: 'PRO' | 'PREMIUM';
+  duration: 'MONTHLY' | 'YEARLY';
+  firstTimeOnly: true;
+};

@@ -13,24 +13,26 @@ enum UserRole {
 }
 
 model User {
-  id                    String                 @id @default(cuid())
+  id                    String                    @id @default(cuid())
   name                  String?
-  email                 String                 @unique
+  email                 String                    @unique
   password              String?
   emailVerified         DateTime?
   image                 String?
-  role                  UserRole               @default(USER)
+  role                  UserRole                  @default(USER)
   firstName             String?
   lastName              String?
   birthDate             DateTime?
-  rating                Int                    @default(0)
-  rank                  String                 @default("D-")
-  moneyUSD              Int                    @default(0)
-  meta                  Json                   @default("{}")
+  rating                Int                       @default(0)
+  rank                  String                    @default("D-")
+  moneyUSD              Int                       @default(0)
+  meta                  Json                      @default("{}")
   accounts              Account[]
   completedExercises    Exercise[]
   completedTests        Test[]
+  discount              Discount[]
   courseProgress        UserCourseProgress[]
+  achievementProgress   UserAchievementProgress[]
   TwoFactorConfirmation TwoFactorConfirmation?
 
   createdAt DateTime @default(now())
@@ -88,18 +90,17 @@ model TwoFactorConfirmation {
 }
 
 model Course {
-  id                 String               @id @default(cuid())
-  name               String
-  description        String
-  icon               String
-  priceUSD           Float
-  certificateId      String?
-  category           String
-  meta               Json                 @default("{}")
-  lessons            Lesson[]
-  achievementsTarget Achievement[]        @relation("targetCourses")
-  achievementsPrize  Achievement[]        @relation("prizeCourses")
-  userProgress       UserCourseProgress[]
+  id            String               @id @default(cuid())
+  name          String
+  description   String
+  icon          String
+  priceUSD      Float
+  certificateId String?
+  category      String
+  meta          Json                 @default("{}")
+  lessons       Lesson[]
+  userProgress  UserCourseProgress[]
+  discount      Discount[]
 }
 
 model Lesson {
@@ -151,18 +152,16 @@ model Test {
 }
 
 model Achievement {
-  id            String    @id @default(cuid())
+  id            String                    @id @default(cuid())
   name          String
   task          String
   icon          String
-  language      String    @default("JavaScript")
-  requiredRank  String    @default("D-")
-  discount      Int
-  meta          Json      @default("{}")
-  targetCourses Course[]  @relation("targetCourses")
-  prizeCourses  Course[]  @relation("prizeCourses")
-  startedAt     DateTime  @default(now())
-  completedAt   DateTime?
+  criteria      Json
+  reward        Json
+  meta          Json                      @default("{}")
+  startDate     DateTime
+  endDate       DateTime?
+  usersProgress UserAchievementProgress[]
 }
 
 model UserCourseProgress {
@@ -185,4 +184,34 @@ model UserCourseProgress {
   @@index([userId])
   @@index([courseId])
   @@index([progress])
+}
+
+model UserAchievementProgress {
+  id             String      @id @default(cuid())
+  user           User        @relation(fields: [userId], references: [id])
+  userId         String
+  achievement    Achievement @relation(fields: [achievementId], references: [id])
+  achievementId  String
+  progress       Float       @default(0) // 0-100%
+  stepsCompleted Json        @default("{}") // Детали выполнения
+  startedAt      DateTime    @default(now())
+  completedAt    DateTime?
+  meta           Json        @default("{}")
+
+  @@unique([userId, achievementId])
+  @@index([progress])
+  @@index([completedAt])
+}
+
+model Discount {
+  id                  String    @id @default(cuid())
+  code                String    @unique
+  user                User[]
+  percent             Int
+  courses             Course[]
+  minAmountToActivate Float     @default(0)
+  maxAmountToActivate Float     @default(0)
+  meta                Json      @default("{}")
+  validFrom           DateTime  @default(now())
+  validUntil          DateTime?
 }

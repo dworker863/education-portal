@@ -154,7 +154,7 @@ model Test {
 model Achievement {
   id            String                    @id @default(cuid())
   name          String
-  task          String
+  description   String
   icon          String
   criteria      Json
   reward        Json

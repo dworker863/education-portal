@@ -105,10 +105,10 @@ export interface ITestPartial {
 export interface IAchievement {
   id: string;
   name: string;
-  task: string;
+  description: string;
   icon: string;
-  criteria: JsonValue;
-  reward: JsonValue;
+  criteria: IAchievementCriteria | JsonValue;
+  reward: IReward | JsonValue;
   meta: JsonValue;
   startDate: Date;
   endDate: Date | null;
@@ -161,7 +161,7 @@ export interface IUserAchievementProgress {
   meta: JsonValue;
 }
 
-export type TAchievementCriteria = {
+export interface IAchievementCriteria {
   type:
     | 'EXERCISE_COMPLETION'
     | 'COURSE_COMPLETION'
@@ -172,7 +172,7 @@ export type TAchievementCriteria = {
     | 'SUBSCRIPTION'
     | 'COMBINATION';
   condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSUBSCRIPTION;
-};
+}
 
 export type TExerciseCompletion = {
   count: number;
@@ -204,3 +204,10 @@ export type TSUBSCRIPTION = {
   duration: 'MONTHLY' | 'YEARLY';
   firstTimeOnly: true;
 };
+
+export interface IReward {
+  type: 'DISCOUNT' | 'SUBSCRIPTION';
+  icon: string;
+  amount: number;
+  subscriptionType?: 'DAYS' | 'MONTHS' | 'YEARS';
+}

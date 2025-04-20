@@ -265,8 +265,8 @@ export const createAchievementSchema = z.object({
       },
       { message: 'Вставьте изображение' },
     ),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.date(),
+  endDate: z.optional(z.date()),
   criteria: criteriaSchema,
   // reward: z.string(),
 });

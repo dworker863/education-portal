@@ -19,6 +19,12 @@ import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Checkbox } from './checkbox';
 import { RadioGroup, RadioGroupItem } from './radio-group';
+import { Popover, PopoverContent, PopoverTrigger } from './popover';
+import { Calendar } from './calendar';
+import { CalendarIcon } from 'lucide-react';
+import { cn } from '../libs/cn';
+import { format } from 'date-fns';
+import { ru } from 'date-fns/locale';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -41,8 +47,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       name: mode === 'create' ? '' : undefined,
       description: mode === 'create' ? '' : undefined,
       icon: null,
-      startDate: mode === 'create' ? '' : undefined,
-      endDate: mode === 'create' ? '' : undefined,
+      startDate: mode === 'create' ? new Date() : undefined,
+      endDate: undefined,
       criteria: {
         type: 'COURSE_COMPLETION',
       },
@@ -111,7 +117,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary text-primary-foreground"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -188,12 +194,34 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               control={form.control}
               name="startDate"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Название</FormLabel>
-                  {mode === 'create' && <RequiredSign />}
-                  <FormControl>
-                    <Input placeholder="Название" {...field} />
-                  </FormControl>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Дата начала</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'pl-3 text-left text-primary font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? format(field.value, 'd MMMM yyyy', { locale: ru }) : <span>Укажите дату</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-primary" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        locale={ru}
+                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -202,12 +230,34 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               control={form.control}
               name="endDate"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Название</FormLabel>
-                  {mode === 'create' && <RequiredSign />}
-                  <FormControl>
-                    <Input placeholder="Название" {...field} />
-                  </FormControl>
+                <FormItem className="flex flex-col">
+                  <FormLabel>Дата начала</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant={'outline'}
+                          className={cn(
+                            'pl-3 text-left text-primary font-normal',
+                            !field.value && 'text-muted-foreground',
+                          )}
+                        >
+                          {field.value ? format(field.value, 'd MMMM yyyy', { locale: ru }) : <span>Укажите дату</span>}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-primary" align="start">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        locale={ru}
+                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        initialFocus
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               )}
@@ -491,7 +541,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           <FormItem className="flex items-center space-x-3 space-y-0">
                             <FormControl>
                               <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
                                 value="PRO"
                               />
                             </FormControl>
@@ -500,7 +550,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           <FormItem className="flex items-center space-x-3 space-y-0">
                             <FormControl>
                               <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
                                 value="PREMIUM"
                               />
                             </FormControl>
@@ -527,7 +577,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           <FormItem className="flex items-center space-x-3 space-y-0">
                             <FormControl>
                               <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
                                 value="MONTHLY"
                               />
                             </FormControl>
@@ -536,7 +586,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           <FormItem className="flex items-center space-x-3 space-y-0">
                             <FormControl>
                               <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
                                 value="YEARLY"
                               />
                             </FormControl>
@@ -586,6 +636,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
+
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button variant="custom" type="submit" disabled={isPending}>

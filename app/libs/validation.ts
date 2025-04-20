@@ -207,9 +207,44 @@ export const editTestSchema = baseTestSchema
   })
   .partial();
 
+export const criteriaSchema = z.discriminatedUnion('type', [
+  z.object({
+    type: z.literal('EXERCISE_COMPLETION'),
+    exercisesIds: z.array(z.string()).optional(),
+    language: z.optional(z.string()),
+    prizePoints: z.optional(z.string()),
+    requiredRank: z.optional(z.number()),
+  }),
+  z.object({
+    type: z.literal('COURSE_COMPLETION'),
+    coursesIds: z.array(z.string()).optional(),
+    minPrize: z.optional(z.number()),
+    maxPrize: z.optional(z.number()),
+    requiredRank: z.optional(z.number()),
+  }),
+  z.object({
+    type: z.literal('COURSE_REGISTRATION'),
+    coursesIds: z.array(z.string()).optional(),
+    minPrize: z.optional(z.number()),
+    maxPrize: z.optional(z.number()),
+    requiredRank: z.optional(z.number()),
+  }),
+  z.object({
+    type: z.literal('PARTICIPATION_LIMIT'),
+    maxParticipants: z.number(),
+    requiredRank: z.optional(z.number()),
+  }),
+  z.object({
+    type: z.literal('SUBSCRIPTION'),
+    tier: z.string(),
+    duration: z.string(),
+    firstTimeOnly: z.boolean(),
+  }),
+]);
+
 export const createAchievementSchema = z.object({
   name: z.string().min(1, { message: 'Введите название достижения' }),
-  task: z.string().min(1, { message: 'Введите описание' }),
+  description: z.string().min(1, { message: 'Введите описание' }),
   icon: z
     .any()
     .refine((file) => file, { message: 'Вставьте иконку достижения' })
@@ -229,10 +264,10 @@ export const createAchievementSchema = z.object({
       },
       { message: 'Вставьте изображение' },
     ),
-  language: z.optional(z.string()),
-  requiredRank: z.optional(z.string()),
-  discount: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
-  courseName: z.string().min(1, { message: 'Укажите курс, на который распространяется призовой бонус' }),
+  startDate: z.string(),
+  endDate: z.string(),
+  criteria: criteriaSchema,
+  // reward: z.string(),
 });
 
 export const achievementsFiltersSchema = z.object({

@@ -166,40 +166,43 @@ export interface IAchievementCriteria {
     | 'EXERCISE_COMPLETION'
     | 'COURSE_COMPLETION'
     | 'COURSE_REGISTRATION'
-    | 'STREAK'
-    | 'SOCIAL_ACTIVITY'
     | 'PARTICIPATION_LIMIT'
     | 'SUBSCRIPTION'
-    | 'COMBINATION';
-  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSUBSCRIPTION;
+    | 'COMBINATION'
+    | 'STREAK'
+    | 'SOCIAL_ACTIVITY';
+  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription;
 }
 
 export type TExerciseCompletion = {
   count: number;
-  exerciseIds?: string[];
+  exercisesIds?: string[];
   language?: string;
-  rank?: string;
   prizePoints?: string;
+  requiredRank?: number;
 };
 
 export type TCourseCompletion = {
-  courseId?: string[];
+  coursesIds?: string[];
   minPrize?: number;
   maxPrize?: number;
+  requiredRank?: string;
 };
 
 export type TCourseRegistration = {
-  courseId?: string[];
+  coursesIds?: string[];
   minPrize?: number;
   maxPrize?: number;
+  requiredRank?: string;
 };
 
 export type TParticipationLimit = {
-  maxParticipants: 1000;
-  currentParticipants: 0;
+  maxParticipants: number;
+  currentParticipants: number;
+  requiredRank?: string;
 };
 
-export type TSUBSCRIPTION = {
+export type TSubscription = {
   tier: 'PRO' | 'PREMIUM';
   duration: 'MONTHLY' | 'YEARLY';
   firstTimeOnly: true;

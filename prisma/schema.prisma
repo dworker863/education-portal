@@ -156,12 +156,12 @@ model Achievement {
   name          String
   description   String
   icon          String
-  criteria      Json
-  reward        Json
-  meta          Json                      @default("{}")
   startDate     DateTime
   endDate       DateTime?
   usersProgress UserAchievementProgress[]
+  criteria      Json
+  reward        Json
+  meta          Json                      @default("{}")
 }
 
 model UserCourseProgress {

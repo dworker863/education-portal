@@ -16,6 +16,7 @@ import ErrorMessage from './error-message';
 import { Button } from './button';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -36,14 +37,17 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
     resolver: zodResolver(schema),
     defaultValues: {
       name: mode === 'create' ? '' : undefined,
-      task: mode === 'create' ? '' : undefined,
+      description: mode === 'create' ? '' : undefined,
       icon: null,
-      language: mode === 'create' ? '' : undefined,
-      requiredRank: mode === 'create' ? '' : undefined,
-      discount: mode === 'create' ? 0 : undefined,
-      courseName: mode === 'create' ? '' : undefined,
+      startDate: mode === 'create' ? '' : undefined,
+      endDate: mode === 'create' ? '' : undefined,
+      criteria: {
+        type: 'COURSE_COMPLETION',
+      },
     },
   });
+
+  const type = form.watch('criteria.type');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
@@ -124,7 +128,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             />
             <FormField
               control={form.control}
-              name="task"
+              name="description"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Условия</FormLabel>
@@ -180,63 +184,301 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             />
             <FormField
               control={form.control}
-              name="language"
+              name="startDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Язык программирования</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Язык программирования" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="requiredRank"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Уровень</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Необходимый уровень" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="discount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Скидка</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Скидка в процентах"
-                      {...field}
-                      {...form.register('discount', {
-                        valueAsNumber: true,
-                      })}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="courseName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Курсы</FormLabel>
+                  <FormLabel>Название</FormLabel>
                   {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Input placeholder="Курсы, на которые распространяется призовой бонус" {...field} />
+                    <Input placeholder="Название" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="endDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Название</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
+                  <FormControl>
+                    <Input placeholder="Название" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="criteria.type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-base">Тип достижения</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl className="w-[300px]">
+                      <SelectTrigger>
+                        <SelectValue placeholder="Выберите тип достижения" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="EXERCISE_COMPLETION">EXERCISE_COMPLETION</SelectItem>
+                      <SelectItem value="COURSE_COMPLETION">COURSE_COMPLETION</SelectItem>
+                      <SelectItem value="COURSE_REGISTRATION">COURSE_REGISTRATION</SelectItem>
+                      <SelectItem value="PARTICIPATION_LIMIT">PARTICIPATION_LIMIT</SelectItem>
+                      <SelectItem value="SUBSCRIPTION">SUBSCRIPTION</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormItem>
+              )}
+            />
+            {type === 'EXERCISE_COMPLETION' && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Данные физического лица</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.exercisesIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.language"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.prizePoints"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.requiredRank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            {type === 'COURSE_COMPLETION' && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Данные физического лица</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.coursesIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.minPrize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.maxPrize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.requiredRank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            {type === 'COURSE_REGISTRATION' && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Данные физического лица</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.coursesIds"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.minPrize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.maxPrize"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.requiredRank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            {type === 'PARTICIPATION_LIMIT' && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Данные физического лица</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.maxParticipants"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.requiredRank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            {type === 'SUBSCRIPTION' && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Данные физического лица</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.tier"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.firstTimeOnly"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Имя</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Имя" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button variant="custom" type="submit" disabled={isPending}>

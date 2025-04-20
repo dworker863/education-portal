@@ -184,15 +184,15 @@ export type TExerciseCompletion = {
 
 export type TCourseCompletion = {
   coursesIds?: string[];
-  minPrize?: number;
-  maxPrize?: number;
+  minPrice?: number;
+  maxPrice?: number;
   requiredRank?: string;
 };
 
 export type TCourseRegistration = {
   coursesIds?: string[];
-  minPrize?: number;
-  maxPrize?: number;
+  minPrice?: number;
+  maxPrice?: number;
   requiredRank?: string;
 };
 
@@ -205,6 +205,7 @@ export type TParticipationLimit = {
 export type TSubscription = {
   tier: 'PRO' | 'PREMIUM';
   duration: 'MONTHLY' | 'YEARLY';
+  amount: number;
   firstTimeOnly: true;
 };
 

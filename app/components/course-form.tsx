@@ -185,7 +185,6 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
                     <Input
                       type="number"
                       placeholder="Цена"
-                      {...field}
                       {...form.register('priceUSD', {
                         valueAsNumber: true,
                       })}

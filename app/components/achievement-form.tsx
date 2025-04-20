@@ -17,6 +17,8 @@ import { Button } from './button';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { Checkbox } from './checkbox';
+import { RadioGroup, RadioGroupItem } from './radio-group';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -235,15 +237,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             />
             {type === 'EXERCISE_COMPLETION' && (
               <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Данные физического лица</h3>
+                <h3 className="font-medium">Выполнение упражнений</h3>
                 <FormField
                   control={form.control}
                   name="criteria.exercisesIds"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Упражнения</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Упражнения" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -254,9 +256,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.language"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Язык программирования</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Язык программирования" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -265,11 +267,17 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 <FormField
                   control={form.control}
                   name="criteria.prizePoints"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Имя</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Колличество призовых баллов"
+                          {...form.register('criteria.prizePoints', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -280,9 +288,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.requiredRank"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Уровень</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Необходимый уровень" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -292,15 +300,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             )}
             {type === 'COURSE_COMPLETION' && (
               <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Данные физического лица</h3>
+                <h3 className="font-medium">Завершение курсов</h3>
                 <FormField
                   control={form.control}
                   name="criteria.coursesIds"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Курсы</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Курсы" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -308,12 +316,18 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
                 <FormField
                   control={form.control}
-                  name="criteria.minPrize"
-                  render={({ field }) => (
+                  name="criteria.minPrice"
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Минимальная цена курса</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Минимальная цена курса"
+                          {...form.register('criteria.minPrice', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -321,12 +335,18 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
                 <FormField
                   control={form.control}
-                  name="criteria.maxPrize"
-                  render={({ field }) => (
+                  name="criteria.maxPrice"
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Максимальная цена курса</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Максимальная цена курса"
+                          {...form.register('criteria.maxPrice', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -337,9 +357,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.requiredRank"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Уровень</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Необходимый уровень" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -349,15 +369,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             )}
             {type === 'COURSE_REGISTRATION' && (
               <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Данные физического лица</h3>
+                <h3 className="font-medium">Регистрация в курсах</h3>
                 <FormField
                   control={form.control}
                   name="criteria.coursesIds"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Курсы</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Курсы" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -365,12 +385,18 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
                 <FormField
                   control={form.control}
-                  name="criteria.minPrize"
-                  render={({ field }) => (
+                  name="criteria.minPrice"
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Минимальная цена курса</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Минимальная цена курса"
+                          {...form.register('criteria.minPrice', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -378,12 +404,18 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
                 <FormField
                   control={form.control}
-                  name="criteria.maxPrize"
-                  render={({ field }) => (
+                  name="criteria.maxPrice"
+                  render={() => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Максимальная цена курса</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Максимальная цена курса"
+                          {...form.register('criteria.maxPrice', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -394,9 +426,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.requiredRank"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Уровень</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Необходимый уровень" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -406,15 +438,21 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             )}
             {type === 'PARTICIPATION_LIMIT' && (
               <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Данные физического лица</h3>
+                <h3 className="font-medium">Попадание в число первых</h3>
                 <FormField
                   control={form.control}
                   name="criteria.maxParticipants"
-                  render={({ field }) => (
+                  render={() => (
                     <FormItem>
                       <FormLabel>Имя</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input
+                          type="number"
+                          placeholder="Максимальное число пользователей"
+                          {...form.register('criteria.maxParticipants', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -425,9 +463,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.requiredRank"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Уровень</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Input placeholder="Необходимый уровень" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -437,15 +475,38 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             )}
             {type === 'SUBSCRIPTION' && (
               <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Данные физического лица</h3>
+                <h3 className="font-medium">Подписка</h3>
                 <FormField
                   control={form.control}
                   name="criteria.tier"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Вид</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                value="PRO"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">PRO</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                value="PREMIUM"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">PREMIUM</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -456,9 +517,51 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   name="criteria.duration"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                      <FormLabel>Срок</FormLabel>
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                value="MONTHLY"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">MONTHLY</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-white"
+                                value="YEARLY"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">YEARLY</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="criteria.amount"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Количество</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Количество"
+                          {...form.register('criteria.maxParticipants', {
+                            valueAsNumber: true,
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -468,11 +571,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   control={form.control}
                   name="criteria.firstTimeOnly"
                   render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Имя</FormLabel>
+                    <FormItem className="flex items-center space-x-3 space-y-0 py-4">
                       <FormControl>
-                        <Input placeholder="Имя" {...field} />
+                        <Checkbox
+                          className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
                       </FormControl>
+                      <FormLabel>Только для впервые оформляющих</FormLabel>
                       <FormMessage />
                     </FormItem>
                   )}

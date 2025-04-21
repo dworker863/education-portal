@@ -236,12 +236,37 @@ export const criteriaSchema = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('SUBSCRIPTION'),
-    tier: z.string(),
-    duration: z.string(),
+    tier: z.enum(['PRO', 'PREMIUM']),
+    duration: z.enum(['MONTHLY', 'YEARLY']),
     amount: z.number(),
     firstTimeOnly: z.boolean(),
   }),
 ]);
+
+export const rewardSchema = z.object({
+  type: z.enum(['DISCOUNT', 'SUBSCRIPTION']),
+  icon: z
+    .any()
+    .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+      message: 'Файл должен быть валидным',
+    })
+    .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+      message: 'Файл не должен быть пустым',
+    })
+    .refine(
+      (file) => {
+        if (!file) return true;
+        if (file instanceof File) {
+          return file.type && file.type.includes('image');
+        }
+
+        return file[0]?.type && file[0].type.includes('image');
+      },
+      { message: 'Вставьте изображение' },
+    ),
+  amount: z.number(),
+  subsribtionType: z.enum(['DAYS', 'MONTHS', 'YEARS']),
+});
 
 export const createAchievementSchema = z.object({
   name: z.string().min(1, { message: 'Введите название достижения' }),
@@ -268,7 +293,7 @@ export const createAchievementSchema = z.object({
   startDate: z.date(),
   endDate: z.optional(z.date()),
   criteria: criteriaSchema,
-  // reward: z.string(),
+  reward: rewardSchema,
 });
 
 export const achievementsFiltersSchema = z.object({

@@ -52,10 +52,17 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       criteria: {
         type: 'COURSE_COMPLETION',
       },
+      reward: {
+        type: 'SUBSCRIPTION',
+        icon: null,
+        amount: 0,
+        subsribtionType: 'DAYS',
+      },
     },
   });
 
-  const type = form.watch('criteria.type');
+  const criteriaType = form.watch('criteria.type');
+  const rewardType = form.watch('reward.type');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
@@ -262,6 +269,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="criteria.type"
@@ -285,7 +293,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 </FormItem>
               )}
             />
-            {type === 'EXERCISE_COMPLETION' && (
+            {criteriaType === 'EXERCISE_COMPLETION' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Выполнение упражнений</h3>
                 <FormField
@@ -348,7 +356,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {type === 'COURSE_COMPLETION' && (
+            {criteriaType === 'COURSE_COMPLETION' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Завершение курсов</h3>
                 <FormField
@@ -417,7 +425,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {type === 'COURSE_REGISTRATION' && (
+            {criteriaType === 'COURSE_REGISTRATION' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Регистрация в курсах</h3>
                 <FormField
@@ -486,7 +494,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {type === 'PARTICIPATION_LIMIT' && (
+            {criteriaType === 'PARTICIPATION_LIMIT' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Попадание в число первых</h3>
                 <FormField
@@ -523,7 +531,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {type === 'SUBSCRIPTION' && (
+            {criteriaType === 'SUBSCRIPTION' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Подписка</h3>
                 <FormField
@@ -636,7 +644,149 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-
+            <div className="space-y-4 border p-4 rounded-lg">
+              <h3 className="font-medium">Награда</h3>
+              <FormField
+                control={form.control}
+                name="reward.type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Вид</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                              value="DISCOUNT"
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">DISCOUNT</FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                              value="SUBSCRIPTION"
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal">SUBSCRIPTION</FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Controller
+                control={form.control}
+                name="reward.icon"
+                render={({ field }) => (
+                  <FormItem className="w-[275px]">
+                    <FormLabel>Иконка награды</FormLabel>
+                    <FormControl>
+                      <Dropzone
+                        onDrop={(acceptedFiles) => {
+                          form.setValue('reward.icon', acceptedFiles, {
+                            shouldValidate: true,
+                          });
+                        }}
+                      >
+                        {({ getRootProps, getInputProps }) => (
+                          <section className="container ">
+                            <div {...getRootProps({ className: 'dropzone disabled' })}>
+                              <input type="file" accept="image/*" {...getInputProps()} />
+                              <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
+                                <p className=" text-muted-foreground text">Загрузите изображение</p>
+                                <FaPlus className="text-customPrimary" size={20} />
+                              </div>
+                            </div>
+                            {field.value && (
+                              <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
+                            )}
+                          </section>
+                        )}
+                      </Dropzone>
+                    </FormControl>
+                    {form.formState.errors.reward?.icon && (
+                      <p className="text-destructive text-sm mt-2">
+                        {form.formState.errors.reward.icon.message as string}
+                      </p>
+                    )}
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="reward.amount"
+                render={() => (
+                  <FormItem>
+                    <FormLabel>Количество</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Количество"
+                        {...form.register('criteria.maxParticipants', {
+                          valueAsNumber: true,
+                        })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {rewardType === 'SUBSCRIPTION' && (
+                <FormField
+                  control={form.control}
+                  name="reward.subsribtionType"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Срок</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                                value="DAYS"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">DAYS</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                                value="MONTHS"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">MONTHS</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                                value="YEARS"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">YEARS</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}
             <Button variant="custom" type="submit" disabled={isPending}>

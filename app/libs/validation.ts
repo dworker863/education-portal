@@ -247,6 +247,7 @@ export const rewardSchema = z.object({
   type: z.enum(['DISCOUNT', 'SUBSCRIPTION']),
   icon: z
     .any()
+    .refine((file) => file, { message: 'Вставьте иконку награды' })
     .refine((file) => !file || file instanceof File || file[0] instanceof File, {
       message: 'Файл должен быть валидным',
     })
@@ -273,7 +274,7 @@ export const createAchievementSchema = z.object({
   description: z.string().min(1, { message: 'Введите описание' }),
   icon: z
     .any()
-    .refine((file) => file, { message: 'Вставьте иконку достижения' })
+    .refine((file) => file, { message: 'Вставьте изображение для достижения' })
     .refine((file) => file && (file instanceof File || file[0] instanceof File), {
       message: 'Файл должен быть валидным',
     })

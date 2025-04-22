@@ -207,41 +207,72 @@ export const editTestSchema = baseTestSchema
   })
   .partial();
 
-export const criteriaSchema = z.discriminatedUnion('type', [
-  z.object({
-    type: z.literal('EXERCISE_COMPLETION'),
-    exercisesIds: z.array(z.string()).optional(),
-    language: z.optional(z.string()),
-    prizePoints: z.optional(z.number()),
-    requiredRank: z.optional(z.string()),
-  }),
-  z.object({
-    type: z.literal('COURSE_COMPLETION'),
-    coursesIds: z.array(z.string()).optional(),
-    minPrice: z.optional(z.number()),
-    maxPrice: z.optional(z.number()),
-    requiredRank: z.optional(z.string()),
-  }),
-  z.object({
-    type: z.literal('COURSE_REGISTRATION'),
-    coursesIds: z.array(z.string()).optional(),
-    minPrice: z.optional(z.number()),
-    maxPrice: z.optional(z.number()),
-    requiredRank: z.optional(z.string()),
-  }),
-  z.object({
-    type: z.literal('PARTICIPATION_LIMIT'),
-    maxParticipants: z.number(),
-    requiredRank: z.optional(z.string()),
-  }),
-  z.object({
-    type: z.literal('SUBSCRIPTION'),
-    tier: z.enum(['PRO', 'PREMIUM']),
-    duration: z.enum(['MONTHLY', 'YEARLY']),
-    amount: z.number(),
-    firstTimeOnly: z.boolean(),
-  }),
-]);
+const exerciseCompletionSchema = z.object({
+  type: z.literal('EXERCISE_COMPLETION'),
+  exercisesIds: z.array(z.string()).optional(),
+  language: z.optional(z.string()),
+  prizePoints: z.optional(z.number()),
+  requiredRank: z.optional(z.string()),
+});
+
+const courseCompletionSchema = z.object({
+  type: z.literal('COURSE_COMPLETION'),
+  coursesIds: z.array(z.string()).optional(),
+  minPrice: z.optional(z.number()),
+  maxPrice: z.optional(z.number()),
+  requiredRank: z.optional(z.string()),
+});
+
+const courseRegistrationSchema = z.object({
+  type: z.literal('COURSE_REGISTRATION'),
+  coursesIds: z.array(z.string()).optional(),
+  minPrice: z.optional(z.number()),
+  maxPrice: z.optional(z.number()),
+  requiredRank: z.optional(z.string()),
+});
+
+const participationLimitSchema = z.object({
+  type: z.literal('PARTICIPATION_LIMIT'),
+  maxParticipants: z.number(),
+  requiredRank: z.optional(z.string()),
+});
+
+const subscriptionSchema = z.object({
+  type: z.literal('SUBSCRIPTION'),
+  tier: z.enum(['PRO', 'PREMIUM']),
+  duration: z.enum(['MONTHLY', 'YEARLY']),
+  amount: z.number(),
+  firstTimeOnly: z.boolean(),
+});
+
+type TCriteriaSchema =
+  | z.infer<typeof exerciseCompletionSchema>
+  | z.infer<typeof courseCompletionSchema>
+  | z.infer<typeof courseRegistrationSchema>
+  | z.infer<typeof participationLimitSchema>
+  | z.infer<typeof subscriptionSchema>
+  | {
+      type: 'COMBINATION';
+      operator: 'AND' | 'OR';
+      conditions: TCriteriaSchema[];
+      requiredRank?: string;
+    };
+
+export const criteriaSchema: z.ZodType<TCriteriaSchema> = z.lazy(() =>
+  z.discriminatedUnion('type', [
+    exerciseCompletionSchema,
+    courseCompletionSchema,
+    courseRegistrationSchema,
+    participationLimitSchema,
+    subscriptionSchema,
+    z.object({
+      type: z.literal('COMBINATION'),
+      operator: z.enum(['AND', 'OR']),
+      conditions: z.array(criteriaSchema),
+      requiredRank: z.string().optional(),
+    }),
+  ]),
+);
 
 export const rewardSchema = z.object({
   type: z.enum(['DISCOUNT', 'SUBSCRIPTION']),
@@ -266,7 +297,7 @@ export const rewardSchema = z.object({
       { message: 'Вставьте изображение' },
     ),
   amount: z.number(),
-  subsribtionType: z.enum(['DAYS', 'MONTHS', 'YEARS']),
+  subscriptionType: z.enum(['DAYS', 'MONTHS', 'YEARS']),
 });
 
 export const createAchievementSchema = z.object({

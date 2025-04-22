@@ -171,7 +171,13 @@ export interface IAchievementCriteria {
     | 'COMBINATION'
     | 'STREAK'
     | 'SOCIAL_ACTIVITY';
-  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription;
+  condition:
+    | TExerciseCompletion
+    | TCourseCompletion
+    | TCourseRegistration
+    | TParticipationLimit
+    | TSubscription
+    | TCombination;
 }
 
 export type TExerciseCompletion = {
@@ -207,6 +213,14 @@ export type TSubscription = {
   duration: 'MONTHLY' | 'YEARLY';
   amount: number;
   firstTimeOnly: true;
+};
+
+export type TCombination = {
+  operator: 'AND' | 'OR';
+  conditions: Array<
+    TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription | TCombination // Рекурсивная структура для вложенных комбинаций
+  >;
+  requiredRank?: string;
 };
 
 export interface IReward {

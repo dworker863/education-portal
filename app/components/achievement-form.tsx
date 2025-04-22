@@ -56,13 +56,14 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
         type: 'SUBSCRIPTION',
         icon: null,
         amount: 0,
-        subsribtionType: 'DAYS',
+        subscriptionType: 'DAYS',
       },
     },
   });
 
   const criteriaType = form.watch('criteria.type');
   const rewardType = form.watch('reward.type');
+  // const subscription = form.watch('criteria.operator');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
@@ -742,7 +743,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               {rewardType === 'SUBSCRIPTION' && (
                 <FormField
                   control={form.control}
-                  name="reward.subsribtionType"
+                  name="reward.subscriptionType"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Срок</FormLabel>

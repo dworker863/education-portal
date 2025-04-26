@@ -63,7 +63,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
 
   const criteriaType = form.watch('criteria.type');
   const rewardType = form.watch('reward.type');
-  // const subscription = form.watch('criteria.operator');
+  const combinationTypes = form.watch('criteria.types');
 
   const achievementTypes = [
     {
@@ -322,7 +322,92 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 </FormItem>
               )}
             />
-            {criteriaType === 'EXERCISE_COMPLETION' && (
+            {(criteriaType === 'COMBINATION' || combinationTypes?.includes('COMBINATION')) && (
+              <div className="space-y-4 border p-4 rounded-lg">
+                <h3 className="font-medium">Комбинированное условие</h3>
+                <FormField
+                  control={form.control}
+                  name="criteria.operator"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Вид</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                                value="AND"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">AND</FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                                value="OR"
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal">OR</FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormItem>
+                  <FormLabel>Тип достижения</FormLabel>
+                  {achievementTypes.map((type, index) => (
+                    <FormField
+                      key={type.id + index}
+                      control={form.control}
+                      name="criteria.types"
+                      render={({ field }) => {
+                        const values = field.value || [];
+
+                        return (
+                          <FormItem className="flex items-center space-x-3 space-y-0 py-1">
+                            <FormControl>
+                              <Checkbox
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                                checked={values.includes(type.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...values, type.id])
+                                    : field.onChange(values?.filter((value) => value !== type.id));
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel>{type.label}</FormLabel>
+                            <FormMessage />
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </FormItem>
+                <FormField
+                  control={form.control}
+                  name="criteria.requiredRank"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Уровень</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Необходимый уровень" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+            {(criteriaType === 'EXERCISE_COMPLETION' || combinationTypes?.includes('EXERCISE_COMPLETION')) && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Выполнение упражнений</h3>
                 <FormField
@@ -385,7 +470,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {criteriaType === 'COURSE_COMPLETION' && (
+            {(criteriaType === 'COURSE_COMPLETION' || combinationTypes?.includes('COURSE_COMPLETION')) && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Завершение курсов</h3>
                 <FormField
@@ -454,7 +539,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {criteriaType === 'COURSE_REGISTRATION' && (
+            {(criteriaType === 'COURSE_REGISTRATION' || combinationTypes?.includes('COURSE_REGISTRATION')) && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Регистрация в курсах</h3>
                 <FormField
@@ -523,7 +608,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {criteriaType === 'PARTICIPATION_LIMIT' && (
+            {(criteriaType === 'PARTICIPATION_LIMIT' || combinationTypes?.includes('PARTICIPATION_LIMIT')) && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Попадание в число первых</h3>
                 <FormField
@@ -560,7 +645,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {criteriaType === 'SUBSCRIPTION' && (
+            {(criteriaType === 'SUBSCRIPTION' || combinationTypes?.includes('SUBSCRIPTION')) && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Подписка</h3>
                 <FormField
@@ -673,91 +758,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
               </div>
             )}
-            {criteriaType === 'COMBINATION' && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Комбинированное условие</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.operator"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Вид</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="AND"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">AND</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="OR"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">OR</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormItem>
-                  <FormLabel>Тип достижения</FormLabel>
-                  {achievementTypes.map((type, index) => (
-                    <FormField
-                      key={type.id + index}
-                      control={form.control}
-                      name="criteria.types"
-                      render={({ field }) => {
-                        const values = field.value || [];
 
-                        return (
-                          <FormItem className="flex items-center space-x-3 space-y-0 py-1">
-                            <FormControl>
-                              <Checkbox
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={values.includes(type.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...values, type.id])
-                                    : field.onChange(values?.filter((value) => value !== type.id));
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel>{type.label}</FormLabel>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                </FormItem>
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
             <div className="space-y-4 border p-4 rounded-lg">
               <h3 className="font-medium">Награда</h3>
               <FormField

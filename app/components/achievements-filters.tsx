@@ -91,18 +91,18 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                       control={form.control}
                       name="rank"
                       render={({ field }) => {
-                        const value = field.value || [];
+                        const values = field.value || [];
 
                         return (
                           <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
                             <FormControl>
                               <Checkbox
                                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={value.includes(rank.id)}
+                                checked={values.includes(rank.id)}
                                 onCheckedChange={(checked) => {
                                   return checked
-                                    ? field.onChange([...value, rank.id])
-                                    : field.onChange(value.filter((value) => value !== rank.id));
+                                    ? field.onChange([...values, rank.id])
+                                    : field.onChange(values.filter((value) => value !== rank.id));
                                 }}
                               />
                             </FormControl>

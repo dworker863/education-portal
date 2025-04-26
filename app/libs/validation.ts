@@ -253,6 +253,14 @@ type TCriteriaSchema =
   | z.infer<typeof subscriptionSchema>
   | {
       type: 'COMBINATION';
+      types: (
+        | 'EXERCISE_COMPLETION'
+        | 'COURSE_COMPLETION'
+        | 'COURSE_REGISTRATION'
+        | 'PARTICIPATION_LIMIT'
+        | 'SUBSCRIPTION'
+        | 'COMBINATION'
+      )[];
       operator: 'AND' | 'OR';
       conditions: TCriteriaSchema[];
       requiredRank?: string;
@@ -268,6 +276,16 @@ export const criteriaSchema: z.ZodType<TCriteriaSchema> = z.lazy(() =>
     z.object({
       type: z.literal('COMBINATION'),
       operator: z.enum(['AND', 'OR']),
+      types: z.array(
+        z.enum([
+          'EXERCISE_COMPLETION',
+          'COURSE_COMPLETION',
+          'COURSE_REGISTRATION',
+          'PARTICIPATION_LIMIT',
+          'SUBSCRIPTION',
+          'COMBINATION',
+        ]),
+      ),
       conditions: z.array(criteriaSchema),
       requiredRank: z.string().optional(),
     }),

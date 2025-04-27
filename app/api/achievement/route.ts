@@ -3,7 +3,7 @@ import { fileUpload } from '@/app/libs/utils/auth';
 import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
-import { getCourseById, getCourseByName } from '@/app/libs/utils/courses';
+import { getCourseByName } from '@/app/libs/utils/courses';
 
 export async function POST(request: Request) {
   try {
@@ -49,12 +49,6 @@ export async function POST(request: Request) {
 
     if (existingAchievement) {
       return NextResponse.json({ error: 'Достижение с таким названием уже существует' }, { status: 409 });
-    }
-
-    const existingCourse = await getCourseByName(values.courseName as string);
-
-    if (!existingCourse) {
-      return NextResponse.json({ error: 'Курса с таким названием не существует' }, { status: 404 });
     }
 
     const { data, ...parsedResult } = await createAchievementSchema.safeParse(values);
@@ -182,13 +176,49 @@ export async function POST(request: Request) {
 export async function PATCH(request: Request) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData);
+    const values: Record<string, any> = {};
+
+    if (formData.has('reward')) {
+      try {
+        const rewardData = JSON.parse(formData.get('reward') as string);
+        const rewardIcon = formData.get('reward.icon');
+
+        if (rewardIcon instanceof File) {
+          rewardData.icon = rewardIcon;
+        }
+
+        values.reward = rewardData;
+      } catch (error) {
+        console.error('Ошибка парсинга reward:', error);
+        return NextResponse.json({ error: 'Некорректный формат reward' }, { status: 400 });
+      }
+    }
+
+    if (formData.has('criteria')) {
+      try {
+        values.criteria = JSON.parse(formData.get('criteria') as string);
+      } catch (error) {
+        console.error('Ошибка парсинга criteria:', error);
+        return NextResponse.json({ error: 'Некорректный формат criteria' }, { status: 400 });
+      }
+    }
+
+    for (const [key, value] of formData.entries()) {
+      if (key !== 'reward' && key !== 'criteria' && key !== 'reward.icon') {
+        if (key === 'startDate' || key === 'endDate') {
+          values[key] = new Date(value as string);
+        } else {
+          values[key] = value;
+        }
+      }
+    }
+
     const achievementId = values.id;
 
     console.log(values);
 
     if (!achievementId) {
-      return NextResponse.json({ error: 'Не указан ID курса' }, { status: 400 });
+      return NextResponse.json({ error: 'Не указан ID достижения' }, { status: 400 });
     }
 
     const existingAchievement = await getAchievementById(values.id as string);
@@ -197,39 +227,95 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Достижение не найдено' }, { status: 404 });
     }
 
-    let existingCourse;
-
-    if (values.courseName) {
-      existingCourse = await getCourseByName(values.courseName as string);
-
-      if (!existingCourse) {
-        return NextResponse.json({ error: 'Курса с таким названием не существует' }, { status: 404 });
-      }
-    }
-
-    const { data, ...parsedResult } = editAchievementSchema.safeParse({
-      ...values,
-      discount: values.discount ? Number(values.discount) : null,
-    });
-
-    if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
-    }
+    const { data, ...parsedResult } = editAchievementSchema.safeParse(values);
 
     if (!data) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
-    const fieldsToCheck = ['name', 'task', 'language', 'requiredRank', 'discount', 'courseId'] as const;
+    if (!parsedResult.success) {
+      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+    }
+
+    if (
+      (data?.criteria?.type === 'COURSE_COMPLETION' || data?.criteria?.type === 'COURSE_REGISTRATION') &&
+      data?.criteria.coursesIds &&
+      data?.criteria.coursesIds.length > 0
+    ) {
+      const invalidIds = await getInvalidIds('courses', data?.criteria.coursesIds);
+
+      if (invalidIds.length > 0) {
+        return NextResponse.json(
+          {
+            error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
+            invalidCourseIds: invalidIds,
+          },
+          { status: 404 },
+        );
+      }
+    }
+
+    if (
+      data?.criteria?.type === 'EXERCISE_COMPLETION' &&
+      data?.criteria.exercisesIds &&
+      data?.criteria.exercisesIds.length > 0
+    ) {
+      const invalidIds = await getInvalidIds('exercises', data?.criteria.exercisesIds);
+
+      if (invalidIds.length > 0) {
+        return NextResponse.json(
+          {
+            error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
+            invalidCourseIds: invalidIds,
+          },
+          { status: 404 },
+        );
+      }
+    }
+
+    if (data?.criteria?.type === 'COMBINATION') {
+      for (const condition of data.criteria.conditions) {
+        if (
+          (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
+          condition.coursesIds &&
+          condition.coursesIds.length > 0
+        ) {
+          const invalidIds = await getInvalidIds('courses', condition.coursesIds);
+
+          if (invalidIds.length > 0) {
+            return NextResponse.json(
+              {
+                error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
+                invalidCourseIds: invalidIds,
+              },
+              { status: 404 },
+            );
+          }
+        }
+
+        if (condition.type === 'EXERCISE_COMPLETION' && condition.exercisesIds && condition.exercisesIds.length > 0) {
+          const invalidIds = await getInvalidIds('exercises', condition.exercisesIds);
+
+          if (invalidIds.length > 0) {
+            return NextResponse.json(
+              {
+                error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
+                invalidCourseIds: invalidIds,
+              },
+              { status: 404 },
+            );
+          }
+        }
+      }
+    }
+
+    const fieldsToCheck = ['name', 'description', 'criteria', 'reward', 'startDate', 'endDate'] as const;
 
     const updatedData: Record<string, any> = {};
 
-    delete data.courseName;
-    const dataToCheck = { ...data, courseId: existingCourse?.id };
-
     fieldsToCheck.forEach((field) => {
-      if (dataToCheck[field] && dataToCheck[field] !== existingAchievement[field]) {
-        updatedData[field] = dataToCheck[field];
+      if (data[field] && data[field] !== existingAchievement[field]) {
+        updatedData[field] = data[field];
       }
     });
 
@@ -249,6 +335,17 @@ export async function PATCH(request: Request) {
       }
 
       updatedData.icon = uploadResult;
+    }
+
+    if (data.reward?.icon) {
+      const uploadResult = await fileUpload(data.icon);
+      console.log('ACHIEVEMENT POST DATA: ', data);
+
+      if (uploadResult instanceof Error) {
+        return NextResponse.json({ error: uploadResult.message }, { status: 400 });
+      }
+
+      updatedData.reward.icon = uploadResult;
     }
 
     console.log(existingAchievement);

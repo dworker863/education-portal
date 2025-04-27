@@ -25,6 +25,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '../libs/cn';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { Item } from '@radix-ui/react-dropdown-menu';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -101,10 +102,24 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           formData.append('id', achievementId);
         }
 
+        if (values.reward) {
+          const { icon, ...rewardData } = values.reward;
+
+          formData.append('reward', JSON.stringify(rewardData));
+
+          if (icon) {
+            formData.append('reward.icon', icon[0]);
+            console.log('ACHIEVEMENT FORM: ', formData.get('reward.icon'));
+          }
+        }
+
+        if (values.criteria) {
+          formData.append('criteria', JSON.stringify(values.criteria));
+        }
+
         for (const key in values) {
           const value = values[key as keyof typeof values];
-
-          if (key !== 'icon' && value !== undefined) {
+          if (key !== 'reward' && key !== 'criteria' && key !== 'icon' && value !== undefined) {
             formData.append(key, value);
           }
         }
@@ -266,7 +281,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               name="endDate"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Дата начала</FormLabel>
+                  <FormLabel>Дата окончания</FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
                       <FormControl>
@@ -480,7 +495,13 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                     <FormItem>
                       <FormLabel>Курсы</FormLabel>
                       <FormControl>
-                        <Input placeholder="Курсы" {...field} />
+                        <Input
+                          placeholder="Введите id курсов через запятую"
+                          {...form.register('criteria.coursesIds', {
+                            setValueAs: (value) =>
+                              typeof value === 'string' ? value.split(',').map((item) => item.trim()) : [],
+                          })}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

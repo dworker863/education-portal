@@ -6,11 +6,6 @@ export const getAchievementByName = async (name: string) => {
       where: {
         name,
       },
-      include: {
-        course: {
-          select: { name: true },
-        },
-      },
     });
 
     return achievement;

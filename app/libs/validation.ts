@@ -296,21 +296,20 @@ export const rewardSchema = z.object({
   type: z.enum(['DISCOUNT', 'SUBSCRIPTION']),
   icon: z
     .any()
-    .refine((file) => file, { message: 'Вставьте иконку награды' })
-    .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+    .refine((file) => file, { message: 'Вставьте изображение для достижения' })
+    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
       message: 'Файл должен быть валидным',
     })
-    .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+    .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
       message: 'Файл не должен быть пустым',
     })
     .refine(
       (file) => {
-        if (!file) return true;
         if (file instanceof File) {
           return file.type && file.type.includes('image');
         }
 
-        return file[0]?.type && file[0].type.includes('image');
+        return file && file[0]?.type && file[0].type.includes('image');
       },
       { message: 'Вставьте изображение' },
     ),

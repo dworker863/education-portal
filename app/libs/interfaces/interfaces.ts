@@ -218,7 +218,7 @@ export type TSubscription = {
 export type TCombination = {
   operator: 'AND' | 'OR';
   conditions: Array<
-    TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription | TCombination // Рекурсивная структура для вложенных комбинаций
+    TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription
   >;
   requiredRank?: string;
 };

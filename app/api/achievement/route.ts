@@ -4,7 +4,6 @@ import { createAchievementSchema, editAchievementSchema } from '@/app/libs/valid
 import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
 import { getCourseById, getCourseByName } from '@/app/libs/utils/courses';
-import { TCourseCompletion } from '@/app/libs/interfaces/interfaces';
 
 export async function POST(request: Request) {
   try {
@@ -115,6 +114,56 @@ export async function POST(request: Request) {
           },
           { status: 404 },
         );
+      }
+    }
+
+    if (data?.criteria.type === 'COMBINATION') {
+      for (const condition of data.criteria.conditions) {
+        if (
+          (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
+          condition.coursesIds &&
+          condition.coursesIds.length > 0
+        ) {
+          const courseCheckPromises = condition.coursesIds.map(async (id) => {
+            const course = await getCourseById(id);
+            return { id, exists: !!course };
+          });
+
+          const results = await Promise.all(courseCheckPromises);
+
+          const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+
+          if (invalidIds.length > 0) {
+            return NextResponse.json(
+              {
+                error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
+                invalidCourseIds: invalidIds,
+              },
+              { status: 404 },
+            );
+          }
+        }
+
+        if (condition.type === 'EXERCISE_COMPLETION' && condition.exercisesIds && condition.exercisesIds.length > 0) {
+          const courseCheckPromises = condition.exercisesIds.map(async (id) => {
+            const course = await getCourseById(id);
+            return { id, exists: !!course };
+          });
+
+          const results = await Promise.all(courseCheckPromises);
+
+          const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+
+          if (invalidIds.length > 0) {
+            return NextResponse.json(
+              {
+                error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
+                invalidCourseIds: invalidIds,
+              },
+              { status: 404 },
+            );
+          }
+        }
       }
     }
 

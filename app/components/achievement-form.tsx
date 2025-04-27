@@ -25,7 +25,6 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '../libs/cn';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { Item } from '@radix-ui/react-dropdown-menu';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -86,10 +85,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
     {
       id: 'SUBSCRIPTION',
       label: 'SUBSCRIPTION',
-    },
-    {
-      id: 'COMBINATION',
-      label: 'COMBINATION',
     },
   ] as const;
 
@@ -337,7 +332,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 </FormItem>
               )}
             />
-            {(criteriaType === 'COMBINATION' || combinationTypes?.includes('COMBINATION')) && (
+            {criteriaType === 'COMBINATION' && (
               <div className="space-y-4 border p-4 rounded-lg">
                 <h3 className="font-medium">Комбинированное условие</h3>
                 <FormField

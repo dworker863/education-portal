@@ -245,52 +245,32 @@ const subscriptionSchema = z.object({
   firstTimeOnly: z.boolean(),
 });
 
-type TCriteriaSchema =
-  | z.infer<typeof exerciseCompletionSchema>
-  | z.infer<typeof courseCompletionSchema>
-  | z.infer<typeof courseRegistrationSchema>
-  | z.infer<typeof participationLimitSchema>
-  | z.infer<typeof subscriptionSchema>
-  | {
-      type: 'COMBINATION';
-      types: (
-        | 'EXERCISE_COMPLETION'
-        | 'COURSE_COMPLETION'
-        | 'COURSE_REGISTRATION'
-        | 'PARTICIPATION_LIMIT'
-        | 'SUBSCRIPTION'
-        | 'COMBINATION'
-      )[];
-      operator: 'AND' | 'OR';
-      conditions: TCriteriaSchema[];
-      requiredRank?: string;
-    };
+const combinationSchema = z.object({
+  type: z.literal('COMBINATION'),
+  operator: z.enum(['AND', 'OR']),
+  types: z.array(
+    z.enum(['EXERCISE_COMPLETION', 'COURSE_COMPLETION', 'COURSE_REGISTRATION', 'PARTICIPATION_LIMIT', 'SUBSCRIPTION']),
+  ),
+  conditions: z.array(
+    z.discriminatedUnion('type', [
+      exerciseCompletionSchema,
+      courseCompletionSchema,
+      courseRegistrationSchema,
+      participationLimitSchema,
+      subscriptionSchema,
+    ]),
+  ),
+  requiredRank: z.string().optional(),
+});
 
-export const criteriaSchema: z.ZodType<TCriteriaSchema> = z.lazy(() =>
-  z.discriminatedUnion('type', [
-    exerciseCompletionSchema,
-    courseCompletionSchema,
-    courseRegistrationSchema,
-    participationLimitSchema,
-    subscriptionSchema,
-    z.object({
-      type: z.literal('COMBINATION'),
-      operator: z.enum(['AND', 'OR']),
-      types: z.array(
-        z.enum([
-          'EXERCISE_COMPLETION',
-          'COURSE_COMPLETION',
-          'COURSE_REGISTRATION',
-          'PARTICIPATION_LIMIT',
-          'SUBSCRIPTION',
-          'COMBINATION',
-        ]),
-      ),
-      conditions: z.array(criteriaSchema),
-      requiredRank: z.string().optional(),
-    }),
-  ]),
-);
+export const criteriaSchema = z.discriminatedUnion('type', [
+  exerciseCompletionSchema,
+  courseCompletionSchema,
+  courseRegistrationSchema,
+  participationLimitSchema,
+  subscriptionSchema,
+  combinationSchema,
+]);
 
 export const rewardSchema = z.object({
   type: z.enum(['DISCOUNT', 'SUBSCRIPTION']),

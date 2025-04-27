@@ -1,4 +1,4 @@
-import { getAchievementById, getAchievementByName } from '@/app/libs/utils/achievements';
+import { getAchievementById, getAchievementByName, getInvalidIds } from '@/app/libs/utils/achievements';
 import { fileUpload } from '@/app/libs/utils/auth';
 import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
@@ -72,14 +72,7 @@ export async function POST(request: Request) {
       data?.criteria.coursesIds &&
       data?.criteria.coursesIds.length > 0
     ) {
-      const courseCheckPromises = data.criteria.coursesIds.map(async (id) => {
-        const course = await getCourseById(id);
-        return { id, exists: !!course };
-      });
-
-      const results = await Promise.all(courseCheckPromises);
-
-      const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+      const invalidIds = await getInvalidIds('courses', data?.criteria.coursesIds);
 
       if (invalidIds.length > 0) {
         return NextResponse.json(
@@ -97,14 +90,7 @@ export async function POST(request: Request) {
       data?.criteria.exercisesIds &&
       data?.criteria.exercisesIds.length > 0
     ) {
-      const courseCheckPromises = data.criteria.exercisesIds.map(async (id) => {
-        const course = await getCourseById(id);
-        return { id, exists: !!course };
-      });
-
-      const results = await Promise.all(courseCheckPromises);
-
-      const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+      const invalidIds = await getInvalidIds('exercises', data?.criteria.exercisesIds);
 
       if (invalidIds.length > 0) {
         return NextResponse.json(
@@ -124,14 +110,7 @@ export async function POST(request: Request) {
           condition.coursesIds &&
           condition.coursesIds.length > 0
         ) {
-          const courseCheckPromises = condition.coursesIds.map(async (id) => {
-            const course = await getCourseById(id);
-            return { id, exists: !!course };
-          });
-
-          const results = await Promise.all(courseCheckPromises);
-
-          const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+          const invalidIds = await getInvalidIds('courses', condition.coursesIds);
 
           if (invalidIds.length > 0) {
             return NextResponse.json(
@@ -145,14 +124,7 @@ export async function POST(request: Request) {
         }
 
         if (condition.type === 'EXERCISE_COMPLETION' && condition.exercisesIds && condition.exercisesIds.length > 0) {
-          const courseCheckPromises = condition.exercisesIds.map(async (id) => {
-            const course = await getCourseById(id);
-            return { id, exists: !!course };
-          });
-
-          const results = await Promise.all(courseCheckPromises);
-
-          const invalidIds = results.filter((result) => !result.exists).map((result) => result.id);
+          const invalidIds = await getInvalidIds('exercises', condition.exercisesIds);
 
           if (invalidIds.length > 0) {
             return NextResponse.json(

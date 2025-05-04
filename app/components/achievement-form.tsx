@@ -257,7 +257,15 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
   );
 };
 
-const ParticipationLimitFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+const ParticipationLimitFields = ({
+  form,
+  prefix = '',
+  mode,
+}: {
+  form: UseFormReturn<any>;
+  prefix: string;
+  mode: 'create' | 'edit';
+}) => {
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Попадание в число первых</h3>
@@ -267,6 +275,7 @@ const ParticipationLimitFields = ({ form, prefix = '' }: { form: UseFormReturn<a
         render={() => (
           <FormItem>
             <FormLabel>Макс. количество участников</FormLabel>
+            {mode === 'create' && <RequiredSign />}
             <FormControl>
               <Input
                 type="number"
@@ -297,7 +306,15 @@ const ParticipationLimitFields = ({ form, prefix = '' }: { form: UseFormReturn<a
   );
 };
 
-const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+const SubscriptionFields = ({
+  form,
+  prefix = '',
+  mode,
+}: {
+  form: UseFormReturn<any>;
+  prefix: string;
+  mode: 'create' | 'edit';
+}) => {
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Подписка</h3>
@@ -307,6 +324,7 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
         render={({ field }) => (
           <FormItem>
             <FormLabel>Вид</FormLabel>
+            {mode === 'create' && <RequiredSign />}
             <FormControl>
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
                 <FormItem className="flex items-center space-x-3 space-y-0">
@@ -339,6 +357,7 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
         render={({ field }) => (
           <FormItem>
             <FormLabel>Срок</FormLabel>
+            {mode === 'create' && <RequiredSign />}
             <FormControl>
               <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
                 <FormItem className="flex items-center space-x-3 space-y-0">
@@ -371,6 +390,7 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
         render={() => (
           <FormItem>
             <FormLabel>Количество</FormLabel>
+            {mode === 'create' && <RequiredSign />}
             <FormControl>
               <Input
                 type="number"
@@ -388,8 +408,8 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
         control={form.control}
         name={`${prefix}.firstTimeOnly`}
         render={({ field }) => (
-          <FormItem className="flex items-center space-x-3 space-y-0 py-4">
-            <FormControl>
+          <FormItem className="flex items-center space-y-0 py-4">
+            <FormControl className="mr-3">
               <Checkbox
                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
                 checked={field.value}
@@ -397,6 +417,7 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
               />
             </FormControl>
             <FormLabel>Только для впервые оформляющих</FormLabel>
+            {mode === 'create' && <RequiredSign />}
             <FormMessage />
           </FormItem>
         )}
@@ -529,8 +550,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   ] as const;
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log('ACHIEVEMENTS FORM: ', values);
-
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -681,11 +700,12 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               control={form.control}
               name="startDate"
               render={({ field }) => (
-                <FormItem className="flex flex-col">
+                <FormItem>
                   <FormLabel>Дата начала</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
                   <Popover>
                     <PopoverTrigger asChild>
-                      <FormControl>
+                      <FormControl className="w-full">
                         <Button
                           variant={'outline'}
                           className={cn(
@@ -770,6 +790,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-base">Тип достижения</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl className="w-[300px]">
                       <SelectTrigger>
@@ -797,6 +818,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Вид</FormLabel>
+                      {mode === 'create' && <RequiredSign />}
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
@@ -829,6 +851,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 />
                 <FormItem>
                   <FormLabel>Тип достижения</FormLabel>
+                  {mode === 'create' && <RequiredSign />}
                   {achievementTypes.map((type, index) => (
                     <FormField
                       key={type.id + index}
@@ -884,10 +907,10 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                       <CourseRegistrationFields form={form} prefix={`criteria.conditions.${index}`} />
                     )}
                     {field.type === 'PARTICIPATION_LIMIT' && (
-                      <ParticipationLimitFields form={form} prefix={`criteria.conditions.${index}`} />
+                      <ParticipationLimitFields form={form} prefix={`criteria.conditions.${index}`} mode={mode} />
                     )}
                     {field.type === 'SUBSCRIPTION' && (
-                      <SubscriptionFields form={form} prefix={`criteria.conditions.${index}`} />
+                      <SubscriptionFields form={form} prefix={`criteria.conditions.${index}`} mode={mode} />
                     )}
                   </div>
                 ))}
@@ -896,8 +919,10 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
             {criteriaType === 'EXERCISE_COMPLETION' && <ExerciseCompletionFields form={form} prefix="criteria" />}
             {criteriaType === 'COURSE_COMPLETION' && <CourseCompletionFields form={form} prefix="criteria" />}
             {criteriaType === 'COURSE_REGISTRATION' && <CourseRegistrationFields form={form} prefix="criteria" />}
-            {criteriaType === 'PARTICIPATION_LIMIT' && <ParticipationLimitFields form={form} prefix="criteria" />}
-            {criteriaType === 'SUBSCRIPTION' && <SubscriptionFields form={form} prefix="criteria" />}
+            {criteriaType === 'PARTICIPATION_LIMIT' && (
+              <ParticipationLimitFields form={form} prefix="criteria" mode={mode} />
+            )}
+            {criteriaType === 'SUBSCRIPTION' && <SubscriptionFields form={form} prefix="criteria" mode={mode} />}
 
             <div className="space-y-4 border p-4 rounded-lg">
               <h3 className="font-medium">Награда</h3>
@@ -907,6 +932,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Вид</FormLabel>
+                    {mode === 'create' && <RequiredSign />}
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -943,6 +969,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 render={({ field }) => (
                   <FormItem className="w-[275px]">
                     <FormLabel>Иконка награды</FormLabel>
+                    {mode === 'create' && <RequiredSign />}
                     <FormControl>
                       <Dropzone
                         onDrop={(acceptedFiles) => {
@@ -981,6 +1008,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 render={() => (
                   <FormItem>
                     <FormLabel>Количество</FormLabel>
+                    {mode === 'create' && <RequiredSign />}
                     <FormControl>
                       <Input
                         type="number"
@@ -1001,6 +1029,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Срок</FormLabel>
+                      {mode === 'create' && <RequiredSign />}
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}

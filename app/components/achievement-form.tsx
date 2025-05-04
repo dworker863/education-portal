@@ -704,7 +704,12 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                         selected={field.value}
                         onSelect={field.onChange}
                         locale={ru}
-                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        disabled={(date) => {
+                          const today = new Date();
+                          const maxDate = new Date();
+                          maxDate.setDate(today.getDate() + 30);
+                          return date < today || date > maxDate;
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -740,7 +745,16 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                         selected={field.value}
                         onSelect={field.onChange}
                         locale={ru}
-                        disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                        disabled={(date) => {
+                          const startDate = form.getValues('startDate');
+                          if (!startDate) return true;
+
+                          const minDate = new Date(startDate);
+                          const maxDate = new Date(startDate);
+                          maxDate.setDate(maxDate.getDate() + 180);
+
+                          return date < minDate || date > maxDate;
+                        }}
                         initialFocus
                       />
                     </PopoverContent>

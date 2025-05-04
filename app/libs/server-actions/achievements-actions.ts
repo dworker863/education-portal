@@ -25,7 +25,7 @@ export const deleteAchievement = async (id: string) => {
       },
     });
 
-    if (!achivement) throw new Error('Курса с таким ID не существует');
+    if (!achivement) throw new Error('Достижения с таким ID не существует');
 
     await prisma.achievement.delete({
       where: {
@@ -33,9 +33,26 @@ export const deleteAchievement = async (id: string) => {
       },
     });
 
-    return { success: 'Курс успешно удален' };
+    return { success: 'Достижение успешно удалено' };
   } catch (error) {
-    console.error('Ошибка при удалении курса: ', error);
+    console.error('Ошибка при удалении достижения: ', error);
+    throw error;
+  }
+};
+
+export const getAchievementById = async (id: string) => {
+  try {
+    const achievement = await prisma.achievement.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!achievement) throw new Error('Достижения с таким ID не существует');
+
+    return achievement;
+  } catch (error) {
+    console.error('Ошибка при получении достижения по ID: ', error);
     throw error;
   }
 };

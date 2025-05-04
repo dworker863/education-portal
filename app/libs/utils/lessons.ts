@@ -10,9 +10,6 @@ export const getLessonByName = async (name: string) => {
       include: {
         exercises: true,
         tests: true,
-        // course: {
-        //   select: { id: true },
-        // },
       },
     });
 

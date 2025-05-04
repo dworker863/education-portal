@@ -409,11 +409,11 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   const [isPending, startTransiton] = useTransition();
   const router = useRouter();
 
+  const schema = mode === 'create' ? createAchievementSchema : editAchievementSchema;
+
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
-
-  const schema = mode === 'create' ? createAchievementSchema : editAchievementSchema;
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

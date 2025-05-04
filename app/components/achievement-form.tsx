@@ -45,8 +45,8 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Колличество упражнений"
-                {...form.register('criteria.count', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.count`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -77,8 +77,8 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Колличество призовых баллов"
-                {...form.register('criteria.prizePoints', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.prizePoints`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -116,7 +116,7 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
             <FormControl>
               <Input
                 placeholder="Введите id курсов через запятую"
-                {...form.register('criteria.coursesIds', {
+                {...form.register(`${prefix}.coursesIds`, {
                   setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
                 })}
               />
@@ -135,8 +135,8 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
               <Input
                 type="number"
                 placeholder="Минимальная цена курса"
-                {...form.register('criteria.minPrice', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.minPrice`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -154,8 +154,8 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
               <Input
                 type="number"
                 placeholder="Максимальная цена курса"
-                {...form.register('criteria.maxPrice', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.maxPrice`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -193,7 +193,7 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
             <FormControl>
               <Input
                 placeholder="Курсы"
-                {...form.register('criteria.coursesIds', {
+                {...form.register(`${prefix}.coursesIds`, {
                   setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
                 })}
               />
@@ -212,8 +212,8 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Минимальная цена курса"
-                {...form.register('criteria.minPrice', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.minPrice`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -231,8 +231,8 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Максимальная цена курса"
-                {...form.register('criteria.maxPrice', {
-                  valueAsNumber: true,
+                {...form.register(`${prefix}.maxPrice`, {
+                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
             </FormControl>
@@ -271,7 +271,7 @@ const ParticipationLimitFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Максимальное количество участников"
-                {...form.register('criteria.maxParticipants', {
+                {...form.register(`${prefix}.maxParticipants`, {
                   valueAsNumber: true,
                 })}
               />
@@ -375,7 +375,7 @@ const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; p
               <Input
                 type="number"
                 placeholder="Количество"
-                {...form.register('criteria.amount', {
+                {...form.register(`${prefix}.amount`, {
                   valueAsNumber: true,
                 })}
               />
@@ -432,7 +432,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       reward: {
         type: 'SUBSCRIPTION',
         icon: null,
-        amount: 0,
+        amount: 1,
         subscriptionType: 'DAYS',
       },
     },

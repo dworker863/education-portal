@@ -209,31 +209,33 @@ export const editTestSchema = baseTestSchema
 
 const exerciseCompletionSchema = z.object({
   type: z.literal('EXERCISE_COMPLETION'),
-  count: z.optional(z.number()),
+  count: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   language: z.optional(z.string()),
-  prizePoints: z.optional(z.number()),
+  prizePoints: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
 });
 
 const courseCompletionSchema = z.object({
   type: z.literal('COURSE_COMPLETION'),
   coursesIds: z.array(z.string()).optional(),
-  minPrice: z.optional(z.number()),
-  maxPrice: z.optional(z.number()),
+  minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
 });
 
 const courseRegistrationSchema = z.object({
   type: z.literal('COURSE_REGISTRATION'),
   coursesIds: z.array(z.string()).optional(),
-  minPrice: z.optional(z.number()),
-  maxPrice: z.optional(z.number()),
+  minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
 });
 
 const participationLimitSchema = z.object({
   type: z.literal('PARTICIPATION_LIMIT'),
-  maxParticipants: z.number(),
+  maxParticipants: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(0, { message: 'Введите количество пользователей, на которых расчитана награда ' }),
   requiredRank: z.optional(z.string()),
 });
 
@@ -241,7 +243,9 @@ const subscriptionSchema = z.object({
   type: z.literal('SUBSCRIPTION'),
   tier: z.enum(['PRO', 'PREMIUM']),
   duration: z.enum(['MONTHLY', 'YEARLY']),
-  amount: z.number(),
+  amount: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(0, { message: 'Введите количество необходимых месяцев/лет подписки' }),
   firstTimeOnly: z.boolean(),
 });
 
@@ -293,7 +297,9 @@ export const rewardSchema = z.object({
       },
       { message: 'Вставьте изображение' },
     ),
-  amount: z.number(),
+  amount: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(0, { message: 'Введите количество призовых билетовых со скидкой' }),
   subscriptionType: z.enum(['DAYS', 'MONTHS', 'YEARS']),
 });
 

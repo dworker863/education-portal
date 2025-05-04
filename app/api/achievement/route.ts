@@ -3,7 +3,6 @@ import { fileUpload } from '@/app/libs/utils/auth';
 import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
-import { getCourseByName } from '@/app/libs/utils/courses';
 
 export async function POST(request: Request) {
   try {
@@ -79,24 +78,6 @@ export async function POST(request: Request) {
       }
     }
 
-    if (
-      data?.criteria.type === 'EXERCISE_COMPLETION' &&
-      data?.criteria.exercisesIds &&
-      data?.criteria.exercisesIds.length > 0
-    ) {
-      const invalidIds = await getInvalidIds('exercises', data?.criteria.exercisesIds);
-
-      if (invalidIds.length > 0) {
-        return NextResponse.json(
-          {
-            error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
-            invalidCourseIds: invalidIds,
-          },
-          { status: 404 },
-        );
-      }
-    }
-
     if (data?.criteria.type === 'COMBINATION') {
       for (const condition of data.criteria.conditions) {
         if (
@@ -110,20 +91,6 @@ export async function POST(request: Request) {
             return NextResponse.json(
               {
                 error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
-                invalidCourseIds: invalidIds,
-              },
-              { status: 404 },
-            );
-          }
-        }
-
-        if (condition.type === 'EXERCISE_COMPLETION' && condition.exercisesIds && condition.exercisesIds.length > 0) {
-          const invalidIds = await getInvalidIds('exercises', condition.exercisesIds);
-
-          if (invalidIds.length > 0) {
-            return NextResponse.json(
-              {
-                error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
                 invalidCourseIds: invalidIds,
               },
               { status: 404 },
@@ -255,24 +222,6 @@ export async function PATCH(request: Request) {
       }
     }
 
-    if (
-      data?.criteria?.type === 'EXERCISE_COMPLETION' &&
-      data?.criteria.exercisesIds &&
-      data?.criteria.exercisesIds.length > 0
-    ) {
-      const invalidIds = await getInvalidIds('exercises', data?.criteria.exercisesIds);
-
-      if (invalidIds.length > 0) {
-        return NextResponse.json(
-          {
-            error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
-            invalidCourseIds: invalidIds,
-          },
-          { status: 404 },
-        );
-      }
-    }
-
     if (data?.criteria?.type === 'COMBINATION') {
       for (const condition of data.criteria.conditions) {
         if (
@@ -286,20 +235,6 @@ export async function PATCH(request: Request) {
             return NextResponse.json(
               {
                 error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
-                invalidCourseIds: invalidIds,
-              },
-              { status: 404 },
-            );
-          }
-        }
-
-        if (condition.type === 'EXERCISE_COMPLETION' && condition.exercisesIds && condition.exercisesIds.length > 0) {
-          const invalidIds = await getInvalidIds('exercises', condition.exercisesIds);
-
-          if (invalidIds.length > 0) {
-            return NextResponse.json(
-              {
-                error: `Упражнений с ID ${invalidIds.join(', ')} не существует`,
                 invalidCourseIds: invalidIds,
               },
               { status: 404 },

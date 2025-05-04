@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { FC, useState, useTransition } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { createAchievementSchema, editAchievementSchema } from '../libs/validation';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
@@ -31,6 +31,380 @@ type TAchievementFormProps = {
   achievementId?: string;
 };
 
+const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="space-y-4 border p-4 rounded-lg">
+      <h3 className="font-medium">Выполнение упражнений</h3>
+      <FormField
+        control={form.control}
+        name={`${prefix}.count`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Колличество упражнений</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Колличество упражнений"
+                {...form.register('criteria.count', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.language`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Язык программирования</FormLabel>
+            <FormControl>
+              <Input placeholder="Язык программирования" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.prizePoints`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Колличество баллов</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Колличество призовых баллов"
+                {...form.register('criteria.prizePoints', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.requiredRank`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Уровень</FormLabel>
+            <FormControl>
+              <Input placeholder="Необходимый уровень" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
+const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="space-y-4 border p-4 rounded-lg">
+      <h3 className="font-medium">Завершение курсов</h3>
+      <FormField
+        control={form.control}
+        name={`${prefix}.coursesIds`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Курсы</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Введите id курсов через запятую"
+                {...form.register('criteria.coursesIds', {
+                  setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.minPrice`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Минимальная цена курса</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Минимальная цена курса"
+                {...form.register('criteria.minPrice', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.maxPrice`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Максимальная цена курса</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Максимальная цена курса"
+                {...form.register('criteria.maxPrice', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.requiredRank`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Уровень</FormLabel>
+            <FormControl>
+              <Input placeholder="Необходимый уровень" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
+const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="space-y-4 border p-4 rounded-lg">
+      <h3 className="font-medium">Регистрация в курсах</h3>
+      <FormField
+        control={form.control}
+        name={`${prefix}.coursesIds`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Курсы</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Курсы"
+                {...form.register('criteria.coursesIds', {
+                  setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.minPrice`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Минимальная цена курса</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Минимальная цена курса"
+                {...form.register('criteria.minPrice', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.maxPrice`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Максимальная цена курса</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Максимальная цена курса"
+                {...form.register('criteria.maxPrice', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.requiredRank`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Уровень</FormLabel>
+            <FormControl>
+              <Input placeholder="Необходимый уровень" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
+const ParticipationLimitFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="space-y-4 border p-4 rounded-lg">
+      <h3 className="font-medium">Попадание в число первых</h3>
+      <FormField
+        control={form.control}
+        name={`${prefix}.maxParticipants`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Макс. количество участников</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Максимальное количество участников"
+                {...form.register('criteria.maxParticipants', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.requiredRank`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Уровень</FormLabel>
+            <FormControl>
+              <Input placeholder="Необходимый уровень" {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
+const SubscriptionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="space-y-4 border p-4 rounded-lg">
+      <h3 className="font-medium">Подписка</h3>
+      <FormField
+        control={form.control}
+        name={`${prefix}.tier`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Вид</FormLabel>
+            <FormControl>
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <RadioGroupItem
+                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                      value="PRO"
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">PRO</FormLabel>
+                </FormItem>
+                <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <RadioGroupItem
+                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                      value="PREMIUM"
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">PREMIUM</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.duration`}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Срок</FormLabel>
+            <FormControl>
+              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
+                <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <RadioGroupItem
+                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                      value="MONTHLY"
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">MONTHLY</FormLabel>
+                </FormItem>
+                <FormItem className="flex items-center space-x-3 space-y-0">
+                  <FormControl>
+                    <RadioGroupItem
+                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                      value="YEARLY"
+                    />
+                  </FormControl>
+                  <FormLabel className="font-normal">YEARLY</FormLabel>
+                </FormItem>
+              </RadioGroup>
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.amount`}
+        render={() => (
+          <FormItem>
+            <FormLabel>Количество</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Количество"
+                {...form.register('criteria.amount', {
+                  valueAsNumber: true,
+                })}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name={`${prefix}.firstTimeOnly`}
+        render={({ field }) => (
+          <FormItem className="flex items-center space-x-3 space-y-0 py-4">
+            <FormControl>
+              <Checkbox
+                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                checked={field.value}
+                onCheckedChange={field.onChange}
+              />
+            </FormControl>
+            <FormLabel>Только для впервые оформляющих</FormLabel>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
+  );
+};
+
 const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => {
   const [isPending, startTransiton] = useTransition();
   const router = useRouter();
@@ -49,9 +423,12 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       icon: null,
       startDate: mode === 'create' ? new Date() : undefined,
       endDate: undefined,
-      criteria: {
-        type: 'COURSE_COMPLETION',
-      },
+      criteria:
+        mode === 'create'
+          ? {
+              type: 'COURSE_COMPLETION',
+            }
+          : undefined,
       reward: {
         type: 'SUBSCRIPTION',
         icon: null,
@@ -60,6 +437,69 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       },
     },
   });
+  const {
+    fields: conditionFields,
+    append: appendCondition,
+    remove: removeConfition,
+  } = useFieldArray({ control: form.control, name: 'criteria.conditions' });
+
+  const addCondition = (
+    type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'PARTICIPATION_LIMIT' | 'SUBSCRIPTION',
+  ) => {
+    switch (type) {
+      case 'EXERCISE_COMPLETION':
+        appendCondition({
+          type: 'EXERCISE_COMPLETION',
+          count: 0,
+          language: '',
+          prizePoints: 0,
+          requiredRank: '',
+        });
+        break;
+
+      case 'COURSE_COMPLETION':
+        appendCondition({
+          type: 'COURSE_COMPLETION',
+          coursesIds: [],
+          minPrice: 0,
+          maxPrice: 0,
+          requiredRank: '',
+        });
+        break;
+
+      case 'COURSE_REGISTRATION':
+        appendCondition({
+          type: 'COURSE_REGISTRATION',
+          coursesIds: [],
+          minPrice: 0,
+          maxPrice: 0,
+          requiredRank: '',
+        });
+        break;
+
+      case 'PARTICIPATION_LIMIT':
+        appendCondition({
+          type: 'PARTICIPATION_LIMIT',
+          maxParticipants: 0,
+          requiredRank: '',
+        });
+        break;
+
+      case 'SUBSCRIPTION':
+        appendCondition({
+          type: 'SUBSCRIPTION',
+          tier: 'PRO',
+          duration: 'MONTHLY',
+          amount: 0,
+          firstTimeOnly: false,
+        });
+        break;
+
+      default:
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
+    }
+  };
 
   const criteriaType = form.watch('criteria.type');
   const rewardType = form.watch('reward.type');
@@ -89,6 +529,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   ] as const;
 
   const onSubmit = (values: z.infer<typeof schema>) => {
+    console.log('ACHIEVEMENTS FORM: ', values);
+
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -388,6 +830,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
                                 checked={values.includes(type.id)}
                                 onCheckedChange={(checked) => {
+                                  addCondition(type.id);
                                   return checked
                                     ? field.onChange([...values, type.id])
                                     : field.onChange(values?.filter((value) => value !== type.id));
@@ -415,365 +858,32 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                     </FormItem>
                   )}
                 />
+                {conditionFields.map((field, index) => (
+                  <div key={field.id}>
+                    {field.type === 'EXERCISE_COMPLETION' && (
+                      <ExerciseCompletionFields form={form} prefix={`criteria.conditions.${index}`} />
+                    )}
+                    {field.type === 'COURSE_COMPLETION' && (
+                      <CourseCompletionFields form={form} prefix={`criteria.conditions.${index}`} />
+                    )}
+                    {field.type === 'COURSE_REGISTRATION' && (
+                      <CourseRegistrationFields form={form} prefix={`criteria.conditions.${index}`} />
+                    )}
+                    {field.type === 'PARTICIPATION_LIMIT' && (
+                      <ParticipationLimitFields form={form} prefix={`criteria.conditions.${index}`} />
+                    )}
+                    {field.type === 'SUBSCRIPTION' && (
+                      <SubscriptionFields form={form} prefix={`criteria.conditions.${index}`} />
+                    )}
+                  </div>
+                ))}
               </div>
             )}
-            {(criteriaType === 'EXERCISE_COMPLETION' || combinationTypes?.includes('EXERCISE_COMPLETION')) && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Выполнение упражнений</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.exercisesIds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Упражнения</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Упражнения" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Язык программирования</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Язык программирования" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.prizePoints"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Имя</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Колличество призовых баллов"
-                          {...form.register('criteria.prizePoints', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            {(criteriaType === 'COURSE_COMPLETION' || combinationTypes?.includes('COURSE_COMPLETION')) && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Завершение курсов</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.coursesIds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Курсы</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Введите id курсов через запятую"
-                          {...form.register('criteria.coursesIds', {
-                            setValueAs: (value) =>
-                              typeof value === 'string' ? value.split(',').map((item) => item.trim()) : [],
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.minPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Минимальная цена курса</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Минимальная цена курса"
-                          {...form.register('criteria.minPrice', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.maxPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Максимальная цена курса</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Максимальная цена курса"
-                          {...form.register('criteria.maxPrice', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            {(criteriaType === 'COURSE_REGISTRATION' || combinationTypes?.includes('COURSE_REGISTRATION')) && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Регистрация в курсах</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.coursesIds"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Курсы</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Курсы" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.minPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Минимальная цена курса</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Минимальная цена курса"
-                          {...form.register('criteria.minPrice', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.maxPrice"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Максимальная цена курса</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Максимальная цена курса"
-                          {...form.register('criteria.maxPrice', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            {(criteriaType === 'PARTICIPATION_LIMIT' || combinationTypes?.includes('PARTICIPATION_LIMIT')) && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Попадание в число первых</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.maxParticipants"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Имя</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Максимальное число пользователей"
-                          {...form.register('criteria.maxParticipants', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
-            {(criteriaType === 'SUBSCRIPTION' || combinationTypes?.includes('SUBSCRIPTION')) && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Подписка</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.tier"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Вид</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="PRO"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">PRO</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="PREMIUM"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">PREMIUM</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.duration"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Срок</FormLabel>
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="MONTHLY"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">MONTHLY</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="YEARLY"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">YEARLY</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.amount"
-                  render={() => (
-                    <FormItem>
-                      <FormLabel>Количество</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Количество"
-                          {...form.register('criteria.maxParticipants', {
-                            valueAsNumber: true,
-                          })}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="criteria.firstTimeOnly"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-3 space-y-0 py-4">
-                      <FormControl>
-                        <Checkbox
-                          className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormLabel>Только для впервые оформляющих</FormLabel>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            )}
+            {criteriaType === 'EXERCISE_COMPLETION' && <ExerciseCompletionFields form={form} prefix="criteria" />}
+            {criteriaType === 'COURSE_COMPLETION' && <CourseCompletionFields form={form} prefix="criteria" />}
+            {criteriaType === 'COURSE_REGISTRATION' && <CourseRegistrationFields form={form} prefix="criteria" />}
+            {criteriaType === 'PARTICIPATION_LIMIT' && <ParticipationLimitFields form={form} prefix="criteria" />}
+            {criteriaType === 'SUBSCRIPTION' && <SubscriptionFields form={form} prefix="criteria" />}
 
             <div className="space-y-4 border p-4 rounded-lg">
               <h3 className="font-medium">Награда</h3>
@@ -861,7 +971,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                       <Input
                         type="number"
                         placeholder="Количество"
-                        {...form.register('criteria.maxParticipants', {
+                        {...form.register('reward.amount', {
                           valueAsNumber: true,
                         })}
                       />

@@ -209,7 +209,7 @@ export const editTestSchema = baseTestSchema
 
 const exerciseCompletionSchema = z.object({
   type: z.literal('EXERCISE_COMPLETION'),
-  exercisesIds: z.array(z.string()).optional(),
+  count: z.optional(z.number()),
   language: z.optional(z.string()),
   prizePoints: z.optional(z.number()),
   requiredRank: z.optional(z.string()),

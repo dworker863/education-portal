@@ -181,8 +181,7 @@ export interface IAchievementCriteria {
 }
 
 export type TExerciseCompletion = {
-  count: number;
-  exercisesIds?: string[];
+  count?: number;
   language?: string;
   prizePoints?: string;
   requiredRank?: number;

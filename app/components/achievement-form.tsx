@@ -117,7 +117,8 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
               <Input
                 placeholder="Введите id курсов через запятую"
                 {...form.register(`${prefix}.coursesIds`, {
-                  setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
+                  setValueAs: (value) =>
+                    typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
                 })}
               />
             </FormControl>
@@ -194,7 +195,8 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 placeholder="Курсы"
                 {...form.register(`${prefix}.coursesIds`, {
-                  setValueAs: (value) => (typeof value === 'string' ? value.split(',').map((item) => item.trim()) : []),
+                  setValueAs: (value) =>
+                    typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
                 })}
               />
             </FormControl>
@@ -450,12 +452,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               type: 'COURSE_COMPLETION',
             }
           : undefined,
-      reward: {
-        type: 'SUBSCRIPTION',
-        icon: null,
-        amount: 1,
-        subscriptionType: 'DAYS',
-      },
+      reward:
+        mode === 'create'
+          ? {
+              type: 'SUBSCRIPTION',
+              icon: null,
+              amount: 1,
+              subscriptionType: 'DAYS',
+            }
+          : undefined,
     },
   });
   const {
@@ -550,6 +555,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   ] as const;
 
   const onSubmit = (values: z.infer<typeof schema>) => {
+    console.log('ACHIEVEMENT FORM:', values);
+
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -558,7 +565,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           formData.append('id', achievementId);
         }
 
-        if (values.reward) {
+        if (values.reward && values.reward.type) {
           const { icon, ...rewardData } = values.reward;
 
           formData.append('reward', JSON.stringify(rewardData));
@@ -569,7 +576,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           }
         }
 
-        if (values.criteria) {
+        if (values.criteria && values.criteria.type) {
           formData.append('criteria', JSON.stringify(values.criteria));
         }
 
@@ -583,6 +590,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
         if (values.icon) {
           formData.append('icon', values.icon[0]);
         }
+        const formDataObj = Object.fromEntries(formData.entries());
+        console.log('ACHIEVEMENT FORM:', formDataObj);
 
         const res = await fetch('/api/achievement', {
           method: mode === 'create' ? 'POST' : 'PATCH',
@@ -1014,7 +1023,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                         type="number"
                         placeholder="Количество"
                         {...form.register('reward.amount', {
-                          valueAsNumber: true,
+                          valueAsNumber: mode === 'create',
+                          setValueAs: (value) => (value === '' ? undefined : Number(value)),
                         })}
                       />
                     </FormControl>

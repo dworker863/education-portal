@@ -377,26 +377,28 @@ export const editAchievementSchema = createAchievementSchema
         { message: 'Вставьте изображение' },
       ),
     criteria: editCriteriaSchema,
-    reward: rewardSchema.extend({
-      icon: z
-        .any()
-        .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-          message: 'Файл должен быть валидным',
-        })
-        .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
-          message: 'Файл не должен быть пустым',
-        })
-        .refine(
-          (file) => {
-            if (file instanceof File) {
-              return file.type && file.type.includes('image');
-            }
+    reward: rewardSchema
+      .extend({
+        icon: z
+          .any()
+          .refine((file) => !file || file instanceof File || file[0] instanceof File, {
+            message: 'Файл должен быть валидным',
+          })
+          .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+            message: 'Файл не должен быть пустым',
+          })
+          .refine(
+            (file) => {
+              if (file instanceof File) {
+                return file.type && file.type.includes('image');
+              }
 
-            return !file || (file[0]?.type && file[0].type.includes('image'));
-          },
-          { message: 'Вставьте изображение' },
-        ),
-    }),
+              return !file || (file[0]?.type && file[0].type.includes('image'));
+            },
+            { message: 'Вставьте изображение' },
+          ),
+      })
+      .partial(),
   })
   .partial();
 

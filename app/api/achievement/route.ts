@@ -142,7 +142,10 @@ export async function POST(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
+    const body = await request.body;
     const formData = await request.formData();
+    console.log('ACHIEVEMENT POST FORMDATA: ', formData);
+
     const values: Record<string, any> = {};
 
     if (formData.has('reward')) {
@@ -182,7 +185,7 @@ export async function PATCH(request: Request) {
 
     const achievementId = values.id;
 
-    console.log(values);
+    console.log('ACHIEVEMENT POST DATA: ', values);
 
     if (!achievementId) {
       return NextResponse.json({ error: 'Не указан ID достижения' }, { status: 400 });
@@ -222,7 +225,7 @@ export async function PATCH(request: Request) {
       }
     }
 
-    if (data?.criteria?.type === 'COMBINATION') {
+    if (data?.criteria?.type === 'COMBINATION' && data.criteria.conditions) {
       for (const condition of data.criteria.conditions) {
         if (
           (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
@@ -273,8 +276,8 @@ export async function PATCH(request: Request) {
     }
 
     if (data.reward?.icon) {
-      const uploadResult = await fileUpload(data.icon);
-      console.log('ACHIEVEMENT POST DATA: ', data);
+      const uploadResult = await fileUpload(data.reward?.icon);
+      // console.log('ACHIEVEMENT POST DATA: ', data);
 
       if (uploadResult instanceof Error) {
         return NextResponse.json({ error: uploadResult.message }, { status: 400 });
@@ -282,9 +285,6 @@ export async function PATCH(request: Request) {
 
       updatedData.reward.icon = uploadResult;
     }
-
-    console.log(existingAchievement);
-    console.log(updatedData);
 
     await prisma.achievement.update({
       where: { id: achievementId as string },

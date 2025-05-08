@@ -169,7 +169,7 @@ export const createExerciseSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),
-  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  pointsToComplete: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   lessonId: z.optional(z.string()),
 });
 
@@ -189,7 +189,7 @@ const baseTestSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),
-  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  pointsToComplete: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   lessonId: z.optional(z.string()),
 });
 
@@ -211,7 +211,7 @@ const exerciseCompletionSchema = z.object({
   type: z.literal('EXERCISE_COMPLETION'),
   count: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   language: z.optional(z.string()),
-  prizePoints: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  pointsToComplete: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
 });
 

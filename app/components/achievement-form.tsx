@@ -69,7 +69,7 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
       />
       <FormField
         control={form.control}
-        name={`${prefix}.prizePoints`}
+        name={`${prefix}.pointsToComplete`}
         render={() => (
           <FormItem>
             <FormLabel>Колличество баллов</FormLabel>
@@ -77,7 +77,7 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
               <Input
                 type="number"
                 placeholder="Колличество призовых баллов"
-                {...form.register(`${prefix}.prizePoints`, {
+                {...form.register(`${prefix}.pointsToComplete`, {
                   setValueAs: (value) => (value === '' ? undefined : Number(value)),
                 })}
               />
@@ -478,7 +478,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           type: 'EXERCISE_COMPLETION',
           count: 0,
           language: '',
-          prizePoints: 0,
+          pointsToComplete: 0,
           requiredRank: '',
         });
         break;

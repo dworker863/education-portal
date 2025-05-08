@@ -102,52 +102,6 @@ export interface ITestPartial {
   name: string;
 }
 
-export interface IAchievement {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  criteria: IAchievementCriteria | JsonValue;
-  reward: IReward | JsonValue;
-  meta: JsonValue;
-  startDate: Date;
-  endDate: Date | null;
-  usersProgress?: IUserAchievementProgress[];
-}
-
-export interface IAchievementPartial {
-  id: string;
-  name: string;
-}
-
-export interface IDiscount {
-  id: string;
-  code: string;
-  user?: IUser;
-  percent: number;
-  courses?: ICourse[];
-  minAmountToActivate: number;
-  maxAmountToActivate: number;
-  meta: JsonValue;
-  validFrom: Date;
-  validUntil: Date | null;
-}
-
-export interface IUserCourseProgress {
-  id: string;
-  user?: IUser;
-  course?: ICourse | ICoursePartial;
-  courseId: string;
-  completedLessons?: ILesson[];
-  currentLesson?: ILesson | ILessonPartial;
-  currentLessonId: string;
-  progress: number;
-  lastAccessedAt: Date;
-  startedAt: Date;
-  completedAt: Date | null;
-  meta: JsonValue;
-}
-
 export interface IUserAchievementProgress {
   id: string;
   user?: IUser;
@@ -227,4 +181,50 @@ export interface IReward {
   icon: string;
   amount: number;
   subscriptionType?: 'DAYS' | 'MONTHS' | 'YEARS';
+}
+
+export interface IAchievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  criteria: JsonValue;
+  reward: JsonValue;
+  meta: JsonValue;
+  startDate: Date;
+  endDate: Date | null;
+  usersProgress?: IUserAchievementProgress[];
+}
+
+export interface IAchievementPartial {
+  id: string;
+  name: string;
+}
+
+export interface IDiscount {
+  id: string;
+  code: string;
+  user?: IUser;
+  percent: number;
+  courses?: ICourse[];
+  minAmountToActivate: number;
+  maxAmountToActivate: number;
+  meta: JsonValue;
+  validFrom: Date;
+  validUntil: Date | null;
+}
+
+export interface IUserCourseProgress {
+  id: string;
+  user?: IUser;
+  course?: ICourse | ICoursePartial;
+  courseId: string;
+  completedLessons?: ILesson[];
+  currentLesson?: ILesson | ILessonPartial;
+  currentLessonId: string;
+  progress: number;
+  lastAccessedAt: Date;
+  startedAt: Date;
+  completedAt: Date | null;
+  meta: JsonValue;
 }

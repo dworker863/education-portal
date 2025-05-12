@@ -33,52 +33,70 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
       },
     },
     {
-      accessorKey: 'language',
+      accessorKey: 'startDate',
       header: ({ column }) => {
         return (
           <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Язык программирования
+            Дата начала
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.original.startDate.toLocaleString()}</div>;
+      },
+    },
+    {
+      accessorKey: 'endDate',
+      header: ({ column }) => {
+        return (
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Дата окончания
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.original.endDate?.toLocaleString() || ''}</div>;
+      },
+    },
+    {
+      accessorKey: 'criteria.type',
+      header: ({ column }) => {
+        return (
+          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            Тип достижения
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
     },
     {
-      accessorKey: 'requiredRank',
+      accessorKey: 'reward.type',
       header: ({ column }) => {
         return (
           <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Уровень
+            Тип награды
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
     },
     {
-      accessorKey: 'discount',
+      accessorKey: 'reward.amount',
       header: ({ column }) => {
         return (
           <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Баллы
+            Срок награды
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
-    },
-    {
-      id: 'courseName',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Курсы
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      cell: ({ row }) => {
+        if (typeof row.original.reward === 'object' && !Array.isArray(row.original.reward)) {
+          return <div>{row.original.reward?.amount + ' ' + row.original.reward?.subscriptionType || 'Нет курса'}</div>;
+        }
       },
-      // cell: ({ row }) => {
-      //   const courseName = row.original.course?.name;
-      //   return <div>{courseName || 'Нет курса'}</div>;
-      // },
     },
   ];
 

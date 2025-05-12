@@ -19,7 +19,7 @@ const Breadcrumbs = ({}) => {
 
   return (
     <Breadcrumb>
-      <BreadcrumbList className="text-primary-foreground justify-start">
+      <BreadcrumbList className="mb-10 text-primary-foreground justify-start">
         <BreadcrumbItem>
           <BreadcrumbLink href="/">Home</BreadcrumbLink>
         </BreadcrumbItem>

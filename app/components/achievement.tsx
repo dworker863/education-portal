@@ -10,12 +10,6 @@ type TAchievementProps = {
 const Achievement: FC<TAchievementProps> = ({ achievement }) => {
   return (
     <>
-      <h2 className="mb-5 text-center">{achievement.name}</h2>
-      <p className="mb-5">{achievement.icon}</p>
-      <p className="mb-5">{achievement.description}</p>
-      {/* {achievement.criteria.map(anfn)} */}
-      <p className="mb-5">Дата начала: {new Date(achievement.startDate).toLocaleDateString()}</p>
-      <p className="mb-5">Дата окончания: {new Date(achievement.startDate).toLocaleDateString()}</p>
       <AchievementCard achievement={achievement} />
       <AchievementFormWrapper achievementId={achievement.id} />
     </>

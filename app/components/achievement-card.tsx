@@ -12,7 +12,7 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
     <Link href={`/achievements/${achievement.name}`}>
       <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary">
         <h2 className="mb-5 text-center text-xl uppercase">{achievement.name}</h2>
-        <div className="flex gap-10 mb-8">
+        <div className="flex gap-10">
           <div className="w-[300px] flex-shrink-0">
             {achievement.icon && (
               <Image src={achievement.icon.replace(/\\/gi, '/')} alt="icon" width={300} height={300} />
@@ -214,18 +214,23 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
                   </p>
                 </div>
               )}
+            {typeof achievement.reward === 'object' && !Array.isArray(achievement.reward) && achievement.reward && (
+              <div className="flex justify-between pt-8">
+                <span className="text-customSecondary text-lg font-semibold">
+                  {JSON.stringify(achievement.reward.type)}
+                </span>
+                {achievement.reward.subscriptionType && (
+                  <span className="text-customSecondary text-lg font-semibold">
+                    {JSON.stringify(achievement.reward.subscriptionType)}
+                  </span>
+                )}
+                <span className="text-customSecondary text-lg font-semibold">
+                  {JSON.stringify(achievement.reward.amount)}
+                </span>
+              </div>
+            )}
           </div>
         </div>
-        <div className="flex justify-end">
-          {typeof achievement.reward === 'object' &&
-            !Array.isArray(achievement.reward) &&
-            achievement.reward?.amount && (
-              <span className="text-customSecondary text-lg font-semibold">
-                {JSON.stringify(achievement.reward.amount)}
-              </span>
-            )}
-        </div>
-        {}
       </div>
     </Link>
   );

@@ -10,7 +10,7 @@ type TRangeSliderProps = {
 const RangeSlider: FC<TRangeSliderProps> = ({ title, range, setRange }) => {
   return (
     <div className="w-[400px] mb-5 space-y-2 cursor-pointer">
-      <h2 className="mb-1">{title}</h2>
+      <h2 className="mb-1 text-md font-medium">{title}</h2>
       <div className="flex justify-between">
         <p className="text-sm">Начало через {range[0]} дней</p>
         <p className="text-sm">Окончание через {range[1]} дней</p>

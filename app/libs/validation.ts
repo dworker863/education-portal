@@ -351,6 +351,7 @@ export const achievementsFiltersSchema = z.object({
       ]),
     )
     .optional(),
+  rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });
 
 export const editCriteriaSchema = z.union([

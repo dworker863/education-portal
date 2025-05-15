@@ -6,13 +6,14 @@ import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel } from './form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Checkbox } from './checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
 import RangeSlider from './range-slider';
 import { criteriaTypes, ranks } from '../libs/utils/static-data';
 import { getDaysUntilDate } from '../libs/utils/filters';
+import { RadioGroup, RadioGroupItem } from './radio-group';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
@@ -27,7 +28,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     resolver: zodResolver(achievementsFiltersSchema),
     defaultValues: {
       criteriaType: ['COURSE_COMPLETION'],
-      // language: 'JavaScript',
       // rank: ['D-'],
       // courseName: ['test'],
     },
@@ -37,11 +37,20 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     const result = achievements.filter((achievement) => {
       // console.log('FILTER: ', getDaysUntilDate(achievement.startDate));
 
+      if (values.rewardType && typeof achievement.reward === 'object' && !Array.isArray(achievement.reward)) {
+        return (
+          achievement.reward?.type === values.rewardType &&
+          getDaysUntilDate(achievement.startDate) >= range[0] &&
+          (achievement.endDate ? getDaysUntilDate(achievement.endDate) : range[1]) <= range[1]
+        );
+      }
+
       return (
         getDaysUntilDate(achievement.startDate) >= range[0] &&
         (achievement.endDate ? getDaysUntilDate(achievement.endDate) : range[1]) <= range[1]
       );
     });
+
     // const result = achievements.filter((achievement) => {
     //   return (
     //     achievement.language === values.language &&
@@ -214,6 +223,44 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
         </div> */}
         {/* <RangeSlider title="Скидка" range={range} setRange={setRange} /> */}
         <RangeSlider title="Сроки" range={range} setRange={setRange} />
+        <div className="mb-10">
+          <FormField
+            control={form.control}
+            name="rewardType"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-md">Награда</FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col space-y-1"
+                  >
+                    <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem
+                          className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                          value="DISCOUNT"
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">Скидка</FormLabel>
+                    </FormItem>
+                    <FormItem className="flex items-center space-x-3 space-y-0">
+                      <FormControl>
+                        <RadioGroupItem
+                          className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                          value="SUBSCRIPTION"
+                        />
+                      </FormControl>
+                      <FormLabel className="font-normal">Подписка</FormLabel>
+                    </FormItem>
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
         <Button variant="custom" className="mr-5">
           Применить
         </Button>

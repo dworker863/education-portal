@@ -9,18 +9,18 @@ type TRangeSliderProps = {
 
 const RangeSlider: FC<TRangeSliderProps> = ({ title, range, setRange }) => {
   return (
-    <div className="w-[200px] mb-5">
+    <div className="w-[400px] mb-5 space-y-2 cursor-pointer">
       <h2 className="mb-1">{title}</h2>
       <div className="flex justify-between">
-        <span className="text-sm">Min: {range[0]}</span>
-        <span className="text-sm">Max: {range[1]}</span>
+        <p className="text-sm">Начало через {range[0]} дней</p>
+        <p className="text-sm">Окончание через {range[1]} дней</p>
       </div>
       <Slider
         className="bg-customPrimary"
         defaultValue={range}
         value={range}
         onValueChange={(newValue) => setRange(newValue)}
-        max={100}
+        max={180}
         min={0}
         step={1}
       />

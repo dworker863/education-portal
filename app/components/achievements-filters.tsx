@@ -11,7 +11,8 @@ import { Checkbox } from './checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
 import RangeSlider from './range-slider';
-import { ranks } from '../libs/utils/static-data';
+import { criteriaTypes, ranks } from '../libs/utils/static-data';
+import { getDaysUntilDate } from '../libs/utils/filters';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
@@ -19,32 +20,40 @@ type TAchievementsFiltersProps = {
 };
 
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
-  const [range, setRange] = useState([20, 80]);
+  const [range, setRange] = useState([0, 30]);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
   const form = useForm<z.infer<typeof achievementsFiltersSchema>>({
     resolver: zodResolver(achievementsFiltersSchema),
     defaultValues: {
-      language: 'JavaScript',
-      rank: ['D-'],
-      courseName: ['test'],
+      criteriaType: ['COURSE_COMPLETION'],
+      // language: 'JavaScript',
+      // rank: ['D-'],
+      // courseName: ['test'],
     },
   });
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
     const result = achievements.filter((achievement) => {
+      // console.log('FILTER: ', getDaysUntilDate(achievement.startDate));
+
       return (
-        achievement.language === values.language &&
-        values.rank &&
-        values.rank.includes(achievement.requiredRank) &&
-        achievement.course &&
-        values.courseName &&
-        values.courseName.includes(achievement.course?.name) &&
-        range[0] <= achievement.discount &&
-        achievement.discount <= range[1]
+        getDaysUntilDate(achievement.startDate) >= range[0] &&
+        (achievement.endDate ? getDaysUntilDate(achievement.endDate) : range[1]) <= range[1]
       );
     });
-
+    // const result = achievements.filter((achievement) => {
+    //   return (
+    //     achievement.language === values.language &&
+    //     values.rank &&
+    //     values.rank.includes(achievement.requiredRank) &&
+    //     achievement.course &&
+    //     values.courseName &&
+    //     values.courseName.includes(achievement.course?.name) &&
+    //     range[0] <= achievement.discount &&
+    //     achievement.discount <= range[1]
+    //   );
+    // });
     setFilteredAchievements(result);
     filterAchievements(result);
   };
@@ -52,7 +61,49 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   return (
     <Form {...form}>
       <form className="mb-5 w-2/3" onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="mb-10">
+        {/* <div className="mb-10">
+          <FormField
+            control={form.control}
+            name="criteriaType"
+            render={() => (
+              <FormItem>
+                <div className="mb-2">
+                  <FormLabel className="text-base">Уровень</FormLabel>
+                </div>
+                <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                  {criteriaTypes.map((type, index) => (
+                    <FormField
+                      key={type.id + index}
+                      control={form.control}
+                      name="criteriaType"
+                      render={({ field }) => {
+                        const values = field.value || [];
+
+                        return (
+                          <FormItem key={type.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                            <FormControl>
+                              <Checkbox
+                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                                checked={values.includes(type.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...values, type.id])
+                                    : field.onChange(values.filter((value) => value !== type.id));
+                                }}
+                              />
+                            </FormControl>
+                            <FormLabel className="font-normal leading-[18px]">{type.label}</FormLabel>
+                          </FormItem>
+                        );
+                      }}
+                    />
+                  ))}
+                </div>
+              </FormItem>
+            )}
+          />
+        </div> */}
+        {/* <div className="mb-10">
           <FormField
             control={form.control}
             name="language"
@@ -74,8 +125,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               </FormItem>
             )}
           />
-        </div>
-        <div className="mb-10">
+        </div> */}
+        {/* <div className="mb-10">
           <FormField
             control={form.control}
             name="rank"
@@ -116,8 +167,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               </FormItem>
             )}
           />
-        </div>
-        <div className="mb-10">
+        </div> */}
+        {/* <div className="mb-10">
           <FormField
             control={form.control}
             name="courseName"
@@ -160,8 +211,9 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               </FormItem>
             )}
           />
-        </div>
-        <RangeSlider title="Скидка" range={range} setRange={setRange} />
+        </div> */}
+        {/* <RangeSlider title="Скидка" range={range} setRange={setRange} /> */}
+        <RangeSlider title="Сроки" range={range} setRange={setRange} />
         <Button variant="custom" className="mr-5">
           Применить
         </Button>

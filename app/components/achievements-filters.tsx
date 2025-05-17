@@ -230,11 +230,77 @@ const ExerciseCompletionFilters = ({
   );
 };
 
+const ParticipationLimitFilters = ({
+  form,
+  maxParticipants,
+  setMaxParticipants,
+}: {
+  form: UseFormReturn<any>;
+  maxParticipants: number[];
+  setMaxParticipants: Dispatch<React.SetStateAction<number[]>>;
+}) => {
+  return (
+    <div className="mb-10 space-y-8">
+      <RangeSlider
+        title="Количество призовых мест"
+        maxValue={10000}
+        minValueText={`От ${maxParticipants[0]} человек`}
+        maxValueText={`До ${maxParticipants[1]} человек`}
+        range={maxParticipants}
+        setRange={setMaxParticipants}
+      />
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name="rank"
+          render={() => (
+            <FormItem>
+              <div className="mb-2">
+                <FormLabel className="text-base">Уровень</FormLabel>
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                {ranks.map((rank, index) => (
+                  <FormField
+                    key={rank.id + index}
+                    control={form.control}
+                    name="rank"
+                    render={({ field }) => {
+                      const values = field.value || [];
+
+                      return (
+                        <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                              checked={values.includes(rank.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...values, rank.id])
+                                  : field.onChange(values.filter((value: string) => value !== rank.id));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
   const [days, setDays] = useState([0, 30]);
   const [prices, setPrices] = useState([0, 100]);
   const [amount, setAmount] = useState([0, 10]);
   const [pointsToComplete, setPointsToComplete] = useState([0, 100]);
+  const [maxParticipants, setMaxParticipants] = useState([0, 1000]);
   const [coursesNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
@@ -352,6 +418,13 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             setAmount={setAmount}
             pointsToComplete={pointsToComplete}
             setPointsToComplete={setPointsToComplete}
+          />
+        )}
+        {criteriaType?.includes('PARTICIPATION_LIMIT') && (
+          <ParticipationLimitFilters
+            form={form}
+            maxParticipants={maxParticipants}
+            setMaxParticipants={setMaxParticipants}
           />
         )}
         <div className="mb-10">

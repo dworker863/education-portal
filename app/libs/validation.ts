@@ -346,6 +346,10 @@ const courseRegistrationFiltersSchema = z.object({
   requiredRank: z.array(z.string()).optional(),
 });
 
+const participationLimitFiltersSchema = z.object({
+  requiredRank: z.optional(z.string()),
+});
+
 export const achievementsFiltersSchema = z.object({
   language: z.optional(z.string()),
   rank: z.array(z.string()).optional(),
@@ -367,7 +371,12 @@ export const achievementsFiltersSchema = z.object({
     )
     .optional(),
   criteriaTypeFilters: z.array(
-    z.union([exerciseCompletionFiltersSchema, courseCompletionFiltersSchema, courseRegistrationFiltersSchema]),
+    z.union([
+      exerciseCompletionFiltersSchema,
+      courseCompletionFiltersSchema,
+      courseRegistrationFiltersSchema,
+      participationLimitFiltersSchema,
+    ]),
   ),
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });

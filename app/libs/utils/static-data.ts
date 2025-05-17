@@ -71,3 +71,26 @@ export const ranks = [
     label: 'A+',
   },
 ] as const;
+
+export const languages = [
+  {
+    id: 'JavaScript',
+    label: 'JavaScript',
+  },
+  {
+    id: 'Python',
+    label: 'Python',
+  },
+  {
+    id: 'Go',
+    label: 'Go',
+  },
+  {
+    id: 'Rust',
+    label: 'Rust',
+  },
+  {
+    id: 'C++',
+    label: 'C++',
+  },
+] as const;

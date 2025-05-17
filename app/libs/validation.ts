@@ -350,6 +350,12 @@ const participationLimitFiltersSchema = z.object({
   requiredRank: z.optional(z.string()),
 });
 
+const subscriptionFiltersSchema = z.object({
+  tier: z.enum(['PRO', 'PREMIUM']),
+  duration: z.enum(['MONTHLY', 'YEARLY']),
+  firstTimeOnly: z.boolean(),
+});
+
 export const achievementsFiltersSchema = z.object({
   language: z.optional(z.string()),
   rank: z.array(z.string()).optional(),
@@ -376,6 +382,7 @@ export const achievementsFiltersSchema = z.object({
       courseCompletionFiltersSchema,
       courseRegistrationFiltersSchema,
       participationLimitFiltersSchema,
+      subscriptionFiltersSchema,
     ]),
   ),
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),

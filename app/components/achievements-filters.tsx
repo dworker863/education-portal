@@ -295,12 +295,131 @@ const ParticipationLimitFilters = ({
   );
 };
 
+const SubscriptionFilters = ({
+  form,
+  monthes,
+  setMonthes,
+}: {
+  form: UseFormReturn<any>;
+  monthes: number[];
+  setMonthes: Dispatch<React.SetStateAction<number[]>>;
+}) => {
+  return (
+    <div className="mb-10 space-y-8">
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name="rewardType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-md">Вид подписки</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="PRO"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">PRO</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="PREMIUM"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">PREMIUM</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <RangeSlider
+        title="Количество призовых мест"
+        maxValue={12}
+        minValueText={`От ${monthes[0]} месяцев/лет`}
+        maxValueText={`До ${monthes[1]} месяцев/лет`}
+        range={monthes}
+        setRange={setMonthes}
+      />
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name="rewardType"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-md">Вид подписки</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="MONTHLY"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">Месяцев</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="YEARLY"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">Лет</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name="firstTimeOnly"
+          render={({ field }) => (
+            <FormItem className="flex items-center space-y-0 py-4">
+              <FormControl className="mr-3">
+                <Checkbox
+                  className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                  checked={field.value}
+                  onCheckedChange={field.onChange}
+                />
+              </FormControl>
+              <FormLabel>Только для впервые оформляющих</FormLabel>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
   const [days, setDays] = useState([0, 30]);
   const [prices, setPrices] = useState([0, 100]);
   const [amount, setAmount] = useState([0, 10]);
   const [pointsToComplete, setPointsToComplete] = useState([0, 100]);
   const [maxParticipants, setMaxParticipants] = useState([0, 1000]);
+  const [monthes, setMonthes] = useState([0, 5]);
   const [coursesNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
@@ -426,6 +545,9 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             maxParticipants={maxParticipants}
             setMaxParticipants={setMaxParticipants}
           />
+        )}
+        {criteriaType?.includes('SUBSCRIPTION') && (
+          <SubscriptionFilters form={form} monthes={monthes} setMonthes={setMonthes} />
         )}
         <div className="mb-10">
           <FormField

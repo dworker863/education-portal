@@ -31,3 +31,21 @@ export const deleteCourse = async (id: string) => {
     throw error;
   }
 };
+
+export const getCoursesNames = async () => {
+  try {
+    const coursesNames = await prisma.course.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+
+    console.log('FUNCTION: ', coursesNames);
+
+    return coursesNames;
+  } catch (error) {
+    console.error('Ошибка при получении имен курсов: ', error);
+    throw error;
+  }
+};

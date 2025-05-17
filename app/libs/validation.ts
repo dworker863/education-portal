@@ -331,6 +331,22 @@ export const createAchievementSchema = z.object({
   reward: rewardSchema,
 });
 
+const courseCompletionFilterSchema = z.object({
+  type: z.literal('COURSE_COMPLETION'),
+  coursesNames: z.array(z.string()).optional(),
+  minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  requiredRank: z.optional(z.string()),
+});
+
+const courseRegistrationFilterSchema = z.object({
+  type: z.literal('COURSE_COMPLETION'),
+  coursesNames: z.array(z.string()).optional(),
+  minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
+  requiredRank: z.optional(z.string()),
+});
+
 export const achievementsFiltersSchema = z.object({
   language: z.optional(z.string()),
   rank: z.array(z.string()).optional(),
@@ -351,6 +367,7 @@ export const achievementsFiltersSchema = z.object({
       ]),
     )
     .optional(),
+  criteriaTypeFilters: z.array(z.union([courseCompletionFilterSchema, courseRegistrationFilterSchema])),
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });
 

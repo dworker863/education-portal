@@ -1,10 +1,10 @@
 'use client';
 
-import React, { Dispatch, FC, SetStateAction, useState } from 'react';
-import { IAchievement } from '../libs/interfaces/interfaces';
+import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react';
+import { IAchievement, ICoursePartial } from '../libs/interfaces/interfaces';
 import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Checkbox } from './checkbox';
@@ -14,15 +14,123 @@ import RangeSlider from './range-slider';
 import { criteriaTypes, ranks } from '../libs/utils/static-data';
 import { getDaysUntilDate } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
+import { getCoursesNames } from '../libs/server-actions/courses-actions';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
   filterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
 };
 
+const CourseCompletionFilters = ({
+  form,
+  coursesNames,
+  range,
+  setRange,
+}: {
+  form: UseFormReturn<any>;
+  coursesNames: ICoursePartial[] | null;
+  range: number[];
+  setRange: Dispatch<React.SetStateAction<number[]>>;
+}) => {
+  return (
+    <div className="mb-10 space-y-4">
+      <FormField
+        control={form.control}
+        name="criteriaTypeFilters"
+        render={() => (
+          <FormItem>
+            <div className="mb-2">
+              <FormLabel className="text-base">Названия курсов</FormLabel>
+            </div>
+            <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+              {coursesNames?.map((course, index) => (
+                <FormField
+                  key={course.id + index}
+                  control={form.control}
+                  name={`criteriaTypeFilters.${index}.coursesNames`}
+                  render={({ field }) => {
+                    const values = field.value || [];
+
+                    return (
+                      <FormItem key={course.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                        <FormControl>
+                          <Checkbox
+                            className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                            checked={values.includes(course.id)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...values, course.id])
+                                : field.onChange(values.filter((value: string) => value !== course.id));
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="font-normal leading-[18px]">{course.name}</FormLabel>
+                      </FormItem>
+                    );
+                  }}
+                />
+              ))}
+            </div>
+          </FormItem>
+        )}
+      />
+      <RangeSlider title="Сроки" range={range} setRange={setRange} />
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name="rank"
+          render={() => (
+            <FormItem>
+              <div className="mb-2">
+                <FormLabel className="text-base">Уровень</FormLabel>
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                {ranks.map((rank, index) => (
+                  <FormField
+                    key={rank.id + index}
+                    control={form.control}
+                    name="rank"
+                    render={({ field }) => {
+                      const values = field.value || [];
+
+                      return (
+                        <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                              checked={values.includes(rank.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...values, rank.id])
+                                  : field.onChange(values.filter((value: string) => value !== rank.id));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
   const [range, setRange] = useState([0, 30]);
+  const [coursesNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
+
+  useEffect(() => {
+    getCoursesNames().then((courses) => {
+      setCoursesNames(courses);
+    });
+  }, []);
 
   const form = useForm<z.infer<typeof achievementsFiltersSchema>>({
     resolver: zodResolver(achievementsFiltersSchema),
@@ -32,6 +140,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       // courseName: ['test'],
     },
   });
+
+  const criteriaType = form.watch('criteriaType');
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
     const result = achievements.filter((achievement) => {
@@ -73,6 +183,32 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
         {/* <div className="mb-10">
           <FormField
             control={form.control}
+            name="language"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-base">Язык программирования</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <FormControl className="w-[300px]">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Выберите язык программирования" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="JavaScript">JavaScript</SelectItem>
+                    <SelectItem value="Python">Python</SelectItem>
+                    <SelectItem value="Go">Go</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormItem>
+            )}
+          />
+        </div> */}
+
+        {/* <RangeSlider title="Скидка" range={range} setRange={setRange} /> */}
+        <RangeSlider title="Сроки" range={range} setRange={setRange} />
+        <div className="mb-10">
+          <FormField
+            control={form.control}
             name="criteriaType"
             render={() => (
               <FormItem>
@@ -111,118 +247,10 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               </FormItem>
             )}
           />
-        </div> */}
-        {/* <div className="mb-10">
-          <FormField
-            control={form.control}
-            name="language"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-base">Язык программирования</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                  <FormControl className="w-[300px]">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Выберите язык программирования" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value="JavaScript">JavaScript</SelectItem>
-                    <SelectItem value="Python">Python</SelectItem>
-                    <SelectItem value="Go">Go</SelectItem>
-                  </SelectContent>
-                </Select>
-              </FormItem>
-            )}
-          />
-        </div> */}
-        {/* <div className="mb-10">
-          <FormField
-            control={form.control}
-            name="rank"
-            render={() => (
-              <FormItem>
-                <div className="mb-2">
-                  <FormLabel className="text-base">Уровень</FormLabel>
-                </div>
-                <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                  {ranks.map((rank, index) => (
-                    <FormField
-                      key={rank.id + index}
-                      control={form.control}
-                      name="rank"
-                      render={({ field }) => {
-                        const values = field.value || [];
-
-                        return (
-                          <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
-                            <FormControl>
-                              <Checkbox
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={values.includes(rank.id)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...values, rank.id])
-                                    : field.onChange(values.filter((value) => value !== rank.id));
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                </div>
-              </FormItem>
-            )}
-          />
-        </div> */}
-        {/* <div className="mb-10">
-          <FormField
-            control={form.control}
-            name="courseName"
-            render={() => (
-              <FormItem>
-                <div className="mb-2">
-                  <FormLabel className="text-base">Курсы</FormLabel>
-                </div>
-                <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                  {achievements.map(({ course }, index) => (
-                    <FormField
-                      key={course ? index + course?.name : index}
-                      control={form.control}
-                      name="courseName"
-                      render={({ field }) => {
-                        const value = field.value || [];
-                        return (
-                          <FormItem
-                            key={course ? index + course?.name : index}
-                            className="flex flex-row items-start space-x-2 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={course && value.includes(course?.name)}
-                                onCheckedChange={(checked) => {
-                                  return checked
-                                    ? field.onChange([...value, course?.name])
-                                    : field.onChange(value.filter((value) => value !== course?.name));
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal leading-[18px]">{course?.name}</FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                </div>
-              </FormItem>
-            )}
-          />
-        </div> */}
-        {/* <RangeSlider title="Скидка" range={range} setRange={setRange} /> */}
-        <RangeSlider title="Сроки" range={range} setRange={setRange} />
+        </div>
+        {(criteriaType?.includes('COURSE_REGISTRATION') || criteriaType?.includes('COURSE_COMPLETION')) && (
+          <CourseCompletionFilters form={form} coursesNames={coursesNames} range={range} setRange={setRange} />
+        )}
         <div className="mb-10">
           <FormField
             control={form.control}

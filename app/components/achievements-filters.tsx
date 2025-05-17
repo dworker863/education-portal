@@ -74,7 +74,14 @@ const CourseCompletionFilters = ({
           </FormItem>
         )}
       />
-      <RangeSlider title="Сроки" range={range} setRange={setRange} />
+      <RangeSlider
+        title="Сроки"
+        maxValue={500}
+        minValueText={`Минимальная цена ${range[0]}`}
+        maxValueText={`Минимальная цена ${range[1]}`}
+        range={range}
+        setRange={setRange}
+      />
       <div className="mb-10">
         <FormField
           control={form.control}
@@ -122,7 +129,8 @@ const CourseCompletionFilters = ({
 };
 
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
-  const [range, setRange] = useState([0, 30]);
+  const [days, setDays] = useState([0, 30]);
+  const [prices, setPrices] = useState([0, 100]);
   const [coursesNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
@@ -150,14 +158,14 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       if (values.rewardType && typeof achievement.reward === 'object' && !Array.isArray(achievement.reward)) {
         return (
           achievement.reward?.type === values.rewardType &&
-          getDaysUntilDate(achievement.startDate) >= range[0] &&
-          (achievement.endDate ? getDaysUntilDate(achievement.endDate) : range[1]) <= range[1]
+          getDaysUntilDate(achievement.startDate) >= days[0] &&
+          (achievement.endDate ? getDaysUntilDate(achievement.endDate) : days[1]) <= days[1]
         );
       }
 
       return (
-        getDaysUntilDate(achievement.startDate) >= range[0] &&
-        (achievement.endDate ? getDaysUntilDate(achievement.endDate) : range[1]) <= range[1]
+        getDaysUntilDate(achievement.startDate) >= days[0] &&
+        (achievement.endDate ? getDaysUntilDate(achievement.endDate) : days[1]) <= days[1]
       );
     });
 
@@ -205,7 +213,14 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
         </div> */}
 
         {/* <RangeSlider title="Скидка" range={range} setRange={setRange} /> */}
-        <RangeSlider title="Сроки" range={range} setRange={setRange} />
+        <RangeSlider
+          title="Сроки"
+          maxValue={180}
+          minValueText={`Начало через ${days[0]} дней`}
+          maxValueText={`Окончание через ${days[1]} дней`}
+          range={days}
+          setRange={setDays}
+        />
         <div className="mb-10">
           <FormField
             control={form.control}
@@ -249,7 +264,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           />
         </div>
         {(criteriaType?.includes('COURSE_REGISTRATION') || criteriaType?.includes('COURSE_COMPLETION')) && (
-          <CourseCompletionFilters form={form} coursesNames={coursesNames} range={range} setRange={setRange} />
+          <CourseCompletionFilters form={form} coursesNames={coursesNames} range={prices} setRange={setPrices} />
         )}
         <div className="mb-10">
           <FormField

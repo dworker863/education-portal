@@ -23,11 +23,13 @@ type TAchievementsFiltersProps = {
 
 const CourseCompletionFilters = ({
   form,
+  prefix,
   coursesNames,
   prices,
   setPrices,
 }: {
   form: UseFormReturn<any>;
+  prefix: string;
   coursesNames: ICoursePartial[] | null;
   prices: number[];
   setPrices: Dispatch<React.SetStateAction<number[]>>;
@@ -36,7 +38,7 @@ const CourseCompletionFilters = ({
     <div className="mb-10 space-y-4">
       <FormField
         control={form.control}
-        name="criteriaTypeFilters"
+        name={`${prefix}.coursesNames`}
         render={() => (
           <FormItem>
             <div className="mb-2">
@@ -47,7 +49,7 @@ const CourseCompletionFilters = ({
                 <FormField
                   key={course.id + index}
                   control={form.control}
-                  name={`criteriaTypeFilters.${index}.coursesNames`}
+                  name={`${prefix}.${index}.coursesNames`}
                   render={({ field }) => {
                     const values = field.value || [];
 
@@ -75,7 +77,7 @@ const CourseCompletionFilters = ({
         )}
       />
       <RangeSlider
-        title="Сроки"
+        title="Цена"
         maxValue={500}
         minValueText={`Минимальная цена ${prices[0]}`}
         maxValueText={`Минимальная цена ${prices[1]}`}
@@ -85,7 +87,7 @@ const CourseCompletionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="rank"
+          name={`${prefix}.requiredRank`}
           render={() => (
             <FormItem>
               <div className="mb-2">
@@ -96,7 +98,7 @@ const CourseCompletionFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name="rank"
+                    name={`${prefix}.${index}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -130,12 +132,14 @@ const CourseCompletionFilters = ({
 
 const ExerciseCompletionFilters = ({
   form,
+  prefix,
   amount,
   setAmount,
   pointsToComplete,
   setPointsToComplete,
 }: {
   form: UseFormReturn<any>;
+  prefix: string;
   amount: number[];
   setAmount: Dispatch<React.SetStateAction<number[]>>;
   pointsToComplete: number[];
@@ -154,28 +158,46 @@ const ExerciseCompletionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="language"
-          render={({ field }) => (
+          name={`${prefix}.language`}
+          render={() => (
             <FormItem>
-              <FormLabel className="text-base">Язык программирования</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl className="w-[300px]">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Выберите язык программирования" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {languages.map((language, index) => (
-                    <SelectItem key={language.id + index} value={language.label}>
-                      {language.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="mb-2">
+                <FormLabel className="text-base">Язык программирования</FormLabel>
+              </div>
+              <div className="flex flex-col gap-y-3 w-[200px] mb-10">
+                {languages.map((language, index) => (
+                  <FormField
+                    key={language.id + index}
+                    control={form.control}
+                    name={`${prefix}.${index}.language`}
+                    render={({ field }) => {
+                      const values = field.value || [];
+
+                      return (
+                        <FormItem key={language.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                              checked={values.includes(language.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...values, language.id])
+                                  : field.onChange(values.filter((value: string) => value !== language.id));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal leading-[18px]">{language.label}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
             </FormItem>
           )}
         />
       </div>
+
       <RangeSlider
         title="Количество необходимых баллов для завершения"
         maxValue={500}
@@ -187,7 +209,7 @@ const ExerciseCompletionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="rank"
+          name={`${prefix}.requiredRank`}
           render={() => (
             <FormItem>
               <div className="mb-2">
@@ -198,7 +220,7 @@ const ExerciseCompletionFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name="rank"
+                    name={`${prefix}.${index}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -232,10 +254,12 @@ const ExerciseCompletionFilters = ({
 
 const ParticipationLimitFilters = ({
   form,
+  prefix,
   maxParticipants,
   setMaxParticipants,
 }: {
   form: UseFormReturn<any>;
+  prefix: string;
   maxParticipants: number[];
   setMaxParticipants: Dispatch<React.SetStateAction<number[]>>;
 }) => {
@@ -252,7 +276,7 @@ const ParticipationLimitFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="rank"
+          name={`${prefix}.requiredRank`}
           render={() => (
             <FormItem>
               <div className="mb-2">
@@ -263,7 +287,7 @@ const ParticipationLimitFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name="rank"
+                    name={`${prefix}.${index}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -297,10 +321,12 @@ const ParticipationLimitFilters = ({
 
 const SubscriptionFilters = ({
   form,
+  prefix,
   monthes,
   setMonthes,
 }: {
   form: UseFormReturn<any>;
+  prefix: string;
   monthes: number[];
   setMonthes: Dispatch<React.SetStateAction<number[]>>;
 }) => {
@@ -345,7 +371,7 @@ const SubscriptionFilters = ({
         />
       </div>
       <RangeSlider
-        title="Количество призовых мест"
+        title="Срок"
         maxValue={12}
         minValueText={`От ${monthes[0]} месяцев/лет`}
         maxValueText={`До ${monthes[1]} месяцев/лет`}
@@ -355,7 +381,7 @@ const SubscriptionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="rewardType"
+          name={`${prefix}.tier`}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-md">Вид подписки</FormLabel>
@@ -393,7 +419,7 @@ const SubscriptionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="firstTimeOnly"
+          name={`${prefix}.firstTimeOnly`}
           render={({ field }) => (
             <FormItem className="flex items-center space-y-0 py-4">
               <FormControl className="mr-3">
@@ -405,6 +431,136 @@ const SubscriptionFilters = ({
               </FormControl>
               <FormLabel>Только для впервые оформляющих</FormLabel>
               <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
+const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix: string }) => {
+  return (
+    <div className="mb-10 space-y-8">
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name={`${prefix}.operator`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-md">Оператор</FormLabel>
+              <FormControl>
+                <RadioGroup
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  className="flex flex-col space-y-1"
+                >
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="AND"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">Или</FormLabel>
+                  </FormItem>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem
+                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
+                        value="OR"
+                      />
+                    </FormControl>
+                    <FormLabel className="font-normal">И</FormLabel>
+                  </FormItem>
+                </RadioGroup>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name={`${prefix}.types`}
+          render={() => (
+            <FormItem>
+              <div className="mb-2">
+                <FormLabel className="text-base">Тип достижения</FormLabel>
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                {criteriaTypes.map((type, index) => (
+                  <FormField
+                    key={type.id + index}
+                    control={form.control}
+                    name={`${prefix}.${index}.types`}
+                    render={({ field }) => {
+                      const values = field.value || [];
+
+                      return (
+                        <FormItem key={type.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                              checked={values.includes(type.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...values, type.id])
+                                  : field.onChange(values.filter((value: string) => value !== type.id));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal leading-[18px]">{type.label}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
+            </FormItem>
+          )}
+        />
+      </div>
+
+      <div className="mb-10">
+        <FormField
+          control={form.control}
+          name={`${prefix}.requiredRank`}
+          render={() => (
+            <FormItem>
+              <div className="mb-2">
+                <FormLabel className="text-base">Уровень</FormLabel>
+              </div>
+              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
+                {ranks.map((rank, index) => (
+                  <FormField
+                    key={rank.id + index}
+                    control={form.control}
+                    name={`${prefix}.${index}.requiredRank`}
+                    render={({ field }) => {
+                      const values = field.value || [];
+
+                      return (
+                        <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
+                          <FormControl>
+                            <Checkbox
+                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
+                              checked={values.includes(rank.id)}
+                              onCheckedChange={(checked) => {
+                                return checked
+                                  ? field.onChange([...values, rank.id])
+                                  : field.onChange(values.filter((value: string) => value !== rank.id));
+                              }}
+                            />
+                          </FormControl>
+                          <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
+                        </FormItem>
+                      );
+                    }}
+                  />
+                ))}
+              </div>
             </FormItem>
           )}
         />
@@ -439,6 +595,9 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   });
 
   const criteriaType = form.watch('criteriaType');
+  const criteriaTypeFilters = form.watch('criteriaTypeFilters');
+
+  console.log('FILTERS FORM: ', typeof criteriaTypeFilters);
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
     const result = achievements.filter((achievement) => {
@@ -492,7 +651,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             render={() => (
               <FormItem>
                 <div className="mb-2">
-                  <FormLabel className="text-base">Уровень</FormLabel>
+                  <FormLabel className="text-base">Тип достижения</FormLabel>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
                   {criteriaTypes.map((type, index) => (
@@ -528,11 +687,18 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           />
         </div>
         {(criteriaType?.includes('COURSE_REGISTRATION') || criteriaType?.includes('COURSE_COMPLETION')) && (
-          <CourseCompletionFilters form={form} coursesNames={coursesNames} prices={prices} setPrices={setPrices} />
+          <CourseCompletionFilters
+            form={form}
+            prefix="criteriaTypeFilters"
+            coursesNames={coursesNames}
+            prices={prices}
+            setPrices={setPrices}
+          />
         )}
         {criteriaType?.includes('EXERCISE_COMPLETION') && (
           <ExerciseCompletionFilters
             form={form}
+            prefix="criteriaTypeFilters"
             amount={amount}
             setAmount={setAmount}
             pointsToComplete={pointsToComplete}
@@ -542,13 +708,91 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
         {criteriaType?.includes('PARTICIPATION_LIMIT') && (
           <ParticipationLimitFilters
             form={form}
+            prefix="criteriaTypeFilters"
             maxParticipants={maxParticipants}
             setMaxParticipants={setMaxParticipants}
           />
         )}
         {criteriaType?.includes('SUBSCRIPTION') && (
-          <SubscriptionFilters form={form} monthes={monthes} setMonthes={setMonthes} />
+          <SubscriptionFilters form={form} prefix="criteriaTypeFilters" monthes={monthes} setMonthes={setMonthes} />
         )}
+        {criteriaType?.includes('COMBINATION') && <CombinationFilters form={form} prefix="criteriaTypeFilters" />}
+        {criteriaType?.includes('COMBINATION') &&
+          criteriaTypeFilters.map((filter, index) => {
+            if ('operator' in filter) {
+              return (
+                filter.types?.includes('EXERCISE_COMPLETION') && (
+                  <ExerciseCompletionFilters
+                    key={index}
+                    form={form}
+                    prefix={`criteriaTypeFilters.conditions.${index}`}
+                    amount={amount}
+                    setAmount={setAmount}
+                    pointsToComplete={pointsToComplete}
+                    setPointsToComplete={setPointsToComplete}
+                  />
+                )
+              );
+            }
+            return null;
+          })}
+        {criteriaType?.includes('COMBINATION') &&
+          criteriaTypeFilters.map((filter, index) => {
+            if ('operator' in filter) {
+              return (
+                (filter.types?.includes('COURSE_COMPLETION') || filter.types?.includes('COURSE_REGISTRATION')) && (
+                  <ExerciseCompletionFilters
+                    key={index}
+                    form={form}
+                    prefix={`criteriaTypeFilters.conditions.${index}`}
+                    amount={amount}
+                    setAmount={setAmount}
+                    pointsToComplete={pointsToComplete}
+                    setPointsToComplete={setPointsToComplete}
+                  />
+                )
+              );
+            }
+            return null;
+          })}
+        {criteriaType?.includes('COMBINATION') &&
+          criteriaTypeFilters.map((filter, index) => {
+            if ('operator' in filter) {
+              return (
+                filter.types?.includes('PARTICIPATION_LIMIT') && (
+                  <ExerciseCompletionFilters
+                    key={index}
+                    form={form}
+                    prefix={`criteriaTypeFilters.conditions.${index}`}
+                    amount={amount}
+                    setAmount={setAmount}
+                    pointsToComplete={pointsToComplete}
+                    setPointsToComplete={setPointsToComplete}
+                  />
+                )
+              );
+            }
+            return null;
+          })}
+        {criteriaType?.includes('COMBINATION') &&
+          criteriaTypeFilters.map((filter, index) => {
+            if ('operator' in filter) {
+              return (
+                filter.types?.includes('SUBSCRIPTION') && (
+                  <ExerciseCompletionFilters
+                    key={index}
+                    form={form}
+                    prefix={`criteriaTypeFilters.conditions.${index}`}
+                    amount={amount}
+                    setAmount={setAmount}
+                    pointsToComplete={pointsToComplete}
+                    setPointsToComplete={setPointsToComplete}
+                  />
+                )
+              );
+            }
+            return null;
+          })}
         <div className="mb-10">
           <FormField
             control={form.control}

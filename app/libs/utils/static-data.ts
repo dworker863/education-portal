@@ -19,6 +19,10 @@ export const criteriaTypes = [
     id: 'SUBSCRIPTION',
     label: 'SUBSCRIPTION',
   },
+  {
+    id: 'COMBINATION',
+    label: 'COMBINATION',
+  },
 ] as const;
 
 export const ranks = [
@@ -92,5 +96,32 @@ export const languages = [
   {
     id: 'C++',
     label: 'C++',
+  },
+  {
+    id: 'C#',
+    label: 'C#',
+  },
+] as const;
+
+export const achievementTypes = [
+  {
+    id: 'EXERCISE_COMPLETION',
+    label: 'EXERCISE_COMPLETION',
+  },
+  {
+    id: 'COURSE_COMPLETION',
+    label: 'COURSE_COMPLETION',
+  },
+  {
+    id: 'COURSE_REGISTRATION',
+    label: 'COURSE_REGISTRATION',
+  },
+  {
+    id: 'PARTICIPATION_LIMIT',
+    label: 'PARTICIPATION_LIMIT',
+  },
+  {
+    id: 'SUBSCRIPTION',
+    label: 'SUBSCRIPTION',
   },
 ] as const;

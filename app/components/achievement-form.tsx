@@ -25,6 +25,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '../libs/cn';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { achievementTypes } from '../libs/utils/static-data';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -530,29 +531,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   const criteriaType = form.watch('criteria.type');
   const rewardType = form.watch('reward.type');
   const combinationTypes = form.watch('criteria.types');
-
-  const achievementTypes = [
-    {
-      id: 'EXERCISE_COMPLETION',
-      label: 'EXERCISE_COMPLETION',
-    },
-    {
-      id: 'COURSE_COMPLETION',
-      label: 'COURSE_COMPLETION',
-    },
-    {
-      id: 'COURSE_REGISTRATION',
-      label: 'COURSE_REGISTRATION',
-    },
-    {
-      id: 'PARTICIPATION_LIMIT',
-      label: 'PARTICIPATION_LIMIT',
-    },
-    {
-      id: 'SUBSCRIPTION',
-      label: 'SUBSCRIPTION',
-    },
-  ] as const;
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     console.log('ACHIEVEMENT FORM:', values);

@@ -4,15 +4,14 @@ import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react'
 import { IAchievement, ICoursePartial } from '../libs/interfaces/interfaces';
 import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import { Checkbox } from './checkbox';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
 import RangeSlider from './range-slider';
 import { criteriaTypes, languages, ranks } from '../libs/utils/static-data';
-import { getDaysUntilDate } from '../libs/utils/filters';
+import { getDaysUntilDate, getDefaultFilter } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCoursesNames } from '../libs/server-actions/courses-actions';
 
@@ -49,7 +48,7 @@ const CourseCompletionFilters = ({
                 <FormField
                   key={course.id + index}
                   control={form.control}
-                  name={`${prefix}.${index}.coursesNames`}
+                  name={`${prefix}.coursesNames`}
                   render={({ field }) => {
                     const values = field.value || [];
 
@@ -98,7 +97,7 @@ const CourseCompletionFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.requiredRank`}
+                    name={`${prefix}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -158,7 +157,7 @@ const ExerciseCompletionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name={`${prefix}.language`}
+          name={`${prefix}.languages`}
           render={() => (
             <FormItem>
               <div className="mb-2">
@@ -169,7 +168,7 @@ const ExerciseCompletionFilters = ({
                   <FormField
                     key={language.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.language`}
+                    name={`${prefix}.languages`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -220,7 +219,7 @@ const ExerciseCompletionFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.requiredRank`}
+                    name={`${prefix}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -287,7 +286,7 @@ const ParticipationLimitFilters = ({
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.requiredRank`}
+                    name={`${prefix}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -494,7 +493,7 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
                   <FormField
                     key={type.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.types`}
+                    name={`${prefix}.types`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -537,7 +536,7 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
                   <FormField
                     key={rank.id + index}
                     control={form.control}
-                    name={`${prefix}.${index}.requiredRank`}
+                    name={`${prefix}.requiredRank`}
                     render={({ field }) => {
                       const values = field.value || [];
 
@@ -588,49 +587,107 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   const form = useForm<z.infer<typeof achievementsFiltersSchema>>({
     resolver: zodResolver(achievementsFiltersSchema),
     defaultValues: {
-      criteriaType: ['COURSE_COMPLETION'],
-      // rank: ['D-'],
-      // courseName: ['test'],
+      criteriaType: [],
+      rewardType: undefined,
+      criteriaTypeFilters: [],
     },
   });
+
+  const {
+    fields: criteriaTypeFiltersFields,
+    append: appendCriteriaTypeFilter,
+    remove,
+  } = useFieldArray({
+    control: form.control,
+    name: 'criteriaTypeFilters',
+  });
+
+  const addTypeFilter = (
+    type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'PARTICIPATION_LIMIT' | 'SUBSCRIPTION',
+  ) => {
+    switch (type) {
+      case 'EXERCISE_COMPLETION':
+        appendCriteriaTypeFilter({ type: 'EXERCISE_COMPLETION', languages: [], requiredRank: [] });
+        break;
+
+      case 'COURSE_COMPLETION':
+        appendCriteriaTypeFilter({ type: 'COURSE_COMPLETION', coursesNames: [], requiredRank: [] });
+        break;
+
+      case 'COURSE_REGISTRATION':
+        appendCriteriaTypeFilter({ type: 'COURSE_REGISTRATION', coursesNames: [], requiredRank: [] });
+        break;
+
+      case 'PARTICIPATION_LIMIT':
+        appendCriteriaTypeFilter({ type: 'PARTICIPATION_LIMIT', requiredRank: [] });
+        break;
+
+      case 'SUBSCRIPTION':
+        appendCriteriaTypeFilter({
+          type: 'SUBSCRIPTION',
+          tier: undefined,
+          duration: undefined,
+          firstTimeOnly: undefined,
+        });
+        break;
+
+      default:
+        const _exhaustiveCheck: never = type;
+        return _exhaustiveCheck;
+    }
+  };
 
   const criteriaType = form.watch('criteriaType');
   const criteriaTypeFilters = form.watch('criteriaTypeFilters');
 
-  console.log('FILTERS FORM: ', typeof criteriaTypeFilters);
-
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
-    const result = achievements.filter((achievement) => {
-      // console.log('FILTER: ', getDaysUntilDate(achievement.startDate));
+    console.log('Form errors:', form.formState.errors);
+    console.log('FILTERS FORM: ', values);
 
-      if (values.rewardType && typeof achievement.reward === 'object' && !Array.isArray(achievement.reward)) {
-        return (
-          achievement.reward?.type === values.rewardType &&
+    let result;
+
+    if (days.length > 0) {
+      result = achievements.filter(
+        (achievement) =>
+          typeof achievement.reward === 'object' &&
+          !Array.isArray(achievement.reward) &&
           getDaysUntilDate(achievement.startDate) >= days[0] &&
-          (achievement.endDate ? getDaysUntilDate(achievement.endDate) : days[1]) <= days[1]
+          (achievement.endDate ? getDaysUntilDate(achievement.endDate) : days[1]) <= days[1],
+      );
+    }
+
+    if (values.rewardType) {
+      if (result) {
+        result = (result || achievements).filter(
+          (achievement) =>
+            typeof achievement.reward === 'object' &&
+            !Array.isArray(achievement.reward) &&
+            achievement.reward?.type === values.rewardType,
         );
       }
+    }
 
-      return (
-        getDaysUntilDate(achievement.startDate) >= days[0] &&
-        (achievement.endDate ? getDaysUntilDate(achievement.endDate) : days[1]) <= days[1]
-      );
-    });
+    if (values.criteriaType?.includes('EXERCISE_COMPLETION')) {
+      if (values.criteriaTypeFilters?.some((filter) => 'languages' in filter)) {
+        if (result) {
+          result = (result || achievements).filter((achievement) =>
+            values.criteriaTypeFilters?.some(
+              (filter) =>
+                'languages' in filter &&
+                typeof achievement.criteria === 'object' &&
+                !Array.isArray(achievement.criteria) &&
+                achievement.criteria?.language === 'string' &&
+                filter.languages?.includes(achievement.criteria?.language),
+            ),
+          );
+        }
+      }
+    }
 
-    // const result = achievements.filter((achievement) => {
-    //   return (
-    //     achievement.language === values.language &&
-    //     values.rank &&
-    //     values.rank.includes(achievement.requiredRank) &&
-    //     achievement.course &&
-    //     values.courseName &&
-    //     values.courseName.includes(achievement.course?.name) &&
-    //     range[0] <= achievement.discount &&
-    //     achievement.discount <= range[1]
-    //   );
-    // });
-    setFilteredAchievements(result);
-    filterAchievements(result);
+    if (result) {
+      setFilteredAchievements(result);
+      filterAchievements(result);
+    }
   };
 
   return (
@@ -669,6 +726,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
                                 checked={values.includes(type.id)}
                                 onCheckedChange={(checked) => {
+                                  addTypeFilter(type.id);
                                   return checked
                                     ? field.onChange([...values, type.id])
                                     : field.onChange(values.filter((value) => value !== type.id));
@@ -686,39 +744,49 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             )}
           />
         </div>
-        {(criteriaType?.includes('COURSE_REGISTRATION') || criteriaType?.includes('COURSE_COMPLETION')) && (
-          <CourseCompletionFilters
-            form={form}
-            prefix="criteriaTypeFilters"
-            coursesNames={coursesNames}
-            prices={prices}
-            setPrices={setPrices}
-          />
-        )}
-        {criteriaType?.includes('EXERCISE_COMPLETION') && (
-          <ExerciseCompletionFilters
-            form={form}
-            prefix="criteriaTypeFilters"
-            amount={amount}
-            setAmount={setAmount}
-            pointsToComplete={pointsToComplete}
-            setPointsToComplete={setPointsToComplete}
-          />
-        )}
-        {criteriaType?.includes('PARTICIPATION_LIMIT') && (
-          <ParticipationLimitFilters
-            form={form}
-            prefix="criteriaTypeFilters"
-            maxParticipants={maxParticipants}
-            setMaxParticipants={setMaxParticipants}
-          />
-        )}
-        {criteriaType?.includes('SUBSCRIPTION') && (
-          <SubscriptionFilters form={form} prefix="criteriaTypeFilters" monthes={monthes} setMonthes={setMonthes} />
-        )}
+        {criteriaTypeFiltersFields.map((field, index) => (
+          <div key={field.id}>
+            {(field.type === 'COURSE_REGISTRATION' || field.type === 'COURSE_COMPLETION') && (
+              <CourseCompletionFilters
+                form={form}
+                prefix={`criteriaTypeFilters.${index}`}
+                coursesNames={coursesNames}
+                prices={prices}
+                setPrices={setPrices}
+              />
+            )}
+            {field.type === 'EXERCISE_COMPLETION' && (
+              <ExerciseCompletionFilters
+                form={form}
+                prefix={`criteriaTypeFilters.${index}`}
+                amount={amount}
+                setAmount={setAmount}
+                pointsToComplete={pointsToComplete}
+                setPointsToComplete={setPointsToComplete}
+              />
+            )}
+            {field.type === 'PARTICIPATION_LIMIT' && (
+              <ParticipationLimitFilters
+                form={form}
+                prefix={`criteriaTypeFilters.${index}`}
+                maxParticipants={maxParticipants}
+                setMaxParticipants={setMaxParticipants}
+              />
+            )}
+            {field.type === 'SUBSCRIPTION' && (
+              <SubscriptionFilters
+                form={form}
+                prefix={`criteriaTypeFilters.${index}`}
+                monthes={monthes}
+                setMonthes={setMonthes}
+              />
+            )}
+          </div>
+        ))}
+
         {criteriaType?.includes('COMBINATION') && <CombinationFilters form={form} prefix="criteriaTypeFilters" />}
         {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters.map((filter, index) => {
+          criteriaTypeFilters?.map((filter, index) => {
             if ('operator' in filter) {
               return (
                 filter.types?.includes('EXERCISE_COMPLETION') && (
@@ -737,7 +805,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             return null;
           })}
         {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters.map((filter, index) => {
+          criteriaTypeFilters?.map((filter, index) => {
             if ('operator' in filter) {
               return (
                 (filter.types?.includes('COURSE_COMPLETION') || filter.types?.includes('COURSE_REGISTRATION')) && (
@@ -756,7 +824,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             return null;
           })}
         {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters.map((filter, index) => {
+          criteriaTypeFilters?.map((filter, index) => {
             if ('operator' in filter) {
               return (
                 filter.types?.includes('PARTICIPATION_LIMIT') && (
@@ -775,7 +843,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             return null;
           })}
         {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters.map((filter, index) => {
+          criteriaTypeFilters?.map((filter, index) => {
             if ('operator' in filter) {
               return (
                 filter.types?.includes('SUBSCRIPTION') && (
@@ -831,7 +899,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             )}
           />
         </div>
-        <Button variant="custom" className="mr-5">
+        <Button variant="custom" type="submit" className="mr-5">
           Применить
         </Button>
         {achievements !== filteredAchievements && (
@@ -842,6 +910,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             onClick={() => {
               filterAchievements(achievements);
               setFilteredAchievements(achievements);
+              form.reset();
             }}
           >
             Сбросить фильтр

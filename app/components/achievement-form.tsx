@@ -464,6 +464,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           : undefined,
     },
   });
+
   const {
     fields: conditionFields,
     append: appendCondition,

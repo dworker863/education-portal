@@ -332,31 +332,37 @@ export const createAchievementSchema = z.object({
 });
 
 const exerciseCompletionFiltersSchema = z.object({
-  language: z.optional(z.string()),
-  requiredRank: z.optional(z.string()),
+  type: z.literal('EXERCISE_COMPLETION'),
+  languages: z.array(z.string()).optional(),
+  requiredRank: z.array(z.string()).optional(),
 });
 
 const courseCompletionFiltersSchema = z.object({
+  type: z.literal('COURSE_COMPLETION'),
   coursesNames: z.array(z.string()).optional(),
   requiredRank: z.array(z.string()).optional(),
 });
 
 const courseRegistrationFiltersSchema = z.object({
+  type: z.literal('COURSE_REGISTRATION'),
   coursesNames: z.array(z.string()).optional(),
   requiredRank: z.array(z.string()).optional(),
 });
 
 const participationLimitFiltersSchema = z.object({
-  requiredRank: z.optional(z.string()),
+  type: z.literal('PARTICIPATION_LIMIT'),
+  requiredRank: z.array(z.string()).optional(),
 });
 
 const subscriptionFiltersSchema = z.object({
-  tier: z.enum(['PRO', 'PREMIUM']),
-  duration: z.enum(['MONTHLY', 'YEARLY']),
-  firstTimeOnly: z.boolean(),
+  type: z.literal('SUBSCRIPTION'),
+  tier: z.enum(['PRO', 'PREMIUM']).optional(),
+  duration: z.enum(['MONTHLY', 'YEARLY']).optional(),
+  firstTimeOnly: z.boolean().optional(),
 });
 
 const combinationFiltersSchema = z.object({
+  type: z.literal('COMBINATION'),
   operator: z.enum(['AND', 'OR']),
   types: z.array(
     z.enum(['EXERCISE_COMPLETION', 'COURSE_COMPLETION', 'COURSE_REGISTRATION', 'PARTICIPATION_LIMIT', 'SUBSCRIPTION']),
@@ -374,14 +380,6 @@ const combinationFiltersSchema = z.object({
 });
 
 export const achievementsFiltersSchema = z.object({
-  language: z.optional(z.string()),
-  rank: z.array(z.string()).optional(),
-  // courseName: z
-  //   .array(z.string())
-  //   .refine((value) => value.some((item) => item), {
-  //     message: 'Укажите курс',
-  //   })
-  //   .optional(),
   criteriaType: z
     .array(
       z.enum([
@@ -394,16 +392,18 @@ export const achievementsFiltersSchema = z.object({
       ]),
     )
     .optional(),
-  criteriaTypeFilters: z.array(
-    z.union([
-      exerciseCompletionFiltersSchema,
-      courseCompletionFiltersSchema,
-      courseRegistrationFiltersSchema,
-      participationLimitFiltersSchema,
-      subscriptionFiltersSchema,
-      combinationFiltersSchema,
-    ]),
-  ),
+  criteriaTypeFilters: z
+    .array(
+      z.discriminatedUnion('type', [
+        exerciseCompletionFiltersSchema,
+        courseCompletionFiltersSchema,
+        courseRegistrationFiltersSchema,
+        participationLimitFiltersSchema,
+        subscriptionFiltersSchema,
+        combinationFiltersSchema,
+      ]),
+    )
+    .optional(),
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });
 

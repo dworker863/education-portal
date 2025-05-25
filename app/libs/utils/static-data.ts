@@ -19,10 +19,10 @@ export const criteriaTypes = [
     id: 'SUBSCRIPTION',
     label: 'SUBSCRIPTION',
   },
-  {
-    id: 'COMBINATION',
-    label: 'COMBINATION',
-  },
+  // {
+  //   id: 'COMBINATION',
+  //   label: 'COMBINATION',
+  // },
 ] as const;
 
 export const ranks = [

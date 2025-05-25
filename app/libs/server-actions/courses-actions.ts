@@ -41,8 +41,6 @@ export const getCoursesNames = async () => {
       },
     });
 
-    console.log('FUNCTION: ', coursesNames);
-
     return coursesNames;
   } catch (error) {
     console.error('Ошибка при получении имен курсов: ', error);

@@ -11,7 +11,7 @@ import { Checkbox } from './checkbox';
 import { Button } from './button';
 import RangeSlider from './range-slider';
 import { criteriaTypes, languages, ranks } from '../libs/utils/static-data';
-import { getDaysUntilDate, getDefaultFilter } from '../libs/utils/filters';
+import { getDaysUntilDate } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCoursesNames } from '../libs/server-actions/courses-actions';
 
@@ -641,7 +641,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   const criteriaTypeFilters = form.watch('criteriaTypeFilters');
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
-    console.log('Form errors:', form.formState.errors);
+    // console.log('Form errors:', form.formState.errors);
     console.log('FILTERS FORM: ', values);
 
     let result;
@@ -656,6 +656,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       );
     }
 
+    console.log('AFTER DAYS: ', result);
+
     if (values.rewardType) {
       if (result) {
         result = (result || achievements).filter(
@@ -667,22 +669,80 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       }
     }
 
+    console.log('AFTER REWARD: ', values.criteriaTypeFilters);
+
     if (values.criteriaType?.includes('EXERCISE_COMPLETION')) {
-      if (values.criteriaTypeFilters?.some((filter) => 'languages' in filter)) {
-        if (result) {
-          result = (result || achievements).filter((achievement) =>
-            values.criteriaTypeFilters?.some(
-              (filter) =>
-                'languages' in filter &&
-                typeof achievement.criteria === 'object' &&
-                !Array.isArray(achievement.criteria) &&
-                achievement.criteria?.language === 'string' &&
-                filter.languages?.includes(achievement.criteria?.language),
-            ),
-          );
-        }
+      result = (result || achievements).filter(
+        (achievement) =>
+          typeof achievement.criteria === 'object' &&
+          !Array.isArray(achievement.criteria) &&
+          achievement?.criteria?.type === 'EXERCISE_COMPLETION',
+      );
+
+      if (amount.length > 0) {
+        result = (result || achievements).filter(
+          (achievement) =>
+            typeof achievement.criteria === 'object' &&
+            !Array.isArray(achievement.criteria) &&
+            achievement.criteria?.count &&
+            typeof achievement.criteria?.count === 'number' &&
+            achievement.criteria?.count >= amount[0] &&
+            achievement.criteria?.count <= amount[1],
+        );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'languages' in filter && filter.languages && filter.languages.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'languages' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.language === 'string' &&
+              filter.languages?.includes(achievement.criteria?.language)
+            );
+          }),
+        );
+      }
+
+      if (pointsToComplete.length > 0) {
+        result = (result || achievements).filter(
+          (achievement) =>
+            typeof achievement.criteria === 'object' &&
+            !Array.isArray(achievement.criteria) &&
+            achievement.criteria?.pointsToComplete &&
+            typeof achievement.criteria?.pointsToComplete === 'number' &&
+            achievement.criteria?.pointsToComplete >= pointsToComplete[0] &&
+            achievement.criteria?.pointsToComplete <= pointsToComplete[1],
+        );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'requiredRank' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.requiredRank === 'string' &&
+              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
+            );
+          }),
+        );
       }
     }
+
+    console.log('AFTER TYPE: ', result);
 
     if (result) {
       setFilteredAchievements(result);

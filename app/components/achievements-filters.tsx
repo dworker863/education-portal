@@ -671,6 +671,24 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
 
     console.log('AFTER REWARD: ', values.criteriaTypeFilters);
 
+    if (values.criteriaType && values.criteriaType.length > 0) {
+      result = achievements.filter(
+        (achievement) =>
+          achievement.criteria &&
+          typeof achievement.criteria === 'object' &&
+          !Array.isArray(achievement.criteria) &&
+          values.criteriaType!.includes(
+            achievement.criteria.type as
+              | 'EXERCISE_COMPLETION'
+              | 'COURSE_COMPLETION'
+              | 'COURSE_REGISTRATION'
+              | 'PARTICIPATION_LIMIT'
+              | 'SUBSCRIPTION'
+              | 'COMBINATION',
+          ),
+      );
+    }
+
     if (values.criteriaType?.includes('EXERCISE_COMPLETION')) {
       result = (result || achievements).filter(
         (achievement) =>
@@ -684,10 +702,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           (achievement) =>
             typeof achievement.criteria === 'object' &&
             !Array.isArray(achievement.criteria) &&
-            achievement.criteria?.count &&
-            typeof achievement.criteria?.count === 'number' &&
-            achievement.criteria?.count >= amount[0] &&
-            achievement.criteria?.count <= amount[1],
+            (typeof achievement.criteria?.count === 'number' ? achievement.criteria?.count : amount[0]) >= amount[0] &&
+            (typeof achievement.criteria?.count === 'number' ? achievement.criteria?.count : amount[1]) <= amount[1],
         );
       }
 
@@ -715,10 +731,45 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           (achievement) =>
             typeof achievement.criteria === 'object' &&
             !Array.isArray(achievement.criteria) &&
-            achievement.criteria?.pointsToComplete &&
-            typeof achievement.criteria?.pointsToComplete === 'number' &&
-            achievement.criteria?.pointsToComplete >= pointsToComplete[0] &&
-            achievement.criteria?.pointsToComplete <= pointsToComplete[1],
+            (typeof achievement.criteria?.pointsToComplete === 'number'
+              ? achievement.criteria?.pointsToComplete
+              : pointsToComplete[0]) >= pointsToComplete[0] &&
+            (typeof achievement.criteria?.pointsToComplete === 'number'
+              ? achievement.criteria?.pointsToComplete
+              : pointsToComplete[1]) <= pointsToComplete[1],
+        );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'requiredRank' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.requiredRank === 'string' &&
+              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
+            );
+          }),
+        );
+      }
+    }
+
+    if (values.criteriaType?.includes('COURSE_COMPLETION')) {
+      if (prices.length > 0) {
+        result = (result || achievements).filter(
+          (achievement) =>
+            typeof achievement.criteria === 'object' &&
+            !Array.isArray(achievement.criteria) &&
+            (typeof achievement.criteria?.minPrice === 'number' ? achievement.criteria?.minPrice : prices[0]) >=
+              prices[0] &&
+            (typeof achievement.criteria?.maxPrice === 'number' ? achievement.criteria?.maxPrice : prices[1]) <=
+              prices[1],
         );
       }
 

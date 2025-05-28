@@ -760,7 +760,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       }
     }
 
-    if (values.criteriaType?.includes('COURSE_COMPLETION')) {
+    if (values.criteriaType?.includes('COURSE_COMPLETION') || values.criteriaType?.includes('COURSE_REGISTRATION')) {
       if (prices.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>
@@ -770,6 +770,41 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               prices[0] &&
             (typeof achievement.criteria?.maxPrice === 'number' ? achievement.criteria?.maxPrice : prices[1]) <=
               prices[1],
+        );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'requiredRank' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.requiredRank === 'string' &&
+              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
+            );
+          }),
+        );
+      }
+    }
+
+    if (values.criteriaType?.includes('PARTICIPATION_LIMIT')) {
+      if (maxParticipants.length > 0) {
+        result = (result || achievements).filter(
+          (achievement) =>
+            typeof achievement.criteria === 'object' &&
+            !Array.isArray(achievement.criteria) &&
+            (typeof achievement.criteria?.maxParticipants === 'number'
+              ? achievement.criteria?.maxParticipants
+              : maxParticipants[0]) >= maxParticipants[0] &&
+            (typeof achievement.criteria?.maxParticipants === 'number'
+              ? achievement.criteria?.maxParticipants
+              : maxParticipants[1]) <= maxParticipants[1],
         );
       }
 

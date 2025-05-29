@@ -57,11 +57,11 @@ const CourseCompletionFilters = ({
                         <FormControl>
                           <Checkbox
                             className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                            checked={values.includes(course.id)}
+                            checked={values.includes(course.name)}
                             onCheckedChange={(checked) => {
                               return checked
-                                ? field.onChange([...values, course.id])
-                                : field.onChange(values.filter((value: string) => value !== course.id));
+                                ? field.onChange([...values, course.name])
+                                : field.onChange(values.filter((value: string) => value !== course.name));
                             }}
                           />
                         </FormControl>
@@ -761,6 +761,32 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     }
 
     if (values.criteriaType?.includes('COURSE_COMPLETION') || values.criteriaType?.includes('COURSE_REGISTRATION')) {
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'courseNames' in filter && filter.courseNames && filter.courseNames.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'courseNames' in filter &&
+              filter.courseNames?.some((name) => {
+                console.log('COURSENAMES FILTER: ', name);
+                console.log('COURSENAMES FILTER: ', courseNames);
+
+                return (
+                  typeof achievement.criteria === 'object' &&
+                  !Array.isArray(achievement.criteria) &&
+                  Array.isArray(achievement.criteria?.courseNames) &&
+                  achievement.criteria?.courseNames?.includes(name)
+                );
+              })
+            );
+          }),
+        );
+      }
+
       if (prices.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>

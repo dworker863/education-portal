@@ -169,7 +169,7 @@ export const createExerciseSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),
-  pointsToComplete: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   lessonId: z.optional(z.string()),
 });
 
@@ -189,7 +189,7 @@ const baseTestSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.optional(z.string()),
-  pointsToComplete: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
+  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Укажите баллы за задание' }),
   lessonId: z.optional(z.string()),
 });
 
@@ -217,7 +217,7 @@ const exerciseCompletionSchema = z.object({
 
 const courseCompletionSchema = z.object({
   type: z.literal('COURSE_COMPLETION'),
-  coursesIds: z.array(z.string()).optional(),
+  courseNames: z.array(z.string()).optional(),
   minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
@@ -225,7 +225,7 @@ const courseCompletionSchema = z.object({
 
 const courseRegistrationSchema = z.object({
   type: z.literal('COURSE_REGISTRATION'),
-  coursesIds: z.array(z.string()).optional(),
+  courseNames: z.array(z.string()).optional(),
   minPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   maxPrice: z.optional(z.number({ invalid_type_error: 'Введите число' })),
   requiredRank: z.optional(z.string()),
@@ -339,13 +339,13 @@ const exerciseCompletionFiltersSchema = z.object({
 
 const courseCompletionFiltersSchema = z.object({
   type: z.literal('COURSE_COMPLETION'),
-  coursesNames: z.array(z.string()).optional(),
+  courseNames: z.array(z.string()).optional(),
   requiredRank: z.array(z.string()).optional(),
 });
 
 const courseRegistrationFiltersSchema = z.object({
   type: z.literal('COURSE_REGISTRATION'),
-  coursesNames: z.array(z.string()).optional(),
+  courseNames: z.array(z.string()).optional(),
   requiredRank: z.array(z.string()).optional(),
 });
 

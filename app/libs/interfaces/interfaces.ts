@@ -142,14 +142,14 @@ export type TExerciseCompletion = {
 };
 
 export type TCourseCompletion = {
-  coursesIds?: string[];
+  courseNames?: string[];
   minPrice?: number;
   maxPrice?: number;
   requiredRank?: string;
 };
 
 export type TCourseRegistration = {
-  coursesIds?: string[];
+  courseNames?: string[];
   minPrice?: number;
   maxPrice?: number;
   requiredRank?: string;

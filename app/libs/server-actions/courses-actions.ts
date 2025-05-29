@@ -32,7 +32,7 @@ export const deleteCourse = async (id: string) => {
   }
 };
 
-export const getCoursesNames = async () => {
+export const getCourseNames = async () => {
   try {
     const coursesNames = await prisma.course.findMany({
       select: {

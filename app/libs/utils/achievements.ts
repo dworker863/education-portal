@@ -1,6 +1,6 @@
 import { prisma } from '@/prisma/prisma';
-import { getCourseById } from './courses';
-import { getExerciseById } from './exercises';
+import { getCourseByName } from './courses';
+import { getExerciseByName } from './exercises';
 
 export const getAchievementByName = async (name: string) => {
   try {
@@ -32,13 +32,13 @@ export const getAchievementById = async (id: string) => {
   }
 };
 
-export const getInvalidIds = async (type: 'courses' | 'exercises', ids: string[]) => {
-  const idsCheckPromises = ids.map(async (id) => {
-    const entity = type === 'courses' ? await getCourseById(id) : await getExerciseById(id);
-    return { id, exists: !!entity };
+export const getInvalidNames = async (type: 'courses' | 'exercises', names: string[]) => {
+  const idsCheckPromises = names.map(async (name) => {
+    const entity = type === 'courses' ? await getCourseByName(name) : await getExerciseByName(name);
+    return { name, exists: !!entity };
   });
 
   const results = await Promise.all(idsCheckPromises);
 
-  return results.filter((result) => !result.exists).map((result) => result.id);
+  return results.filter((result) => !result.exists).map((result) => result.name);
 };

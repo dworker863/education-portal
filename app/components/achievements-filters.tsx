@@ -13,7 +13,7 @@ import RangeSlider from './range-slider';
 import { criteriaTypes, languages, ranks } from '../libs/utils/static-data';
 import { getDaysUntilDate } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
-import { getCoursesNames } from '../libs/server-actions/courses-actions';
+import { getCourseNames } from '../libs/server-actions/courses-actions';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
@@ -23,13 +23,13 @@ type TAchievementsFiltersProps = {
 const CourseCompletionFilters = ({
   form,
   prefix,
-  coursesNames,
+  courseNames,
   prices,
   setPrices,
 }: {
   form: UseFormReturn<any>;
   prefix: string;
-  coursesNames: ICoursePartial[] | null;
+  courseNames: ICoursePartial[] | null;
   prices: number[];
   setPrices: Dispatch<React.SetStateAction<number[]>>;
 }) => {
@@ -37,18 +37,18 @@ const CourseCompletionFilters = ({
     <div className="mb-10 space-y-4">
       <FormField
         control={form.control}
-        name={`${prefix}.coursesNames`}
+        name={`${prefix}.courseNames`}
         render={() => (
           <FormItem>
             <div className="mb-2">
               <FormLabel className="text-base">Названия курсов</FormLabel>
             </div>
             <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-              {coursesNames?.map((course, index) => (
+              {courseNames?.map((course, index) => (
                 <FormField
                   key={course.id + index}
                   control={form.control}
-                  name={`${prefix}.coursesNames`}
+                  name={`${prefix}.courseNames`}
                   render={({ field }) => {
                     const values = field.value || [];
 
@@ -575,11 +575,11 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   const [pointsToComplete, setPointsToComplete] = useState([0, 100]);
   const [maxParticipants, setMaxParticipants] = useState([0, 1000]);
   const [monthes, setMonthes] = useState([0, 5]);
-  const [coursesNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
+  const [courseNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
   useEffect(() => {
-    getCoursesNames().then((courses) => {
+    getCourseNames().then((courses) => {
       setCoursesNames(courses);
     });
   }, []);
@@ -611,11 +611,11 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
         break;
 
       case 'COURSE_COMPLETION':
-        appendCriteriaTypeFilter({ type: 'COURSE_COMPLETION', coursesNames: [], requiredRank: [] });
+        appendCriteriaTypeFilter({ type: 'COURSE_COMPLETION', courseNames: [], requiredRank: [] });
         break;
 
       case 'COURSE_REGISTRATION':
-        appendCriteriaTypeFilter({ type: 'COURSE_REGISTRATION', coursesNames: [], requiredRank: [] });
+        appendCriteriaTypeFilter({ type: 'COURSE_REGISTRATION', courseNames: [], requiredRank: [] });
         break;
 
       case 'PARTICIPATION_LIMIT':
@@ -947,7 +947,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               <CourseCompletionFilters
                 form={form}
                 prefix={`criteriaTypeFilters.${index}`}
-                coursesNames={coursesNames}
+                courseNames={courseNames}
                 prices={prices}
                 setPrices={setPrices}
               />

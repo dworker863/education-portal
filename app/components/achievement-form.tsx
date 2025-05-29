@@ -110,14 +110,14 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
       <h3 className="font-medium">Завершение курсов</h3>
       <FormField
         control={form.control}
-        name={`${prefix}.coursesIds`}
+        name={`${prefix}.courseNames`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Курсы</FormLabel>
             <FormControl>
               <Input
                 placeholder="Введите id курсов через запятую"
-                {...form.register(`${prefix}.coursesIds`, {
+                {...form.register(`${prefix}.courseNames`, {
                   setValueAs: (value) =>
                     typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
                 })}
@@ -188,14 +188,14 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
       <h3 className="font-medium">Регистрация в курсах</h3>
       <FormField
         control={form.control}
-        name={`${prefix}.coursesIds`}
+        name={`${prefix}.courseNames`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Курсы</FormLabel>
             <FormControl>
               <Input
                 placeholder="Курсы"
-                {...form.register(`${prefix}.coursesIds`, {
+                {...form.register(`${prefix}.courseNames`, {
                   setValueAs: (value) =>
                     typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
                 })}
@@ -488,7 +488,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       case 'COURSE_COMPLETION':
         appendCondition({
           type: 'COURSE_COMPLETION',
-          coursesIds: [],
+          courseNames: [],
           minPrice: 0,
           maxPrice: 0,
           requiredRank: '',
@@ -498,7 +498,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       case 'COURSE_REGISTRATION':
         appendCondition({
           type: 'COURSE_REGISTRATION',
-          coursesIds: [],
+          courseNames: [],
           minPrice: 0,
           maxPrice: 0,
           requiredRank: '',

@@ -1,4 +1,4 @@
-import { getAchievementById, getAchievementByName, getInvalidIds } from '@/app/libs/utils/achievements';
+import { getAchievementById, getAchievementByName, getInvalidNames } from '@/app/libs/utils/achievements';
 import { fileUpload } from '@/app/libs/utils/auth';
 import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
@@ -62,10 +62,10 @@ export async function POST(request: Request) {
 
     if (
       (data?.criteria.type === 'COURSE_COMPLETION' || data?.criteria.type === 'COURSE_REGISTRATION') &&
-      data?.criteria.coursesIds &&
-      data?.criteria.coursesIds.length > 0
+      data?.criteria.courseNames &&
+      data?.criteria.courseNames.length > 0
     ) {
-      const invalidIds = await getInvalidIds('courses', data?.criteria.coursesIds);
+      const invalidIds = await getInvalidNames('courses', data?.criteria.courseNames);
 
       if (invalidIds.length > 0) {
         return NextResponse.json(
@@ -82,10 +82,10 @@ export async function POST(request: Request) {
       for (const condition of data.criteria.conditions) {
         if (
           (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
-          condition.coursesIds &&
-          condition.coursesIds.length > 0
+          condition.courseNames &&
+          condition.courseNames.length > 0
         ) {
-          const invalidIds = await getInvalidIds('courses', condition.coursesIds);
+          const invalidIds = await getInvalidNames('courses', condition.courseNames);
 
           if (invalidIds.length > 0) {
             return NextResponse.json(
@@ -209,10 +209,10 @@ export async function PATCH(request: Request) {
 
     if (
       (data?.criteria?.type === 'COURSE_COMPLETION' || data?.criteria?.type === 'COURSE_REGISTRATION') &&
-      data?.criteria.coursesIds &&
-      data?.criteria.coursesIds.length > 0
+      data?.criteria.courseNames &&
+      data?.criteria.courseNames.length > 0
     ) {
-      const invalidIds = await getInvalidIds('courses', data?.criteria.coursesIds);
+      const invalidIds = await getInvalidNames('courses', data?.criteria.courseNames);
 
       if (invalidIds.length > 0) {
         return NextResponse.json(
@@ -229,10 +229,10 @@ export async function PATCH(request: Request) {
       for (const condition of data.criteria.conditions) {
         if (
           (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
-          condition.coursesIds &&
-          condition.coursesIds.length > 0
+          condition.courseNames &&
+          condition.courseNames.length > 0
         ) {
-          const invalidIds = await getInvalidIds('courses', condition.coursesIds);
+          const invalidIds = await getInvalidNames('courses', condition.courseNames);
 
           if (invalidIds.length > 0) {
             return NextResponse.json(

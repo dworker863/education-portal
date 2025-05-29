@@ -334,7 +334,7 @@ const SubscriptionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name="rewardType"
+          name={`${prefix}.tier`}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-md">Вид подписки</FormLabel>
@@ -380,7 +380,7 @@ const SubscriptionFilters = ({
       <div className="mb-10">
         <FormField
           control={form.control}
-          name={`${prefix}.tier`}
+          name={`${prefix}.duration`}
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-md">Вид подписки</FormLabel>
@@ -822,6 +822,57 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
               !Array.isArray(achievement.criteria) &&
               typeof achievement.criteria?.requiredRank === 'string' &&
               filter.requiredRank?.includes(achievement.criteria?.requiredRank)
+            );
+          }),
+        );
+      }
+    }
+
+    if (values.criteriaType?.includes('SUBSCRIPTION')) {
+      if (values.criteriaTypeFilters?.some((filter) => 'tier' in filter && filter.tier && filter.tier.length > 0)) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'tier' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.tier === 'string' &&
+              filter.tier?.includes(achievement.criteria?.tier)
+            );
+          }),
+        );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'duration' in filter && filter.duration && filter.duration.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'duration' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.duration === 'string' &&
+              filter.duration?.includes(achievement.criteria?.duration)
+            );
+          }),
+        );
+      }
+
+      if (values.criteriaTypeFilters?.some((filter) => 'firstTimeOnly' in filter && filter.firstTimeOnly)) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'firstTimeOnly' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.firstTimeOnly === 'boolean' &&
+              filter.firstTimeOnly === achievement.criteria?.firstTimeOnly
             );
           }),
         );

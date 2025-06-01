@@ -458,7 +458,7 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
                     <FormControl>
                       <RadioGroupItem
                         className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="AND"
+                        value="OR"
                       />
                     </FormControl>
                     <FormLabel className="font-normal">Или</FormLabel>
@@ -467,7 +467,7 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
                     <FormControl>
                       <RadioGroupItem
                         className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="OR"
+                        value="AND"
                       />
                     </FormControl>
                     <FormLabel className="font-normal">И</FormLabel>
@@ -603,7 +603,13 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   });
 
   const addTypeFilter = (
-    type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'PARTICIPATION_LIMIT' | 'SUBSCRIPTION',
+    type:
+      | 'EXERCISE_COMPLETION'
+      | 'COURSE_COMPLETION'
+      | 'COURSE_REGISTRATION'
+      | 'PARTICIPATION_LIMIT'
+      | 'SUBSCRIPTION'
+      | 'COMBINATION',
   ) => {
     switch (type) {
       case 'EXERCISE_COMPLETION':
@@ -628,6 +634,16 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           tier: undefined,
           duration: undefined,
           firstTimeOnly: undefined,
+        });
+        break;
+
+      case 'COMBINATION':
+        appendCriteriaTypeFilter({
+          type: 'COMBINATION',
+          operator: undefined,
+          types: [],
+          // conditions: [],
+          requiredRank: [],
         });
         break;
 
@@ -905,6 +921,24 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       }
     }
 
+    if (values.criteriaType?.includes('COMBINATION')) {
+      if (values.criteriaTypeFilters?.some((filter) => 'operator' in filter && filter.operator)) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            console.log('COMBINATION FILTER: ', 'operator' in filter && filter.operator);
+
+            return (
+              'operator' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.operator === 'string' &&
+              filter.operator?.includes(achievement.criteria?.operator)
+            );
+          }),
+        );
+      }
+    }
+
     console.log('AFTER TYPE: ', result);
 
     if (result) {
@@ -1004,10 +1038,10 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                 setMonthes={setMonthes}
               />
             )}
+            {field.type === 'COMBINATION' && <CombinationFilters form={form} prefix={`criteriaTypeFilters.${index}`} />}
           </div>
         ))}
 
-        {criteriaType?.includes('COMBINATION') && <CombinationFilters form={form} prefix="criteriaTypeFilters" />}
         {criteriaType?.includes('COMBINATION') &&
           criteriaTypeFilters?.map((filter, index) => {
             if ('operator' in filter) {

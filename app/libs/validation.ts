@@ -363,20 +363,30 @@ const subscriptionFiltersSchema = z.object({
 
 const combinationFiltersSchema = z.object({
   type: z.literal('COMBINATION'),
-  operator: z.enum(['AND', 'OR']),
-  types: z.array(
-    z.enum(['EXERCISE_COMPLETION', 'COURSE_COMPLETION', 'COURSE_REGISTRATION', 'PARTICIPATION_LIMIT', 'SUBSCRIPTION']),
-  ),
-  conditions: z.array(
-    z.discriminatedUnion('type', [
-      exerciseCompletionSchema,
-      courseCompletionSchema,
-      courseRegistrationSchema,
-      participationLimitSchema,
-      subscriptionSchema,
-    ]),
-  ),
-  requiredRank: z.string().optional(),
+  operator: z.enum(['AND', 'OR']).optional(),
+  types: z
+    .array(
+      z.enum([
+        'EXERCISE_COMPLETION',
+        'COURSE_COMPLETION',
+        'COURSE_REGISTRATION',
+        'PARTICIPATION_LIMIT',
+        'SUBSCRIPTION',
+      ]),
+    )
+    .optional(),
+  // conditions: z
+  //   .array(
+  //     z.discriminatedUnion('type', [
+  //       exerciseCompletionSchema,
+  //       courseCompletionSchema,
+  //       courseRegistrationSchema,
+  //       participationLimitSchema,
+  //       subscriptionSchema,
+  //     ]),
+  //   )
+  //   .optional(),
+  requiredRank: z.array(z.string()).optional(),
 });
 
 export const achievementsFiltersSchema = z.object({

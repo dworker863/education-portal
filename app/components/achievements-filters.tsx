@@ -642,7 +642,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           type: 'COMBINATION',
           operator: undefined,
           types: [],
-          // conditions: [],
+          conditions: [],
           requiredRank: [],
         });
         break;
@@ -925,8 +925,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       if (values.criteriaTypeFilters?.some((filter) => 'operator' in filter && filter.operator)) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            console.log('COMBINATION FILTER: ', 'operator' in filter && filter.operator);
-
             return (
               'operator' in filter &&
               typeof achievement.criteria === 'object' &&
@@ -936,6 +934,44 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             );
           }),
         );
+      }
+
+      if (
+        values.criteriaTypeFilters?.some(
+          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
+        )
+      ) {
+        result = (result || achievements).filter((achievement) =>
+          values.criteriaTypeFilters?.some((filter) => {
+            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
+            return (
+              'requiredRank' in filter &&
+              typeof achievement.criteria === 'object' &&
+              !Array.isArray(achievement.criteria) &&
+              typeof achievement.criteria?.requiredRank === 'string' &&
+              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
+            );
+          }),
+        );
+      }
+
+      if (values.criteriaTypeFilters?.some((filter) => 'types' in filter && filter.types && filter.types.length > 0)) {
+        result = (result || achievements).filter((achievement) => {
+          return values.criteriaTypeFilters?.some((filter) => {
+            return (
+              'types' in filter &&
+              filter.types?.some((type) => {
+                return (
+                  typeof achievement.criteria === 'object' &&
+                  !Array.isArray(achievement.criteria) &&
+                  Array.isArray(achievement.criteria?.types) &&
+                  achievement.criteria.types.includes(type)
+                );
+              })
+            );
+          });
+        });
+        // console.log('COMBINATION FILTER: ', result);
       }
     }
 

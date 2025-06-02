@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Checkbox } from './checkbox';
 import { Button } from './button';
 import RangeSlider from './range-slider';
-import { criteriaTypes, languages, ranks } from '../libs/utils/static-data';
+import { criteriaTypes, extendedCriteriaTypes, languages, ranks } from '../libs/utils/static-data';
 import { getDaysUntilDate } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCourseNames } from '../libs/server-actions/courses-actions';
@@ -642,7 +642,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           type: 'COMBINATION',
           operator: undefined,
           types: [],
-          conditions: [],
           requiredRank: [],
         });
         break;
@@ -1004,7 +1003,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                   <FormLabel className="text-base">Тип достижения</FormLabel>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                  {criteriaTypes.map((type, index) => (
+                  {extendedCriteriaTypes.map((type, index) => (
                     <FormField
                       key={type.id + index}
                       control={form.control}
@@ -1078,82 +1077,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           </div>
         ))}
 
-        {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters?.map((filter, index) => {
-            if ('operator' in filter) {
-              return (
-                filter.types?.includes('EXERCISE_COMPLETION') && (
-                  <ExerciseCompletionFilters
-                    key={index}
-                    form={form}
-                    prefix={`criteriaTypeFilters.conditions.${index}`}
-                    amount={amount}
-                    setAmount={setAmount}
-                    pointsToComplete={pointsToComplete}
-                    setPointsToComplete={setPointsToComplete}
-                  />
-                )
-              );
-            }
-            return null;
-          })}
-        {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters?.map((filter, index) => {
-            if ('operator' in filter) {
-              return (
-                (filter.types?.includes('COURSE_COMPLETION') || filter.types?.includes('COURSE_REGISTRATION')) && (
-                  <ExerciseCompletionFilters
-                    key={index}
-                    form={form}
-                    prefix={`criteriaTypeFilters.conditions.${index}`}
-                    amount={amount}
-                    setAmount={setAmount}
-                    pointsToComplete={pointsToComplete}
-                    setPointsToComplete={setPointsToComplete}
-                  />
-                )
-              );
-            }
-            return null;
-          })}
-        {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters?.map((filter, index) => {
-            if ('operator' in filter) {
-              return (
-                filter.types?.includes('PARTICIPATION_LIMIT') && (
-                  <ExerciseCompletionFilters
-                    key={index}
-                    form={form}
-                    prefix={`criteriaTypeFilters.conditions.${index}`}
-                    amount={amount}
-                    setAmount={setAmount}
-                    pointsToComplete={pointsToComplete}
-                    setPointsToComplete={setPointsToComplete}
-                  />
-                )
-              );
-            }
-            return null;
-          })}
-        {criteriaType?.includes('COMBINATION') &&
-          criteriaTypeFilters?.map((filter, index) => {
-            if ('operator' in filter) {
-              return (
-                filter.types?.includes('SUBSCRIPTION') && (
-                  <ExerciseCompletionFilters
-                    key={index}
-                    form={form}
-                    prefix={`criteriaTypeFilters.conditions.${index}`}
-                    amount={amount}
-                    setAmount={setAmount}
-                    pointsToComplete={pointsToComplete}
-                    setPointsToComplete={setPointsToComplete}
-                  />
-                )
-              );
-            }
-            return null;
-          })}
         <div className="mb-10">
           <FormField
             control={form.control}

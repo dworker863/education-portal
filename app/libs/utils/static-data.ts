@@ -19,6 +19,10 @@ export const criteriaTypes = [
     id: 'SUBSCRIPTION',
     label: 'SUBSCRIPTION',
   },
+] as const;
+
+export const extendedCriteriaTypes = [
+  ...criteriaTypes,
   {
     id: 'COMBINATION',
     label: 'COMBINATION',

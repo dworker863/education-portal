@@ -375,17 +375,6 @@ const combinationFiltersSchema = z.object({
       ]),
     )
     .optional(),
-  conditions: z
-    .array(
-      z.discriminatedUnion('type', [
-        exerciseCompletionSchema,
-        courseCompletionSchema,
-        courseRegistrationSchema,
-        participationLimitSchema,
-        subscriptionSchema,
-      ]),
-    )
-    .optional(),
   requiredRank: z.array(z.string()).optional(),
 });
 

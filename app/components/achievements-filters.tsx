@@ -596,7 +596,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   const {
     fields: criteriaTypeFiltersFields,
     append: appendCriteriaTypeFilter,
-    remove,
+    remove: removeCriteriaTypeFilter,
   } = useFieldArray({
     control: form.control,
     name: 'criteriaTypeFilters',
@@ -1018,10 +1018,20 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
                                 className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
                                 checked={values.includes(type.id)}
                                 onCheckedChange={(checked) => {
-                                  addTypeFilter(type.id);
-                                  return checked
-                                    ? field.onChange([...values, type.id])
-                                    : field.onChange(values.filter((value) => value !== type.id));
+                                  if (checked) {
+                                    // Добавляем тип в criteriaType и создаем новый фильтр
+                                    addTypeFilter(type.id);
+                                    field.onChange([...values, type.id]);
+                                  } else {
+                                    // Удаляем тип из criteriaType и соответствующий фильтр
+                                    const filterIndex = criteriaTypeFiltersFields.findIndex(
+                                      (filter) => filter.type === type.id,
+                                    );
+                                    if (filterIndex !== -1) {
+                                      removeCriteriaTypeFilter(filterIndex);
+                                    }
+                                    field.onChange(values.filter((value) => value !== type.id));
+                                  }
                                 }}
                               />
                             </FormControl>

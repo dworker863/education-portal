@@ -35,6 +35,7 @@ const CourseCompletionFilters = ({
 }) => {
   return (
     <div className="mb-10 space-y-4">
+      <h2 className="text-customSecondary text-lg">Окончание/старт курса</h2>
       <FormField
         control={form.control}
         name={`${prefix}.courseNames`}
@@ -146,6 +147,7 @@ const ExerciseCompletionFilters = ({
 }) => {
   return (
     <div className="mb-10 space-y-8">
+      <h2 className="text-customSecondary text-lg">Выполнение упражнений</h2>
       <RangeSlider
         title="Количество упражнений"
         maxValue={50}
@@ -264,6 +266,8 @@ const ParticipationLimitFilters = ({
 }) => {
   return (
     <div className="mb-10 space-y-8">
+      <h2 className="text-customSecondary text-lg">Количество участников</h2>
+
       <RangeSlider
         title="Количество призовых мест"
         maxValue={10000}
@@ -331,6 +335,8 @@ const SubscriptionFilters = ({
 }) => {
   return (
     <div className="mb-10 space-y-8">
+      <h2 className="text-customSecondary text-lg">Подписка</h2>
+
       <div className="mb-10">
         <FormField
           control={form.control}

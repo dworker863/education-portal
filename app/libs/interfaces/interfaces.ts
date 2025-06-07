@@ -137,7 +137,7 @@ export interface IAchievementCriteria {
 export type TExerciseCompletion = {
   count?: number;
   language?: string;
-  pointsToComplete?: string;
+  pointsToComplete?: number;
   requiredRank?: number;
 };
 

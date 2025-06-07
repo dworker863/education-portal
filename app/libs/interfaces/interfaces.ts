@@ -116,15 +116,7 @@ export interface IUserAchievementProgress {
 }
 
 export interface IAchievementCriteria {
-  type:
-    | 'EXERCISE_COMPLETION'
-    | 'COURSE_COMPLETION'
-    | 'COURSE_REGISTRATION'
-    | 'PARTICIPATION_LIMIT'
-    | 'SUBSCRIPTION'
-    | 'COMBINATION'
-    | 'STREAK'
-    | 'SOCIAL_ACTIVITY';
+  type: TCriteriaType;
   condition:
     | TExerciseCompletion
     | TCourseCompletion
@@ -134,14 +126,32 @@ export interface IAchievementCriteria {
     | TCombination;
 }
 
+export type IAchievementCriteriaCondition =
+  | TExerciseCompletion
+  | TCourseCompletion
+  | TCourseRegistration
+  | TParticipationLimit
+  | TSubscription
+  | TCombination;
+
+export type TCriteriaType =
+  | 'EXERCISE_COMPLETION'
+  | 'COURSE_COMPLETION'
+  | 'COURSE_REGISTRATION'
+  | 'PARTICIPATION_LIMIT'
+  | 'SUBSCRIPTION'
+  | 'COMBINATION';
+
 export type TExerciseCompletion = {
+  type: 'EXERCISE_COMPLETION';
   count?: number;
   language?: string;
   pointsToComplete?: number;
-  requiredRank?: number;
+  requiredRank?: string;
 };
 
 export type TCourseCompletion = {
+  type: 'COURSE_COMPLETION';
   courseNames?: string[];
   minPrice?: number;
   maxPrice?: number;
@@ -149,6 +159,7 @@ export type TCourseCompletion = {
 };
 
 export type TCourseRegistration = {
+  type: 'COURSE_REGISTRATION';
   courseNames?: string[];
   minPrice?: number;
   maxPrice?: number;
@@ -156,12 +167,14 @@ export type TCourseRegistration = {
 };
 
 export type TParticipationLimit = {
+  type: 'PARTICIPATION_LIMIT';
   maxParticipants: number;
   currentParticipants: number;
   requiredRank?: string;
 };
 
 export type TSubscription = {
+  type: 'SUBSCRIPTION';
   tier: 'PRO' | 'PREMIUM';
   duration: 'MONTHLY' | 'YEARLY';
   amount: number;
@@ -169,6 +182,7 @@ export type TSubscription = {
 };
 
 export type TCombination = {
+  type: 'COMBINATION';
   operator: 'AND' | 'OR';
   conditions: Array<
     TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription

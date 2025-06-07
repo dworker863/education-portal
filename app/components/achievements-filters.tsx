@@ -1,7 +1,7 @@
 'use client';
 
 import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react';
-import { IAchievement, ICoursePartial } from '../libs/interfaces/interfaces';
+import { IAchievement, ICoursePartial, TCriteriaType } from '../libs/interfaces/interfaces';
 import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
 import { useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
@@ -608,15 +608,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     name: 'criteriaTypeFilters',
   });
 
-  const addTypeFilter = (
-    type:
-      | 'EXERCISE_COMPLETION'
-      | 'COURSE_COMPLETION'
-      | 'COURSE_REGISTRATION'
-      | 'PARTICIPATION_LIMIT'
-      | 'SUBSCRIPTION'
-      | 'COMBINATION',
-  ) => {
+  const addTypeFilter = (type: TCriteriaType) => {
     switch (type) {
       case 'EXERCISE_COMPLETION':
         appendCriteriaTypeFilter({ type: 'EXERCISE_COMPLETION', languages: [], requiredRank: [] });
@@ -698,15 +690,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
           achievement.criteria &&
           typeof achievement.criteria === 'object' &&
           !Array.isArray(achievement.criteria) &&
-          values.criteriaType!.includes(
-            achievement.criteria.type as
-              | 'EXERCISE_COMPLETION'
-              | 'COURSE_COMPLETION'
-              | 'COURSE_REGISTRATION'
-              | 'PARTICIPATION_LIMIT'
-              | 'SUBSCRIPTION'
-              | 'COMBINATION',
-          ),
+          values.criteriaType!.includes(achievement.criteria.type as TCriteriaType),
       );
     }
 

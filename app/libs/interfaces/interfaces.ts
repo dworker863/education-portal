@@ -126,7 +126,7 @@ export interface IAchievementCriteria {
     | TCombination;
 }
 
-export type IAchievementCriteriaCondition =
+export type TCriteria =
   | TExerciseCompletion
   | TCourseCompletion
   | TCourseRegistration
@@ -231,6 +231,7 @@ export interface IDiscount {
 export interface IUserCourseProgress {
   id: string;
   user?: IUser;
+  userId: string;
   course?: ICourse | ICoursePartial;
   courseId: string;
   completedLessons?: ILesson[];

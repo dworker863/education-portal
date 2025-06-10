@@ -1,4 +1,4 @@
-import { IAchievementCriteriaCondition, TCriteriaType, TExerciseCompletion } from './../interfaces/interfaces';
+import { TCriteria, TCourseCompletion, TExerciseCompletion } from './../interfaces/interfaces';
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
@@ -46,63 +46,118 @@ export const getInvalidNames = async (type: 'courses' | 'exercises', names: stri
 };
 
 export const getExerciseComplitionProgress = async (userId: string, criteria: TExerciseCompletion) => {
-  const whereExercise: any = {
-    completedUsers: { some: { id: userId } },
-  };
-
-  if (criteria.requiredRank) {
-    whereExercise.completedUsers = {
-      ...whereExercise.completedUsers,
-      some: { ...whereExercise.completedUsers.some, rank: criteria.requiredRank },
+  try {
+    const whereExercise: any = {
+      completedUsers: { some: { id: userId } },
     };
+
+    if (criteria.requiredRank) {
+      whereExercise.completedUsers = {
+        ...whereExercise.completedUsers,
+        some: { ...whereExercise.completedUsers.some, rank: criteria.requiredRank },
+      };
+    }
+
+    if (criteria.language) {
+      whereExercise.language = criteria.language;
+    }
+
+    const completedExercises = await prisma.exercise.findMany({
+      where: whereExercise,
+    });
+
+    if (criteria.count) {
+      const progress = Math.floor((completedExercises.length / criteria.count) * 100);
+      return Math.min(progress, 100);
+    }
+
+    if (criteria.pointsToComplete) {
+      const earnedPoints = completedExercises.reduce((sum, exercise) => (sum += exercise.prizePoints), 0);
+      const progress = Math.floor((earnedPoints / criteria.pointsToComplete) * 100);
+      return Math.min(progress, 100);
+    }
+
+    return 0;
+  } catch (error) {
+    console.log('Ошибка при получении прогресса по достижению', error);
+
+    throw error;
   }
+};
+export const getCourseComplitionProgress = async (userId: string, criteria: TCourseCompletion) => {
+  try {
+    const whereCourse: any = {};
 
-  if (criteria.language) {
-    whereExercise.language = criteria.language;
-  }
+    if (criteria.courseNames && criteria.courseNames.length > 0) {
+      whereCourse.name = { in: criteria.courseNames };
+    }
 
-  const completedExercises = await prisma.exercise.findMany({
-    where: whereExercise,
-  });
+    if (criteria.minPrice !== undefined) {
+      whereCourse.priceUSD = { gte: criteria.minPrice };
+    }
 
-  if (criteria.count) {
-    const progress = Math.floor((completedExercises.length / criteria.count) * 100);
-    return Math.min(progress, 100);
-  }
+    if (criteria.maxPrice !== undefined) {
+      whereCourse.priceUSD = { lte: criteria.minPrice };
+    }
 
-  if (criteria.pointsToComplete) {
-    const earnedPoints = completedExercises.reduce((sum, exercise) => (sum += exercise.prizePoints), 0);
-    const progress = Math.floor((earnedPoints / criteria.pointsToComplete) * 100);
-    return Math.min(progress, 100);
+    const targetCourses = await prisma.course.findMany({
+      where: whereCourse,
+    });
+
+    if (targetCourses.length === 0) {
+      throw new Error('Курсы подходящие под данные критерии не найдены');
+    }
+
+    const completedTargetCourses = await Promise.all(
+      targetCourses.map(async (course, index) => {
+        const courseId = course.id;
+        const userCompletedCourses = await prisma.userCourseProgress.findUnique({
+          where: {
+            userId_courseId: { userId, courseId },
+          },
+          select: {
+            completedAt: true,
+          },
+        });
+
+        return userCompletedCourses;
+      }),
+    );
+
+    if (completedTargetCourses) {
+      const progress = Math.floor((completedTargetCourses.length / targetCourses.length) * 100);
+      return Math.min(progress, 100);
+    }
+
+    return 0;
+  } catch (error) {
+    console.log('Ошибка при получении прогресса по достижению', error);
+    throw error;
   }
 };
 
-export const getNewProgress = async (
-  criteriaType: TCriteriaType,
-  criteriaCondition: IAchievementCriteriaCondition,
-  userId: string,
-) => {
-  switch (criteriaType) {
+export const getNewProgress = async (criteria: TCriteria, userId: string) => {
+  switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
-      return await getExerciseComplitionProgress(userId, criteriaCondition as TExerciseCompletion);
+      return await getExerciseComplitionProgress(userId, criteria as TExerciseCompletion);
 
     case 'COURSE_COMPLETION':
-      return;
+      return await getCourseComplitionProgress(userId, criteria as TCourseCompletion);
 
     case 'COURSE_REGISTRATION':
-      return;
+      return 0;
 
     case 'PARTICIPATION_LIMIT':
-      return;
+      return 0;
 
     case 'SUBSCRIPTION':
-      return;
+      return 0;
 
     case 'COMBINATION':
-      return;
+      return 0;
 
     default:
-      const _exhaustiveCheck: never = criteriaType;
+      const _exhaustiveCheck: never = criteria;
       return _exhaustiveCheck;
   }
 };
@@ -141,8 +196,8 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
     let newProgress = 0;
 
     if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
-      const criteria = criteriaSchema.parse(achievement.criteria) as IAchievementCriteriaCondition;
-      const newProgress = await getNewProgress(criteria.type, criteria, userId);
+      const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
+      newProgress = await getNewProgress(criteria, userId);
     }
 
     const isNowComplete = newProgress >= 100 && userProgress.progress < 100;

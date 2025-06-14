@@ -14,6 +14,7 @@ export interface IUser {
   rating: number;
   rank: string;
   moneyUSD: number;
+  subsription: TSubscription | null;
   meta: JsonValue;
   completedExercises?: IExercise[];
   completedTests?: ITest[];
@@ -176,7 +177,6 @@ export type TParticipationLimit = {
 export type TSubscription = {
   type: 'SUBSCRIPTION';
   tier: 'PRO' | 'PREMIUM';
-  duration: 'MONTHLY' | 'YEARLY';
   amount: number;
   firstTimeOnly: true;
 };

@@ -127,6 +127,7 @@ export async function POST(request: Request) {
         description: data.description,
         icon: uploadIconResult as string,
         criteria: data.criteria,
+        criteriaType: data.criteria.type,
         reward: { ...data.reward, icon: uploadRewardIconResult },
         startDate: data.startDate,
         endDate: data.endDate,

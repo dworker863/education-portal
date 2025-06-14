@@ -1,4 +1,10 @@
-import { TCriteria, TCourseCompletion, TExerciseCompletion, TParticipationLimit } from './../interfaces/interfaces';
+import {
+  TCriteria,
+  TCourseCompletion,
+  TExerciseCompletion,
+  TCourseRegistration,
+  TSubscription,
+} from './../interfaces/interfaces';
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
@@ -84,6 +90,7 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
     throw error;
   }
 };
+
 export const getCourseCompletionProgress = async (userId: string, criteria: TCourseCompletion) => {
   try {
     const whereCourse: any = {};
@@ -129,6 +136,60 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
   }
 };
 
+export const getCourseRegistrationProgress = async (userId: string, criteria: TCourseRegistration) => {
+  try {
+    const whereCourse: any = {};
+
+    if (criteria.courseNames && criteria.courseNames.length > 0) {
+      whereCourse.name = { in: criteria.courseNames };
+    }
+
+    if (criteria.minPrice !== undefined) {
+      whereCourse.priceUSD = { gte: criteria.minPrice };
+    }
+
+    if (criteria.maxPrice !== undefined) {
+      whereCourse.priceUSD = { lte: criteria.minPrice };
+    }
+
+    const targetCourses = await prisma.course.findMany({
+      where: whereCourse,
+      include: {
+        usersProgress: {
+          select: { completedAt: true },
+        },
+      },
+    });
+
+    if (targetCourses.length === 0) {
+      throw new Error('Курсы подходящие под данные критерии не найдены');
+    }
+
+    const completedTargetCourses = targetCourses.filter((course, index) => {
+      return course.usersProgress.some((progress) => progress.completedAt !== null);
+    });
+
+    if (completedTargetCourses) {
+      const progress = Math.floor((completedTargetCourses.length / targetCourses.length) * 100);
+      return Math.min(progress, 100);
+    }
+
+    return 0;
+  } catch (error) {
+    console.log('Ошибка при получении прогресса по достижению', error);
+    throw error;
+  }
+};
+
+const getSubscriptionProgress = (userId: string, criteria: TSubscription) => {
+  try {
+    const whereUser: any = {};
+  } catch (error) {
+    console.log('Ошибка при получении прогресса по достижению', error);
+    throw error;
+  }
+};
+
 export const getNewProgress = async (criteria: TCriteria, userId: string) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
@@ -138,7 +199,7 @@ export const getNewProgress = async (criteria: TCriteria, userId: string) => {
       return await getCourseCompletionProgress(userId, criteria as TCourseCompletion);
 
     case 'COURSE_REGISTRATION':
-      return 0;
+      return await getCourseRegistrationProgress(userId, criteria as TCourseRegistration);
 
     case 'PARTICIPATION_LIMIT':
       return 0;

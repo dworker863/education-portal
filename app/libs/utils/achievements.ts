@@ -1,4 +1,4 @@
-import { TCriteria, TCourseCompletion, TExerciseCompletion } from './../interfaces/interfaces';
+import { TCriteria, TCourseCompletion, TExerciseCompletion, TParticipationLimit } from './../interfaces/interfaces';
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
@@ -45,7 +45,7 @@ export const getInvalidNames = async (type: 'courses' | 'exercises', names: stri
   return results.filter((result) => !result.exists).map((result) => result.name);
 };
 
-export const getExerciseComplitionProgress = async (userId: string, criteria: TExerciseCompletion) => {
+export const getExerciseCompletionProgress = async (userId: string, criteria: TExerciseCompletion) => {
   try {
     const whereExercise: any = {
       completedUsers: { some: { id: userId } },
@@ -84,7 +84,7 @@ export const getExerciseComplitionProgress = async (userId: string, criteria: TE
     throw error;
   }
 };
-export const getCourseComplitionProgress = async (userId: string, criteria: TCourseCompletion) => {
+export const getCourseCompletionProgress = async (userId: string, criteria: TCourseCompletion) => {
   try {
     const whereCourse: any = {};
 
@@ -102,27 +102,20 @@ export const getCourseComplitionProgress = async (userId: string, criteria: TCou
 
     const targetCourses = await prisma.course.findMany({
       where: whereCourse,
+      include: {
+        usersProgress: {
+          select: { completedAt: true },
+        },
+      },
     });
 
     if (targetCourses.length === 0) {
       throw new Error('Курсы подходящие под данные критерии не найдены');
     }
 
-    const completedTargetCourses = await Promise.all(
-      targetCourses.map(async (course, index) => {
-        const courseId = course.id;
-        const userCompletedCourses = await prisma.userCourseProgress.findUnique({
-          where: {
-            userId_courseId: { userId, courseId },
-          },
-          select: {
-            completedAt: true,
-          },
-        });
-
-        return userCompletedCourses;
-      }),
-    );
+    const completedTargetCourses = targetCourses.filter((course, index) => {
+      return course.usersProgress.some((progress) => progress.completedAt !== null);
+    });
 
     if (completedTargetCourses) {
       const progress = Math.floor((completedTargetCourses.length / targetCourses.length) * 100);
@@ -139,10 +132,10 @@ export const getCourseComplitionProgress = async (userId: string, criteria: TCou
 export const getNewProgress = async (criteria: TCriteria, userId: string) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
-      return await getExerciseComplitionProgress(userId, criteria as TExerciseCompletion);
+      return await getExerciseCompletionProgress(userId, criteria as TExerciseCompletion);
 
     case 'COURSE_COMPLETION':
-      return await getCourseComplitionProgress(userId, criteria as TCourseCompletion);
+      return await getCourseCompletionProgress(userId, criteria as TCourseCompletion);
 
     case 'COURSE_REGISTRATION':
       return 0;

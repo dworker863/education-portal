@@ -169,7 +169,7 @@ export type TCourseRegistration = {
 export type TParticipationLimit = {
   type: 'PARTICIPATION_LIMIT';
   maxParticipants: number;
-  currentParticipants: number;
+  achievementType: TCriteriaType;
   requiredRank?: string;
 };
 
@@ -203,6 +203,7 @@ export interface IAchievement {
   description: string;
   icon: string;
   criteria: JsonValue;
+  criteriaType: TCriteriaType;
   reward: JsonValue;
   meta: JsonValue;
   startDate: Date;

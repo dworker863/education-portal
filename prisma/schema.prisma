@@ -1,15 +1,10 @@
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
 }
 
-enum UserRole {
-  ADMIN
-  USER
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -27,16 +22,15 @@ model User {
   rank                  String                    @default("D-")
   moneyUSD              Float                     @default(0)
   meta                  Json                      @default("{}")
+  createdAt             DateTime                  @default(now())
+  updatedAt             DateTime                  @updatedAt
   accounts              Account[]
-  completedExercises    Exercise[]
-  completedTests        Test[]
-  discount              Discount[]
-  coursesProgress       UserCourseProgress[]
-  achievementsProgress  UserAchievementProgress[]
   TwoFactorConfirmation TwoFactorConfirmation?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  achievementsProgress  UserAchievementProgress[]
+  coursesProgress       UserCourseProgress[]
+  discount              Discount[]                @relation("DiscountToUser")
+  completedExercises    Exercise[]                @relation("ExerciseToUser")
+  completedTests        Test[]                    @relation("TestToUser")
 }
 
 model Account {
@@ -51,11 +45,9 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([provider, providerAccountId])
 }
@@ -100,7 +92,7 @@ model Course {
   meta          Json                 @default("{}")
   lessons       Lesson[]
   usersProgress UserCourseProgress[]
-  discounts     Discount[]
+  discounts     Discount[]           @relation("CourseToDiscount")
 }
 
 model Lesson {
@@ -110,12 +102,12 @@ model Lesson {
   images            String[]             @default([])
   video             String?
   meta              Json                 @default("{}")
-  course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId          String
   exercises         Exercise[]
+  course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   tests             Test[]
-  completedByUsers  UserCourseProgress[] @relation("CompletedLessons")
   currentInProgress UserCourseProgress?
+  completedByUsers  UserCourseProgress[] @relation("CompletedLessons")
 
   @@index([courseId])
 }
@@ -131,9 +123,9 @@ model Exercise {
   requiredRank   String  @default("D-")
   prizePoints    Int
   meta           Json    @default("{}")
-  lesson         Lesson? @relation(fields: [lessonId], references: [id])
   lessonId       String?
-  completedUsers User[]
+  lesson         Lesson? @relation(fields: [lessonId], references: [id])
+  completedUsers User[]  @relation("ExerciseToUser")
 }
 
 model Test {
@@ -146,38 +138,39 @@ model Test {
   requiredRank   String   @default("D-")
   prizePoints    Int
   meta           Json     @default("{}")
-  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
   lessonId       String?
-  completedUsers User[]
+  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
+  completedUsers User[]   @relation("TestToUser")
 }
 
 model Achievement {
   id            String                    @id @default(cuid())
   name          String
-  description   String
   icon          String
-  startDate     DateTime
-  endDate       DateTime?
-  usersProgress UserAchievementProgress[]
-  criteria      Json
-  reward        Json
   meta          Json                      @default("{}")
+  criteria      Json
+  criteriaType  String
+  endDate       DateTime?
+  reward        Json
+  startDate     DateTime
+  description   String
+  usersProgress UserAchievementProgress[]
 }
 
 model UserCourseProgress {
   id               String    @id @default(cuid())
-  user             User      @relation(fields: [userId], references: [id])
   userId           String
-  course           Course    @relation(fields: [courseId], references: [id])
   courseId         String
-  completedLessons Lesson[]  @relation("CompletedLessons")
-  currentLesson    Lesson    @relation(fields: [currentLessonId], references: [id])
   currentLessonId  String    @unique
-  progress         Float     @default(0) // 0-100%
+  progress         Float     @default(0)
   lastAccessedAt   DateTime  @default(now())
   startedAt        DateTime  @default(now())
   completedAt      DateTime?
   meta             Json      @default("{}")
+  course           Course    @relation(fields: [courseId], references: [id])
+  currentLesson    Lesson    @relation(fields: [currentLessonId], references: [id])
+  user             User      @relation(fields: [userId], references: [id])
+  completedLessons Lesson[]  @relation("CompletedLessons")
 
   @@unique([userId, courseId])
   @@index([userId, courseId])
@@ -188,15 +181,15 @@ model UserCourseProgress {
 
 model UserAchievementProgress {
   id             String      @id @default(cuid())
-  user           User        @relation(fields: [userId], references: [id])
   userId         String
-  achievement    Achievement @relation(fields: [achievementId], references: [id])
   achievementId  String
-  progress       Float       @default(0) // 0-100%
-  stepsCompleted Json        @default("{}") // Детали выполнения
+  progress       Float       @default(0)
+  stepsCompleted Json        @default("{}")
   startedAt      DateTime    @default(now())
   completedAt    DateTime?
   meta           Json        @default("{}")
+  achievement    Achievement @relation(fields: [achievementId], references: [id])
+  user           User        @relation(fields: [userId], references: [id])
 
   @@unique([userId, achievementId])
   @@index([progress])
@@ -206,12 +199,17 @@ model UserAchievementProgress {
 model Discount {
   id                  String    @id @default(cuid())
   code                String    @unique
-  user                User[]
   percent             Int
-  courses             Course[]
   minAmountToActivate Float     @default(0)
   maxAmountToActivate Float     @default(0)
   meta                Json      @default("{}")
   validFrom           DateTime  @default(now())
   validUntil          DateTime?
+  courses             Course[]  @relation("CourseToDiscount")
+  user                User[]    @relation("DiscountToUser")
+}
+
+enum UserRole {
+  ADMIN
+  USER
 }

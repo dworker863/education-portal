@@ -4,6 +4,7 @@ import {
   TExerciseCompletion,
   TCourseRegistration,
   TSubscription,
+  TCombination,
 } from './../interfaces/interfaces';
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
@@ -218,7 +219,31 @@ const getSubscriptionProgress = async (
   }
 };
 
-export const getNewProgress = async (criteria: TCriteria, userId: string) => {
+const getCombinationProgress = async (userId: string, criteria: TCombination) => {
+  try {
+    const subCriteria = criteria.conditions || [];
+    if (subCriteria.length === 0) return 100;
+
+    const results: number[] = [];
+
+    for (const sub of subCriteria) {
+      let progress = 0;
+      getNewProgress(userId, sub);
+      results.push(progress);
+    }
+
+    if (criteria.operator === 'AND') {
+      return Math.min(...results);
+    } else {
+      return Math.max(...results);
+    }
+  } catch (error) {
+    console.log('Ошибка при получении прогресса по достижению', error);
+    throw error;
+  }
+};
+
+export const getNewProgress = async (userId: string, criteria: TCriteria) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
       return await getExerciseCompletionProgress(userId, criteria as TExerciseCompletion);
@@ -236,7 +261,7 @@ export const getNewProgress = async (criteria: TCriteria, userId: string) => {
       return await getSubscriptionProgress(userId, criteria as TSubscription);
 
     case 'COMBINATION':
-      return 0;
+      return await getCombinationProgress(userId, criteria as TCombination);
 
     default:
       const _exhaustiveCheck: never = criteria;
@@ -279,7 +304,7 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
 
     if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
       const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
-      newProgress = await getNewProgress(criteria, userId);
+      newProgress = await getNewProgress(userId, criteria);
     }
 
     const isNowComplete = newProgress >= 100 && userProgress.progress < 100;

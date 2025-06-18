@@ -356,39 +356,6 @@ const SubscriptionFields = ({
       />
       <FormField
         control={form.control}
-        name={`${prefix}.duration`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Срок</FormLabel>
-            {mode === 'create' && <RequiredSign />}
-            <FormControl>
-              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem
-                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                      value="MONTHLY"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">MONTHLY</FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem
-                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                      value="YEARLY"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">YEARLY</FormLabel>
-                </FormItem>
-              </RadioGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
         name={`${prefix}.amount`}
         render={() => (
           <FormItem>
@@ -397,7 +364,7 @@ const SubscriptionFields = ({
             <FormControl>
               <Input
                 type="number"
-                placeholder="Количество"
+                placeholder="Количество месяцев"
                 {...form.register(`${prefix}.amount`, {
                   valueAsNumber: true,
                 })}
@@ -459,7 +426,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               type: 'SUBSCRIPTION',
               icon: null,
               amount: 1,
-              subscriptionType: 'DAYS',
             }
           : undefined,
     },
@@ -517,7 +483,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
         appendCondition({
           type: 'SUBSCRIPTION',
           tier: 'PRO',
-          duration: 'MONTHLY',
           amount: 0,
           firstTimeOnly: false,
         });
@@ -995,7 +960,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 name="reward.amount"
                 render={() => (
                   <FormItem>
-                    <FormLabel>Количество</FormLabel>
+                    <FormLabel>{rewardType === 'SUBSCRIPTION' ? 'Количество месяцев' : 'Количество билетов'}</FormLabel>
                     {mode === 'create' && <RequiredSign />}
                     <FormControl>
                       <Input
@@ -1011,54 +976,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   </FormItem>
                 )}
               />
-              {rewardType === 'SUBSCRIPTION' && (
-                <FormField
-                  control={form.control}
-                  name="reward.subscriptionType"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Срок</FormLabel>
-                      {mode === 'create' && <RequiredSign />}
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="DAYS"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">DAYS</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="MONTHS"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">MONTHS</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="YEARS"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">YEARS</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
             </div>
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}

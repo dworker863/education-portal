@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         criteria: data.criteria,
         criteriaType: data.criteria.type,
         reward: { ...data.reward, icon: uploadRewardIconResult },
-        startDate: data.startDate,
+        startDate: new Date(),
         endDate: data.endDate,
       },
     });
@@ -289,7 +289,7 @@ export async function PATCH(request: Request) {
 
     await prisma.achievement.update({
       where: { id: achievementId as string },
-      data: updatedData,
+      data: { ...updatedData, startDate: new Date() },
     });
 
     return NextResponse.json({ success: 'Достижение успешно обновлено' }, { status: 200 });

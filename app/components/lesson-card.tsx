@@ -35,7 +35,7 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
-  const content = lesson?.content ? DOMPurify.sanitize(lesson?.content) : '';
+  const content = lesson?.content ? DOMPurify?.sanitize(lesson?.content) : '';
   const session = useSession();
   const userId = session?.data?.user.id as string;
 
@@ -50,11 +50,10 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 
   const lessonIndex = lessons.findIndex((partialLesson) => partialLesson.name === lesson.name);
-  const nextLessonName = lessonIndex !== -1 && slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
+  // console.log('NEXT LESSON NAME: ', lessonIndex);
+  const nextLessonName = lessonIndex !== lessons.length - 1 && slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
 
   const prevLessonName = lessonIndex !== 0 && slugify(lessons[lessonIndex - 1].name, { locale: 'ru' });
-
-  console.log('NEXT LESSON NAME: ', nextLessonName);
 
   useEffect(() => {
     Prism.highlightAll();

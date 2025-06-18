@@ -236,13 +236,13 @@ const participationLimitSchema = z.object({
   maxParticipants: z
     .number({ invalid_type_error: 'Введите число' })
     .min(0, { message: 'Введите количество пользователей, на которых расчитана награда ' }),
+
   requiredRank: z.optional(z.string()),
 });
 
 const subscriptionSchema = z.object({
   type: z.literal('SUBSCRIPTION'),
   tier: z.enum(['PRO', 'PREMIUM']),
-  duration: z.enum(['MONTHLY', 'YEARLY']),
   amount: z
     .number({ invalid_type_error: 'Введите число' })
     .min(0, { message: 'Введите количество необходимых месяцев/лет подписки' }),
@@ -300,7 +300,6 @@ export const rewardSchema = z.object({
   amount: z
     .number({ invalid_type_error: 'Введите число' })
     .min(0, { message: 'Введите количество призовых билетовых со скидкой' }),
-  subscriptionType: z.enum(['DAYS', 'MONTHS', 'YEARS']),
 });
 
 export const createAchievementSchema = z.object({

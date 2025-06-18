@@ -170,7 +170,6 @@ export type TCourseRegistration = {
 export type TParticipationLimit = {
   type: 'PARTICIPATION_LIMIT';
   maxParticipants: number;
-  achievementType: TCriteriaType;
   requiredRank?: string;
 };
 
@@ -194,7 +193,6 @@ export interface IReward {
   type: 'DISCOUNT' | 'SUBSCRIPTION';
   icon: string;
   amount: number;
-  subscriptionType?: 'DAYS' | 'MONTHS' | 'YEARS';
 }
 
 export interface IAchievement {

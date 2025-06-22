@@ -9,6 +9,7 @@ import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import { useSession } from 'next-auth/react';
 import { completeExercise } from '../libs/server-actions/exercises-actions';
+import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -25,13 +26,15 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const task = exercise?.task ? DOMPurify.sanitize(exercise?.task) : '';
 
-  const checkExercise = async () => {
+  const checkExercise = async (exerciseName: string) => {
     try {
-      const response = await fetch('https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises');
+      const response = await fetch(
+        `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
+      );
       const data = await response.json();
       console.log('Полученные данные:', data);
 
-      if (data === 'Not found' || data[0].failed > 0) {
+      if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
         setIsPassed('failed');
       } else {
         console.log('EXERCISE SESSION: ', session);
@@ -39,11 +42,22 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         const { user } = await completeExercise(userId, exercise.id);
         console.log(user);
 
+        setPassedTasks([...passedTasks, exercise.id]);
+
+        const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION');
+
+        await Promise.all(
+          achievements.map((achievement) => {
+            updateAchievementProgress(achievement.id, user.id);
+          }),
+        );
+
         const result = await session.update({
           rating: user.rating || 0,
         });
+
         console.log('UPDATE RESULT: ', result);
-        setPassedTasks([...passedTasks, exercise.id]);
+
         setIsPassed('success');
       }
     } catch (error) {
@@ -82,7 +96,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
       <div className="flex gap-4">
         <Button
           variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-          onClick={() => checkExercise()}
+          onClick={async () => await checkExercise(exercise.name)}
         >
           {isPassed === 'success' && (
             <>

@@ -9,37 +9,6 @@ import {
 import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
-import { criteriaSchema } from '../validation';
-
-export const getAchievementByName = async (name: string) => {
-  try {
-    const achievement = await prisma.achievement.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    return achievement;
-  } catch (error) {
-    console.error('Ошибка при получении курса по названию: ', error);
-    throw error;
-  }
-};
-
-export const getAchievementById = async (id: string) => {
-  try {
-    const achievement = await prisma.achievement.findFirst({
-      where: {
-        id,
-      },
-    });
-
-    return achievement;
-  } catch (error) {
-    console.error('Ошибка при получении курса по ID: ', error);
-    throw error;
-  }
-};
 
 export const getInvalidNames = async (type: 'courses' | 'exercises', names: string[]) => {
   const idsCheckPromises = names.map(async (name) => {
@@ -266,59 +235,5 @@ export const getNewProgress = async (userId: string, criteria: TCriteria) => {
     default:
       const _exhaustiveCheck: never = criteria;
       return _exhaustiveCheck;
-  }
-};
-
-export const updateAchievementProgress = async (achievementId: string, userId: string) => {
-  try {
-    const achievement = await prisma.achievement.findUnique({
-      where: {
-        id: achievementId,
-      },
-    });
-
-    if (!achievement) {
-      throw new Error('Достижения с таким ID не существует');
-    }
-
-    const now = new Date();
-    if (achievement.startDate > now) return;
-    if (achievement.endDate && achievement.endDate < now) return;
-
-    let userProgress = await prisma.userAchievementProgress.findUnique({
-      where: { userId_achievementId: { userId, achievementId } },
-    });
-
-    if (!userProgress) {
-      userProgress = await prisma.userAchievementProgress.create({
-        data: {
-          userId,
-          achievementId,
-          progress: 0,
-          stepsCompleted: {},
-        },
-      });
-    }
-
-    let newProgress = 0;
-
-    if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
-      const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
-      newProgress = await getNewProgress(userId, criteria);
-    }
-
-    const isNowComplete = newProgress >= 100 && userProgress.progress < 100;
-
-    await prisma.userAchievementProgress.update({
-      where: {
-        id: userProgress.id,
-      },
-      data: {
-        progress: newProgress,
-        ...(isNowComplete && { completedAt: new Date() }),
-      },
-    });
-  } catch (error) {
-    console.error('Ошибка при получении достижения по ID: ', error);
   }
 };

@@ -107,7 +107,7 @@ export interface IUserAchievementProgress {
   id: string;
   user?: IUser;
   userId: string;
-  achievement?: IAchievement;
+  achievement?: IAchievement | IAchievementPartial;
   achievementId: string;
   progress: number;
   stepsCompleted: JsonValue;

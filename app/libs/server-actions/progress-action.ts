@@ -32,6 +32,30 @@ export const getUserCoursesProgress = async (userId: string) => {
   }
 };
 
+export const getUserAchievementsProgress = async (userId: string) => {
+  try {
+    const progress = await prisma.userAchievementProgress.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        achievement: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+
+    console.log(progress);
+
+    return progress;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const updateCourseProgress = async (userId: string, courseId: string, lessonId: string) => {
   try {
     const result = await prisma.$transaction(

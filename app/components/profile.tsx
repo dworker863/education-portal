@@ -9,8 +9,8 @@ import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
 import { Session } from 'next-auth';
-import { getUserCoursesProgress } from '../libs/server-actions/progress-action';
-import { IUserCourseProgress } from '../libs/interfaces/interfaces';
+import { getUserAchievementsProgress, getUserCoursesProgress } from '../libs/server-actions/progress-action';
+import { IUserAchievementProgress, IUserCourseProgress } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import slugify from 'slugify';
 
@@ -26,6 +26,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
 
   const [authSession, setAuthSession] = useState<Session | null>(null);
   const [userCourses, setUserCourses] = useState<IUserCourseProgress[] | null>(null);
+  const [userAchievements, setUserAchievemets] = useState<IUserAchievementProgress[] | null>(null);
 
   const user = session?.data?.user || authSession?.user;
   const completedCourses = userCourses?.filter((course) => course.completedAt);
@@ -53,7 +54,17 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       }
     };
 
+    const getUserAchievements = async () => {
+      const userAchievementsProgress = await getUserAchievementsProgress(user.id);
+      console.log('PROFILE PROGRESS: ', userAchievementsProgress);
+
+      if (userAchievementsProgress) {
+        setUserAchievemets(userAchievementsProgress);
+      }
+    };
+
     getUserCourses();
+    getUserAchievements();
   }, [user]);
 
   if (!user) {
@@ -194,6 +205,26 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 </span>
               ))}
             </p>
+          )}
+          {userAchievements && userAchievements.length > 0 && (
+            <div className="mb-2 text-sm">
+              Прогресс достижений:
+              {userAchievements.map((achievementProgress, index) => {
+                return (
+                  <div
+                    className="flex flex-col mb-4"
+                    key={achievementProgress.achievement?.name ? achievementProgress.achievement?.name + index : index}
+                  >
+                    <Link href={`/achievements/${achievementProgress.achievement?.name}`}>
+                      <span className="ml-1 text-customPrimary hover:text-customBackground ">
+                        {achievementProgress.achievement?.name && achievementProgress.achievement?.name}
+                        <span className="text-customSecondary"> ({achievementProgress.progress}% )</span>
+                      </span>
+                    </Link>
+                  </div>
+                );
+              })}
+            </div>
           )}
           <p className="mb-2 text-sm">
             Баланс: <span className="text-customPrimary">{user?.moneyUSD}</span>

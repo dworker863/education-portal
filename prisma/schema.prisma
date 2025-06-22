@@ -156,6 +156,8 @@ model Achievement {
   startDate     DateTime
   description   String
   usersProgress UserAchievementProgress[]
+
+  @@index([criteriaType])
 }
 
 model UserCourseProgress {

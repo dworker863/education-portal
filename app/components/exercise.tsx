@@ -27,11 +27,11 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
 
   const checkExercise = async () => {
     try {
-      const response = await fetch('https://67e2eeaf97fc65f535382fe2.mockapi.io/test-result');
+      const response = await fetch('https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises');
       const data = await response.json();
       console.log('Полученные данные:', data);
 
-      if (data[0].failed > 0) {
+      if (data === 'Not found' || data[0].failed > 0) {
         setIsPassed('failed');
       } else {
         console.log('EXERCISE SESSION: ', session);

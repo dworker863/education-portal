@@ -74,17 +74,24 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
     }
 
     if (criteria.maxPrice !== undefined) {
-      whereCourse.priceUSD = { lte: criteria.minPrice };
+      whereCourse.priceUSD = { lte: criteria.maxPrice };
     }
 
     const targetCourses = await prisma.course.findMany({
       where: whereCourse,
-      include: {
+      select: {
+        id: true,
+        name: true,
         usersProgress: {
-          select: { completedAt: true },
+          where: {
+            userId,
+          },
+          select: { progress: true, completedAt: true },
         },
       },
     });
+
+    console.log('TARGET COURSES: ', JSON.stringify(targetCourses));
 
     if (targetCourses.length === 0) {
       throw new Error('Курсы подходящие под данные критерии не найдены');
@@ -94,12 +101,13 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
       return course.usersProgress.some((progress) => progress.completedAt !== null);
     });
 
-    if (completedTargetCourses) {
-      const progress = Math.floor((completedTargetCourses.length / targetCourses.length) * 100);
-      return Math.min(progress, 100);
+    console.log('COMPLETED COURSES: ', completedTargetCourses);
+
+    if (completedTargetCourses.length > 0) {
+      return 100;
     }
 
-    return 0;
+    return Math.max(...targetCourses.map((course) => course.usersProgress[0].progress));
   } catch (error) {
     console.log('Ошибка при получении прогресса по достижению', error);
     throw error;

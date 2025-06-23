@@ -24,6 +24,7 @@ import { useSession } from 'next-auth/react';
 import { checkCompletedExercises } from '../libs/utils/exercises';
 import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
+import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -65,7 +66,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
     setPassedTasks(lessonCompletedExercises);
   }, [tasks, completedTasks]);
 
-  const handleCheckLesson = () => {
+  const handleCheckLesson = async () => {
     const result = checkLesson(passedTasks, tasksIds);
 
     if (!result) {
@@ -78,6 +79,14 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
         .catch((error) => {
           console.log(error);
         });
+
+      const achievements = await getAchievementByCriteriaType('COURSE_COMPLETION');
+
+      await Promise.all(
+        achievements.map((achievement) => {
+          updateAchievementProgress(achievement.id, userId);
+        }),
+      );
     }
   };
 

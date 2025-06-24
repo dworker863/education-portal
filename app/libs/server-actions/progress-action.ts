@@ -56,6 +56,36 @@ export const getUserAchievementsProgress = async (userId: string) => {
   }
 };
 
+export const createCourseProgress = async (userId: string, courseId: string) => {
+  try {
+    const course = await prisma.course.findUnique({ where: { id: courseId }, include: { lessons: true } });
+
+    if (!course) throw new Error('Курса с таким ID не существует');
+
+    if (!course.lessons || course.lessons.length === 0) {
+      throw new Error('У данного курса нет уроков');
+    }
+
+    const progress = await prisma.userCourseProgress.upsert({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId,
+        },
+      },
+      create: {
+        userId,
+        courseId,
+        progress: 0,
+        currentLessonId: course.lessons[0].id,
+      },
+      update: {},
+    });
+
+    return progress;
+  } catch (error) {}
+};
+
 export const updateCourseProgress = async (userId: string, courseId: string, lessonId: string) => {
   try {
     const result = await prisma.$transaction(

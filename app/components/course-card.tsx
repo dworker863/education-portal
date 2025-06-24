@@ -1,16 +1,35 @@
+'use client';
+
 import React, { FC } from 'react';
 import { ICourse } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import Image from 'next/image';
+import { createCourseProgress } from '../libs/server-actions/progress-action';
+import { useSession } from 'next-auth/react';
 
 type TCourseCardProps = {
   course: ICourse;
 };
 
 const CourseCard: FC<TCourseCardProps> = ({ course }) => {
+  const { data: session } = useSession();
+  const user = session?.user;
+
+  const handleClick = async () => {
+    try {
+      if (!user) {
+        throw new Error('Пользователь не аутентифицирован');
+      }
+
+      await createCourseProgress(user.id, course.id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Link href={`/courses/${course.name}`}>
-      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary">
+      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary" onClick={handleClick}>
         <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
         <div className="flex gap-10 mb-8">
           <div className="w-[300px] flex-shrink-0">

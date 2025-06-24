@@ -132,24 +132,19 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
 
     const targetCourses = await prisma.course.findMany({
       where: whereCourse,
-      include: {
+      select: {
+        id: true,
+        name: true,
         usersProgress: {
-          select: { completedAt: true },
+          where: {
+            userId,
+          },
         },
       },
     });
 
-    if (targetCourses.length === 0) {
-      throw new Error('Курсы подходящие под данные критерии не найдены');
-    }
-
-    const completedTargetCourses = targetCourses.filter((course, index) => {
-      return course.usersProgress.some((progress) => progress.completedAt !== null);
-    });
-
-    if (completedTargetCourses) {
-      const progress = Math.floor((completedTargetCourses.length / targetCourses.length) * 100);
-      return Math.min(progress, 100);
+    if (targetCourses.length !== 0) {
+      return 100;
     }
 
     return 0;

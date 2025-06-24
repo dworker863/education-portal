@@ -104,6 +104,8 @@ model Lesson {
   video             String?
   meta              Json                 @default("{}")
   courseId          String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
   exercises         Exercise[]
   course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   tests             Test[]

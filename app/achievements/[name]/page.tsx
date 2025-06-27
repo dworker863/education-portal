@@ -1,5 +1,5 @@
 import Achievement from '@/app/components/achievement';
-import { getAchievementByName } from '@/app/libs/utils/achievements';
+import { getAchievementByName } from '@/app/libs/server-actions/achievements-actions';
 import React from 'react';
 
 const AchievementPage = async ({ params }: { params: { name: string } }) => {

@@ -1,8 +1,9 @@
-import { getAchievementById, getAchievementByName, getInvalidNames } from '@/app/libs/utils/achievements';
+import { getInvalidNames } from '@/app/libs/utils/achievements';
 import { fileUpload } from '@/app/libs/utils/auth';
 import { createAchievementSchema, editAchievementSchema } from '@/app/libs/validation';
 import { NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
+import { getAchievementById, getAchievementByName } from '@/app/libs/server-actions/achievements-actions';
 
 export async function POST(request: Request) {
   try {

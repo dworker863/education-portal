@@ -201,7 +201,7 @@ export interface IAchievement {
   description: string;
   icon: string;
   criteria: JsonValue;
-  criteriaType: TCriteriaType;
+  criteriaType: string | TCriteriaType;
   reward: JsonValue;
   meta: JsonValue;
   startDate: Date;

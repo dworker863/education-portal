@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { createCourseProgress } from '../libs/server-actions/progress-action';
 import { useSession } from 'next-auth/react';
+import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -22,6 +23,14 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       }
 
       await createCourseProgress(user.id, course.id);
+
+      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
+
+      await Promise.all(
+        achievements.map((achievement) => {
+          updateAchievementProgress(achievement.id, user.id);
+        }),
+      );
     } catch (error) {
       console.log(error);
     }

@@ -24,7 +24,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
       await createCourseProgress(user.id, course.id);
 
-      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
+      const achievements = await getAchievementByCriteriaType(['COURSE_REGISTRATION', 'COMBINATION']);
 
       await Promise.all(
         achievements.map((achievement) => {

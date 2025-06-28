@@ -44,7 +44,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
 
         setPassedTasks([...passedTasks, exercise.id]);
 
-        const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION');
+        const achievements = await getAchievementByCriteriaType(['EXERCISE_COMPLETION', 'COMBINATION']);
 
         await Promise.all(
           achievements.map((achievement) => {

@@ -75,13 +75,37 @@ export const getAchievementByName = async (name: string) => {
   }
 };
 
-export const getAchievementByCriteriaType = async (criteriaType: TCriteriaType) => {
+export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[]) => {
   try {
     const achievements = await prisma.achievement.findMany({
       where: {
-        criteriaType,
+        criteriaType: { in: criteriaTypes },
       },
     });
+
+    const combinationResult = achievements.filter((achievement) => {
+      if (achievement.criteriaType === criteriaTypes[0]) {
+        return true;
+      }
+
+      if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
+        if (
+          achievement.criteriaType === 'COMBINATION' &&
+          achievement.criteria.conditions &&
+          Array.isArray(achievement.criteria.conditions)
+        ) {
+          return achievement.criteria.conditions.some(
+            (condition) =>
+              condition &&
+              typeof condition === 'object' &&
+              !Array.isArray(condition) &&
+              condition.type === criteriaTypes[0],
+          );
+        }
+      }
+    });
+
+    console.log('ACHIEVEMENT BY CRITERIA TYPE: ', achievements);
 
     return achievements;
   } catch (error) {
@@ -109,6 +133,10 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
     let userProgress = await prisma.userAchievementProgress.findUnique({
       where: { userId_achievementId: { userId, achievementId } },
     });
+
+    if (userProgress?.completedAt) {
+      throw new Error('Достижение было выполнено ранее');
+    }
 
     if (!userProgress) {
       userProgress = await prisma.userAchievementProgress.create({

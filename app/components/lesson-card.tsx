@@ -80,7 +80,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
           console.log(error);
         });
 
-      const achievements = await getAchievementByCriteriaType('COURSE_COMPLETION');
+      const achievements = await getAchievementByCriteriaType(['COURSE_COMPLETION', 'COMBINATION']);
 
       await Promise.all(
         achievements.map((achievement) => {

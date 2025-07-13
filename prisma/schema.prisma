@@ -29,7 +29,7 @@ model User {
   TwoFactorConfirmation TwoFactorConfirmation?
   achievementsProgress  UserAchievementProgress[]
   coursesProgress       UserCourseProgress[]
-  discounts             Discount[]                @relation("DiscountToUser")
+  prizeTickets          PrizeTicket[]             @relation("PrizeTicketsToUser")
   completedExercises    Exercise[]                @relation("ExerciseToUser")
   completedTests        Test[]                    @relation("TestToUser")
 
@@ -98,7 +98,7 @@ model Course {
   updatedAt     DateTime             @updatedAt
   usersProgress UserCourseProgress[]
   lessons       Lesson[]
-  discounts     Discount[]           @relation("CourseToDiscount")
+  prizeTickets  PrizeTicket[]        @relation("CourseToPrizeTickets")
 
   @@index([name])
 }
@@ -231,19 +231,21 @@ model UserAchievementProgress {
   @@index([completedAt])
 }
 
-model Discount {
-  id                  String    @id @default(cuid())
-  code                String    @unique
-  percent             Int
-  minAmountToActivate Float     @default(0) //Минимальная сумма заказа, при которой скидка может быть активирована.
-  maxAmountToActivate Float     @default(0) //Максимальная сумма заказа, при которой скидка всё ещё применима.
-  validFrom           DateTime  @default(now())
+model PrizeTicket {
+  id                  String          @id @default(cuid())
+  type                PrizeTicketType
+  code                String          @unique
+  percent             Int?
+  months              Int?
+  minAmountToActivate Float           @default(0) //Минимальная сумма заказа, при которой скидка может быть активирована.
+  maxAmountToActivate Float           @default(0) //Максимальная сумма заказа, при которой скидка всё ещё применима.
+  validFrom           DateTime        @default(now())
   validUntil          DateTime?
-  meta                Json      @default("{}")
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  courses             Course[]  @relation("CourseToDiscount")
-  users               User[]    @relation("DiscountToUser")
+  meta                Json            @default("{}")
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  courses             Course[]        @relation("CourseToPrizeTickets")
+  users               User[]          @relation("PrizeTicketsToUser")
 
   @@index([percent])
   @@index([validUntil])
@@ -252,4 +254,9 @@ model Discount {
 enum UserRole {
   ADMIN
   USER
+}
+
+enum PrizeTicketType {
+  DISCOUNT
+  SUBSCRIPTION
 }

@@ -20,7 +20,7 @@ export interface IUser {
   role: 'ADMIN' | 'USER';
   completedExercises?: (IExercise | IExercisePartial)[];
   completedTests?: (ITest | ITestPartial)[];
-  discount?: (IDiscount | IDiscountPartial)[];
+  prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
   courseProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
   achievementsProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
 }
@@ -44,7 +44,7 @@ export interface ICourse {
   updatedAt: Date;
   lessons?: (ILesson | ILessonPartial)[];
   usersProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
-  discounts?: (IDiscount | IDiscountPartial)[];
+  prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
 }
 
 export interface ICoursePartial {
@@ -260,11 +260,13 @@ export interface IReward {
   amount: number;
 }
 
-export interface IDiscount {
+export interface IPrizeTicket {
   id: string;
+  type: 'DISCOUNT' | 'SUBSCRIPTION';
   code: string;
   user?: IUser;
-  percent: number;
+  percent?: number;
+  months?: number;
   courses?: (ICourse | ICoursePartial)[];
   minAmountToActivate: number;
   maxAmountToActivate: number;
@@ -273,8 +275,10 @@ export interface IDiscount {
   validUntil: Date | null;
 }
 
-export interface IDiscountPartial {
+export interface IPrizeTicketPartial {
   id: string;
-  percent: string;
+  type: 'DISCOUNT' | 'SUBSCRIPTION';
+  percent?: string;
+  months?: number;
   validUntil: Date | null;
 }

@@ -18,13 +18,13 @@ export const getAllTests = async () => {
 
 export const addTest = async (values: z.infer<typeof createTestSchema>) => {
   try {
+    const { data, ...parsedResult } = await createTestSchema.safeParse(values);
+
     const existingTest = await getTestByName(values.name);
 
-    if (existingTest) {
+    if (existingTest && existingTest.lessonId === data?.lessonId) {
       throw new Error('Тест с таким названием уже существует');
     }
-
-    const { data, ...parsedResult } = await createTestSchema.safeParse(values);
 
     if (!parsedResult.success) {
       throw new Error(parsedResult.error?.issues[0].message);
@@ -119,7 +119,7 @@ export const editTest = async (id: string, values: z.infer<typeof editTestSchema
     if (updatedData.name) {
       const test = await getTestByName(updatedData.name);
 
-      if (test && id !== test.id) {
+      if (test && test.lessonId === data?.lessonId && id !== test.id) {
         throw Error('Тест с таким названием уже существует');
       }
     }

@@ -14,13 +14,13 @@ export async function POST(request: NextRequest) {
 
     values.images = images;
 
+    const { data, ...parsedResult } = createLessonSchema.safeParse(values);
+
     const existingLesson = await getLessonByName(values.name as string);
 
-    if (existingLesson) {
+    if (existingLesson && existingLesson.courseId === data?.courseId) {
       return NextResponse.json({ error: 'Урок с таким названием уже существует' }, { status: 409 });
     }
-
-    const { data, ...parsedResult } = createLessonSchema.safeParse(values);
 
     if (!parsedResult.success) {
       return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
@@ -124,7 +124,7 @@ export async function PATCH(request: NextRequest) {
     if (updatedData.name) {
       const lesson = await getLessonByName(updatedData.name);
 
-      if (lesson && lessonId !== lesson.id) {
+      if (lesson && lesson.courseId === data?.courseId && lessonId !== lesson.id) {
         return NextResponse.json({ error: 'Урок с таким названием уже существует' }, { status: 409 });
       }
     }

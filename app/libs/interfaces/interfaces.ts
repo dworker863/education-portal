@@ -16,6 +16,8 @@ export interface IUser {
   moneyUSD: number;
   subsription: TSubscription | null;
   meta: JsonValue;
+  createdAt: Date;
+  updatedAt: Date;
   completedExercises?: IExercise[];
   completedTests?: ITest[];
   discount?: IDiscount[];

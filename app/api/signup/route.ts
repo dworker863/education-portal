@@ -7,11 +7,8 @@ import { generateVerificationToken } from '@/app/libs/utils/tokens';
 import { sendVerificationEmail } from '@/app/libs/utils/mail';
 
 export async function POST(request: NextRequest) {
-  console.log(1);
-
   try {
     const formData = await request.formData();
-    console.log(formData);
 
     const values = Object.fromEntries(formData.entries());
 
@@ -19,8 +16,6 @@ export async function POST(request: NextRequest) {
       ...values,
       birthDate: values.birthDate ? new Date(values.birthDate as string) : undefined,
     };
-
-    console.log(values);
 
     const existingUser = await getUserByEmail(values.email as string);
 

@@ -72,10 +72,7 @@ export const getResetPasswordTokenByEmail = async (email: string) => {
 
     return resetPasswordToken;
   } catch (error) {
-    console.error(
-      'Ошибка при получении resetPassword-токена по email: ',
-      error,
-    );
+    console.error('Ошибка при получении resetPassword-токена по email: ', error);
     throw error;
   }
 };

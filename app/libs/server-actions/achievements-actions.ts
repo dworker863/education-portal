@@ -109,7 +109,7 @@ export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[
 
     return achievements;
   } catch (error) {
-    console.error('Ошибка при получении достижения по тпу критерия: ', error);
+    console.error('Ошибка при получении достижения по типу критерия: ', error);
     throw error;
   }
 };

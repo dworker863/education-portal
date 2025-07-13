@@ -53,20 +53,15 @@ export const fileUpload = async (file: File) => {
 
 export const getTwoFactorConfirmationByUserId = async (userId: string) => {
   try {
-    const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique(
-      {
-        where: {
-          userId,
-        },
+    const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique({
+      where: {
+        userId,
       },
-    );
+    });
 
     return twoFactorConfirmation;
   } catch (error) {
-    console.error(
-      'Ошибка при получении twoFactor-подтверждения файла: ',
-      error,
-    );
+    console.error('Ошибка при получении twoFactor-подтверждения файла: ', error);
     throw error;
   }
 };
@@ -79,10 +74,7 @@ export const checkCredentials = async (email: string, password: string) => {
       throw new Error('Неверные имя пользователя или пароль');
     }
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      existingUser.password!,
-    );
+    const passwordMatch = await bcrypt.compare(password, existingUser.password!);
 
     if (!passwordMatch) {
       throw new Error('Неверные имя пользователя или пароль');

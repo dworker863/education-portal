@@ -11,7 +11,6 @@ import Exercises from './exercises';
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import { getAllExercises } from '../libs/server-actions/exercises-actions';
 import { getAllAchievements } from '../libs/server-actions/achievements-actions';
-import AchievementForm from './achievement-form';
 
 const Sidebar = () => {
   const [exercises, setExercises] = useState<IExercise[] | null>(null);

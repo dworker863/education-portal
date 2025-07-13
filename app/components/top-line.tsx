@@ -22,7 +22,7 @@ const TopLine = () => {
 
   return (
     <div className="flex justify-between py-5">
-      <div className="flex-1 flex justify-start gap-5">Right</div>
+      <div className="flex-1 flex justify-start gap-5">Left</div>
       <div className="flex-1 flex justify-end gap-5">
         {session?.user ? (
           <>

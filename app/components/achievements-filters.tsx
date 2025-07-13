@@ -594,8 +594,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
     resolver: zodResolver(achievementsFiltersSchema),
     defaultValues: {
       criteriaType: [],
-      rewardType: undefined,
       criteriaTypeFilters: [],
+      rewardType: undefined,
     },
   });
 

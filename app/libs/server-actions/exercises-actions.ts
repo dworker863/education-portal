@@ -17,13 +17,13 @@ export const getAllExercises = async () => {
 
 export const addExercise = async (values: z.infer<typeof createExerciseSchema>) => {
   try {
+    const { data, ...parsedResult } = await createExerciseSchema.safeParse(values);
+
     const existingExercise = await getExerciseByName(values.name);
 
-    if (existingExercise) {
+    if (existingExercise && existingExercise.language === data?.language) {
       throw new Error('Упражнение с таким названием уже существует');
     }
-
-    const { data, ...parsedResult } = await createExerciseSchema.safeParse(values);
 
     if (!parsedResult.success) {
       throw new Error(parsedResult.error?.issues[0].message);
@@ -99,7 +99,7 @@ export const editExercise = async (id: string, values: z.infer<typeof editExerci
     if (updatedData.name) {
       const exercise = await getExerciseByName(updatedData.name);
 
-      if (exercise && id !== exercise.id) {
+      if (exercise && exercise.language === data?.language && id !== exercise.id) {
         throw Error('Упражнение с таким названием уже существует');
       }
     }

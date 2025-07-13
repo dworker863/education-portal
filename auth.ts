@@ -29,6 +29,8 @@ declare module 'next-auth' {
       rank: string;
       moneyUSD: number;
       meta: JsonValue;
+      createdAt: Date;
+      updatedAt: Date;
       completedExercises?: IExercise[];
       completedTests?: ITest[];
       discount?: IDiscount[];

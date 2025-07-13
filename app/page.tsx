@@ -1,4 +1,3 @@
-import { auth } from '@/auth';
 import Courses from './components/courses';
 import { getAllCourses } from './libs/server-actions/courses-actions';
 

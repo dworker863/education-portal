@@ -14,7 +14,6 @@ model User {
   password              String?
   emailVerified         DateTime?
   image                 String?
-  role                  UserRole                  @default(USER)
   firstName             String?
   lastName              String?
   birthDate             DateTime?
@@ -25,13 +24,17 @@ model User {
   meta                  Json                      @default("{}")
   createdAt             DateTime                  @default(now())
   updatedAt             DateTime                  @updatedAt
+  role                  UserRole                  @default(USER)
   accounts              Account[]
   TwoFactorConfirmation TwoFactorConfirmation?
   achievementsProgress  UserAchievementProgress[]
   coursesProgress       UserCourseProgress[]
-  discount              Discount[]                @relation("DiscountToUser")
+  discounts             Discount[]                @relation("DiscountToUser")
   completedExercises    Exercise[]                @relation("ExerciseToUser")
   completedTests        Test[]                    @relation("TestToUser")
+
+  @@index([rating])
+  @@index([name])
 }
 
 model Account {
@@ -84,7 +87,7 @@ model TwoFactorConfirmation {
 
 model Course {
   id            String               @id @default(cuid())
-  name          String
+  name          String               @unique
   description   String
   icon          String
   priceUSD      Float
@@ -93,9 +96,35 @@ model Course {
   meta          Json                 @default("{}")
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
-  lessons       Lesson[]
   usersProgress UserCourseProgress[]
+  lessons       Lesson[]
   discounts     Discount[]           @relation("CourseToDiscount")
+
+  @@index([name])
+}
+
+model UserCourseProgress {
+  id               String    @id @default(cuid())
+  progress         Float     @default(0)
+  lastAccessedAt   DateTime  @default(now())
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  meta             Json      @default("{}")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  user             User      @relation(fields: [userId], references: [id])
+  userId           String
+  course           Course    @relation(fields: [courseId], references: [id])
+  courseId         String
+  currentLesson    Lesson    @relation(fields: [currentLessonId], references: [id])
+  currentLessonId  String    @unique
+  completedLessons Lesson[]  @relation("CompletedLessons")
+
+  @@unique([userId, courseId])
+  @@index([userId])
+  @@index([courseId])
+  @@index([progress])
+  @@index([completedAt])
 }
 
 model Lesson {
@@ -105,99 +134,84 @@ model Lesson {
   images            String[]             @default([])
   video             String?
   meta              Json                 @default("{}")
-  courseId          String
   createdAt         DateTime             @default(now())
   updatedAt         DateTime             @updatedAt
-  exercises         Exercise[]
   course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  courseId          String
+  exercises         Exercise[]
   tests             Test[]
   currentInProgress UserCourseProgress?
   completedByUsers  UserCourseProgress[] @relation("CompletedLessons")
 
+  @@unique([name, courseId])
+  @@index([name])
   @@index([courseId])
 }
 
 model Exercise {
-  id             String   @id @default(cuid())
-  name           String
-  task           String
-  code           String?
-  test           String
-  solution       String
-  language       String   @default("JavaScript")
-  requiredRank   String   @default("D-")
-  prizePoints    Int
-  meta           Json     @default("{}")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
-  lessonId       String?
-  completedUsers User[]   @relation("ExerciseToUser")
+  id               String   @id @default(cuid())
+  name             String
+  task             String
+  code             String?
+  test             String
+  solution         String
+  language         String   @default("JavaScript")
+  requiredRank     String   @default("D-")
+  prizePoints      Int
+  meta             Json     @default("{}")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lesson           Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId         String?
+  completedByUsers User[]   @relation("ExerciseToUser")
+
+  @@unique([name, language])
+  @@index([name])
+  @@index([lessonId])
 }
 
 model Test {
-  id             String   @id @default(cuid())
-  name           String
-  task           String
-  variants       String[]
-  solution       String
-  language       String   @default("JavaScript")
-  requiredRank   String   @default("D-")
-  prizePoints    Int
-  meta           Json     @default("{}")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  lesson         Lesson?  @relation(fields: [lessonId], references: [id])
-  lessonId       String?
-  completedUsers User[]   @relation("TestToUser")
+  id               String   @id @default(cuid())
+  name             String
+  task             String
+  variants         String[]
+  solution         String
+  language         String   @default("JavaScript")
+  requiredRank     String   @default("D-")
+  prizePoints      Int
+  meta             Json     @default("{}")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  lesson           Lesson?  @relation(fields: [lessonId], references: [id])
+  lessonId         String?
+  completedByUsers User[]   @relation("TestToUser")
+
+  @@unique([name, lessonId])
+  @@index([name])
+  @@index([lessonId])
 }
 
 model Achievement {
   id            String                    @id @default(cuid())
-  name          String
+  name          String                    @unique
   icon          String
-  meta          Json                      @default("{}")
+  description   String
   criteria      Json
   criteriaType  String
-  endDate       DateTime?
   reward        Json
   startDate     DateTime
-  description   String
+  endDate       DateTime?
+  meta          Json                      @default("{}")
   createdAt     DateTime                  @default(now())
   updatedAt     DateTime                  @updatedAt
   usersProgress UserAchievementProgress[]
 
+  @@index([name])
   @@index([criteriaType])
-}
-
-model UserCourseProgress {
-  id               String    @id @default(cuid())
-  userId           String
-  courseId         String
-  currentLessonId  String    @unique
-  progress         Float     @default(0)
-  lastAccessedAt   DateTime  @default(now())
-  startedAt        DateTime  @default(now())
-  completedAt      DateTime?
-  meta             Json      @default("{}")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-  course           Course    @relation(fields: [courseId], references: [id])
-  currentLesson    Lesson    @relation(fields: [currentLessonId], references: [id])
-  user             User      @relation(fields: [userId], references: [id])
-  completedLessons Lesson[]  @relation("CompletedLessons")
-
-  @@unique([userId, courseId])
-  @@index([userId, courseId])
-  @@index([userId])
-  @@index([courseId])
-  @@index([progress])
 }
 
 model UserAchievementProgress {
   id             String      @id @default(cuid())
-  userId         String
-  achievementId  String
   progress       Float       @default(0)
   stepsCompleted Json        @default("{}")
   startedAt      DateTime    @default(now())
@@ -205,10 +219,14 @@ model UserAchievementProgress {
   meta           Json        @default("{}")
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-  achievement    Achievement @relation(fields: [achievementId], references: [id])
   user           User        @relation(fields: [userId], references: [id])
+  userId         String
+  achievement    Achievement @relation(fields: [achievementId], references: [id])
+  achievementId  String
 
   @@unique([userId, achievementId])
+  @@index([userId])
+  @@index([achievementId])
   @@index([progress])
   @@index([completedAt])
 }
@@ -217,15 +235,17 @@ model Discount {
   id                  String    @id @default(cuid())
   code                String    @unique
   percent             Int
-  minAmountToActivate Float     @default(0)
-  maxAmountToActivate Float     @default(0)
+  minAmountToActivate Float     @default(0) //Минимальная сумма заказа, при которой скидка может быть активирована.
+  maxAmountToActivate Float     @default(0) //Максимальная сумма заказа, при которой скидка всё ещё применима.
   validFrom           DateTime  @default(now())
   validUntil          DateTime?
   meta                Json      @default("{}")
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   courses             Course[]  @relation("CourseToDiscount")
-  user                User[]    @relation("DiscountToUser")
+  users               User[]    @relation("DiscountToUser")
+
+  @@index([validUntil])
 }
 
 enum UserRole {

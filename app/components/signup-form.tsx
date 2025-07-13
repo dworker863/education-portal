@@ -33,8 +33,6 @@ const SignupForm = () => {
   const [success, setSuccess] = useState<null | string>(null);
   const [year, setYear] = useState(new Date().getFullYear());
 
-  console.log(year);
-
   const years = Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i);
 
   const form = useForm<z.infer<typeof registrationSchema>>({
@@ -52,8 +50,6 @@ const SignupForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof registrationSchema>) => {
-    console.log(values);
-
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -86,10 +82,6 @@ const SignupForm = () => {
         if (data.success) {
           setSuccess(data.success);
           setError(null);
-          setTimeout(() => {
-            context?.setIsModalOpen(false);
-            router.back();
-          }, 1500);
         }
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);

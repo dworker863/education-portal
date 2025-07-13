@@ -7,7 +7,6 @@ export interface IUser {
   password: string | null;
   emailVerified: Date | null;
   image: string | null;
-  role: 'ADMIN' | 'USER';
   firstName: string | null;
   lastName: string | null;
   birthDate: Date | null;
@@ -18,11 +17,18 @@ export interface IUser {
   meta: JsonValue;
   createdAt: Date;
   updatedAt: Date;
-  completedExercises?: IExercise[];
-  completedTests?: ITest[];
-  discount?: IDiscount[];
-  courseProgress?: IUserCourseProgress[];
-  achievementsProgress?: IUserAchievementProgress[];
+  role: 'ADMIN' | 'USER';
+  completedExercises?: (IExercise | IExercisePartial)[];
+  completedTests?: (ITest | ITestPartial)[];
+  discount?: (IDiscount | IDiscountPartial)[];
+  courseProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
+  achievementsProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
+}
+
+export interface IUserPartial {
+  id: string;
+  name: string;
+  email: string;
 }
 
 export interface ICourse {
@@ -34,14 +40,42 @@ export interface ICourse {
   certificateId: string | null;
   category: string;
   meta: JsonValue;
-  lessons?: ILesson[];
-  usersProgress?: IUserCourseProgress[];
-  discounts?: IDiscount[];
+  createdAt: Date;
+  updatedAt: Date;
+  lessons?: (ILesson | ILessonPartial)[];
+  usersProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
+  discounts?: (IDiscount | IDiscountPartial)[];
 }
 
 export interface ICoursePartial {
   id: string;
   name: string;
+}
+
+export interface IUserCourseProgress {
+  id: string;
+  completedLessons?: (ILesson | ILessonPartial)[];
+  currentLesson?: ILesson | ILessonPartial;
+  currentLessonId: string;
+  progress: number;
+  lastAccessedAt: Date;
+  startedAt: Date;
+  completedAt: Date | null;
+  meta: JsonValue;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: IUser | IUserPartial;
+  userId: string;
+  course?: ICourse | ICoursePartial;
+  courseId: string;
+}
+
+export interface IUserCourseProgressPartial {
+  id: string;
+  userId: string;
+  courseId: string;
+  progress: string;
+  completedAt?: Date | null;
 }
 
 export interface ILesson {
@@ -51,12 +85,14 @@ export interface ILesson {
   images: string | string[];
   video: string | null;
   meta: JsonValue;
-  course?: ICourse;
+  createdAt: Date;
+  updatedAt: Date;
+  course?: ICourse | ICoursePartial;
   courseId: string;
-  exercises?: IExercise[];
-  tests?: ITest[];
-  completedByUsers?: IUserCourseProgress[];
-  currentInProgress?: IUserCourseProgress | null;
+  exercises?: (IExercise | IExercisePartial)[];
+  tests?: (ITest | ITestPartial)[];
+  completedByUsers?: (IUserCourseProgress | IUserCourseProgressPartial)[];
+  currentInProgress?: IUserCourseProgress | IUserCourseProgressPartial | null;
 }
 
 export interface ILessonPartial {
@@ -75,9 +111,9 @@ export interface IExercise {
   requiredRank: string;
   prizePoints: number;
   meta: JsonValue;
-  lesson?: ILesson;
+  lesson?: ILesson | ILessonPartial;
   lessonId: string | null;
-  completedUsers?: IUser[];
+  completedUsers?: (IUser | IUserPartial)[];
 }
 
 export interface IExercisePartial {
@@ -95,12 +131,31 @@ export interface ITest {
   requiredRank: string;
   prizePoints: number;
   meta: JsonValue;
-  lesson?: ILesson | null;
+  lesson?: ILesson | ILessonPartial | null;
   lessonId: string | null;
-  completedUsers?: IUser[];
+  completedUsers?: (IUser | IUserPartial)[];
 }
 
 export interface ITestPartial {
+  id: string;
+  name: string;
+}
+
+export interface IAchievement {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  criteria: JsonValue;
+  criteriaType: string | TCriteriaType;
+  reward: JsonValue;
+  meta: JsonValue;
+  startDate: Date;
+  endDate: Date | null;
+  usersProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
+}
+
+export interface IAchievementPartial {
   id: string;
   name: string;
 }
@@ -118,6 +173,30 @@ export interface IUserAchievementProgress {
   meta: JsonValue;
 }
 
+export interface IUserAchievementProgressPartial {
+  id: string;
+  userId: string;
+  achievementId: string;
+  progress: string;
+  completedAt?: Date | null;
+}
+
+export type TCriteriaType =
+  | 'EXERCISE_COMPLETION'
+  | 'COURSE_COMPLETION'
+  | 'COURSE_REGISTRATION'
+  | 'PARTICIPATION_LIMIT'
+  | 'SUBSCRIPTION'
+  | 'COMBINATION';
+
+export type TCriteria =
+  | TExerciseCompletion
+  | TCourseCompletion
+  | TCourseRegistration
+  | TParticipationLimit
+  | TSubscription
+  | TCombination;
+
 export interface IAchievementCriteria {
   type: TCriteriaType;
   condition:
@@ -128,22 +207,6 @@ export interface IAchievementCriteria {
     | TSubscription
     | TCombination;
 }
-
-export type TCriteria =
-  | TExerciseCompletion
-  | TCourseCompletion
-  | TCourseRegistration
-  | TParticipationLimit
-  | TSubscription
-  | TCombination;
-
-export type TCriteriaType =
-  | 'EXERCISE_COMPLETION'
-  | 'COURSE_COMPLETION'
-  | 'COURSE_REGISTRATION'
-  | 'PARTICIPATION_LIMIT'
-  | 'SUBSCRIPTION'
-  | 'COMBINATION';
 
 export type TExerciseCompletion = {
   type: 'EXERCISE_COMPLETION';
@@ -197,31 +260,12 @@ export interface IReward {
   amount: number;
 }
 
-export interface IAchievement {
-  id: string;
-  name: string;
-  description: string;
-  icon: string;
-  criteria: JsonValue;
-  criteriaType: string | TCriteriaType;
-  reward: JsonValue;
-  meta: JsonValue;
-  startDate: Date;
-  endDate: Date | null;
-  usersProgress?: IUserAchievementProgress[];
-}
-
-export interface IAchievementPartial {
-  id: string;
-  name: string;
-}
-
 export interface IDiscount {
   id: string;
   code: string;
   user?: IUser;
   percent: number;
-  courses?: ICourse[];
+  courses?: (ICourse | ICoursePartial)[];
   minAmountToActivate: number;
   maxAmountToActivate: number;
   meta: JsonValue;
@@ -229,18 +273,8 @@ export interface IDiscount {
   validUntil: Date | null;
 }
 
-export interface IUserCourseProgress {
+export interface IDiscountPartial {
   id: string;
-  user?: IUser;
-  userId: string;
-  course?: ICourse | ICoursePartial;
-  courseId: string;
-  completedLessons?: ILesson[];
-  currentLesson?: ILesson | ILessonPartial;
-  currentLessonId: string;
-  progress: number;
-  lastAccessedAt: Date;
-  startedAt: Date;
-  completedAt: Date | null;
-  meta: JsonValue;
+  percent: string;
+  validUntil: Date | null;
 }

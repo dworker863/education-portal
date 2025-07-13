@@ -245,6 +245,7 @@ model Discount {
   courses             Course[]  @relation("CourseToDiscount")
   users               User[]    @relation("DiscountToUser")
 
+  @@index([percent])
   @@index([validUntil])
 }
 

@@ -3,7 +3,8 @@
 import { createExerciseSchema, editExerciseSchema } from '../validation';
 import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
-import { calculateRank, getExerciseById, getExerciseByName } from '../utils/exercises';
+import { getExerciseById, getExerciseByName } from '../utils/exercises';
+import { calculateRank } from '../utils/common';
 
 export const getAllExercises = async () => {
   try {

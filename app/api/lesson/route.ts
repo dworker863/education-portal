@@ -1,4 +1,4 @@
-import { fileUpload } from '@/app/libs/utils/auth';
+import { fileUpload } from '@/app/libs/utils/common';
 import { getLessonById, getLessonByName } from '@/app/libs/utils/lessons';
 import { createLessonSchema, editLessonSchema } from '@/app/libs/validation';
 import { prisma } from '@/prisma/prisma';

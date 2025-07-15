@@ -11,9 +11,9 @@ import { Checkbox } from './checkbox';
 import { Button } from './button';
 import RangeSlider from './range-slider';
 import { criteriaTypes, extendedCriteriaTypes, languages, ranks } from '../libs/utils/static-data';
-import { getDaysUntilDate } from '../libs/utils/filters';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCourseNames } from '../libs/server-actions/courses-actions';
+import { getDaysUntilDate } from '../libs/utils/common';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];

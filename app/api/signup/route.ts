@@ -2,9 +2,10 @@ import bcrypt from 'bcryptjs';
 import { registrationSchema } from '@/app/libs/validation';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
-import { fileUpload, getUserByEmail } from '@/app/libs/utils/auth';
+import { getUserByEmail } from '@/app/libs/utils/auth';
 import { generateVerificationToken } from '@/app/libs/utils/tokens';
 import { sendVerificationEmail } from '@/app/libs/utils/mail';
+import { fileUpload } from '@/app/libs/utils/common';
 
 export async function POST(request: NextRequest) {
   try {

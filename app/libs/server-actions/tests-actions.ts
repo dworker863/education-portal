@@ -4,7 +4,7 @@ import { createTestSchema, editTestSchema } from '../validation';
 import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
 import { getTestById, getTestByName } from '../utils/tests';
-import { calculateRank } from '../utils/exercises';
+import { calculateRank } from '../utils/common';
 
 export const addTest = async (values: z.infer<typeof createTestSchema>) => {
   try {

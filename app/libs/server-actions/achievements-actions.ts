@@ -43,21 +43,6 @@ export const deleteAchievement = async (id: string) => {
   }
 };
 
-export const getAchievementByName = async (name: string) => {
-  try {
-    const achievement = await prisma.achievement.findFirst({
-      where: {
-        name,
-      },
-    });
-
-    return achievement;
-  } catch (error) {
-    console.error('Ошибка при получении достижения по названию: ', error);
-    throw error;
-  }
-};
-
 export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[]) => {
   try {
     const achievements = await prisma.achievement.findMany({

@@ -25,7 +25,7 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '../libs/cn';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { achievementTypes } from '../libs/utils/static-data';
+import { criteriaTypes } from '../libs/utils/static-data';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';
@@ -805,7 +805,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 <FormItem>
                   <FormLabel>Тип достижения</FormLabel>
                   {mode === 'create' && <RequiredSign />}
-                  {achievementTypes.map((type, index) => (
+                  {criteriaTypes.map((type, index) => (
                     <FormField
                       key={type.id + index}
                       control={form.control}

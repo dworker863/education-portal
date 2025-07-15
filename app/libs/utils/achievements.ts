@@ -10,6 +10,23 @@ import { prisma } from '@/prisma/prisma';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
 
+export const getAchievementById = async (id: string) => {
+  try {
+    const achievement = await prisma.achievement.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!achievement) throw new Error('Достижения с таким ID не существует');
+
+    return achievement;
+  } catch (error) {
+    console.error('Ошибка при получении достижения по ID: ', error);
+    throw error;
+  }
+};
+
 export const getInvalidNames = async (type: 'courses' | 'exercises', names: string[]) => {
   const idsCheckPromises = names.map(async (name) => {
     const entity = type === 'courses' ? await getCourseByName(name) : await getExerciseByName(name);

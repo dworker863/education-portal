@@ -1,6 +1,31 @@
 import { prisma } from '@/prisma/prisma';
 import { IExercise } from '../interfaces/interfaces';
 
+export const getAllLessons = async () => {
+  try {
+    const lessons = await prisma.lesson.findMany();
+    return lessons;
+  } catch (error) {
+    console.error('Ошибка при получении уроков: ', error);
+    throw error;
+  }
+};
+
+export const getPartialLessons = async () => {
+  try {
+    const lessons = await prisma.lesson.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    });
+    return lessons;
+  } catch (error) {
+    console.error('Ошибка при получении уроков: ', error);
+    throw error;
+  }
+};
+
 export const getLessonByName = async (name: string) => {
   try {
     const lesson = await prisma.lesson.findFirst({

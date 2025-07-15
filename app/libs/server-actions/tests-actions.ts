@@ -6,16 +6,6 @@ import { prisma } from '@/prisma/prisma';
 import { getTestById, getTestByName } from '../utils/tests';
 import { calculateRank } from '../utils/exercises';
 
-export const getAllTests = async () => {
-  try {
-    const tests = await prisma.test.findMany();
-    return tests;
-  } catch (error) {
-    console.error('Ошибка при получении тестов: ', error);
-    throw error;
-  }
-};
-
 export const addTest = async (values: z.infer<typeof createTestSchema>) => {
   try {
     const { data, ...parsedResult } = await createTestSchema.safeParse(values);

@@ -3,16 +3,6 @@
 import { prisma } from '@/prisma/prisma';
 import { getCourseById } from '../utils/courses';
 
-export const getAllCourses = async () => {
-  try {
-    const courses = await prisma.course.findMany();
-    return courses;
-  } catch (error) {
-    console.error('Ошибка при получении курсов: ', error);
-    throw error;
-  }
-};
-
 export const deleteCourse = async (id: string) => {
   try {
     const course = await getCourseById(id);

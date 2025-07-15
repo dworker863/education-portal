@@ -1,8 +1,7 @@
 import ExerciseForm from '@/app/components/exercise-form';
 import LessonCard from '@/app/components/lesson-card';
 import TestForm from '@/app/components/test-form';
-import { getPartialLessons } from '@/app/libs/server-actions/lessons-actions';
-import { getLessonByName } from '@/app/libs/utils/lessons';
+import { getLessonByName, getPartialLessons } from '@/app/libs/utils/lessons';
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
 export default async function Lesson({ params }: { params: { lesson: string } }) {

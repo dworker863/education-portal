@@ -34,28 +34,30 @@ export const getVerificationTokenByToken = async (token: string) => {
 
 export const generateVerificationToken = async (email: string) => {
   try {
-    const token = uuidv4();
-    const expires = new Date(new Date().getTime() + 600 * 1000);
+    return await prisma.$transaction(async (tx) => {
+      const token = uuidv4();
+      const expires = new Date(new Date().getTime() + 600 * 1000);
 
-    const existingToken = await getVerificationTokenByEmail(email);
+      const existingToken = await getVerificationTokenByEmail(email);
 
-    if (existingToken) {
-      await prisma.verificationToken.delete({
-        where: {
-          id: existingToken.id,
+      if (existingToken) {
+        await tx.verificationToken.delete({
+          where: {
+            id: existingToken.id,
+          },
+        });
+      }
+
+      const verificationToken = await tx.verificationToken.create({
+        data: {
+          email,
+          token,
+          expires,
         },
       });
-    }
 
-    const verificationToken = await prisma.verificationToken.create({
-      data: {
-        email,
-        token,
-        expires,
-      },
+      return verificationToken;
     });
-
-    return verificationToken;
   } catch (error) {
     console.error('Ошибка при генерации email-токена: ', error);
     throw error;
@@ -94,28 +96,30 @@ export const getResetPasswordTokenByToken = async (token: string) => {
 
 export const generateResetPasswordToken = async (email: string) => {
   try {
-    const token = uuidv4();
-    const expires = new Date(new Date().getTime() + 600 * 1000);
+    return await prisma.$transaction(async (tx) => {
+      const token = uuidv4();
+      const expires = new Date(new Date().getTime() + 600 * 1000);
 
-    const existingToken = await getResetPasswordTokenByEmail(email);
+      const existingToken = await getResetPasswordTokenByEmail(email);
 
-    if (existingToken) {
-      await prisma.resetPasswordToken.delete({
-        where: {
-          id: existingToken.id,
+      if (existingToken) {
+        await tx.resetPasswordToken.delete({
+          where: {
+            id: existingToken.id,
+          },
+        });
+      }
+
+      const resetPasswordToken = await tx.resetPasswordToken.create({
+        data: {
+          email,
+          token,
+          expires,
         },
       });
-    }
 
-    const resetPasswordToken = await prisma.resetPasswordToken.create({
-      data: {
-        email,
-        token,
-        expires,
-      },
+      return resetPasswordToken;
     });
-
-    return resetPasswordToken;
   } catch (error) {
     console.log('Ошибка при генерации resetPassword-токена: ', error);
     throw error;
@@ -154,32 +158,34 @@ export const getTwoFactorTokenByToken = async (token: string) => {
 
 export const generateTwoFactorToken = async (email: string) => {
   try {
-    const token = crypto.randomInt(100_000, 1000_000).toString();
-    const expires = new Date(new Date().getTime() + 600 * 1000);
+    return await prisma.$transaction(async (tx) => {
+      const token = crypto.randomInt(100_000, 1000_000).toString();
+      const expires = new Date(new Date().getTime() + 600 * 1000);
 
-    const existingToken = await prisma.twoFactorToken.findFirst({
-      where: {
-        email,
-      },
-    });
-
-    if (existingToken) {
-      await prisma.twoFactorToken.delete({
+      const existingToken = await tx.twoFactorToken.findFirst({
         where: {
-          id: existingToken.id,
+          email,
         },
       });
-    }
 
-    const twoFactorToken = await prisma.twoFactorToken.create({
-      data: {
-        email,
-        token,
-        expires,
-      },
+      if (existingToken) {
+        await tx.twoFactorToken.delete({
+          where: {
+            id: existingToken.id,
+          },
+        });
+      }
+
+      const twoFactorToken = await tx.twoFactorToken.create({
+        data: {
+          email,
+          token,
+          expires,
+        },
+      });
+
+      return twoFactorToken;
     });
-
-    return twoFactorToken;
   } catch (error) {
     console.error('Ошибка при генерации twoFactor-токена: ', error);
     throw error;

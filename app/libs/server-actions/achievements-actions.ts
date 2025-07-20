@@ -84,58 +84,62 @@ export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[
 
 export const updateAchievementProgress = async (achievementId: string, userId: string) => {
   try {
-    const achievement = await prisma.achievement.findUnique({
-      where: {
-        id: achievementId,
-      },
-    });
-
-    if (!achievement) {
-      throw new Error('Достижения с таким ID не существует');
-    }
-
-    const now = new Date();
-    if (achievement.startDate > now) return;
-    if (achievement.endDate && achievement.endDate < now) return;
-
-    let userProgress = await prisma.userAchievementProgress.findUnique({
-      where: { userId_achievementId: { userId, achievementId } },
-    });
-
-    if (userProgress?.completedAt) {
-      throw new Error('Достижение было выполнено ранее');
-    }
-
-    if (!userProgress) {
-      userProgress = await prisma.userAchievementProgress.create({
-        data: {
-          userId,
-          achievementId,
-          progress: 0,
-          stepsCompleted: {},
+    return await prisma.$transaction(async (tx) => {
+      const achievement = await tx.achievement.findUnique({
+        where: {
+          id: achievementId,
         },
       });
-    }
 
-    let newProgress = 0;
+      if (!achievement) {
+        throw new Error('Достижения с таким ID не существует');
+      }
 
-    if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
-      const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
-      newProgress = await getNewProgress(userId, criteria);
-    }
+      const now = new Date();
+      if (achievement.startDate > now) return;
+      if (achievement.endDate && achievement.endDate < now) return;
 
-    console.log('NEW PROGRESS: ', newProgress);
+      let userProgress = await tx.userAchievementProgress.findUnique({
+        where: { userId_achievementId: { userId, achievementId } },
+      });
 
-    const isNowComplete = newProgress >= 100 && userProgress.progress < 100;
+      if (userProgress?.completedAt) {
+        throw new Error('Достижение было выполнено ранее');
+      }
 
-    await prisma.userAchievementProgress.update({
-      where: {
-        id: userProgress.id,
-      },
-      data: {
-        progress: newProgress,
-        ...(isNowComplete && { completedAt: new Date() }),
-      },
+      if (!userProgress) {
+        userProgress = await tx.userAchievementProgress.create({
+          data: {
+            userId,
+            achievementId,
+            progress: 0,
+            stepsCompleted: {},
+          },
+        });
+      }
+
+      let newProgress = 0;
+
+      if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
+        const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
+        newProgress = await getNewProgress(userId, criteria);
+      }
+
+      console.log('NEW PROGRESS: ', newProgress);
+
+      const isNowComplete = newProgress >= 100 && userProgress.progress < 100;
+
+      const progress = await tx.userAchievementProgress.update({
+        where: {
+          id: userProgress.id,
+        },
+        data: {
+          progress: newProgress,
+          ...(isNowComplete && { completedAt: new Date() }),
+        },
+      });
+
+      return { progress, success: 'Прогресс успешно обновлен' };
     });
   } catch (error) {
     console.error('Ошибка при обновлении прогресса достижения: ', error);

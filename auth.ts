@@ -8,8 +8,9 @@ import { getTwoFactorConfirmationByUserId, getUserById } from './app/libs/utils/
 import { generateVerificationToken } from './app/libs/utils/tokens';
 import { JsonValue } from '@prisma/client/runtime/library';
 import {
-  IDiscount,
   IExercise,
+  IPrizeTicket,
+  IPrizeTicketPartial,
   ITest,
   IUserAchievementProgress,
   IUserCourseProgress,
@@ -33,7 +34,7 @@ declare module 'next-auth' {
       updatedAt: Date;
       completedExercises?: IExercise[];
       completedTests?: ITest[];
-      discount?: IDiscount[];
+      prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
       courseProgress?: IUserCourseProgress[];
       achievementsProgress?: IUserAchievementProgress[];
     } & DefaultSession['user'];

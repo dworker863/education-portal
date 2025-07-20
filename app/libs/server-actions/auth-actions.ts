@@ -54,16 +54,18 @@ export const login = async (values?: z.infer<typeof loginSchema>, provider: stri
           throw new Error('Код больше не действителен');
         }
 
-        await prisma.twoFactorToken.delete({
-          where: {
-            id: twoFactorToken.id,
-          },
-        });
+        await prisma.$transaction(async (tx) => {
+          await tx.twoFactorToken.delete({
+            where: {
+              id: twoFactorToken.id,
+            },
+          });
 
-        await prisma.twoFactorConfirmation.create({
-          data: {
-            userId: existingUser.id,
-          },
+          await tx.twoFactorConfirmation.create({
+            data: {
+              userId: existingUser.id,
+            },
+          });
         });
       } else {
         const twoFactorToken = await generateTwoFactorToken(email);
@@ -128,20 +130,22 @@ export const confirmVerification = async (token: string) => {
       throw new Error('Пользователя с таким email не существует');
     }
 
-    await prisma.user.update({
-      where: {
-        id: existingUser.id,
-      },
-      data: {
-        emailVerified: new Date(),
-        email: existingToken.email,
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
+        where: {
+          id: existingUser.id,
+        },
+        data: {
+          emailVerified: new Date(),
+          email: existingToken.email,
+        },
+      });
 
-    await prisma.verificationToken.delete({
-      where: {
-        id: existingToken.id,
-      },
+      await tx.verificationToken.delete({
+        where: {
+          id: existingToken.id,
+        },
+      });
     });
 
     return { success: 'Email подтвержден' };
@@ -227,24 +231,26 @@ export const addNewPassword = async (token: string, email: string, values: z.inf
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await prisma.user.update({
-      where: {
-        email,
-      },
-      data: {
-        password: hashedPassword,
-      },
-    });
-
-    const existingToken = await getResetPasswordTokenByToken(token);
-
-    if (existingToken) {
-      await prisma.resetPasswordToken.delete({
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({
         where: {
-          id: existingToken.id,
+          email,
+        },
+        data: {
+          password: hashedPassword,
         },
       });
-    }
+
+      const existingToken = await getResetPasswordTokenByToken(token);
+
+      if (existingToken) {
+        await tx.resetPasswordToken.delete({
+          where: {
+            id: existingToken.id,
+          },
+        });
+      }
+    });
 
     return { success: 'Пароль успешно изменен' };
   } catch (error) {

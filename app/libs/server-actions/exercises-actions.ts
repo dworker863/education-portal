@@ -142,8 +142,8 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
   console.log('COMPLETE EXERCISE');
 
   try {
-    return await prisma.$transaction(async (prisma) => {
-      const existingExercise = await prisma.exercise.findUnique({
+    return await prisma.$transaction(async (tx) => {
+      const existingExercise = await tx.exercise.findUnique({
         where: {
           id: exerciseId,
         },
@@ -154,7 +154,7 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
         throw Error('Упражнения с таким ID не существует');
       }
 
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await tx.user.findUnique({
         where: {
           id: userId,
         },
@@ -179,7 +179,7 @@ export const completeExercise = async (userId: string, exerciseId: string) => {
 
       const newRank = calculateRank(newRating);
 
-      const updatedUser = await prisma.user.update({
+      const updatedUser = await tx.user.update({
         where: { id: userId },
         data: {
           rating: newRating,

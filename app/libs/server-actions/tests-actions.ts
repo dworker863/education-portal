@@ -151,8 +151,8 @@ export const completeTest = async (userId: string, testId: string) => {
   console.log('COMPLETE EXERCISE');
 
   try {
-    return await prisma.$transaction(async (prisma) => {
-      const existingTest = await prisma.test.findUnique({
+    return await prisma.$transaction(async (tx) => {
+      const existingTest = await tx.test.findUnique({
         where: {
           id: testId,
         },
@@ -163,7 +163,7 @@ export const completeTest = async (userId: string, testId: string) => {
         throw Error('Теста с таким ID не существует');
       }
 
-      const existingUser = await prisma.user.findUnique({
+      const existingUser = await tx.user.findUnique({
         where: {
           id: userId,
         },
@@ -186,7 +186,7 @@ export const completeTest = async (userId: string, testId: string) => {
 
       const newRank = calculateRank(newRating);
 
-      const updatedUser = await prisma.user.update({
+      const updatedUser = await tx.user.update({
         where: { id: userId },
         data: {
           rating: newRating,

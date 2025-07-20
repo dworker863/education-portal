@@ -27,10 +27,12 @@ const ResetPasswordForm = () => {
       resetPassword(values)
         .then((data) => {
           setError(null);
+          console.error('Ошибка при выполнении запроса:', error);
           setSuccess(data.success);
         })
         .catch((error) => {
           setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
           setError(error.message);
         });
     });

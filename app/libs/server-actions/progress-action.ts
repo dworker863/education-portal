@@ -28,7 +28,8 @@ export const getUserCoursesProgress = async (userId: string) => {
 
     return progress;
   } catch (error) {
-    console.log(error);
+    console.log('Ошибка при получчении прогресса по курсам');
+    throw error;
   }
 };
 
@@ -52,7 +53,8 @@ export const getUserAchievementsProgress = async (userId: string) => {
 
     return progress;
   } catch (error) {
-    console.log(error);
+    console.log('Ошибка при получении прогресса по достижениям');
+    throw error;
   }
 };
 
@@ -83,7 +85,10 @@ export const createCourseProgress = async (userId: string, courseId: string) => 
     });
 
     return progress;
-  } catch (error) {}
+  } catch (error) {
+    console.error('Ошибка при создании прогресса по курсу:', error);
+    throw error;
+  }
 };
 
 export const updateCourseProgress = async (userId: string, courseId: string, lessonId: string) => {
@@ -105,7 +110,7 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
           },
         });
 
-        if (alreadyCompleted) return { warning: 'Урок уже был завершен ранее' };
+        if (alreadyCompleted) return;
 
         const totalLessonsCount = await prisma.lesson.count({
           where: { courseId },
@@ -149,7 +154,7 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
 
     return { sucess: 'Прогресс успешно обновлен', result };
   } catch (error) {
-    console.error('Ошибка обновления прогресса:', error);
-    throw new Error('Не удалось обновить прогресс');
+    console.error('Ошибка при обновлении прогресса по курсу:', error);
+    throw error;
   }
 };

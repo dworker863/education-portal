@@ -56,6 +56,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
           })
           .catch((error) => {
             setSuccess(null);
+            console.error('Ошибка при выполнении запроса:', error);
             setError(error.message);
           });
       });
@@ -73,6 +74,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
           })
           .catch((error) => {
             setSuccess(null);
+            console.error('Ошибка при выполнении запроса:', error);
             setError(error.message);
           });
       });

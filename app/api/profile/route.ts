@@ -19,7 +19,7 @@ export async function PATCH(request: Request) {
     const existingUser = await getUserByEmail(email as string);
 
     if (!existingUser) {
-      return NextResponse.json({ error: 'Пользователь не найден' }, { status: 400 });
+      return NextResponse.json({ error: 'Пользователь не найден' }, { status: 404 });
     }
 
     const { data, ...parsedResult } = await editProfileSchema.safeParse(values);

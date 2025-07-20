@@ -43,11 +43,13 @@ const SigninForm = () => {
           if (!data) {
             context?.setIsModalOpen(false);
             router.back();
+            return;
           }
 
           if (data?.success) {
             setError(null);
             setSuccess(data.success);
+            return;
           }
 
           if (data?.twoFactor) {
@@ -58,6 +60,7 @@ const SigninForm = () => {
         })
         .catch((error) => {
           setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
           setError(error.message);
         });
     });

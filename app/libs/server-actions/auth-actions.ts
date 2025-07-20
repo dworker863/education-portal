@@ -90,6 +90,7 @@ export const login = async (values?: z.infer<typeof loginSchema>, provider: stri
           throw new Error('Что-то пошло не так');
       }
     }
+    console.error('Ошибка при попытки аутентификации: ', error);
     throw error;
   }
 };

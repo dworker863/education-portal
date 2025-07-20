@@ -3,7 +3,7 @@
 import { prisma } from '@/prisma/prisma';
 import { TCriteria, TCriteriaType } from '../interfaces/interfaces';
 import { criteriaSchema } from '../validation';
-import { getNewProgress } from '../utils/achievements';
+import { getNewProgress } from '../utils/progress';
 
 export const getAllAchievements = async () => {
   try {
@@ -138,6 +138,7 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
       },
     });
   } catch (error) {
-    console.error('Ошибка при получении достижения по ID: ', error);
+    console.error('Ошибка при обновлении прогресса достижения: ', error);
+    throw error;
   }
 };

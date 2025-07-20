@@ -48,7 +48,6 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
     return 0;
   } catch (error) {
     console.log('Ошибка при получении прогресса по достижению', error);
-
     throw error;
   }
 };

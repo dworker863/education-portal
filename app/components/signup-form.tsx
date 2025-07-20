@@ -84,9 +84,9 @@ const SignupForm = () => {
           setError(null);
         }
       } catch (error) {
+        setSuccess(null);
         console.error('Ошибка при выполнении запроса:', error);
         setError('Что-то пошло не так. Попробуйте снова.');
-        setSuccess(null);
       }
     });
   };

@@ -62,6 +62,7 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
           })
           .catch((error) => {
             setSuccess(null);
+            console.error('Ошибка при выполнении запроса:', error);
             setError(error.message);
           });
       });

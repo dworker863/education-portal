@@ -61,7 +61,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         setIsPassed('success');
       }
     } catch (error) {
-      console.log(error);
+      console.error('Ошибка при выполнении запроса:', error);
     }
   };
 

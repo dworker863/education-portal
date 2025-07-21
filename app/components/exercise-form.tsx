@@ -49,34 +49,35 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
   const onSubmit = (values: z.infer<typeof schema>) => {
     if (mode === 'create') {
       startTransition(async () => {
-        addExercise(values as z.infer<typeof createExerciseSchema>)
-          .then((data) => {
-            setError(null);
-            setSuccess(data.success);
-          })
-          .catch((error) => {
-            setSuccess(null);
-            console.error('Ошибка при выполнении запроса:', error);
-            setError(error.message);
-          });
+        try {
+          const response = await addExercise(values as z.infer<typeof createExerciseSchema>);
+
+          setError(null);
+          setSuccess(response.success);
+        } catch (error) {
+          setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
       });
     }
 
     if (exerciseId) {
       startTransition(async () => {
-        editExercise(exerciseId, values as z.infer<typeof editExerciseSchema>)
-          .then((data) => {
-            setError(null);
-            setSuccess(data.success);
-            setTimeout(() => {
-              router.refresh();
-            }, 1500);
-          })
-          .catch((error) => {
-            setSuccess(null);
-            console.error('Ошибка при выполнении запроса:', error);
-            setError(error.message);
-          });
+        try {
+          const response = await editExercise(exerciseId, values as z.infer<typeof editExerciseSchema>);
+
+          setError(null);
+          setSuccess(response.success);
+
+          setTimeout(() => {
+            router.refresh();
+          }, 1500);
+        } catch (error) {
+          setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
       });
     }
   };

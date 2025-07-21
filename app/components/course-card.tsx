@@ -32,7 +32,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
         }),
       );
     } catch (error) {
-      console.log(error);
+      console.error('Ошибка при выполнении запроса: ', error);
     }
   };
 

@@ -52,36 +52,39 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
 
     if (mode === 'create') {
       startTransition(async () => {
-        addTest(values as z.infer<typeof createTestSchema>)
-          .then((data) => {
-            setError(null);
-            setSuccess(data.success);
-            setTimeout(() => {
-              router.refresh();
-            }, 1500);
-          })
-          .catch((error) => {
-            setSuccess(null);
-            console.error('Ошибка при выполнении запроса:', error);
-            setError(error.message);
-          });
+        try {
+          const response = await addTest(values as z.infer<typeof createTestSchema>);
+
+          setError(null);
+          setSuccess(response.success);
+
+          setTimeout(() => {
+            router.refresh();
+          }, 1500);
+        } catch (error) {
+          setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
       });
     }
 
     if (testId) {
       startTransition(async () => {
-        editTest(testId, values as z.infer<typeof editTestSchema>)
-          .then((data) => {
-            setError(null);
-            setSuccess(data.success);
-            setTimeout(() => {
-              router.refresh();
-            }, 1500);
-          })
-          .catch((error) => {
-            setSuccess(null);
-            setError(error.message);
-          });
+        try {
+          const response = await editTest(testId, values as z.infer<typeof editTestSchema>);
+
+          setError(null);
+          setSuccess(response.success);
+
+          setTimeout(() => {
+            router.refresh();
+          }, 1500);
+        } catch (error) {
+          setSuccess(null);
+          console.error('Ошибка при выполнении запроса:', error);
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
       });
     }
   };

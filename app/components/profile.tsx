@@ -33,8 +33,12 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
 
   useEffect(() => {
     const handleReload = async () => {
-      const data = await getSession();
-      setAuthSession(data);
+      try {
+        const data = await getSession();
+        setAuthSession(data);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
     };
 
     handleReload();
@@ -46,20 +50,28 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     }
 
     const getUserCourses = async () => {
-      const userCoursesProgress = await getUserCoursesProgress(user.id);
-      console.log('PROFILE PROGRESS: ', userCoursesProgress);
+      try {
+        const userCoursesProgress = await getUserCoursesProgress(user.id);
+        console.log('PROFILE PROGRESS: ', userCoursesProgress);
 
-      if (userCoursesProgress) {
-        setUserCourses(userCoursesProgress);
+        if (userCoursesProgress) {
+          setUserCourses(userCoursesProgress);
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
       }
     };
 
     const getUserAchievements = async () => {
-      const userAchievementsProgress = await getUserAchievementsProgress(user.id);
-      console.log('PROFILE PROGRESS: ', userAchievementsProgress);
+      try {
+        const userAchievementsProgress = await getUserAchievementsProgress(user.id);
+        console.log('PROFILE PROGRESS: ', userAchievementsProgress);
 
-      if (userAchievementsProgress) {
-        setUserAchievemets(userAchievementsProgress);
+        if (userAchievementsProgress) {
+          setUserAchievemets(userAchievementsProgress);
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
       }
     };
 

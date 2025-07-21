@@ -84,9 +84,9 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
           }, 1500);
         }
       } catch (error) {
+        setSuccess(null);
         console.error('Ошибка при выполнении запроса:', error);
         setError('Что-то пошло не так. Попробуйте снова.');
-        setSuccess(null);
       }
     });
   };

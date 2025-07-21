@@ -1,6 +1,7 @@
 'use server';
 
 import { prisma } from '@/prisma/prisma';
+import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
 
 export const getUserCoursesProgress = async (userId: string) => {
   try {
@@ -152,6 +153,27 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
     });
   } catch (error) {
     console.error('Ошибка при обновлении прогресса по курсу:', error);
+    throw error;
+  }
+};
+
+export const courseRegistrationHandler = async (userId: string, courseId: string) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const courseProgress = await createCourseProgress(userId, courseId);
+
+      const achievements = await getAchievementByCriteriaType(['COURSE_REGISTRATION', 'COMBINATION']);
+
+      const progress = await Promise.all(
+        achievements.map((achievement) => {
+          updateAchievementProgress(achievement.id, userId);
+        }),
+      );
+
+      return { progress, sucess: 'Прогресс успешно обновлен' };
+    });
+  } catch (error) {
+    console.log('Ошибка при регистрации на курсе: ', error);
     throw error;
   }
 };

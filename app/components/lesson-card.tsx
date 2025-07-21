@@ -67,18 +67,17 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   }, [tasks, completedTasks]);
 
   const handleCheckLesson = async () => {
-    const result = checkLesson(passedTasks, tasksIds);
+    try {
+      const result = checkLesson(passedTasks, tasksIds);
 
-    if (!result) {
-      setIsPassed('failed');
-    } else {
-      setIsPassed('success');
-      router.push(`./${nextLessonName}`);
-      updateCourseProgress(userId, lesson.courseId, lesson.id)
-        .then((data) => {})
-        .catch((error) => {
-          console.log(error);
-        });
+      if (!result) {
+        setIsPassed('failed');
+      } else {
+        setIsPassed('success');
+        router.push(`./${nextLessonName}`);
+      }
+
+      await updateCourseProgress(userId, lesson.courseId, lesson.id);
 
       const achievements = await getAchievementByCriteriaType(['COURSE_COMPLETION', 'COMBINATION']);
 
@@ -87,6 +86,8 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
           updateAchievementProgress(achievement.id, userId);
         }),
       );
+    } catch (error) {
+      console.error('Ошибка при выполнении запроса:', error);
     }
   };
 

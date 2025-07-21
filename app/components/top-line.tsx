@@ -13,8 +13,12 @@ const TopLine = () => {
 
   useEffect(() => {
     const handleReload = async () => {
-      const data = await getSession();
-      setSession(data);
+      try {
+        const data = await getSession();
+        setSession(data);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
     };
 
     handleReload();

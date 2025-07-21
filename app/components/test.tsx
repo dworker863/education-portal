@@ -34,24 +34,28 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
   });
 
   const handleClick = async (index: number, variant: string) => {
-    const newButtonTypes = [...buttonTypes];
+    try {
+      const newButtonTypes = [...buttonTypes];
 
-    if (variant !== test.solution) {
-      newButtonTypes[index] = 'customFail';
-    } else {
-      const { user } = await completeTest(userId, test.id);
-      console.log(user);
+      if (variant !== test.solution) {
+        newButtonTypes[index] = 'customFail';
+      } else {
+        const { user } = await completeTest(userId, test.id);
+        console.log(user);
 
-      const result = await session.update({
-        rating: user.rating || 0,
-      });
+        const result = await session.update({
+          rating: user.rating || 0,
+        });
 
-      console.log('UPDATE RESULT: ', result);
-      newButtonTypes[index] = 'customSuccess';
-      setPassedTasks([...passedTasks, test.id]);
+        console.log('UPDATE RESULT: ', result);
+        newButtonTypes[index] = 'customSuccess';
+        setPassedTasks([...passedTasks, test.id]);
+      }
+
+      setButtonTypes(newButtonTypes);
+    } catch (error) {
+      console.error('Ошибка при выполнении запроса:', error);
     }
-
-    setButtonTypes(newButtonTypes);
   };
 
   return (

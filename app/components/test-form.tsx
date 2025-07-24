@@ -64,7 +64,12 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
         } catch (error) {
           setSuccess(null);
           console.error('Ошибка при выполнении запроса:', error);
-          setError('Что-то пошло не так. Попробуйте снова.');
+
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('Что-то пошло не так. Попробуйте снова.');
+          }
         }
       });
     }
@@ -83,7 +88,12 @@ const TestForm: FC<TTestFormProps> = ({ lessonId, testId, mode }) => {
         } catch (error) {
           setSuccess(null);
           console.error('Ошибка при выполнении запроса:', error);
-          setError('Что-то пошло не так. Попробуйте снова.');
+
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError('Что-то пошло не так. Попробуйте снова.');
+          }
         }
       });
     }

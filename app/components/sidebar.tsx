@@ -20,25 +20,31 @@ const Sidebar = () => {
   const [showAchievements, setShowAchievements] = useState(false);
 
   useEffect(() => {
-    getAllExercises()
-      .then((data) => {
-        setExercises(data);
-      })
-      .catch((error) => {
-        console.log('Что-то пошло не так');
-        console.log(error);
-      });
+    const handleGetExercises = async () => {
+      try {
+        const response = await getAllExercises();
+
+        setExercises(response);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
+    };
+
+    handleGetExercises();
   }, []);
 
   useEffect(() => {
-    getAllAchievements()
-      .then((data) => {
-        setAchievements(data);
-      })
-      .catch((error) => {
-        console.log('Что-то пошло не так');
-        console.log(error);
-      });
+    const handleGetExercises = async () => {
+      try {
+        const response = await getAllAchievements();
+
+        setAchievements(response);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
+    };
+
+    handleGetExercises();
   }, []);
 
   const showProfileHandler = () => {

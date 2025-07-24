@@ -14,23 +14,31 @@ export default function Page() {
   const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
-    if (token) {
-      confirmVerification(token)
-        .then((data) => {
-          if (data?.success) {
-            setError(null);
-            setSuccess(data?.success);
-            router.push('/');
-          }
-        })
-        .catch((error) => {
+    const handleConfirmVerification = async () => {
+      try {
+        if (token) {
+          const response = await confirmVerification(token);
+
+          setError(null);
+          setSuccess(response?.success);
+          router.push('/');
+        } else {
           setSuccess(null);
+          setError('Неверный токен');
+        }
+      } catch (error) {
+        setSuccess(null);
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
           setError(error.message);
-        });
-    } else {
-      setSuccess(null);
-      setError('Неверный токен');
-    }
+        } else {
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
+    };
+
+    handleConfirmVerification();
   }, [token, error, success, router]);
 
   return (

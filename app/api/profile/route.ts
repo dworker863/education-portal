@@ -1,5 +1,5 @@
+import { fileUpload } from '@/app/libs/server-actions/file-actions';
 import { getUserByEmail } from '@/app/libs/utils/auth';
-import { fileUpload } from '@/app/libs/utils/common';
 import { sendTwoFactorToken } from '@/app/libs/utils/mail';
 import { generateTwoFactorToken, getTwoFactorTokenByToken } from '@/app/libs/utils/tokens';
 import { editProfileSchema } from '@/app/libs/validation';

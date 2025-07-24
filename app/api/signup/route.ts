@@ -5,7 +5,7 @@ import { prisma } from '@/prisma/prisma';
 import { getUserByEmail } from '@/app/libs/utils/auth';
 import { generateVerificationToken } from '@/app/libs/utils/tokens';
 import { sendVerificationEmail } from '@/app/libs/utils/mail';
-import { fileUpload } from '@/app/libs/utils/common';
+import { fileUpload } from '@/app/libs/server-actions/file-actions';
 
 export async function POST(request: NextRequest) {
   try {

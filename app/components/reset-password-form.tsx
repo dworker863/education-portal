@@ -23,18 +23,22 @@ const ResetPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof resetPasswordSchema>) => {
-    startTransiton(() => {
-      resetPassword(values)
-        .then((data) => {
-          setError(null);
-          console.error('Ошибка при выполнении запроса:', error);
-          setSuccess(data.success);
-        })
-        .catch((error) => {
-          setSuccess(null);
-          console.error('Ошибка при выполнении запроса:', error);
+    startTransiton(async () => {
+      try {
+        const response = await resetPassword(values);
+
+        setError(null);
+        setSuccess(response.success);
+      } catch (error) {
+        setSuccess(null);
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
           setError(error.message);
-        });
+        } else {
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
     });
   };
 

@@ -37,32 +37,37 @@ const SigninForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    startTransiton(() => {
-      login(values)
-        .then((data) => {
-          if (!data) {
-            context?.setIsModalOpen(false);
-            router.back();
-            return;
-          }
+    startTransiton(async () => {
+      try {
+        const response = await login(values);
 
-          if (data?.success) {
-            setError(null);
-            setSuccess(data.success);
-            return;
-          }
+        if (!response) {
+          context?.setIsModalOpen(false);
+          router.back();
+          return;
+        }
 
-          if (data?.twoFactor) {
-            setError(null);
-            setTwoFactor(data.twoFactor);
-            setSuccess('Код подтверждения отправлен на email');
-          }
-        })
-        .catch((error) => {
-          setSuccess(null);
-          console.error('Ошибка при выполнении запроса:', error);
+        if (response?.success) {
+          setError(null);
+          setSuccess(response.success);
+          return;
+        }
+
+        if (response?.twoFactor) {
+          setError(null);
+          setTwoFactor(response.twoFactor);
+          setSuccess('Код подтверждения отправлен на email');
+        }
+      } catch (error) {
+        setSuccess(null);
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
           setError(error.message);
-        });
+        } else {
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
     });
   };
 

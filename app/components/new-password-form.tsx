@@ -26,15 +26,25 @@ const NewPasswordForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    confirmResetPasswordToken(token)
-      .then((data) => {
+    const handleToken = async () => {
+      try {
+        const response = await confirmResetPasswordToken(token);
+
         setTokenError(null);
-        setSuccess(data?.success);
-      })
-      .catch((error) => {
+        setSuccess(response?.success);
+      } catch (error) {
         setSuccess(null);
-        setTokenError(error.message);
-      });
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
+          setTokenError(error.message);
+        } else {
+          setTokenError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
+    };
+
+    handleToken();
   }, [token]);
 
   const form = useForm<z.infer<typeof newPasswordSchema>>({
@@ -42,7 +52,7 @@ const NewPasswordForm = () => {
   });
 
   const onSubmit = (values: z.infer<typeof newPasswordSchema>) => {
-    startTransiton(() => {
+    startTransiton(async () => {
       if (!email) {
         setSuccess(null);
         setError('Invalid email');
@@ -55,15 +65,21 @@ const NewPasswordForm = () => {
         return;
       }
 
-      addNewPassword(token, email, values)
-        .then((data) => {
-          setError(null);
-          setSuccess(data.success);
-        })
-        .catch((error) => {
-          setSuccess(null);
+      try {
+        const response = await addNewPassword(token, email, values);
+
+        setError(null);
+        setSuccess(response.success);
+      } catch (error) {
+        setSuccess(null);
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
           setError(error.message);
-        });
+        } else {
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
 
       setTimeout(() => {
         router.push('/');

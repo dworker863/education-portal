@@ -15,18 +15,24 @@ const Socials = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const onSubmit = (provider: string) => {
-    startTransiton(() => {
-      login(undefined, provider)
-        .then((data) => {
-          if (data?.success) {
-            setError(null);
-            setSuccess(data.success);
-          }
-        })
-        .catch((error) => {
-          setSuccess(null);
+    startTransiton(async () => {
+      try {
+        const resposnse = await login(undefined, provider);
+
+        if (resposnse?.success) {
+          setError(null);
+          setSuccess(resposnse.success);
+        }
+      } catch (error) {
+        setSuccess(null);
+        console.error('Ошибка при выполнении запроса:', error);
+
+        if (error instanceof Error) {
           setError(error.message);
-        });
+        } else {
+          setError('Что-то пошло не так. Попробуйте снова.');
+        }
+      }
     });
   };
 

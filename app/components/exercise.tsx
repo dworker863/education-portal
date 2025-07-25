@@ -26,7 +26,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const task = exercise?.task ? DOMPurify.sanitize(exercise?.task) : '';
 
-  const checkExercise = async (exerciseName: string) => {
+  const checkExerciseHandler = async (exerciseName: string) => {
     try {
       const response = await fetch(
         `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
@@ -96,7 +96,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
       <div className="flex gap-4">
         <Button
           variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-          onClick={async () => await checkExercise(exercise.name)}
+          onClick={async () => await checkExerciseHandler(exercise.name)}
         >
           {isPassed === 'success' && (
             <>

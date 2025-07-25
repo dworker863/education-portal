@@ -32,7 +32,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const completedCourses = userCourses?.filter((course) => course.completedAt);
 
   useEffect(() => {
-    const handleReload = async () => {
+    const loadSession = async () => {
       try {
         const data = await getSession();
         setAuthSession(data);
@@ -41,7 +41,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       }
     };
 
-    handleReload();
+    loadSession();
   }, [context]);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       return;
     }
 
-    const getUserCourses = async () => {
+    const loadUserCourses = async () => {
       try {
         const userCoursesProgress = await getUserCoursesProgress(user.id);
         console.log('PROFILE PROGRESS: ', userCoursesProgress);
@@ -62,7 +62,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       }
     };
 
-    const getUserAchievements = async () => {
+    const loadUserAchievements = async () => {
       try {
         const userAchievementsProgress = await getUserAchievementsProgress(user.id);
         console.log('PROFILE PROGRESS: ', userAchievementsProgress);
@@ -75,8 +75,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       }
     };
 
-    getUserCourses();
-    getUserAchievements();
+    loadUserCourses();
+    loadUserAchievements();
   }, [user]);
 
   if (!user) {

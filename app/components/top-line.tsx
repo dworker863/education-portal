@@ -12,7 +12,7 @@ const TopLine = () => {
   const context = useContext(ModalContext);
 
   useEffect(() => {
-    const handleReload = async () => {
+    const loadSession = async () => {
       try {
         const data = await getSession();
         setSession(data);
@@ -21,7 +21,7 @@ const TopLine = () => {
       }
     };
 
-    handleReload();
+    loadSession();
   }, [context]);
 
   return (

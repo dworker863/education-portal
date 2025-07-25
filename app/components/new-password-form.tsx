@@ -26,7 +26,7 @@ const NewPasswordForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
-    const handleToken = async () => {
+    const loadToken = async () => {
       try {
         const response = await confirmResetPasswordToken(token);
 
@@ -44,7 +44,7 @@ const NewPasswordForm = () => {
       }
     };
 
-    handleToken();
+    loadToken();
   }, [token]);
 
   const form = useForm<z.infer<typeof newPasswordSchema>>({

@@ -14,7 +14,7 @@ export default function Page() {
   const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
-    const handleConfirmVerification = async () => {
+    const loadConfirmVerification = async () => {
       try {
         if (token) {
           const response = await confirmVerification(token);
@@ -38,7 +38,7 @@ export default function Page() {
       }
     };
 
-    handleConfirmVerification();
+    loadConfirmVerification();
   }, [token, error, success, router]);
 
   return (

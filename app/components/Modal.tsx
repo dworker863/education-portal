@@ -24,7 +24,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const modalClose = () => {
+  const modalCloseHandler = () => {
     context?.setIsModalOpen(false);
     router.back();
   };
@@ -35,7 +35,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     console.log('MODAL TARGET: ', event.target);
 
     if (modalRef.current && !modalRef.current.contains(event.target as Node) && !isSelectElement && !isRoleElement) {
-      modalClose();
+      modalCloseHandler();
     }
   };
 
@@ -53,7 +53,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     <Card ref={modalRef} className="relative w-[500px] bg-primary h-min">
       <CardHeader>
         <ModalHeader label={headerLabel} type={type} />
-        <Button className="absolute right-0 top-0" variant="link" onClick={modalClose}>
+        <Button className="absolute right-0 top-0" variant="link" onClick={modalCloseHandler}>
           <IoCloseSharp className="text-customPrimary" size={24} />
         </Button>
       </CardHeader>

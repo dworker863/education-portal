@@ -33,7 +33,7 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
     Prism.highlightAll();
   });
 
-  const handleClick = async (index: number, variant: string) => {
+  const checkTestHandler = async (index: number, variant: string) => {
     try {
       const newButtonTypes = [...buttonTypes];
 
@@ -75,7 +75,7 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
             variant={buttonTypes[index]}
             key={index + variant}
             size="lg"
-            onClick={() => handleClick(index, variant)}
+            onClick={() => checkTestHandler(index, variant)}
             disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
           >
             {buttonTypes[index] === 'customFail' && <SlClose className="mr-2" size={20} />}

@@ -157,7 +157,7 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
   }
 };
 
-export const courseRegistrationHandler = async (userId: string, courseId: string) => {
+export const registerForCourse = async (userId: string, courseId: string) => {
   try {
     return await prisma.$transaction(async (tx) => {
       const courseProgress = await createCourseProgress(userId, courseId);

@@ -16,7 +16,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const { data: session } = useSession();
   const user = session?.user;
 
-  const handleClick = async () => {
+  const courseCardClickHandler = async () => {
     try {
       if (!user) {
         throw new Error('Пользователь не аутентифицирован');
@@ -38,7 +38,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
   return (
     <Link href={`/courses/${course.name}`}>
-      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary" onClick={handleClick}>
+      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary" onClick={courseCardClickHandler}>
         <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
         <div className="flex gap-10 mb-8">
           <div className="w-[300px] flex-shrink-0">

@@ -18,7 +18,7 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
   const [vm, setVm] = useState<VM | null>(null);
 
   useEffect(() => {
-    const runEmbed = async () => {
+    const loadEmbedProject = async () => {
       try {
         const vm = await sdk.embedProjectId(
           exercise.id,
@@ -34,7 +34,7 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
       }
     };
 
-    runEmbed();
+    loadEmbedProject();
 
     return () => {
       console.log('UNMOUNTED');

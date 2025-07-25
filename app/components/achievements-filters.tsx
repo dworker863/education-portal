@@ -585,7 +585,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
   useEffect(() => {
-    const handleCourseNames = async () => {
+    const loadCourseNames = async () => {
       try {
         const response = await getCourseNames();
 
@@ -595,7 +595,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
       }
     };
 
-    handleCourseNames();
+    loadCourseNames();
   }, []);
 
   const form = useForm<z.infer<typeof achievementsFiltersSchema>>({

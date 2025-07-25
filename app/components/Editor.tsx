@@ -20,7 +20,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
     const solutionPath = 'solution.js';
     const testPath = `test.js`;
 
-    const runEmbed = async () => {
+    const loadEmbedProject = async () => {
       try {
         if (isFirstLoad) {
           setTimeout(() => {
@@ -62,7 +62,7 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
       }
     };
 
-    runEmbed();
+    loadEmbedProject();
   }, [userId, mode, exercise, vm, isFirstLoad]);
   return <></>;
 };

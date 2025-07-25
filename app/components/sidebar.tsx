@@ -20,7 +20,7 @@ const Sidebar = () => {
   const [showAchievements, setShowAchievements] = useState(false);
 
   useEffect(() => {
-    const handleGetExercises = async () => {
+    const loadExercises = async () => {
       try {
         const response = await getAllExercises();
 
@@ -30,11 +30,11 @@ const Sidebar = () => {
       }
     };
 
-    handleGetExercises();
+    loadExercises();
   }, []);
 
   useEffect(() => {
-    const handleGetExercises = async () => {
+    const loadAchievements = async () => {
       try {
         const response = await getAllAchievements();
 
@@ -44,7 +44,7 @@ const Sidebar = () => {
       }
     };
 
-    handleGetExercises();
+    loadAchievements();
   }, []);
 
   const showProfileHandler = () => {

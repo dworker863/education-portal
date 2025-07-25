@@ -66,7 +66,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
     setPassedTasks(lessonCompletedExercises);
   }, [tasks, completedTasks]);
 
-  const handleCheckLesson = async () => {
+  const checkLessonHandler = async () => {
     try {
       const result = checkLesson(passedTasks, tasksIds);
 
@@ -106,7 +106,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
           {nextLessonName && (
             <Button
               variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-              onClick={() => handleCheckLesson()}
+              onClick={() => checkLessonHandler()}
             >
               {isPassed === 'success' && (
                 <>

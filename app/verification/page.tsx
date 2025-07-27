@@ -6,7 +6,7 @@ import { confirmVerification } from '@/app/libs/server-actions/auth-actions';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-export default function Page() {
+export default function VerificationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');

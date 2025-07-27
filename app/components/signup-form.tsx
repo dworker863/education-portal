@@ -31,7 +31,7 @@ const SignupForm = () => {
 
   const [error, setError] = useState<null | string>(null);
   const [success, setSuccess] = useState<null | string>(null);
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number>(new Date().getFullYear());
 
   const years = Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i);
 

@@ -1,15 +1,18 @@
+'use client';
+
+import { useContext } from 'react';
 import ExerciseForm from '../components/exercise-form';
 import Exercises from '../components/exercises';
-import { getAllExercises } from '../libs/server-actions/exercises-actions';
+import { ExercisesContext } from '../components/app-wrapper';
 
-export default async function Profile() {
-  const exercises = await getAllExercises();
+export default function ExercisesPage() {
+  const exercises = useContext(ExercisesContext);
 
   return (
     <>
       <h1 className="mb-5">Exercises</h1>
       <ExerciseForm mode="create" />
-      <Exercises mode="page" exercises={exercises} />
+      {exercises && <Exercises mode="page" exercises={exercises} />}
     </>
   );
 }

@@ -80,7 +80,7 @@ const CourseCompletionFilters = ({
         title="Цена"
         maxValue={500}
         minValueText={`Минимальная цена ${prices[0]}`}
-        maxValueText={`Минимальная цена ${prices[1]}`}
+        maxValueText={`Максимальная цена ${prices[1]}`}
         range={prices}
         setRange={setPrices}
       />
@@ -575,12 +575,12 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
 };
 
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setFilterAchievements }) => {
-  const [days, setDays] = useState([0, 30]);
-  const [prices, setPrices] = useState([0, 100]);
-  const [amount, setAmount] = useState([0, 10]);
-  const [pointsToComplete, setPointsToComplete] = useState([0, 100]);
-  const [maxParticipants, setMaxParticipants] = useState([0, 1000]);
-  const [monthes, setMonthes] = useState([0, 5]);
+  const [days, setDays] = useState<number[]>([0, 30]);
+  const [prices, setPrices] = useState<number[]>([0, 100]);
+  const [amount, setAmount] = useState<number[]>([0, 10]);
+  const [pointsToComplete, setPointsToComplete] = useState<number[]>([0, 100]);
+  const [maxParticipants, setMaxParticipants] = useState<number[]>([0, 1000]);
+  const [monthes, setMonthes] = useState<number[]>([0, 5]);
   const [courseNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 

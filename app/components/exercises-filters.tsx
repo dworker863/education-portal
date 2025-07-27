@@ -19,7 +19,7 @@ type TExercisesFiltersProps = {
 };
 
 const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, setFilterExercises }) => {
-  const [range, setRange] = useState([20, 80]);
+  const [range, setRange] = useState<number[]>([20, 80]);
   const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
 
   const form = useForm<z.infer<typeof exercisesFiltersSchema>>({
@@ -110,7 +110,14 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, setFilterExer
             )}
           />
         </div>
-        <RangeSlider title="Баллы" range={range} setRange={setRange} />
+        <RangeSlider
+          title="Баллы"
+          maxValue={200}
+          minValueText={`Минимальные баллы ${range[0]}`}
+          maxValueText={`Максимальные баллы ${range[1]}`}
+          range={range}
+          setRange={setRange}
+        />
         <Button variant="custom" className="mr-5">
           Применить
         </Button>

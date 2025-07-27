@@ -17,7 +17,7 @@ export const OverlayContext = createContext<TOverlayContext | null>(null);
 
 const Overlay: FC<TOverlayProps> = ({ children }) => {
   const context = useContext(ModalContext);
-  const [active, setActive] = useState<boolean>(context?.isModalOpen ?? false);
+  const [active, setActive] = useState(context?.isModalOpen ?? false);
 
   useEffect(() => {
     setActive(context?.isModalOpen ?? false);

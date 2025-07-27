@@ -4,7 +4,7 @@ import TestForm from '@/app/components/test-form';
 import { getLessonByName, getPartialLessons } from '@/app/libs/utils/lessons';
 import CyrillicToTranslit from 'cyrillic-to-translit-js';
 
-export default async function Lesson({ params }: { params: { lesson: string } }) {
+export default async function LessonPage({ params }: { params: { lesson: string } }) {
   // @ts-ignore
   const cyrillicToTranslit = new CyrillicToTranslit();
   const lessonName = cyrillicToTranslit.reverse(params.lesson).replace('-', ' ');

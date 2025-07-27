@@ -1,15 +1,18 @@
+'use client';
+
+import { useContext } from 'react';
 import AchievementForm from '../components/achievement-form';
 import Achievements from '../components/achievements';
-import { getAllAchievements } from '../libs/server-actions/achievements-actions';
+import { AchievementsContext } from '../components/app-wrapper';
 
-export default async function AchievementsPage() {
-  const achievements = await getAllAchievements();
+export default function AchievementsPage() {
+  const achievements = useContext(AchievementsContext);
 
   return (
     <>
       <h1 className="mb-5">Achievements</h1>
       <AchievementForm mode="create" />
-      <Achievements mode="page" achievements={achievements} />
+      {achievements && <Achievements mode="page" achievements={achievements} />}
     </>
   );
 }

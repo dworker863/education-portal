@@ -35,7 +35,6 @@ type TLessonCardProps = {
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
   const router = useRouter();
-  const containerRef = useRef<HTMLDivElement>(null);
   const content = lesson?.content ? DOMPurify?.sanitize(lesson?.content) : '';
   const session = useSession();
   const userId = session?.data?.user.id as string;
@@ -95,7 +94,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
     <div className="flex w-full gap-10 p-10 bg-primary text-primary-foreground rounded-lg">
       <div className="w-2/4">
         <h2 className="mb-5 text-center">Теория</h2>
-        <div ref={containerRef} className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
         {lesson?.video && <Video src={lesson?.video} />}
         <div className="flex justify-between">
           {prevLessonName && (

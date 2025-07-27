@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { FaUser } from 'react-icons/fa';
 import { Button } from './button';
 import { TfiPencilAlt } from 'react-icons/tfi';
@@ -8,17 +8,17 @@ import { GrAchievement } from 'react-icons/gr';
 import Profile from './profile';
 import Achievements from './achievements';
 import Exercises from './exercises';
-import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
+import { IExercise } from '../libs/interfaces/interfaces';
 import { getAllExercises } from '../libs/server-actions/exercises-actions';
-import { getAllAchievements } from '../libs/server-actions/achievements-actions';
+import { AchievementsContext } from './app-wrapper';
 
 const Sidebar = () => {
   const [exercises, setExercises] = useState<IExercise[] | null>(null);
-  const [achievements, setAchievements] = useState<IAchievement[] | null>(null);
   const [showProfile, setShowProfile] = useState(false);
   const [showExercises, setShowExercises] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
 
+  const achievements = useContext(AchievementsContext);
   useEffect(() => {
     const loadExercises = async () => {
       try {
@@ -31,20 +31,6 @@ const Sidebar = () => {
     };
 
     loadExercises();
-  }, []);
-
-  useEffect(() => {
-    const loadAchievements = async () => {
-      try {
-        const response = await getAllAchievements();
-
-        setAchievements(response);
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    loadAchievements();
   }, []);
 
   const showProfileHandler = () => {

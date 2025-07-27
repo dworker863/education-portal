@@ -13,8 +13,8 @@ type TEditorWrapperProps = {
 };
 
 const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
-  const { data: session } = useSession();
-  const userId = session?.user.id;
+  const session = useSession();
+  const userId = session?.data?.user.id;
   const [vm, setVm] = useState<VM | null>(null);
 
   useEffect(() => {

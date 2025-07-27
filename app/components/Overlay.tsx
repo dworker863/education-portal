@@ -1,11 +1,11 @@
 'use client';
 
-import React, { createContext, Dispatch, FC, SetStateAction, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
 import { ModalContext } from './app-wrapper';
 import { cn } from '../libs/cn';
 
 type TOverlayProps = {
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 type TOverlayContext = {

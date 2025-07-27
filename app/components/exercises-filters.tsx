@@ -15,10 +15,10 @@ import { IExercise } from '../libs/interfaces/interfaces';
 
 type TExercisesFiltersProps = {
   exercises: IExercise[];
-  filterExercises: Dispatch<SetStateAction<IExercise[]>>;
+  setFilterExercises: Dispatch<SetStateAction<IExercise[]>>;
 };
 
-const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercises }) => {
+const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, setFilterExercises }) => {
   const [range, setRange] = useState([20, 80]);
   const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
 
@@ -41,7 +41,7 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
     });
 
     setFilteredExercises(result);
-    filterExercises(result);
+    setFilterExercises(result);
   };
 
   return (
@@ -120,7 +120,7 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, filterExercis
             className="mr-auto my-4"
             variant="custom"
             onClick={() => {
-              filterExercises(exercises);
+              setFilterExercises(exercises);
               setFilteredExercises(exercises);
             }}
           >

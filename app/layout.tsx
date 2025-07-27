@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -20,9 +21,9 @@ export default function RootLayout({
   auth,
   profile,
 }: Readonly<{
-  children: React.ReactNode;
-  auth: React.ReactNode;
-  profile: React.ReactNode;
+  children: ReactNode;
+  auth: ReactNode;
+  profile: ReactNode;
 }>) {
   return (
     <html lang="en">

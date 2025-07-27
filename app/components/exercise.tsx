@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useRef, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
@@ -13,7 +13,7 @@ import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs
 
 type TExerciseProps = {
   exercise: IExercise;
-  setPassedTasks: React.Dispatch<React.SetStateAction<string[]>>;
+  setPassedTasks: Dispatch<SetStateAction<string[]>>;
   passedTasks: string[];
 };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, useEffect, useRef, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react';
 import { ITest } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
@@ -15,7 +15,7 @@ import { useSession } from 'next-auth/react';
 
 type TTestProps = {
   test: ITest;
-  setPassedTasks: React.Dispatch<React.SetStateAction<string[]>>;
+  setPassedTasks: Dispatch<SetStateAction<string[]>>;
   passedTasks: string[];
 };
 

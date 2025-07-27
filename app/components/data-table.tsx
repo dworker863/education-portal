@@ -19,14 +19,14 @@ import { Button } from './button';
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 
-interface DataTableProps<TData> {
+type TDataTableProps<TData> = {
   mode: 'exercises' | 'achievements';
   data: TData[];
   setShowComponent?: Dispatch<SetStateAction<boolean>>;
   columns: ColumnDef<IExercise>[] | ColumnDef<IAchievement>[];
-}
+};
 
-const DataTable: FC<DataTableProps<any>> = ({ mode, data, setShowComponent, columns }) => {
+const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, columns }) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});

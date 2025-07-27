@@ -13,8 +13,8 @@ type TCourseCardProps = {
 };
 
 const CourseCard: FC<TCourseCardProps> = ({ course }) => {
-  const { data: session } = useSession();
-  const user = session?.user;
+  const session = useSession();
+  const user = session?.data?.user;
 
   const courseCardClickHandler = async () => {
     try {

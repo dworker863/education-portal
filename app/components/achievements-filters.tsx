@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Dispatch, FC, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, FC, SetStateAction, useState, useEffect } from 'react';
 import { IAchievement, ICoursePartial, TCriteriaType } from '../libs/interfaces/interfaces';
 import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
@@ -17,7 +17,7 @@ import { getDaysUntilDate } from '../libs/utils/common';
 
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
-  filterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
+  setFilterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
 };
 
 const CourseCompletionFilters = ({
@@ -31,7 +31,7 @@ const CourseCompletionFilters = ({
   prefix: string;
   courseNames: ICoursePartial[] | null;
   prices: number[];
-  setPrices: Dispatch<React.SetStateAction<number[]>>;
+  setPrices: Dispatch<SetStateAction<number[]>>;
 }) => {
   return (
     <div className="mb-10 space-y-4">
@@ -141,9 +141,9 @@ const ExerciseCompletionFilters = ({
   form: UseFormReturn<any>;
   prefix: string;
   amount: number[];
-  setAmount: Dispatch<React.SetStateAction<number[]>>;
+  setAmount: Dispatch<SetStateAction<number[]>>;
   pointsToComplete: number[];
-  setPointsToComplete: Dispatch<React.SetStateAction<number[]>>;
+  setPointsToComplete: Dispatch<SetStateAction<number[]>>;
 }) => {
   return (
     <div className="mb-10 space-y-8">
@@ -262,7 +262,7 @@ const ParticipationLimitFilters = ({
   form: UseFormReturn<any>;
   prefix: string;
   maxParticipants: number[];
-  setMaxParticipants: Dispatch<React.SetStateAction<number[]>>;
+  setMaxParticipants: Dispatch<SetStateAction<number[]>>;
 }) => {
   return (
     <div className="mb-10 space-y-8">
@@ -331,7 +331,7 @@ const SubscriptionFilters = ({
   form: UseFormReturn<any>;
   prefix: string;
   monthes: number[];
-  setMonthes: Dispatch<React.SetStateAction<number[]>>;
+  setMonthes: Dispatch<SetStateAction<number[]>>;
 }) => {
   return (
     <div className="mb-10 space-y-8">
@@ -574,7 +574,7 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
   );
 };
 
-const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filterAchievements }) => {
+const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setFilterAchievements }) => {
   const [days, setDays] = useState([0, 30]);
   const [prices, setPrices] = useState([0, 100]);
   const [amount, setAmount] = useState([0, 10]);
@@ -976,7 +976,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
 
     if (result) {
       setFilteredAchievements(result);
-      filterAchievements(result);
+      setFilterAchievements(result);
     }
   };
 
@@ -1132,7 +1132,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, filt
             className="mr-auto my-4"
             variant="custom"
             onClick={() => {
-              filterAchievements(achievements);
+              setFilterAchievements(achievements);
               setFilteredAchievements(achievements);
               form.reset();
             }}

@@ -118,7 +118,7 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
             {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
           {showFilters && (
-            <AchievementsFilters achievements={achievements} filterAchievements={setFilteredAchievements} />
+            <AchievementsFilters achievements={achievements} setFilterAchievements={setFilteredAchievements} />
           )}
           <DataTable
             mode="achievements"

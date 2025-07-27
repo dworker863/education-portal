@@ -1,7 +1,7 @@
 'use client';
 
 import { Card, CardContent, CardFooter, CardHeader } from '@/app/components/card';
-import React, { FC, useContext, useEffect, useRef } from 'react';
+import React, { FC, ReactNode, useContext, useEffect, useRef } from 'react';
 import ModalHeader from './modal-header';
 import { Button } from '@/app/components/button';
 import Link from 'next/link';
@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 
 type TModalProps = {
   type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile';
-  children: React.ReactNode;
+  children: ReactNode;
   headerLabel: string;
   backButtonLabel: string;
   backButtonHref: string;

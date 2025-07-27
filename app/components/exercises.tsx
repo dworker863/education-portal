@@ -95,7 +95,7 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
           <Button className="mr-auto my-4" variant="custom" onClick={() => setShowFilters(!showFilters)}>
             {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
-          {showFilters && <ExercisesFilters exercises={exercises} filterExercises={setFilteredExercises} />}
+          {showFilters && <ExercisesFilters exercises={exercises} setFilterExercises={setFilteredExercises} />}
           <DataTable mode="exercises" data={filteredExercises} setShowComponent={setShowExercises} columns={columns} />
         </>
       ) : (

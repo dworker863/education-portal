@@ -9,7 +9,9 @@ export const getUserCoursesProgress = async (userId: string) => {
       where: {
         userId,
       },
-      include: {
+      select: {
+        id: true,
+        progress: true,
         course: {
           select: {
             id: true,
@@ -40,7 +42,9 @@ export const getUserAchievementsProgress = async (userId: string) => {
       where: {
         userId,
       },
-      include: {
+      select: {
+        id: true,
+        progress: true,
         achievement: {
           select: {
             id: true,
@@ -61,7 +65,7 @@ export const getUserAchievementsProgress = async (userId: string) => {
 
 export const createCourseProgress = async (userId: string, courseId: string) => {
   try {
-    const course = await prisma.course.findUnique({ where: { id: courseId }, include: { lessons: true } });
+    const course = await prisma.course.findUnique({ where: { id: courseId }, select: { lessons: true } });
 
     if (!course) throw new Error('Курса с таким ID не существует');
 
@@ -107,6 +111,9 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
           userId,
           courseId,
           completedLessons: { some: { id: lessonId } },
+        },
+        select: {
+          id: true,
         },
       });
 

@@ -16,7 +16,9 @@ export const getCourseByName = async (name: string) => {
       where: {
         name,
       },
-      include: {
+      select: {
+        name: true,
+        id: true,
         lessons: {
           select: {
             id: true,

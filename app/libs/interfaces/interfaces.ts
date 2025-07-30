@@ -72,10 +72,11 @@ export interface IUserCourseProgress {
 
 export interface IUserCourseProgressPartial {
   id: string;
-  userId: string;
-  courseId: string;
-  progress: string;
+  progress: number;
   completedAt?: Date | null;
+  currentLesson?: ILesson | ILessonPartial;
+  course?: ICourse | ICoursePartial;
+  user?: IUser | IUserPartial;
 }
 
 export interface ILesson {
@@ -175,10 +176,9 @@ export interface IUserAchievementProgress {
 
 export interface IUserAchievementProgressPartial {
   id: string;
-  userId: string;
-  achievementId: string;
-  progress: string;
+  progress: number;
   completedAt?: Date | null;
+  achievement?: IAchievement | IAchievementPartial;
 }
 
 export type TCriteriaType =

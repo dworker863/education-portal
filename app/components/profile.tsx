@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
 import { Session } from 'next-auth';
 import { getUserAchievementsProgress, getUserCoursesProgress } from '../libs/server-actions/progress-action';
-import { IUserAchievementProgress, IUserCourseProgress } from '../libs/interfaces/interfaces';
+import { IUserAchievementProgressPartial, IUserCourseProgressPartial } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import slugify from 'slugify';
 
@@ -25,8 +25,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const session = useSession();
 
   const [authSession, setAuthSession] = useState<Session | null>(null);
-  const [userCourses, setUserCourses] = useState<IUserCourseProgress[] | null>(null);
-  const [userAchievements, setUserAchievemets] = useState<IUserAchievementProgress[] | null>(null);
+  const [userCourses, setUserCourses] = useState<IUserCourseProgressPartial[] | null>(null);
+  const [userAchievements, setUserAchievemets] = useState<IUserAchievementProgressPartial[] | null>(null);
 
   const user = session?.data?.user || authSession?.user;
   const completedCourses = userCourses?.filter((course) => course.completedAt);

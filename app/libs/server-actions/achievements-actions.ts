@@ -4,6 +4,7 @@ import { prisma } from '@/prisma/prisma';
 import { TCriteria, TCriteriaType } from '../interfaces/interfaces';
 import { criteriaSchema } from '../validation';
 import { getNewProgress } from '../utils/progress';
+import { getAchievementById } from '../utils/achievements';
 
 export const getAllAchievements = async () => {
   try {
@@ -22,11 +23,7 @@ export const getAllAchievements = async () => {
 
 export const deleteAchievement = async (id: string) => {
   try {
-    const achivement = await prisma.achievement.findUnique({
-      where: {
-        id,
-      },
-    });
+    const achivement = await getAchievementById(id);
 
     if (!achivement) throw new Error('Достижения с таким ID не существует');
 
@@ -48,6 +45,11 @@ export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[
     const achievements = await prisma.achievement.findMany({
       where: {
         criteriaType: { in: criteriaTypes },
+      },
+      select: {
+        id: true,
+        criteriaType: true,
+        criteria: true,
       },
     });
 
@@ -89,6 +91,11 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
         where: {
           id: achievementId,
         },
+        select: {
+          startDate: true,
+          endDate: true,
+          criteria: true,
+        },
       });
 
       if (!achievement) {
@@ -101,6 +108,11 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
 
       let userProgress = await tx.userAchievementProgress.findUnique({
         where: { userId_achievementId: { userId, achievementId } },
+        select: {
+          id: true,
+          completedAt: true,
+          progress: true,
+        },
       });
 
       if (userProgress?.completedAt) {

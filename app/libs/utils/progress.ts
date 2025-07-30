@@ -32,6 +32,9 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
 
     const completedExercises = await prisma.exercise.findMany({
       where: whereExercise,
+      select: {
+        prizePoints: true,
+      },
     });
 
     if (criteria.count) {

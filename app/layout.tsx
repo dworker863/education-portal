@@ -11,6 +11,8 @@ import Breadcrumbs from './components/breadcrumbs';
 import { getAllAchievements } from './libs/server-actions/achievements-actions';
 import { getAllExercises } from './libs/server-actions/exercises-actions';
 
+export const revalidate = 86400;
+
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {

@@ -5,8 +5,9 @@ import { TCriteria, TCriteriaType } from '../interfaces/interfaces';
 import { criteriaSchema } from '../validation';
 import { getNewProgress } from '../utils/progress';
 import { getAchievementById } from '../utils/achievements';
+import { cache } from 'react';
 
-export const getAllAchievements = async () => {
+export const getAllAchievements = cache(async () => {
   try {
     const achievement = await prisma.achievement.findMany({
       include: {
@@ -19,7 +20,7 @@ export const getAllAchievements = async () => {
     console.error('Ошибка при получении достижений: ', error);
     throw error;
   }
-};
+});
 
 export const deleteAchievement = async (id: string) => {
   try {

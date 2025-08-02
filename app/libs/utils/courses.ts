@@ -1,6 +1,7 @@
 import { prisma } from '@/prisma/prisma';
+import { cache } from 'react';
 
-export const getAllCourses = async () => {
+export const getAllCourses = cache(async () => {
   try {
     const courses = await prisma.course.findMany();
     return courses;
@@ -8,7 +9,7 @@ export const getAllCourses = async () => {
     console.error('Ошибка при получении курсов: ', error);
     throw error;
   }
-};
+});
 
 export const getCourseByName = async (name: string) => {
   try {

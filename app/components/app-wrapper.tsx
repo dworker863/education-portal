@@ -25,8 +25,9 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   return (
     <SessionProvider>
       <ModalContext.Provider value={{ isModalOpen, setIsModalOpen }}>
-        <AchievementsContext.Provider value={achievements}>{children}</AchievementsContext.Provider>
-        <ExercisesContext.Provider value={exercises}>{children}</ExercisesContext.Provider>
+        <AchievementsContext.Provider value={achievements}>
+          <ExercisesContext.Provider value={exercises}>{children}</ExercisesContext.Provider>
+        </AchievementsContext.Provider>
       </ModalContext.Provider>
     </SessionProvider>
   );

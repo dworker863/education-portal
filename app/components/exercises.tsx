@@ -8,6 +8,7 @@ import { IExercise } from '../libs/interfaces/interfaces';
 import { ColumnDef } from '@tanstack/react-table';
 import { ArrowUpDown } from 'lucide-react';
 import DataTable from './data-table';
+import { extractTextFromHTML } from '../libs/utils/common';
 
 type TExercisesProps = {
   exercises: IExercise[];
@@ -41,6 +42,11 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
+      },
+      cell: ({ getValue }) => {
+        const rawHTML = getValue<string>();
+        const text = extractTextFromHTML(rawHTML);
+        return <span>{text}</span>;
       },
     },
     {

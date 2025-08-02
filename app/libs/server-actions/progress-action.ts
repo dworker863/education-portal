@@ -65,7 +65,10 @@ export const getUserAchievementsProgress = async (userId: string) => {
 
 export const createCourseProgress = async (userId: string, courseId: string) => {
   try {
-    const course = await prisma.course.findUnique({ where: { id: courseId }, select: { lessons: true } });
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: { lessons: { select: { id: true } } },
+    });
 
     if (!course) throw new Error('Курса с таким ID не существует');
 

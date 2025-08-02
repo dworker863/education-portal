@@ -8,30 +8,15 @@ import { GrAchievement } from 'react-icons/gr';
 import Profile from './profile';
 import Achievements from './achievements';
 import Exercises from './exercises';
-import { IExercise } from '../libs/interfaces/interfaces';
-import { getAllExercises } from '../libs/server-actions/exercises-actions';
-import { AchievementsContext } from './app-wrapper';
+import { AchievementsContext, ExercisesContext } from './app-wrapper';
 
 const Sidebar = () => {
-  const [exercises, setExercises] = useState<IExercise[] | null>(null);
+  const exercises = useContext(ExercisesContext);
+  const achievements = useContext(AchievementsContext);
+
   const [showProfile, setShowProfile] = useState(false);
   const [showExercises, setShowExercises] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
-
-  const achievements = useContext(AchievementsContext);
-  useEffect(() => {
-    const loadExercises = async () => {
-      try {
-        const response = await getAllExercises();
-
-        setExercises(response);
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    loadExercises();
-  }, []);
 
   const showProfileHandler = () => {
     setShowProfile(!showProfile);

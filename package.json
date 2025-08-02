@@ -28,6 +28,7 @@
     "@types/prismjs": "^1.26.5",
     "@types/react-dropzone": "^4.2.2",
     "bcryptjs": "^2.4.3",
+    "cheerio": "^1.1.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "cyrillic-to-translit-js": "^3.2.1",

@@ -7,7 +7,7 @@ export default async function CoursePage({ params }: { params: { name: string } 
   return (
     <>
       <h1 className="mb-5 text-center text-xl uppercase">{params.name}</h1>
-      <Lessons courseId={course?.id} lessons={course?.lessons} params={params} />
+      <Lessons courseId={course?.id} lessons={course?.lessons} name={params.name} />
     </>
   );
 }

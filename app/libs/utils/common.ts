@@ -1,3 +1,4 @@
+import * as cheerio from 'cheerio';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
 
@@ -32,4 +33,32 @@ export const getDaysUntilDate = (targetDate: Date) => {
   const diffInMs = targetDate.getTime() - new Date().getTime();
   const diffInDays = Math.ceil(diffInMs / (1000 * 60 * 60 * 24));
   return diffInDays;
+};
+
+export const extractTextFromHTML = (html: string) => {
+  const $ = cheerio.load(html);
+  let result = '';
+
+  $('body')
+    .contents()
+    .each((_, el) => {
+      if (el.type !== 'tag') return;
+
+      const tag = el.tagName;
+
+      if (tag === 'p') {
+        result += $(el).text().trim() + '\n';
+      } else if (tag === 'code') {
+        result += $(el).text().trim() + '\n\n';
+      } else {
+        // для прочих элементов, например h2, div и т.п.
+        result += $(el).text().trim() + ' ';
+      }
+    });
+
+  // Финальная очистка: удалить лишние пробелы и пустые строки
+  return result
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 };

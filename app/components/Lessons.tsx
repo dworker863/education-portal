@@ -10,10 +10,10 @@ import slugify from 'slugify';
 type TLessonsProps = {
   courseId?: string;
   lessons?: ILessonPartial[];
-  params: { name: string };
+  name: string;
 };
 
-const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
+const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   return (
     <section>
       <LessonForm courseId={courseId} mode="create" />
@@ -25,7 +25,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, params }) => {
             return (
               <li key={lesson.id + lesson.name}>
                 <div className="mb-5">
-                  <Link href={`/courses/${params.name}/${lessonName}`}>{lesson.name}</Link>
+                  <Link href={`/courses/${name}/${lessonName}`}>{lesson.name}</Link>
                   <LessonFormWrapper lessonId={lesson.id} />
                 </div>
               </li>

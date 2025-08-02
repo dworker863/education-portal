@@ -40,7 +40,9 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
   };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleOutsideClick);
+    if (type !== 'registration') {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
 
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);

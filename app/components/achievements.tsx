@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useMemo, useState } from 'react';
 import { cn } from '../libs/cn';
 import { IAchievement } from '../libs/interfaces/interfaces';
 import DataTable from './data-table';
@@ -20,85 +20,90 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
   const [showFilters, setShowFilters] = useState(false);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
-  const columns: ColumnDef<IAchievement>[] = [
-    {
-      accessorKey: 'name',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Название
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+  const columns = useMemo<ColumnDef<IAchievement>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Название
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
       },
-    },
-    {
-      accessorKey: 'startDate',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Дата начала
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: 'startDate',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Дата начала
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          return <div>{row.original.startDate.toLocaleString()}</div>;
+        },
       },
-      cell: ({ row }) => {
-        return <div>{row.original.startDate.toLocaleString()}</div>;
+      {
+        accessorKey: 'endDate',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Дата окончания
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          return <div>{row.original.endDate?.toLocaleString() || ''}</div>;
+        },
       },
-    },
-    {
-      accessorKey: 'endDate',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Дата окончания
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: 'criteria.type',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Тип достижения
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
       },
-      cell: ({ row }) => {
-        return <div>{row.original.endDate?.toLocaleString() || ''}</div>;
+      {
+        accessorKey: 'reward.type',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Тип награды
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
       },
-    },
-    {
-      accessorKey: 'criteria.type',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Тип достижения
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
+      {
+        accessorKey: 'reward.amount',
+        header: ({ column }) => {
+          return (
+            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+              Срок награды
+              <ArrowUpDown className="ml-2 h-4 w-4" />
+            </Button>
+          );
+        },
+        cell: ({ row }) => {
+          if (typeof row.original.reward === 'object' && !Array.isArray(row.original.reward)) {
+            return (
+              <div>{row.original.reward?.amount + ' ' + row.original.reward?.subscriptionType || 'Нет курса'}</div>
+            );
+          }
+        },
       },
-    },
-    {
-      accessorKey: 'reward.type',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Тип награды
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-    },
-    {
-      accessorKey: 'reward.amount',
-      header: ({ column }) => {
-        return (
-          <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
-            Срок награды
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        if (typeof row.original.reward === 'object' && !Array.isArray(row.original.reward)) {
-          return <div>{row.original.reward?.amount + ' ' + row.original.reward?.subscriptionType || 'Нет курса'}</div>;
-        }
-      },
-    },
-  ];
+    ],
+    [],
+  );
 
   return (
     <div
@@ -139,4 +144,4 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
   );
 };
 
-export default Achievements;
+export default memo(Achievements);

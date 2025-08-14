@@ -11,13 +11,18 @@ const SignUp = () => {
   const overlayContext = useContext(OverlayContext);
 
   useEffect(() => {
-    if (modalContext) {
-      modalContext.setIsModalOpen(true);
-    }
+    if (!modalContext && !overlayContext) return;
 
-    if (overlayContext) {
-      overlayContext.setActive(false);
-    }
+    const prevModal = modalContext?.isModalOpen;
+    const prevOverlayActive = overlayContext?.active;
+
+    modalContext?.setIsModalOpen(true);
+    overlayContext?.setActive(false);
+
+    return () => {
+      modalContext?.setIsModalOpen(prevModal ?? false);
+      overlayContext?.setActive(prevOverlayActive ?? true);
+    };
   }, [modalContext, overlayContext]);
 
   return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction, useRef, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useMemo, useRef, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
@@ -24,7 +24,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
 
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
-  const task = exercise?.task ? DOMPurify.sanitize(exercise?.task) : '';
+  const task = useMemo(() => (exercise?.task ? DOMPurify.sanitize(exercise?.task) : ''), [exercise?.task]);
 
   const checkExerciseHandler = async (exerciseName: string) => {
     try {
@@ -122,4 +122,4 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
   );
 };
 
-export default Exercise;
+export default memo(Exercise);

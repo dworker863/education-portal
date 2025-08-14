@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, memo } from 'react';
 import LessonForm from './lesson-form';
 import { ILessonPartial } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
@@ -36,4 +36,4 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   );
 };
 
-export default Lessons;
+export default memo(Lessons);

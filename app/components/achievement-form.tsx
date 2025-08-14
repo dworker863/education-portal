@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { FC, useState, useTransition } from 'react';
+import React, { FC, memo, useMemo, useState, useTransition } from 'react';
 import { Controller, useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { createAchievementSchema, editAchievementSchema } from '../libs/validation';
 import { z } from 'zod';
@@ -400,7 +400,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   const [isPending, startTransiton] = useTransition();
   const router = useRouter();
 
-  const schema = mode === 'create' ? createAchievementSchema : editAchievementSchema;
+  const schema = useMemo(() => (mode === 'create' ? createAchievementSchema : editAchievementSchema), [mode]);
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -989,4 +989,4 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   );
 };
 
-export default AchievementForm;
+export default memo(AchievementForm);

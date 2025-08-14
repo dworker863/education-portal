@@ -1,7 +1,7 @@
 'use client';
 
 import sdk, { VM } from '@stackblitz/sdk';
-import React, { FC, useEffect, useRef, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Editor from './editor';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { useSession } from 'next-auth/react';
@@ -39,7 +39,7 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
     return () => {
       console.log('UNMOUNTED');
     };
-  }, []);
+  }, [exercise.id, exercise.language, exercise.name]);
 
   if (!vm || !userId) return null;
 

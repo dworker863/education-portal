@@ -6,7 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { createLessonSchema, editLessonSchema } from '../libs/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
-import { FC, useState, useTransition } from 'react';
+import { FC, useMemo, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Button } from '@/app/components/button';
@@ -32,7 +32,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const schema = mode === 'create' ? createLessonSchema : editLessonSchema;
+  const schema = useMemo(() => (mode === 'create' ? createLessonSchema : editLessonSchema), [mode]);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

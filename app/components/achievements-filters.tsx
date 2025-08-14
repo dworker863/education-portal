@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction, useState, useEffect } from 'react';
+import { Dispatch, FC, SetStateAction, useState, useEffect, memo } from 'react';
 import { IAchievement, ICoursePartial, TCriteriaType } from '../libs/interfaces/interfaces';
 import { achievementsFiltersSchema } from '../libs/validation';
 import { z } from 'zod';
@@ -13,12 +13,7 @@ import RangeSlider from './range-slider';
 import { criteriaTypes, extendedCriteriaTypes, languages, ranks } from '../libs/utils/static-data';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCourseNames } from '../libs/server-actions/courses-actions';
-import { getDaysUntilDate } from '../libs/utils/common';
-
-type TAchievementsFiltersProps = {
-  achievements: IAchievement[];
-  setFilterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
-};
+import { getDaysUntilDate, isObjectCriteria } from '../libs/utils/common';
 
 const CourseCompletionFilters = ({
   form,
@@ -574,6 +569,11 @@ const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix
   );
 };
 
+type TAchievementsFiltersProps = {
+  achievements: IAchievement[];
+  setFilterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
+};
+
 const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setFilterAchievements }) => {
   const [days, setDays] = useState<number[]>([0, 30]);
   const [prices, setPrices] = useState<number[]>([0, 100]);
@@ -585,9 +585,12 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
 
   useEffect(() => {
+    let mounted = true;
     const loadCourseNames = async () => {
       try {
         const response = await getCourseNames();
+
+        if (!mounted) return;
 
         setCoursesNames(response);
       } catch (error) {
@@ -596,6 +599,9 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
     };
 
     loadCourseNames();
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   const form = useForm<z.infer<typeof achievementsFiltersSchema>>({
@@ -619,19 +625,34 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
   const addTypeFilter = (type: TCriteriaType) => {
     switch (type) {
       case 'EXERCISE_COMPLETION':
-        appendCriteriaTypeFilter({ type: 'EXERCISE_COMPLETION', languages: [], requiredRank: [] });
+        appendCriteriaTypeFilter({
+          type: 'EXERCISE_COMPLETION',
+          languages: [],
+          requiredRank: [],
+        });
         break;
 
       case 'COURSE_COMPLETION':
-        appendCriteriaTypeFilter({ type: 'COURSE_COMPLETION', courseNames: [], requiredRank: [] });
+        appendCriteriaTypeFilter({
+          type: 'COURSE_COMPLETION',
+          courseNames: [],
+          requiredRank: [],
+        });
         break;
 
       case 'COURSE_REGISTRATION':
-        appendCriteriaTypeFilter({ type: 'COURSE_REGISTRATION', courseNames: [], requiredRank: [] });
+        appendCriteriaTypeFilter({
+          type: 'COURSE_REGISTRATION',
+          courseNames: [],
+          requiredRank: [],
+        });
         break;
 
       case 'PARTICIPATION_LIMIT':
-        appendCriteriaTypeFilter({ type: 'PARTICIPATION_LIMIT', requiredRank: [] });
+        appendCriteriaTypeFilter({
+          type: 'PARTICIPATION_LIMIT',
+          requiredRank: [],
+        });
         break;
 
       case 'SUBSCRIPTION':
@@ -695,9 +716,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
     if (values.criteriaType && values.criteriaType.length > 0) {
       result = achievements.filter(
         (achievement) =>
-          achievement.criteria &&
-          typeof achievement.criteria === 'object' &&
-          !Array.isArray(achievement.criteria) &&
+          isObjectCriteria(achievement.criteria) &&
           values.criteriaType!.includes(achievement.criteria.type as TCriteriaType),
       );
     }
@@ -705,16 +724,13 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
     if (values.criteriaType?.includes('EXERCISE_COMPLETION')) {
       result = (result || achievements).filter(
         (achievement) =>
-          typeof achievement.criteria === 'object' &&
-          !Array.isArray(achievement.criteria) &&
-          achievement?.criteria?.type === 'EXERCISE_COMPLETION',
+          isObjectCriteria(achievement.criteria) && achievement?.criteria?.type === 'EXERCISE_COMPLETION',
       );
 
       if (amount.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>
-            typeof achievement.criteria === 'object' &&
-            !Array.isArray(achievement.criteria) &&
+            isObjectCriteria(achievement.criteria) &&
             (typeof achievement.criteria?.count === 'number' ? achievement.criteria?.count : amount[0]) >= amount[0] &&
             (typeof achievement.criteria?.count === 'number' ? achievement.criteria?.count : amount[1]) <= amount[1],
         );
@@ -730,8 +746,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'languages' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.language === 'string' &&
               filter.languages?.includes(achievement.criteria?.language)
             );
@@ -742,8 +757,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       if (pointsToComplete.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>
-            typeof achievement.criteria === 'object' &&
-            !Array.isArray(achievement.criteria) &&
+            isObjectCriteria(achievement.criteria) &&
             (typeof achievement.criteria?.pointsToComplete === 'number'
               ? achievement.criteria?.pointsToComplete
               : pointsToComplete[0]) >= pointsToComplete[0] &&
@@ -763,8 +777,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.requiredRank === 'string' &&
               filter.requiredRank?.includes(achievement.criteria?.requiredRank)
             );
@@ -789,8 +802,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
                 console.log('COURSENAMES FILTER: ', courseNames);
 
                 return (
-                  typeof achievement.criteria === 'object' &&
-                  !Array.isArray(achievement.criteria) &&
+                  isObjectCriteria(achievement.criteria) &&
                   Array.isArray(achievement.criteria?.courseNames) &&
                   achievement.criteria?.courseNames?.includes(name)
                 );
@@ -803,8 +815,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       if (prices.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>
-            typeof achievement.criteria === 'object' &&
-            !Array.isArray(achievement.criteria) &&
+            isObjectCriteria(achievement.criteria) &&
             (typeof achievement.criteria?.minPrice === 'number' ? achievement.criteria?.minPrice : prices[0]) >=
               prices[0] &&
             (typeof achievement.criteria?.maxPrice === 'number' ? achievement.criteria?.maxPrice : prices[1]) <=
@@ -822,8 +833,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.requiredRank === 'string' &&
               filter.requiredRank?.includes(achievement.criteria?.requiredRank)
             );
@@ -836,8 +846,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       if (maxParticipants.length > 0) {
         result = (result || achievements).filter(
           (achievement) =>
-            typeof achievement.criteria === 'object' &&
-            !Array.isArray(achievement.criteria) &&
+            isObjectCriteria(achievement.criteria) &&
             (typeof achievement.criteria?.maxParticipants === 'number'
               ? achievement.criteria?.maxParticipants
               : maxParticipants[0]) >= maxParticipants[0] &&
@@ -857,8 +866,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.requiredRank === 'string' &&
               filter.requiredRank?.includes(achievement.criteria?.requiredRank)
             );
@@ -874,8 +882,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'tier' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.tier === 'string' &&
               filter.tier?.includes(achievement.criteria?.tier)
             );
@@ -893,8 +900,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'duration' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.duration === 'string' &&
               filter.duration?.includes(achievement.criteria?.duration)
             );
@@ -908,8 +914,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'firstTimeOnly' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.firstTimeOnly === 'boolean' &&
               filter.firstTimeOnly === achievement.criteria?.firstTimeOnly
             );
@@ -924,8 +929,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
           values.criteriaTypeFilters?.some((filter) => {
             return (
               'operator' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.operator === 'string' &&
               filter.operator?.includes(achievement.criteria?.operator)
             );
@@ -943,8 +947,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
-              typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
+              isObjectCriteria(achievement.criteria) &&
               typeof achievement.criteria?.requiredRank === 'string' &&
               filter.requiredRank?.includes(achievement.criteria?.requiredRank)
             );
@@ -959,8 +962,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
               'types' in filter &&
               filter.types?.some((type) => {
                 return (
-                  typeof achievement.criteria === 'object' &&
-                  !Array.isArray(achievement.criteria) &&
+                  isObjectCriteria(achievement.criteria) &&
                   Array.isArray(achievement.criteria?.types) &&
                   achievement.criteria.types.includes(type)
                 );
@@ -1145,4 +1147,4 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
   );
 };
 
-export default AchievementsFilters;
+export default memo(AchievementsFilters);

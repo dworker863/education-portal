@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useEffect, useState } from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext } from 'react';
 import { ModalContext } from './app-wrapper';
 import { cn } from '../libs/cn';
 
@@ -17,11 +17,9 @@ export const OverlayContext = createContext<TOverlayContext | null>(null);
 
 const Overlay: FC<TOverlayProps> = ({ children }) => {
   const context = useContext(ModalContext);
-  const [active, setActive] = useState(context?.isModalOpen ?? false);
 
-  useEffect(() => {
-    setActive(context?.isModalOpen ?? false);
-  }, [context?.isModalOpen]);
+  const active = context?.isModalOpen || false;
+  const setActive = context?.setIsModalOpen || (() => {});
 
   return (
     <OverlayContext.Provider value={{ active, setActive }}>

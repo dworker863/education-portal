@@ -35,7 +35,7 @@ type TLessonCardProps = {
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
   const router = useRouter();
-  const content = lesson?.content ? DOMPurify?.sanitize(lesson?.content) : '';
+  const content = useMemo(() => (lesson?.content ? DOMPurify?.sanitize(lesson?.content) : ''), [lesson?.content]);
   const session = useSession();
   const userId = session?.data?.user.id as string;
 
@@ -57,7 +57,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
 
   useEffect(() => {
     Prism.highlightAll();
-  });
+  }, [content]);
 
   useEffect(() => {
     const lessonCompletedExercises = checkCompletedExercises(completedTasks, tasks);
@@ -136,7 +136,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
           <CarouselContent>
             {tasks.length > 0 &&
               tasks.map((task, index) => (
-                <CarouselItem key={index}>
+                <CarouselItem key={task.id}>
                   <div className="p-1">
                     {'variants' in task ? (
                       <Test

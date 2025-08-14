@@ -15,6 +15,8 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   useEffect(() => {
+    let mounted = true;
+    const timers: any[] = [];
     const exerciseFileName = exercise.name.split(' ').join('');
     const exercisePath = `${userId}/${exerciseFileName}.js`;
     const solutionPath = 'solution.js';
@@ -23,7 +25,8 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
     const loadEmbedProject = async () => {
       try {
         if (isFirstLoad) {
-          setTimeout(() => {
+          const id = setTimeout(() => {
+            if (!mounted) return;
             vm.applyFsDiff({
               create: {
                 [exercisePath]: exercise.code || '',
@@ -40,22 +43,30 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
 
             setIsFirstLoad(false);
           }, 2000);
+
+          timers.push(id);
         }
 
         if (mode === 'exercise') {
           if (!isFirstLoad) {
+            if (!mounted) return;
             vm.editor.openFile(exercisePath);
           }
 
           if (isFirstLoad) {
-            setTimeout(() => {
+            const id = setTimeout(() => {
+              if (!mounted) return;
               vm.editor.openFile(exercisePath);
             }, 2000);
+            timers.push(id);
           }
         }
 
         if (mode === 'solution') {
-          vm.editor.openFile(solutionPath);
+          const id = setTimeout(() => {
+            vm.editor.openFile(solutionPath);
+          }, 2000);
+          timers.push(id);
         }
       } catch (error) {
         console.error('Error embedding project:', error);
@@ -63,6 +74,11 @@ const Editor: FC<TEditorProps> = ({ userId, mode, exercise, vm }) => {
     };
 
     loadEmbedProject();
+
+    return () => {
+      mounted = false;
+      timers.forEach(clearTimeout);
+    };
   }, [userId, mode, exercise, vm, isFirstLoad]);
   return <></>;
 };

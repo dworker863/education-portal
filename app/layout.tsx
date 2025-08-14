@@ -41,7 +41,9 @@ export default async function RootLayout({
           <Overlay>
             <Sidebar />
             <div className="container mx-auto h-screen">
-              <TopLine />
+              <header>
+                <TopLine />
+              </header>
               <Breadcrumbs />
               {children}
             </div>

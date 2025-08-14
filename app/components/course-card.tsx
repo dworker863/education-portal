@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC } from 'react';
+import React, { FC, memo, useCallback } from 'react';
 import { ICourse } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const session = useSession();
   const user = session?.data?.user;
 
-  const courseCardClickHandler = async () => {
+  const courseCardClickHandler = useCallback(async () => {
     try {
       if (!user) {
         throw new Error('Пользователь не аутентифицирован');
@@ -34,7 +34,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     } catch (error) {
       console.error('Ошибка при выполнении запроса: ', error);
     }
-  };
+  }, [user, course.id]);
 
   return (
     <Link href={`/courses/${course.name}`}>
@@ -54,4 +54,4 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   );
 };
 
-export default CourseCard;
+export default memo(CourseCard);

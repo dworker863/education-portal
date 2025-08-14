@@ -26,9 +26,12 @@ const NewPasswordForm = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   useEffect(() => {
+    let mounted = true;
     const loadToken = async () => {
       try {
         const response = await confirmResetPasswordToken(token);
+
+        if (!mounted) return;
 
         setTokenError(null);
         setSuccess(response?.success);
@@ -45,6 +48,10 @@ const NewPasswordForm = () => {
     };
 
     loadToken();
+
+    return () => {
+      mounted = false;
+    };
   }, [token]);
 
   const form = useForm<z.infer<typeof newPasswordSchema>>({

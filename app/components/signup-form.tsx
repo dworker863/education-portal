@@ -1,6 +1,6 @@
 'use client';
 
-import { useContext, useState, useTransition } from 'react';
+import { useContext, useMemo, useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { registrationSchema } from '../libs/validation';
@@ -33,7 +33,7 @@ const SignupForm = () => {
   const [success, setSuccess] = useState<null | string>(null);
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
-  const years = Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i);
+  const years = useMemo(() => Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i), []);
 
   const form = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),

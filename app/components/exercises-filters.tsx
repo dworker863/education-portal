@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FC, Dispatch, SetStateAction, useState } from 'react';
+import { FC, Dispatch, SetStateAction, useState, memo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel } from './form';
@@ -139,4 +139,4 @@ const ExercisesFilters: FC<TExercisesFiltersProps> = ({ exercises, setFilterExer
   );
 };
 
-export default ExercisesFilters;
+export default memo(ExercisesFilters);

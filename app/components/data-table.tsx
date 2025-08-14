@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useState } from 'react';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -126,4 +126,4 @@ const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, col
   );
 };
 
-export default DataTable;
+export default memo(DataTable);

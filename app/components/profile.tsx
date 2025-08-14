@@ -32,9 +32,13 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const completedCourses = userCourses?.filter((course) => course.completedAt);
 
   useEffect(() => {
+    let mounted = true;
     const loadSession = async () => {
       try {
         const data = await getSession();
+
+        if (!mounted) return;
+
         setAuthSession(data);
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -42,6 +46,10 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     };
 
     loadSession();
+
+    return () => {
+      mounted = false;
+    };
   }, [context]);
 
   useEffect(() => {
@@ -49,9 +57,12 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       return;
     }
 
+    let mounted = true;
+
     const loadUserCourses = async () => {
       try {
         const userCoursesProgress = await getUserCoursesProgress(user.id);
+        if (!mounted) return;
         console.log('PROFILE PROGRESS: ', userCoursesProgress);
 
         if (userCoursesProgress) {
@@ -65,6 +76,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     const loadUserAchievements = async () => {
       try {
         const userAchievementsProgress = await getUserAchievementsProgress(user.id);
+        if (!mounted) return;
+
         console.log('PROFILE PROGRESS: ', userAchievementsProgress);
 
         if (userAchievementsProgress) {
@@ -77,6 +90,10 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
 
     loadUserCourses();
     loadUserAchievements();
+
+    return () => {
+      mounted = false;
+    };
   }, [user]);
 
   if (!user) {

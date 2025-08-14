@@ -6,18 +6,23 @@ import { ModalContext } from '../components/app-wrapper';
 import { OverlayContext } from '../components/overlay';
 import SigninForm from '../components/signin-form';
 
-const SignUp = () => {
+const SignIn = () => {
   const modalContext = useContext(ModalContext);
   const overlayContext = useContext(OverlayContext);
 
   useEffect(() => {
-    if (modalContext) {
-      modalContext.setIsModalOpen(true);
-    }
+    if (!modalContext && !overlayContext) return;
 
-    if (overlayContext) {
-      overlayContext.setActive(false);
-    }
+    const prevModal = modalContext?.isModalOpen;
+    const prevOverlayActive = overlayContext?.active;
+
+    modalContext?.setIsModalOpen(true);
+    overlayContext?.setActive(false);
+
+    return () => {
+      modalContext?.setIsModalOpen(prevModal ?? false);
+      overlayContext?.setActive(prevOverlayActive ?? true);
+    };
   }, [modalContext, overlayContext]);
 
   return (
@@ -35,4 +40,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignIn;

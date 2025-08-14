@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
-import { FC, useState, useTransition } from 'react';
+import { FC, useMemo, useState, useTransition } from 'react';
 import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { FaPlus } from 'react-icons/fa';
@@ -29,7 +29,7 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(mode === 'create' ? false : true);
-  const schema = mode === 'create' ? createCourseSchema : editCourseSchema;
+  const schema = useMemo(() => (mode === 'create' ? createCourseSchema : editCourseSchema), [mode]);
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),

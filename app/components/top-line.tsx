@@ -12,9 +12,16 @@ const TopLine = () => {
   const context = useContext(ModalContext);
 
   useEffect(() => {
+    let mounted = true;
+
+    if (!context) return;
+
     const loadSession = async () => {
       try {
         const data = await getSession();
+
+        if (!mounted) return;
+
         setSession(data);
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -22,6 +29,10 @@ const TopLine = () => {
     };
 
     loadSession();
+
+    return () => {
+      mounted = false;
+    };
   }, [context]);
 
   return (

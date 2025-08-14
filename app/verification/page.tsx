@@ -14,10 +14,14 @@ export default function VerificationPage() {
   const [error, setError] = useState<null | string>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const loadConfirmVerification = async () => {
       try {
         if (token) {
           const response = await confirmVerification(token);
+
+          if (!mounted) return;
 
           setError(null);
           setSuccess(response?.success);
@@ -27,6 +31,8 @@ export default function VerificationPage() {
           setError('Неверный токен');
         }
       } catch (error) {
+        if (!mounted) return;
+
         setSuccess(null);
         console.error('Ошибка при выполнении запроса:', error);
 
@@ -39,6 +45,10 @@ export default function VerificationPage() {
     };
 
     loadConfirmVerification();
+
+    return () => {
+      mounted = false;
+    };
   }, [token, error, success, router]);
 
   return (

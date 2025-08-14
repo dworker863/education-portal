@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, SetStateAction, useEffect, useRef, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
 import { ITest } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
@@ -27,11 +27,12 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
     Array(test.variants.length).fill('custom'),
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const task = test?.task ? DOMPurify.sanitize(test?.task) : '';
+  const task = useMemo(() => (test?.task ? DOMPurify.sanitize(test?.task) : ''), [test?.task]);
+  const isDisabled = useMemo(() => buttonTypes.some((t) => t === 'customFail' || t === 'customSuccess'), [buttonTypes]);
 
   useEffect(() => {
     Prism.highlightAll();
-  });
+  }, []);
 
   const checkTestHandler = async (index: number, variant: string) => {
     try {
@@ -76,7 +77,7 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
             key={index + variant}
             size="lg"
             onClick={() => checkTestHandler(index, variant)}
-            disabled={buttonTypes.some((type) => type === 'customFail' || type === 'customSuccess')}
+            disabled={isDisabled}
           >
             {buttonTypes[index] === 'customFail' && <SlClose className="mr-2" size={20} />}
             {buttonTypes[index] === 'customSuccess' && <GoIssueClosed className="mr-2" size={20} />}
@@ -89,4 +90,4 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
   );
 };
 
-export default Test;
+export default memo(Test);

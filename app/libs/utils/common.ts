@@ -62,3 +62,24 @@ export const extractTextFromHTML = (html: string) => {
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 };
+
+export const isObjectCriteria = (
+  obj: any,
+): obj is {
+  type: any;
+  count: any;
+  language: any;
+  pointsToComplete: any;
+  requiredRank: any;
+  courseNames: any;
+  minPrice: any;
+  maxPrice: any;
+  maxParticipants: any;
+  tier: any;
+  duration: any;
+  firstTimeOnly: any;
+  operator: any;
+  types: any;
+} => {
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
+};

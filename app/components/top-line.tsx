@@ -5,6 +5,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ModalContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 import { Session } from 'next-auth';
+import Link from 'next/link';
 
 const TopLine = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -37,7 +38,11 @@ const TopLine = () => {
 
   return (
     <div className="flex justify-between py-5">
-      <div className="flex-1 flex justify-start gap-5">Left</div>
+      <nav className="flex gap-6">
+        <Link href="/">Главная</Link>
+        <Link href="/achievements">Достижения</Link>
+        <Link href="/exercises">Упражнения</Link>
+      </nav>
       <div className="flex-1 flex justify-end gap-5">
         {session?.user ? (
           <>

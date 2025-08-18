@@ -42,6 +42,7 @@ const TopLine = () => {
         <Link href="/">Главная</Link>
         <Link href="/achievements">Достижения</Link>
         <Link href="/exercises">Упражнения</Link>
+        <Link href="/prizetickets">Призовые билеты</Link>
       </nav>
       <div className="flex-1 flex justify-end gap-5">
         {session?.user ? (

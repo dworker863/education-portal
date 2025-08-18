@@ -1,6 +1,4 @@
-'use client';
-
-import React, { FC, memo } from 'react';
+import { FC } from 'react';
 import CourseForm from './course-form';
 import { ICourse } from '../libs/interfaces/interfaces';
 import CourseCard from './course-card';
@@ -29,4 +27,4 @@ const Courses: FC<TCoursesProps> = ({ courses }) => {
   );
 };
 
-export default memo(Courses);
+export default Courses;

@@ -265,8 +265,8 @@ export interface IPrizeTicket {
   type: 'DISCOUNT' | 'SUBSCRIPTION';
   code: string;
   user?: IUser;
-  percent?: number;
-  months?: number;
+  percent: number | null;
+  months: number | null;
   courses?: (ICourse | ICoursePartial)[];
   minAmountToActivate: number;
   maxAmountToActivate: number;
@@ -278,7 +278,7 @@ export interface IPrizeTicket {
 export interface IPrizeTicketPartial {
   id: string;
   type: 'DISCOUNT' | 'SUBSCRIPTION';
-  percent?: string;
+  percent?: number;
   months?: number;
   validUntil: Date | null;
 }

@@ -513,7 +513,7 @@ export const createPrizeTicketSchema = z.object({
   minAmountToActivate: z.number().min(0).optional(),
   maxAmountToActivate: z.number().min(0).optional(),
   validFrom: z.coerce.date().optional(),
-  validUntil: z.coerce.date().optional().nullable(),
+  validUntil: z.coerce.date().optional(),
   courses: z.array(z.string()).optional(),
 });
 

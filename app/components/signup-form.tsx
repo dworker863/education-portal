@@ -20,13 +20,9 @@ import { cn } from '../libs/cn';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
 import { format } from 'date-fns';
-import { useRouter } from 'next/navigation';
 import { ru } from 'date-fns/locale';
-import { ModalContext } from './app-wrapper';
 
 const SignupForm = () => {
-  const router = useRouter();
-  const context = useContext(ModalContext);
   const [isPending, startTransiton] = useTransition();
 
   const [error, setError] = useState<null | string>(null);

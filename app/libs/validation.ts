@@ -1,3 +1,4 @@
+import { PrizeTicketType } from '@prisma/client';
 import { z } from 'zod';
 
 export const registrationSchema = z
@@ -502,3 +503,18 @@ export const achievementsFiltersSchema = z.object({
     .optional(),
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });
+
+export const createPrizeTicketSchema = z.object({
+  code: z.string().min(3, 'Код должен содержать минимум 3 символа'),
+  name: z.string().min(1, { message: 'Введите название билета' }),
+  type: z.nativeEnum(PrizeTicketType, { errorMap: () => ({ message: 'Неверный тип билета' }) }),
+  percent: z.number().min(0).max(100).optional(),
+  months: z.number().min(1).optional(),
+  minAmountToActivate: z.number().min(0).optional(),
+  maxAmountToActivate: z.number().min(0).optional(),
+  validFrom: z.coerce.date().optional(),
+  validUntil: z.coerce.date().optional().nullable(),
+  courses: z.array(z.string()).optional(),
+});
+
+export const editPrizeTicketSchema = createPrizeTicketSchema.partial();

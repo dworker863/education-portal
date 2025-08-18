@@ -54,27 +54,27 @@ export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[
       },
     });
 
-    const combinationResult = achievements.filter((achievement) => {
-      if (achievement.criteriaType === criteriaTypes[0]) {
-        return true;
-      }
+    // const combinationResult = achievements.filter((achievement) => {
+    //   if (achievement.criteriaType === criteriaTypes[0]) {
+    //     return true;
+    //   }
 
-      if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
-        if (
-          achievement.criteriaType === 'COMBINATION' &&
-          achievement.criteria.conditions &&
-          Array.isArray(achievement.criteria.conditions)
-        ) {
-          return achievement.criteria.conditions.some(
-            (condition) =>
-              condition &&
-              typeof condition === 'object' &&
-              !Array.isArray(condition) &&
-              condition.type === criteriaTypes[0],
-          );
-        }
-      }
-    });
+    //   if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
+    //     if (
+    //       achievement.criteriaType === 'COMBINATION' &&
+    //       achievement.criteria.conditions &&
+    //       Array.isArray(achievement.criteria.conditions)
+    //     ) {
+    //       return achievement.criteria.conditions.some(
+    //         (condition) =>
+    //           condition &&
+    //           typeof condition === 'object' &&
+    //           !Array.isArray(condition) &&
+    //           condition.type === criteriaTypes[0],
+    //       );
+    //     }
+    //   }
+    // });
 
     console.log('ACHIEVEMENT BY CRITERIA TYPE: ', achievements);
 

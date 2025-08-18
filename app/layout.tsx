@@ -39,7 +39,9 @@ export default async function RootLayout({
       >
         <AppWrapper achievements={achievements} exercises={exercises}>
           <Overlay>
-            <Sidebar />
+            <aside>
+              <Sidebar />
+            </aside>
             <div className="container mx-auto h-screen">
               <header>
                 <TopLine />

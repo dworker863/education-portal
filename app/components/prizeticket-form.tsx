@@ -1,13 +1,12 @@
 import { useRouter } from 'next/navigation';
-import { FC, useMemo, useState, useTransition } from 'react';
+import { FC, useEffect, useMemo, useState, useTransition } from 'react';
 import { createPrizeTicketSchema, editPrizeTicketSchema } from '../libs/validation';
-import { Form, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addPrizeTicket, editPrizeTicket } from '../libs/server-actions/prizeticket-actions';
 import { Button } from './button';
 import { FaPlus } from 'react-icons/fa';
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
 import RequiredSign from './required-sign';
 import { Input } from './input';
 import ErrorMessage from './error-message';
@@ -19,13 +18,14 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
 import { ru } from 'date-fns/locale';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
 type TPrizeTicketFormProps = {
   prizeTicketId?: string;
   mode: 'create' | 'edit';
 };
 
-// ------------------ COMPONENT -------------------
 const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -42,17 +42,32 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
+      code: mode === 'create' ? uuidv4() : undefined,
       name: mode === 'create' ? '' : undefined,
       type: mode === 'create' ? 'DISCOUNT' : undefined,
-      code: mode === 'create' ? '' : undefined,
-      percent: undefined,
-      months: undefined,
+      percent: mode === 'create' ? 0 : undefined,
+      months: mode === 'create' ? 1 : undefined,
       minAmountToActivate: 0,
       maxAmountToActivate: 0,
       validFrom: undefined,
       validUntil: undefined,
     },
   });
+
+  const type = form.watch('type');
+
+  useEffect(() => {
+    if (mode === 'create') {
+      if (type === 'DISCOUNT') {
+        form.setValue('percent', 0);
+        form.setValue('months', undefined);
+      }
+      if (type === 'SUBSCRIPTION') {
+        form.setValue('percent', undefined);
+        form.setValue('months', 1);
+      }
+    }
+  }, [type, mode, form]);
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     if (mode === 'create') {
@@ -100,24 +115,9 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-6 mb-5 px-5 py-10 w-[500px] rounded-md bg-primary"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
             onSubmit={form.handleSubmit(onSubmit)}
           >
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Название</FormLabel>
-                  {mode === 'create' && <RequiredSign />}
-                  <FormControl>
-                    <Input placeholder="Название купона" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
             <FormField
               control={form.control}
               name="type"
@@ -125,11 +125,18 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
                 <FormItem>
                   <FormLabel>Тип</FormLabel>
                   {mode === 'create' && <RequiredSign />}
-                  <FormControl>
-                    <select {...field} className="w-full rounded-md border px-3 py-2 text-black">
-                      <option value="DISCOUNT">Скидка</option>
-                      <option value="SUBSCRIPTION">Подписка</option>
-                    </select>
+                  <FormControl className="w-[300px]">
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl className="w-[300px]">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Выберите тип достижения" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="DISCOUNT">Скидка</SelectItem>
+                        <SelectItem value="SUBSCRIPTION">Подписка</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,90 +145,97 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
 
             <FormField
               control={form.control}
-              name="code"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Код</FormLabel>
-                  {mode === 'create' && <RequiredSign />}
+                  <FormLabel>Название</FormLabel>
                   <FormControl>
-                    <Input placeholder="Уникальный код купона" {...field} />
+                    <Input placeholder="Введите название купона" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="percent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>% скидки (для DISCOUNT)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Например, 20"
-                      {...form.register('percent', { valueAsNumber: true })}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {type === 'DISCOUNT' && (
+              <FormField
+                control={form.control}
+                name="percent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>% скидки (для DISCOUNT)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Например, 20"
+                        {...form.register('percent', { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
-            <FormField
-              control={form.control}
-              name="months"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Месяцы (для SUBSCRIPTION)</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="Например, 6"
-                      {...form.register('months', { valueAsNumber: true })}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {type === 'SUBSCRIPTION' && (
+              <FormField
+                control={form.control}
+                name="months"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Месяцы (для SUBSCRIPTION)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Например, 6"
+                        {...form.register('months', { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
-            <FormField
-              control={form.control}
-              name="minAmountToActivate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Мин. сумма для активации</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...form.register('minAmountToActivate', { valueAsNumber: true })}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {type === 'DISCOUNT' && (
+              <FormField
+                control={form.control}
+                name="minAmountToActivate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Мин. сумма для активации</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        {...form.register('minAmountToActivate', { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
-            <FormField
-              control={form.control}
-              name="maxAmountToActivate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Макс. сумма для активации</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="number"
-                      placeholder="0"
-                      {...form.register('maxAmountToActivate', { valueAsNumber: true })}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {type === 'DISCOUNT' && (
+              <FormField
+                control={form.control}
+                name="maxAmountToActivate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Макс. сумма для активации</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="0"
+                        {...form.register('maxAmountToActivate', { valueAsNumber: true })}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="flex w-full gap-5">
               <FormField

@@ -17,6 +17,8 @@ export const getAllPrizeTickets = cache(async () => {
 });
 
 export const addPrizeTicket = async (values: z.infer<typeof createPrizeTicketSchema>) => {
+  console.log('Adding prize ticket with values:', values);
+
   try {
     const { data, ...parsedResult } = await createPrizeTicketSchema.safeParse(values);
 

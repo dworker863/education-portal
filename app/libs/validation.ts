@@ -506,7 +506,7 @@ export const achievementsFiltersSchema = z.object({
 
 export const createPrizeTicketSchema = z.object({
   code: z.string().min(3, 'Код должен содержать минимум 3 символа'),
-  name: z.string().min(1, { message: 'Введите название билета' }),
+  name: z.string().optional(),
   type: z.nativeEnum(PrizeTicketType, { errorMap: () => ({ message: 'Неверный тип билета' }) }),
   percent: z.number().min(0).max(100).optional(),
   months: z.number().min(1).optional(),
@@ -514,7 +514,6 @@ export const createPrizeTicketSchema = z.object({
   maxAmountToActivate: z.number().min(0).optional(),
   validFrom: z.coerce.date().optional(),
   validUntil: z.coerce.date().optional(),
-  courses: z.array(z.string()).optional(),
 });
 
 export const editPrizeTicketSchema = createPrizeTicketSchema.partial();

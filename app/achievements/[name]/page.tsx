@@ -4,7 +4,7 @@ import React from 'react';
 
 const AchievementPage = async ({ params }: { params: { name: string } }) => {
   const { name } = params;
-  const title = name.replace(/([A-Z])/g, ' $1').trim();
+  const title = name.replace(/([A-Z])/g, '$1').trim();
   const achievement = await getAchievementByName(title);
 
   return <div>{achievement && <Achievement achievement={achievement} />}</div>;

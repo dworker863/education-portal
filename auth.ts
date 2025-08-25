@@ -34,7 +34,7 @@ declare module 'next-auth' {
       updatedAt: Date;
       completedExercises?: IExercise[];
       completedTests?: ITest[];
-      prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
+      prizeTickets?: IPrizeTicket[];
       courseProgress?: IUserCourseProgress[];
       achievementsProgress?: IUserAchievementProgress[];
     } & DefaultSession['user'];
@@ -132,6 +132,7 @@ export const {
           include: {
             completedExercises: true,
             completedTests: true,
+            prizeTickets: true,
           },
         });
 

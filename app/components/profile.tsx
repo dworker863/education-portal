@@ -23,10 +23,11 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const context = useContext(ModalContext);
   const router = useRouter();
   const session = useSession();
+  const prizeTickets = session?.data?.user?.prizeTickets;
 
   const [authSession, setAuthSession] = useState<Session | null>(null);
   const [userCourses, setUserCourses] = useState<IUserCourseProgressPartial[] | null>(null);
-  const [userAchievements, setUserAchievemets] = useState<IUserAchievementProgressPartial[] | null>(null);
+  const [userAchievements, setUserAchievements] = useState<IUserAchievementProgressPartial[] | null>(null);
 
   const user = session?.data?.user || authSession?.user;
   const completedCourses = userCourses?.filter((course) => course.completedAt);
@@ -36,6 +37,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     const loadSession = async () => {
       try {
         const data = await getSession();
+
+        console.error('data', data);
 
         if (!mounted) return;
 
@@ -78,7 +81,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
         if (!mounted) return;
 
         if (userAchievementsProgress) {
-          setUserAchievemets(userAchievementsProgress);
+          setUserAchievements(userAchievementsProgress);
         }
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -236,15 +239,41 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             <div className="mb-2 text-sm">
               Прогресс достижений:
               {userAchievements.map((achievementProgress, index) => {
+                if (achievementProgress.progress < 100) {
+                  return (
+                    <div
+                      className="flex flex-col mb-4"
+                      key={
+                        achievementProgress.achievement?.name ? achievementProgress.achievement?.name + index : index
+                      }
+                    >
+                      <Link href={`/achievements/${achievementProgress.achievement?.name}`}>
+                        <span className="ml-1 text-customPrimary hover:text-customBackground ">
+                          {achievementProgress.achievement?.name && achievementProgress.achievement?.name}
+                          <span className="text-customSecondary"> ({achievementProgress.progress}% )</span>
+                        </span>
+                      </Link>
+                    </div>
+                  );
+                }
+              })}
+            </div>
+          )}
+          {prizeTickets && prizeTickets.length > 0 && (
+            <div className="mb-2 text-sm">
+              Призовые билеты:
+              {prizeTickets.map((prizeTicket, index) => {
                 return (
-                  <div
-                    className="flex flex-col mb-4"
-                    key={achievementProgress.achievement?.name ? achievementProgress.achievement?.name + index : index}
-                  >
-                    <Link href={`/achievements/${achievementProgress.achievement?.name}`}>
+                  <div className="flex flex-col mb-4" key={prizeTicket.id ? prizeTicket.id + index : index}>
+                    <Link href={`/achievements/${prizeTicket.name}`}>
                       <span className="ml-1 text-customPrimary hover:text-customBackground ">
-                        {achievementProgress.achievement?.name && achievementProgress.achievement?.name}
-                        <span className="text-customSecondary"> ({achievementProgress.progress}% )</span>
+                        {prizeTicket.name}
+                        {prizeTicket.percent && (
+                          <span className="text-customSecondary"> ({prizeTicket.percent}% )</span>
+                        )}
+                        {prizeTicket.months && (
+                          <span className="text-customSecondary"> ({prizeTicket.months} мес. )</span>
+                        )}
                       </span>
                     </Link>
                   </div>

@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { IAchievement, IAchievementCriteria } from '../libs/interfaces/interfaces';
+import { IAchievement } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import Image from 'next/image';
 

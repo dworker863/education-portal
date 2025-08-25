@@ -115,7 +115,6 @@ export async function POST(request: Request) {
 
     if (data.reward.icon) {
       uploadRewardIconResult = await fileUpload(data.icon);
-      console.log('ACHIEVEMENT POST DATA: ', data);
 
       if (uploadRewardIconResult instanceof Error) {
         return NextResponse.json({ error: uploadRewardIconResult.message }, { status: 400 });
@@ -146,7 +145,6 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.body;
     const formData = await request.formData();
-    console.log('ACHIEVEMENT POST FORMDATA: ', formData);
 
     const values: Record<string, any> = {};
 
@@ -186,8 +184,6 @@ export async function PATCH(request: Request) {
     }
 
     const achievementId = values.id;
-
-    console.log('ACHIEVEMENT POST DATA: ', values);
 
     if (!achievementId) {
       return NextResponse.json({ error: 'Не указан ID достижения' }, { status: 400 });
@@ -279,7 +275,6 @@ export async function PATCH(request: Request) {
 
     if (data.reward?.icon) {
       const uploadResult = await fileUpload(data.reward?.icon);
-      // console.log('ACHIEVEMENT POST DATA: ', data);
 
       if (uploadResult instanceof Error) {
         return NextResponse.json({ error: uploadResult.message }, { status: 400 });

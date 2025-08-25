@@ -27,11 +27,9 @@ export const getUserCoursesProgress = async (userId: string) => {
       },
     });
 
-    console.log(progress);
-
     return progress;
   } catch (error) {
-    console.log('Ошибка при получчении прогресса по курсам');
+    console.error('Ошибка при получчении прогресса по курсам');
     throw error;
   }
 };
@@ -54,11 +52,9 @@ export const getUserAchievementsProgress = async (userId: string) => {
       },
     });
 
-    console.log(progress);
-
     return progress;
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижениям');
+    console.error('Ошибка при получении прогресса по достижениям');
     throw error;
   }
 };
@@ -183,7 +179,7 @@ export const registerForCourse = async (userId: string, courseId: string) => {
       return { progress, sucess: 'Прогресс успешно обновлен' };
     });
   } catch (error) {
-    console.log('Ошибка при регистрации на курсе: ', error);
+    console.error('Ошибка при регистрации на курсе: ', error);
     throw error;
   }
 };

@@ -235,6 +235,7 @@ model PrizeTicket {
   id                  String          @id @default(cuid())
   type                PrizeTicketType
   code                String          @unique
+  name                String?         @unique
   percent             Int?
   months              Int?
   minAmountToActivate Float           @default(0) //Минимальная сумма заказа, при которой скидка может быть активирована.
@@ -248,6 +249,8 @@ model PrizeTicket {
   users               User[]          @relation("PrizeTicketsToUser")
 
   @@index([percent])
+  @@index([code])
+  @@index([name])
   @@index([validUntil])
 }
 

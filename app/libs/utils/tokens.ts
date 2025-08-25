@@ -89,7 +89,7 @@ export const getResetPasswordTokenByToken = async (token: string) => {
 
     return resetPasswordToken;
   } catch (error) {
-    console.log('Ошибка при получении resetPassword-токена по токену: ', error);
+    console.error('Ошибка при получении resetPassword-токена по токену: ', error);
     throw error;
   }
 };
@@ -121,7 +121,7 @@ export const generateResetPasswordToken = async (email: string) => {
       return resetPasswordToken;
     });
   } catch (error) {
-    console.log('Ошибка при генерации resetPassword-токена: ', error);
+    console.error('Ошибка при генерации resetPassword-токена: ', error);
     throw error;
   }
 };

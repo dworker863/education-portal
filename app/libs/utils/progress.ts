@@ -50,7 +50,7 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
 
     return 0;
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижению', error);
+    console.error('Ошибка при получении прогресса по достижению', error);
     throw error;
   }
 };
@@ -85,8 +85,6 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
       },
     });
 
-    console.log('TARGET COURSES: ', JSON.stringify(targetCourses));
-
     if (targetCourses.length === 0) {
       throw new Error('Курсы подходящие под данные критерии не найдены');
     }
@@ -95,15 +93,13 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
       return course.usersProgress.some((progress) => progress.completedAt !== null);
     });
 
-    console.log('COMPLETED COURSES: ', completedTargetCourses);
-
     if (completedTargetCourses.length > 0) {
       return 100;
     }
 
     return Math.max(...targetCourses.map((course) => course.usersProgress[0].progress));
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижению', error);
+    console.error('Ошибка при получении прогресса по достижению', error);
     throw error;
   }
 };
@@ -143,7 +139,7 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
 
     return 0;
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижению', error);
+    console.error('Ошибка при получении прогресса по достижению', error);
     throw error;
   }
 };
@@ -180,7 +176,7 @@ const getSubscriptionProgress = async (
 
     return 0;
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижению', error);
+    console.error('Ошибка при получении прогресса по достижению', error);
     throw error;
   }
 };
@@ -204,7 +200,7 @@ const getCombinationProgress = async (userId: string, criteria: TCombination) =>
       return Math.max(...results);
     }
   } catch (error) {
-    console.log('Ошибка при получении прогресса по достижению', error);
+    console.error('Ошибка при получении прогресса по достижению', error);
     throw error;
   }
 };

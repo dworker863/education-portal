@@ -54,30 +54,6 @@ export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[
       },
     });
 
-    // const combinationResult = achievements.filter((achievement) => {
-    //   if (achievement.criteriaType === criteriaTypes[0]) {
-    //     return true;
-    //   }
-
-    //   if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
-    //     if (
-    //       achievement.criteriaType === 'COMBINATION' &&
-    //       achievement.criteria.conditions &&
-    //       Array.isArray(achievement.criteria.conditions)
-    //     ) {
-    //       return achievement.criteria.conditions.some(
-    //         (condition) =>
-    //           condition &&
-    //           typeof condition === 'object' &&
-    //           !Array.isArray(condition) &&
-    //           condition.type === criteriaTypes[0],
-    //       );
-    //     }
-    //   }
-    // });
-
-    console.log('ACHIEVEMENT BY CRITERIA TYPE: ', achievements);
-
     return achievements;
   } catch (error) {
     console.error('Ошибка при получении достижения по типу критерия: ', error);
@@ -93,6 +69,7 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
           id: achievementId,
         },
         select: {
+          name: true,
           startDate: true,
           endDate: true,
           criteria: true,
@@ -138,8 +115,6 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
         newProgress = await getNewProgress(userId, criteria);
       }
 
-      console.log('NEW PROGRESS: ', newProgress);
-
       const isNowComplete = newProgress >= 100 && userProgress.progress < 100;
 
       const progress = await tx.userAchievementProgress.update({
@@ -151,6 +126,27 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
           ...(isNowComplete && { completedAt: new Date() }),
         },
       });
+
+      if (isNowComplete) {
+        const prizeTicket = await tx.prizeTicket.findUnique({
+          where: {
+            name: `Награда за ${achievement.name}`,
+          },
+        });
+
+        if (prizeTicket) {
+          await tx.prizeTicket.update({
+            where: { id: prizeTicket.id },
+            data: {
+              users: {
+                connect: { id: userId },
+              },
+            },
+          });
+        }
+
+        return { progress, success: 'Достижение выполнено! Награда доступна в личном кабинете.' };
+      }
 
       return { progress, success: 'Прогресс успешно обновлен' };
     });

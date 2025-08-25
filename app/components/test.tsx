@@ -42,13 +42,11 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
         newButtonTypes[index] = 'customFail';
       } else {
         const { user } = await completeTest(userId, test.id);
-        console.log(user);
 
         const result = await session.update({
           rating: user.rating || 0,
         });
 
-        console.log('UPDATE RESULT: ', result);
         newButtonTypes[index] = 'customSuccess';
         setPassedTasks([...passedTasks, test.id]);
       }

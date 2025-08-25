@@ -499,8 +499,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   const combinationTypes = form.watch('criteria.types');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
-    console.log('ACHIEVEMENT FORM:', values);
-
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -516,7 +514,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
 
           if (icon) {
             formData.append('reward.icon', icon[0]);
-            console.log('ACHIEVEMENT FORM: ', formData.get('reward.icon'));
           }
         }
 
@@ -535,7 +532,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           formData.append('icon', values.icon[0]);
         }
         const formDataObj = Object.fromEntries(formData.entries());
-        console.log('ACHIEVEMENT FORM:', formDataObj);
 
         const res = await fetch('/api/achievement', {
           method: mode === 'create' ? 'POST' : 'PATCH',

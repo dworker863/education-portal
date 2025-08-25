@@ -53,7 +53,6 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) 
   });
 
   const onSubmit = (values: z.infer<typeof editProfileSchema>) => {
-    console.log(values);
     startTransition(async () => {
       try {
         const formData = new FormData();

@@ -35,10 +35,6 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
     };
 
     loadEmbedProject();
-
-    return () => {
-      console.log('UNMOUNTED');
-    };
   }, [exercise.id, exercise.language, exercise.name]);
 
   if (!vm || !userId) return null;

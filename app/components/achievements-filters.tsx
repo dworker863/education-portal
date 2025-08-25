@@ -683,9 +683,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
   const criteriaTypeFilters = form.watch('criteriaTypeFilters');
 
   const onSubmit = (values: z.infer<typeof achievementsFiltersSchema>) => {
-    // console.log('Form errors:', form.formState.errors);
-    console.log('FILTERS FORM: ', values);
-
     let result;
 
     if (days.length > 0) {
@@ -698,8 +695,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       );
     }
 
-    console.log('AFTER DAYS: ', result);
-
     if (values.rewardType) {
       if (result) {
         result = (result || achievements).filter(
@@ -710,8 +705,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
         );
       }
     }
-
-    console.log('AFTER REWARD: ', values.criteriaTypeFilters);
 
     if (values.criteriaType && values.criteriaType.length > 0) {
       result = achievements.filter(
@@ -743,7 +736,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'languages' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -774,7 +766,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -794,13 +785,9 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'courseNames' in filter &&
               filter.courseNames?.some((name) => {
-                console.log('COURSENAMES FILTER: ', name);
-                console.log('COURSENAMES FILTER: ', courseNames);
-
                 return (
                   isObjectCriteria(achievement.criteria) &&
                   Array.isArray(achievement.criteria?.courseNames) &&
@@ -830,7 +817,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -863,7 +849,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -879,7 +864,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       if (values.criteriaTypeFilters?.some((filter) => 'tier' in filter && filter.tier && filter.tier.length > 0)) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'tier' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -897,7 +881,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'duration' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -911,7 +894,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       if (values.criteriaTypeFilters?.some((filter) => 'firstTimeOnly' in filter && filter.firstTimeOnly)) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'firstTimeOnly' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -944,7 +926,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       ) {
         result = (result || achievements).filter((achievement) =>
           values.criteriaTypeFilters?.some((filter) => {
-            // console.log('TYPE filter: ', filter.languages?.includes(achievement.criteria?.language));
             return (
               'requiredRank' in filter &&
               isObjectCriteria(achievement.criteria) &&
@@ -970,11 +951,8 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
             );
           });
         });
-        // console.log('COMBINATION FILTER: ', result);
       }
     }
-
-    console.log('AFTER TYPE: ', result);
 
     if (result) {
       setFilteredAchievements(result);

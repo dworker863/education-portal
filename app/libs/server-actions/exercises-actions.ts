@@ -140,8 +140,6 @@ export const deleteExercise = async (id: string) => {
 };
 
 export const completeExercise = async (userId: string, exerciseId: string) => {
-  console.log('COMPLETE EXERCISE');
-
   try {
     return await prisma.$transaction(async (tx) => {
       const existingExercise = await tx.exercise.findUnique({

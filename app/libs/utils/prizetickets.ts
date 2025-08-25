@@ -29,3 +29,18 @@ export const getPrizeTicketByCode = async (code: string) => {
     throw error;
   }
 };
+
+export const getPrizeTicketByName = async (name: string) => {
+  try {
+    const prizeTicket = await prisma.prizeTicket.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    return prizeTicket;
+  } catch (error) {
+    console.error('Ошибка при получении призового билета по коду: ', error);
+    throw error;
+  }
+};

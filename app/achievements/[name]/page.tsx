@@ -7,8 +7,6 @@ const AchievementPage = async ({ params }: { params: { name: string } }) => {
   const title = name.replace(/([A-Z])/g, ' $1').trim();
   const achievement = await getAchievementByName(title);
 
-  console.log('ACHIEVEMENT PAGE: ', JSON.stringify(achievement?.reward));
-
   return <div>{achievement && <Achievement achievement={achievement} />}</div>;
 };
 

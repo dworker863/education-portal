@@ -32,15 +32,11 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
       );
       const data = await response.json();
-      console.log('Полученные данные:', data);
 
       if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
         setIsPassed('failed');
       } else {
-        console.log('EXERCISE SESSION: ', session);
-
         const { user } = await completeExercise(userId, exercise.id);
-        console.log(user);
 
         setPassedTasks([...passedTasks, exercise.id]);
 
@@ -55,8 +51,6 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         const result = await session.update({
           rating: user.rating || 0,
         });
-
-        console.log('UPDATE RESULT: ', result);
 
         setIsPassed('success');
       }

@@ -45,8 +45,6 @@ export const addTest = async (values: z.infer<typeof createTestSchema>) => {
 };
 
 export const editTest = async (id: string, values: z.infer<typeof editTestSchema>) => {
-  console.log('SERVER ACTION: ', values);
-
   try {
     if (!id) {
       throw new Error('Не указан ID теста');
@@ -148,8 +146,6 @@ export const deleteTest = async (id: string) => {
 };
 
 export const completeTest = async (userId: string, testId: string) => {
-  console.log('COMPLETE EXERCISE');
-
   try {
     return await prisma.$transaction(async (tx) => {
       const existingTest = await tx.test.findUnique({

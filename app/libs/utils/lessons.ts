@@ -60,12 +60,7 @@ export const getLessonById = async (id: string) => {
 };
 
 export const checkLesson = (passedExercises: string[], totalExercises: string[]) => {
-  console.log('CHECK LESSON PASSED', passedExercises);
-  console.log('CHECK LESSON TOTAL', totalExercises);
-
   const result = (passedExercises.length / totalExercises.length) * 100;
-
-  console.log('CHECK LESSON RESULT', result);
 
   if (result < 75) {
     return false;

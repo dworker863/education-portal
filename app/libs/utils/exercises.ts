@@ -35,9 +35,6 @@ export const checkCompletedExercises = (
   userCompletedExercises: (IExercise | ITest)[],
   lessonExercises: (IExercise | ITest)[],
 ) => {
-  console.log('userCompletedExercises: ', userCompletedExercises);
-  console.log('lessonExercises: ', lessonExercises);
-
   if (userCompletedExercises.length === 0) {
     return [];
   }
@@ -47,8 +44,6 @@ export const checkCompletedExercises = (
   });
 
   const matchedExercisesIds = matchedExercises.map((matchedExercise) => matchedExercise.id);
-
-  console.log('matchedExercisesIds: ', matchedExercisesIds);
 
   return matchedExercisesIds;
 };

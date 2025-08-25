@@ -17,8 +17,6 @@ export const getAllPrizeTickets = cache(async () => {
 });
 
 export const addPrizeTicket = async (values: z.infer<typeof createPrizeTicketSchema>) => {
-  console.log('Adding prize ticket with values:', values);
-
   try {
     const { data, ...parsedResult } = await createPrizeTicketSchema.safeParse(values);
 
@@ -55,6 +53,7 @@ export const addPrizeTicket = async (values: z.infer<typeof createPrizeTicketSch
       data: {
         type: data.type,
         code: data.code,
+        name: data.name || null,
         percent: data.percent || null,
         months: data.months || null,
         minAmountToActivate: data.minAmountToActivate || 0,
@@ -87,6 +86,7 @@ export const editPrizeTicket = async (id: string, values: z.infer<typeof editPri
     const fieldsToCheck = [
       'type',
       'code',
+      'name',
       'percent',
       'months',
       'minAmountToActivate',

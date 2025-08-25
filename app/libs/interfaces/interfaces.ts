@@ -264,6 +264,7 @@ export interface IPrizeTicket {
   id: string;
   type: 'DISCOUNT' | 'SUBSCRIPTION';
   code: string;
+  name: string | null;
   user?: IUser;
   percent: number | null;
   months: number | null;

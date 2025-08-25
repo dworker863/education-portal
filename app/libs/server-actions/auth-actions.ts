@@ -177,7 +177,7 @@ export const resetPassword = async (values: z.infer<typeof resetPasswordSchema>)
 
     return { success: 'Ссылка сброса пароля отправлена на ваш email' };
   } catch (error) {
-    console.log('Ошибка при сбросе пароля: ', error);
+    console.error('Ошибка при сбросе пароля: ', error);
     throw error;
   }
 };
@@ -208,7 +208,7 @@ export const confirmResetPasswordToken = async (token: string | null) => {
 
     return { success: 'Введите новый пароль' };
   } catch (error) {
-    console.log('Ошибка при обработке resetPassword-токена: ', error);
+    console.error('Ошибка при обработке resetPassword-токена: ', error);
     throw error;
   }
 };
@@ -254,7 +254,7 @@ export const addNewPassword = async (token: string, email: string, values: z.inf
 
     return { success: 'Пароль успешно изменен' };
   } catch (error) {
-    console.log('Ошибка при изменении пароля: ', error);
+    console.error('Ошибка при изменении пароля: ', error);
     throw error;
   }
 };

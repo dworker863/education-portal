@@ -63,7 +63,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       try {
         const userCoursesProgress = await getUserCoursesProgress(user.id);
         if (!mounted) return;
-        console.log('PROFILE PROGRESS: ', userCoursesProgress);
 
         if (userCoursesProgress) {
           setUserCourses(userCoursesProgress);
@@ -77,8 +76,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       try {
         const userAchievementsProgress = await getUserAchievementsProgress(user.id);
         if (!mounted) return;
-
-        console.log('PROFILE PROGRESS: ', userAchievementsProgress);
 
         if (userAchievementsProgress) {
           setUserAchievemets(userAchievementsProgress);

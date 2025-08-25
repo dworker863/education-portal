@@ -10,7 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Checkbox } from './checkbox';
 import { Button } from './button';
 import RangeSlider from './range-slider';
-import { criteriaTypes, extendedCriteriaTypes, languages, ranks } from '../libs/utils/static-data';
+import { criteriaTypes, languages, ranks } from '../libs/utils/static-data';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { getCourseNames } from '../libs/server-actions/courses-actions';
 import { getDaysUntilDate, isObjectCriteria } from '../libs/utils/common';
@@ -248,75 +248,6 @@ const ExerciseCompletionFilters = ({
   );
 };
 
-const ParticipationLimitFilters = ({
-  form,
-  prefix,
-  maxParticipants,
-  setMaxParticipants,
-}: {
-  form: UseFormReturn<any>;
-  prefix: string;
-  maxParticipants: number[];
-  setMaxParticipants: Dispatch<SetStateAction<number[]>>;
-}) => {
-  return (
-    <div className="mb-10 space-y-8">
-      <h2 className="text-customSecondary text-lg">Количество участников</h2>
-
-      <RangeSlider
-        title="Количество призовых мест"
-        maxValue={10000}
-        minValueText={`От ${maxParticipants[0]} человек`}
-        maxValueText={`До ${maxParticipants[1]} человек`}
-        range={maxParticipants}
-        setRange={setMaxParticipants}
-      />
-      <div className="mb-10">
-        <FormField
-          control={form.control}
-          name={`${prefix}.requiredRank`}
-          render={() => (
-            <FormItem>
-              <div className="mb-2">
-                <FormLabel className="text-base">Уровень</FormLabel>
-              </div>
-              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                {ranks.map((rank, index) => (
-                  <FormField
-                    key={rank.id + index}
-                    control={form.control}
-                    name={`${prefix}.requiredRank`}
-                    render={({ field }) => {
-                      const values = field.value || [];
-
-                      return (
-                        <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                              checked={values.includes(rank.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...values, rank.id])
-                                  : field.onChange(values.filter((value: string) => value !== rank.id));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-              </div>
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
-  );
-};
-
 const SubscriptionFilters = ({
   form,
   prefix,
@@ -439,136 +370,6 @@ const SubscriptionFilters = ({
   );
 };
 
-const CombinationFilters = ({ form, prefix }: { form: UseFormReturn<any>; prefix: string }) => {
-  return (
-    <div className="mb-10 space-y-8">
-      <div className="mb-10">
-        <FormField
-          control={form.control}
-          name={`${prefix}.operator`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-md">Оператор</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem
-                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="OR"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">Или</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem
-                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="AND"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">И</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-      <div className="mb-10">
-        <FormField
-          control={form.control}
-          name={`${prefix}.types`}
-          render={() => (
-            <FormItem>
-              <div className="mb-2">
-                <FormLabel className="text-base">Тип достижения</FormLabel>
-              </div>
-              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                {criteriaTypes.map((type, index) => (
-                  <FormField
-                    key={type.id + index}
-                    control={form.control}
-                    name={`${prefix}.types`}
-                    render={({ field }) => {
-                      const values = field.value || [];
-
-                      return (
-                        <FormItem key={type.id + index} className="flex flex-row items-start space-x-2 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                              checked={values.includes(type.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...values, type.id])
-                                  : field.onChange(values.filter((value: string) => value !== type.id));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal leading-[18px]">{type.label}</FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-              </div>
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <div className="mb-10">
-        <FormField
-          control={form.control}
-          name={`${prefix}.requiredRank`}
-          render={() => (
-            <FormItem>
-              <div className="mb-2">
-                <FormLabel className="text-base">Уровень</FormLabel>
-              </div>
-              <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                {ranks.map((rank, index) => (
-                  <FormField
-                    key={rank.id + index}
-                    control={form.control}
-                    name={`${prefix}.requiredRank`}
-                    render={({ field }) => {
-                      const values = field.value || [];
-
-                      return (
-                        <FormItem key={rank.id + index} className="flex flex-row items-start space-x-2 space-y-0">
-                          <FormControl>
-                            <Checkbox
-                              className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                              checked={values.includes(rank.id)}
-                              onCheckedChange={(checked) => {
-                                return checked
-                                  ? field.onChange([...values, rank.id])
-                                  : field.onChange(values.filter((value: string) => value !== rank.id));
-                              }}
-                            />
-                          </FormControl>
-                          <FormLabel className="font-normal leading-[18px]">{rank.label}</FormLabel>
-                        </FormItem>
-                      );
-                    }}
-                  />
-                ))}
-              </div>
-            </FormItem>
-          )}
-        />
-      </div>
-    </div>
-  );
-};
-
 type TAchievementsFiltersProps = {
   achievements: IAchievement[];
   setFilterAchievements: Dispatch<SetStateAction<IAchievement[]>>;
@@ -579,7 +380,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
   const [prices, setPrices] = useState<number[]>([0, 100]);
   const [amount, setAmount] = useState<number[]>([0, 10]);
   const [pointsToComplete, setPointsToComplete] = useState<number[]>([0, 100]);
-  const [maxParticipants, setMaxParticipants] = useState<number[]>([0, 1000]);
   const [monthes, setMonthes] = useState<number[]>([0, 5]);
   const [courseNames, setCoursesNames] = useState<ICoursePartial[] | null>(null);
   const [filteredAchievements, setFilteredAchievements] = useState<IAchievement[]>(achievements);
@@ -648,28 +448,12 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
         });
         break;
 
-      case 'PARTICIPATION_LIMIT':
-        appendCriteriaTypeFilter({
-          type: 'PARTICIPATION_LIMIT',
-          requiredRank: [],
-        });
-        break;
-
       case 'SUBSCRIPTION':
         appendCriteriaTypeFilter({
           type: 'SUBSCRIPTION',
           tier: undefined,
           duration: undefined,
           firstTimeOnly: undefined,
-        });
-        break;
-
-      case 'COMBINATION':
-        appendCriteriaTypeFilter({
-          type: 'COMBINATION',
-          operator: undefined,
-          types: [],
-          requiredRank: [],
         });
         break;
 
@@ -828,38 +612,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       }
     }
 
-    if (values.criteriaType?.includes('PARTICIPATION_LIMIT')) {
-      if (maxParticipants.length > 0) {
-        result = (result || achievements).filter(
-          (achievement) =>
-            isObjectCriteria(achievement.criteria) &&
-            (typeof achievement.criteria?.maxParticipants === 'number'
-              ? achievement.criteria?.maxParticipants
-              : maxParticipants[0]) >= maxParticipants[0] &&
-            (typeof achievement.criteria?.maxParticipants === 'number'
-              ? achievement.criteria?.maxParticipants
-              : maxParticipants[1]) <= maxParticipants[1],
-        );
-      }
-
-      if (
-        values.criteriaTypeFilters?.some(
-          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
-        )
-      ) {
-        result = (result || achievements).filter((achievement) =>
-          values.criteriaTypeFilters?.some((filter) => {
-            return (
-              'requiredRank' in filter &&
-              isObjectCriteria(achievement.criteria) &&
-              typeof achievement.criteria?.requiredRank === 'string' &&
-              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
-            );
-          }),
-        );
-      }
-    }
-
     if (values.criteriaType?.includes('SUBSCRIPTION')) {
       if (values.criteriaTypeFilters?.some((filter) => 'tier' in filter && filter.tier && filter.tier.length > 0)) {
         result = (result || achievements).filter((achievement) =>
@@ -905,55 +657,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       }
     }
 
-    if (values.criteriaType?.includes('COMBINATION')) {
-      if (values.criteriaTypeFilters?.some((filter) => 'operator' in filter && filter.operator)) {
-        result = (result || achievements).filter((achievement) =>
-          values.criteriaTypeFilters?.some((filter) => {
-            return (
-              'operator' in filter &&
-              isObjectCriteria(achievement.criteria) &&
-              typeof achievement.criteria?.operator === 'string' &&
-              filter.operator?.includes(achievement.criteria?.operator)
-            );
-          }),
-        );
-      }
-
-      if (
-        values.criteriaTypeFilters?.some(
-          (filter) => 'requiredRank' in filter && filter.requiredRank && filter.requiredRank.length > 0,
-        )
-      ) {
-        result = (result || achievements).filter((achievement) =>
-          values.criteriaTypeFilters?.some((filter) => {
-            return (
-              'requiredRank' in filter &&
-              isObjectCriteria(achievement.criteria) &&
-              typeof achievement.criteria?.requiredRank === 'string' &&
-              filter.requiredRank?.includes(achievement.criteria?.requiredRank)
-            );
-          }),
-        );
-      }
-
-      if (values.criteriaTypeFilters?.some((filter) => 'types' in filter && filter.types && filter.types.length > 0)) {
-        result = (result || achievements).filter((achievement) => {
-          return values.criteriaTypeFilters?.some((filter) => {
-            return (
-              'types' in filter &&
-              filter.types?.some((type) => {
-                return (
-                  isObjectCriteria(achievement.criteria) &&
-                  Array.isArray(achievement.criteria?.types) &&
-                  achievement.criteria.types.includes(type)
-                );
-              })
-            );
-          });
-        });
-      }
-    }
-
     if (result) {
       setFilteredAchievements(result);
       setFilterAchievements(result);
@@ -981,7 +684,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
                   <FormLabel className="text-base">Тип достижения</FormLabel>
                 </div>
                 <div className="flex flex-wrap gap-x-5 gap-y-3 w-[200px] mb-10">
-                  {extendedCriteriaTypes.map((type, index) => (
+                  {criteriaTypes.map((type, index) => (
                     <FormField
                       key={type.id + index}
                       control={form.control}
@@ -1045,14 +748,7 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
                 setPointsToComplete={setPointsToComplete}
               />
             )}
-            {field.type === 'PARTICIPATION_LIMIT' && (
-              <ParticipationLimitFilters
-                form={form}
-                prefix={`criteriaTypeFilters.${index}`}
-                maxParticipants={maxParticipants}
-                setMaxParticipants={setMaxParticipants}
-              />
-            )}
+
             {field.type === 'SUBSCRIPTION' && (
               <SubscriptionFilters
                 form={form}
@@ -1061,7 +757,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
                 setMonthes={setMonthes}
               />
             )}
-            {field.type === 'COMBINATION' && <CombinationFilters form={form} prefix={`criteriaTypeFilters.${index}`} />}
           </div>
         ))}
 

@@ -170,7 +170,7 @@ export const registerForCourse = async (userId: string, courseId: string) => {
     return await prisma.$transaction(async (tx) => {
       const courseProgress = await createCourseProgress(userId, courseId);
 
-      const achievements = await getAchievementByCriteriaType(['COURSE_REGISTRATION', 'COMBINATION']);
+      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
 
       const progress = await Promise.all(
         achievements.map((achievement) => {

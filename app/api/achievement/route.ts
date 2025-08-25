@@ -79,28 +79,6 @@ export async function POST(request: Request) {
       }
     }
 
-    if (data?.criteria.type === 'COMBINATION') {
-      for (const condition of data.criteria.conditions) {
-        if (
-          (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
-          condition.courseNames &&
-          condition.courseNames.length > 0
-        ) {
-          const invalidIds = await getInvalidNames('courses', condition.courseNames);
-
-          if (invalidIds.length > 0) {
-            return NextResponse.json(
-              {
-                error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
-                invalidCourseIds: invalidIds,
-              },
-              { status: 404 },
-            );
-          }
-        }
-      }
-    }
-
     let uploadIconResult;
 
     if (data.icon) {
@@ -220,28 +198,6 @@ export async function PATCH(request: Request) {
           },
           { status: 404 },
         );
-      }
-    }
-
-    if (data?.criteria?.type === 'COMBINATION' && data.criteria.conditions) {
-      for (const condition of data.criteria.conditions) {
-        if (
-          (condition.type === 'COURSE_COMPLETION' || condition.type === 'COURSE_REGISTRATION') &&
-          condition.courseNames &&
-          condition.courseNames.length > 0
-        ) {
-          const invalidIds = await getInvalidNames('courses', condition.courseNames);
-
-          if (invalidIds.length > 0) {
-            return NextResponse.json(
-              {
-                error: `Курсов с ID ${invalidIds.join(', ')} не существует`,
-                invalidCourseIds: invalidIds,
-              },
-              { status: 404 },
-            );
-          }
-        }
       }
     }
 

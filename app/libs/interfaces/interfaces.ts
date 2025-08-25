@@ -181,31 +181,13 @@ export interface IUserAchievementProgressPartial {
   achievement?: IAchievement | IAchievementPartial;
 }
 
-export type TCriteriaType =
-  | 'EXERCISE_COMPLETION'
-  | 'COURSE_COMPLETION'
-  | 'COURSE_REGISTRATION'
-  | 'PARTICIPATION_LIMIT'
-  | 'SUBSCRIPTION'
-  | 'COMBINATION';
+export type TCriteriaType = 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'SUBSCRIPTION';
 
-export type TCriteria =
-  | TExerciseCompletion
-  | TCourseCompletion
-  | TCourseRegistration
-  | TParticipationLimit
-  | TSubscription
-  | TCombination;
+export type TCriteria = TExerciseCompletion | TCourseCompletion | TCourseRegistration | TSubscription;
 
 export interface IAchievementCriteria {
   type: TCriteriaType;
-  condition:
-    | TExerciseCompletion
-    | TCourseCompletion
-    | TCourseRegistration
-    | TParticipationLimit
-    | TSubscription
-    | TCombination;
+  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TSubscription;
 }
 
 export type TExerciseCompletion = {
@@ -232,26 +214,11 @@ export type TCourseRegistration = {
   requiredRank?: string;
 };
 
-export type TParticipationLimit = {
-  type: 'PARTICIPATION_LIMIT';
-  maxParticipants: number;
-  requiredRank?: string;
-};
-
 export type TSubscription = {
   type: 'SUBSCRIPTION';
   tier: 'PRO' | 'PREMIUM';
   amount: number;
   firstTimeOnly: true;
-};
-
-export type TCombination = {
-  type: 'COMBINATION';
-  operator: 'AND' | 'OR';
-  conditions: Array<
-    TExerciseCompletion | TCourseCompletion | TCourseRegistration | TParticipationLimit | TSubscription
-  >;
-  requiredRank?: string;
 };
 
 export interface IReward {

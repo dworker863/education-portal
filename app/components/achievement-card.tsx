@@ -33,39 +33,10 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
               </p>
             </div>
             <h2 className="mb-4 text-customSecondary">Условия</h2>
+
             {typeof achievement.criteria === 'object' &&
               !Array.isArray(achievement.criteria) &&
-              achievement.criteria?.type === 'COMBINATION' && (
-                <div className="space-y-2">
-                  <p>
-                    Тип: <span className="text-customPrimary">Комбинированное достижение</span>
-                  </p>
-                  <p>
-                    Оба условия:{' '}
-                    <span className="text-customPrimary">
-                      {JSON.stringify(achievement.criteria?.operator) === 'AND' ? 'Да' : 'Нет'}
-                    </span>
-                  </p>
-                  {achievement.criteria?.requiredRank && (
-                    <p>
-                      Необходимый рейтинг:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.language)}</span>
-                    </p>
-                  )}
-                </div>
-              )}
-            {typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
-              (achievement.criteria?.type === 'EXERCISE_COMPLETION' ||
-                (achievement.criteria?.type === 'COMBINATION' &&
-                  achievement.criteria?.conditions &&
-                  Array.isArray(achievement.criteria?.conditions) &&
-                  achievement.criteria?.conditions.some(
-                    (condition) =>
-                      typeof condition === 'object' &&
-                      !Array.isArray(condition) &&
-                      condition?.type === 'EXERCISE_COMPLETION',
-                  ))) && (
+              achievement.criteria?.type === 'EXERCISE_COMPLETION' && (
                 <div className="space-y-2">
                   <p>
                     Тип: <span className="text-customPrimary">Выполнение упражнений</span>
@@ -99,17 +70,7 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
             {typeof achievement.criteria === 'object' &&
               !Array.isArray(achievement.criteria) &&
               (achievement.criteria?.type === 'COURSE_COMPLETION' ||
-                achievement.criteria?.type === 'COURSE_REGISTRATION' ||
-                (achievement.criteria?.type === 'COMBINATION' &&
-                  achievement.criteria?.conditions &&
-                  Array.isArray(achievement.criteria?.conditions) &&
-                  achievement.criteria?.conditions.some((condition) => {
-                    return (
-                      typeof condition === 'object' &&
-                      !Array.isArray(condition) &&
-                      (condition?.type === 'COURSE_COMPLETION' || condition?.type === 'COURSE_REGISTRATION')
-                    );
-                  }))) && (
+                achievement.criteria?.type === 'COURSE_REGISTRATION') && (
                 <div className="space-y-2">
                   <p>
                     Тип:{' '}
@@ -148,48 +109,7 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
 
             {typeof achievement.criteria === 'object' &&
               !Array.isArray(achievement.criteria) &&
-              (achievement.criteria?.type === 'PARTICIPATION_LIMIT' ||
-                (achievement.criteria?.type === 'COMBINATION' &&
-                  achievement.criteria?.conditions &&
-                  Array.isArray(achievement.criteria?.conditions) &&
-                  achievement.criteria?.conditions.some(
-                    (condition) =>
-                      typeof condition === 'object' &&
-                      !Array.isArray(condition) &&
-                      condition?.type === 'PARTICIPATION_LIMIT',
-                  ))) && (
-                <div className="space-y-2">
-                  <p>
-                    Тип: <span className="text-customPrimary">Попадение в число первых</span>
-                  </p>
-                  <p>
-                    Необходимое количество победителей:{' '}
-                    <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.maxParticipants)}</span>
-                  </p>
-                  <p>
-                    Количество победителей:{' '}
-                    <span className="text-customPrimary">
-                      {JSON.stringify(achievement.criteria?.currentParticipants)}
-                    </span>
-                  </p>
-                  {achievement.criteria?.requiredRank && (
-                    <p>
-                      Необходимый рейтинг:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.language)}</span>
-                    </p>
-                  )}
-                </div>
-              )}
-            {typeof achievement.criteria === 'object' &&
-              !Array.isArray(achievement.criteria) &&
-              (achievement.criteria?.type === 'SUBSCRIPTION' ||
-                (achievement.criteria?.type === 'COMBINATION' &&
-                  achievement.criteria?.conditions &&
-                  Array.isArray(achievement.criteria?.conditions) &&
-                  achievement.criteria?.conditions.some(
-                    (condition) =>
-                      typeof condition === 'object' && !Array.isArray(condition) && condition?.type === 'SUBSCRIPTION',
-                  ))) && (
+              achievement.criteria?.type === 'SUBSCRIPTION' && (
                 <div className="space-y-2">
                   <p>
                     Тип: <span className="text-customPrimary">Оформление подписки</span>

@@ -11,21 +11,10 @@ export const criteriaTypes = [
     id: 'COURSE_REGISTRATION',
     label: 'COURSE_REGISTRATION',
   },
-  {
-    id: 'PARTICIPATION_LIMIT',
-    label: 'PARTICIPATION_LIMIT',
-  },
+
   {
     id: 'SUBSCRIPTION',
     label: 'SUBSCRIPTION',
-  },
-] as const;
-
-export const extendedCriteriaTypes = [
-  ...criteriaTypes,
-  {
-    id: 'COMBINATION',
-    label: 'COMBINATION',
   },
 ] as const;
 

@@ -77,7 +77,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
 
       await updateCourseProgress(userId, lesson.courseId, lesson.id);
 
-      const achievements = await getAchievementByCriteriaType(['COURSE_COMPLETION', 'COMBINATION']);
+      const achievements = await getAchievementByCriteriaType('COURSE_COMPLETION');
 
       await Promise.all(
         achievements.map((achievement) => {

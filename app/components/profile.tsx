@@ -38,8 +38,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
       try {
         const data = await getSession();
 
-        console.error('data', data);
-
         if (!mounted) return;
 
         setAuthSession(data);

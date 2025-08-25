@@ -1,6 +1,5 @@
 import { prisma } from '@/prisma/prisma';
 import {
-  TCombination,
   TCourseCompletion,
   TCourseRegistration,
   TCriteria,
@@ -181,30 +180,6 @@ const getSubscriptionProgress = async (
   }
 };
 
-const getCombinationProgress = async (userId: string, criteria: TCombination) => {
-  try {
-    const subCriteria = criteria.conditions || [];
-    if (subCriteria.length === 0) return 100;
-
-    const results: number[] = [];
-
-    for (const sub of subCriteria) {
-      let progress = 0;
-      getNewProgress(userId, sub);
-      results.push(progress);
-    }
-
-    if (criteria.operator === 'AND') {
-      return Math.min(...results);
-    } else {
-      return Math.max(...results);
-    }
-  } catch (error) {
-    console.error('Ошибка при получении прогресса по достижению', error);
-    throw error;
-  }
-};
-
 export const getNewProgress = async (userId: string, criteria: TCriteria) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
@@ -216,14 +191,8 @@ export const getNewProgress = async (userId: string, criteria: TCriteria) => {
     case 'COURSE_REGISTRATION':
       return await getCourseRegistrationProgress(userId, criteria as TCourseRegistration);
 
-    case 'PARTICIPATION_LIMIT':
-      return 0;
-
     case 'SUBSCRIPTION':
       return await getSubscriptionProgress(userId, criteria as TSubscription);
-
-    case 'COMBINATION':
-      return await getCombinationProgress(userId, criteria as TCombination);
 
     default:
       const _exhaustiveCheck: never = criteria;

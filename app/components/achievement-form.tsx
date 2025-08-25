@@ -260,55 +260,6 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
   );
 };
 
-const ParticipationLimitFields = ({
-  form,
-  prefix = '',
-  mode,
-}: {
-  form: UseFormReturn<any>;
-  prefix: string;
-  mode: 'create' | 'edit';
-}) => {
-  return (
-    <div className="space-y-4 border p-4 rounded-lg">
-      <h3 className="font-medium">Попадание в число первых</h3>
-      <FormField
-        control={form.control}
-        name={`${prefix}.maxParticipants`}
-        render={() => (
-          <FormItem>
-            <FormLabel>Макс. количество участников</FormLabel>
-            {mode === 'create' && <RequiredSign />}
-            <FormControl>
-              <Input
-                type="number"
-                placeholder="Максимальное количество участников"
-                {...form.register(`${prefix}.maxParticipants`, {
-                  valueAsNumber: true,
-                })}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-      <FormField
-        control={form.control}
-        name={`${prefix}.requiredRank`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Уровень</FormLabel>
-            <FormControl>
-              <Input placeholder="Необходимый уровень" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-    </div>
-  );
-};
-
 const SubscriptionFields = ({
   form,
   prefix = '',
@@ -437,9 +388,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
     remove: removeConfition,
   } = useFieldArray({ control: form.control, name: 'criteria.conditions' });
 
-  const addCondition = (
-    type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'PARTICIPATION_LIMIT' | 'SUBSCRIPTION',
-  ) => {
+  const addCondition = (type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'SUBSCRIPTION') => {
     switch (type) {
       case 'EXERCISE_COMPLETION':
         appendCondition({
@@ -471,14 +420,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
         });
         break;
 
-      case 'PARTICIPATION_LIMIT':
-        appendCondition({
-          type: 'PARTICIPATION_LIMIT',
-          maxParticipants: 0,
-          requiredRank: '',
-        });
-        break;
-
       case 'SUBSCRIPTION':
         appendCondition({
           type: 'SUBSCRIPTION',
@@ -496,7 +437,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
 
   const criteriaType = form.watch('criteria.type');
   const rewardType = form.watch('reward.type');
-  const combinationTypes = form.watch('criteria.types');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
@@ -750,127 +690,17 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                       <SelectItem value="EXERCISE_COMPLETION">EXERCISE_COMPLETION</SelectItem>
                       <SelectItem value="COURSE_COMPLETION">COURSE_COMPLETION</SelectItem>
                       <SelectItem value="COURSE_REGISTRATION">COURSE_REGISTRATION</SelectItem>
-                      <SelectItem value="PARTICIPATION_LIMIT">PARTICIPATION_LIMIT</SelectItem>
                       <SelectItem value="SUBSCRIPTION">SUBSCRIPTION</SelectItem>
-                      <SelectItem value="COMBINATION">COMBINATION</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormItem>
               )}
             />
-            {criteriaType === 'COMBINATION' && (
-              <div className="space-y-4 border p-4 rounded-lg">
-                <h3 className="font-medium">Комбинированное условие</h3>
-                <FormField
-                  control={form.control}
-                  name="criteria.operator"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Вид</FormLabel>
-                      {mode === 'create' && <RequiredSign />}
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col space-y-1"
-                        >
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="AND"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">AND</FormLabel>
-                          </FormItem>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                                value="OR"
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">OR</FormLabel>
-                          </FormItem>
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormItem>
-                  <FormLabel>Тип достижения</FormLabel>
-                  {mode === 'create' && <RequiredSign />}
-                  {criteriaTypes.map((type, index) => (
-                    <FormField
-                      key={type.id + index}
-                      control={form.control}
-                      name="criteria.types"
-                      render={({ field }) => {
-                        const values = field.value || [];
 
-                        return (
-                          <FormItem className="flex items-center space-x-3 space-y-0 py-1">
-                            <FormControl>
-                              <Checkbox
-                                className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary"
-                                checked={values.includes(type.id)}
-                                onCheckedChange={(checked) => {
-                                  addCondition(type.id);
-                                  return checked
-                                    ? field.onChange([...values, type.id])
-                                    : field.onChange(values?.filter((value) => value !== type.id));
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel>{type.label}</FormLabel>
-                            <FormMessage />
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                </FormItem>
-                <FormField
-                  control={form.control}
-                  name="criteria.requiredRank"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Уровень</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Необходимый уровень" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {conditionFields.map((field, index) => (
-                  <div key={field.id}>
-                    {field.type === 'EXERCISE_COMPLETION' && (
-                      <ExerciseCompletionFields form={form} prefix={`criteria.conditions.${index}`} />
-                    )}
-                    {field.type === 'COURSE_COMPLETION' && (
-                      <CourseCompletionFields form={form} prefix={`criteria.conditions.${index}`} />
-                    )}
-                    {field.type === 'COURSE_REGISTRATION' && (
-                      <CourseRegistrationFields form={form} prefix={`criteria.conditions.${index}`} />
-                    )}
-                    {field.type === 'PARTICIPATION_LIMIT' && (
-                      <ParticipationLimitFields form={form} prefix={`criteria.conditions.${index}`} mode={mode} />
-                    )}
-                    {field.type === 'SUBSCRIPTION' && (
-                      <SubscriptionFields form={form} prefix={`criteria.conditions.${index}`} mode={mode} />
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
             {criteriaType === 'EXERCISE_COMPLETION' && <ExerciseCompletionFields form={form} prefix="criteria" />}
             {criteriaType === 'COURSE_COMPLETION' && <CourseCompletionFields form={form} prefix="criteria" />}
             {criteriaType === 'COURSE_REGISTRATION' && <CourseRegistrationFields form={form} prefix="criteria" />}
-            {criteriaType === 'PARTICIPATION_LIMIT' && (
-              <ParticipationLimitFields form={form} prefix="criteria" mode={mode} />
-            )}
+
             {criteriaType === 'SUBSCRIPTION' && <SubscriptionFields form={form} prefix="criteria" mode={mode} />}
 
             <div className="space-y-4 border p-4 rounded-lg">

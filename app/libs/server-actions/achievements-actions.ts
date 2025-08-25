@@ -41,11 +41,11 @@ export const deleteAchievement = async (id: string) => {
   }
 };
 
-export const getAchievementByCriteriaType = async (criteriaTypes: TCriteriaType[]) => {
+export const getAchievementByCriteriaType = async (criteriaType: TCriteriaType) => {
   try {
     const achievements = await prisma.achievement.findMany({
       where: {
-        criteriaType: { in: criteriaTypes },
+        criteriaType: criteriaType,
       },
       select: {
         id: true,

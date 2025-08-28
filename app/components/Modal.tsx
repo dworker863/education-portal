@@ -15,7 +15,7 @@ type TModalProps = {
   children: ReactNode;
   headerLabel: string;
   backButtonLabel: string;
-  backButtonHref: string;
+  backButtonHref?: string;
   showSocials?: boolean;
 };
 
@@ -68,9 +68,20 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
         </CardFooter>
       )}
       <CardFooter>
-        <Button variant="link" className="w-full text-primary-foreground font-normal" size="sm" asChild>
-          <Link href={backButtonHref}>{backButtonLabel}</Link>
-        </Button>
+        {backButtonHref ? (
+          <Button variant="link" className="w-full text-primary-foreground font-normal" size="sm" asChild>
+            <Link href={backButtonHref}>Назад</Link>
+          </Button>
+        ) : (
+          <Button
+            variant="link"
+            className="w-full text-primary-foreground font-normal"
+            size="sm"
+            onClick={modalCloseHandler}
+          >
+            Назад
+          </Button>
+        )}
       </CardFooter>
     </Card>
   );

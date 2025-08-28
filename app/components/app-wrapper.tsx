@@ -80,13 +80,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
             >
               {isModalOpen && confirmationModalType && (
                 <div className="h-screen flex items-center justify-center absolute w-full z-40 space-y-8 text-primary-foreground">
-                  <Modal
-                    type="confirmation"
-                    headerLabel="Подтверждение"
-                    backButtonLabel="Назад"
-                    backButtonHref="./"
-                    showSocials={false}
-                  >
+                  <Modal type="confirmation" headerLabel="Подтверждение" backButtonLabel="Назад" showSocials={false}>
                     <div className="space-y-8 text-primary-foreground">
                       <p>
                         Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.

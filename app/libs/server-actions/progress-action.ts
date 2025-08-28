@@ -60,8 +60,6 @@ export const getUserAchievementsProgress = async (userId: string) => {
 };
 
 export const createCourseProgress = async (userId: string, courseId: string) => {
-  console.log('create course progress called');
-
   try {
     const course = await prisma.course.findUnique({
       where: { id: courseId },

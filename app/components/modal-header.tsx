@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 type TModalHeader = {
-  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile';
+  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile' | 'confirmation';
   label: string;
 };
 
@@ -14,6 +14,7 @@ const ModalHeader: FC<TModalHeader> = ({ type, label }) => {
         {type === 'reset-password' && 'Сменить пароль'}
         {type === 'new-password' && 'Новый пароль'}
         {type === 'edit-profile' && 'Профиль'}
+        {type === 'confirmation' && 'Подтверждение'}
       </h1>
       <p className="text-muted-foreground text-sm">{label}</p>
     </div>

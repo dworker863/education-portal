@@ -116,8 +116,10 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
     }
 
     if (criteria.maxPrice !== undefined) {
-      whereCourse.priceUSD = { lte: criteria.minPrice };
+      whereCourse.priceUSD = { ...whereCourse.priceUSD, lte: criteria.maxPrice };
     }
+
+    console.log('Course registration whereCourse:', whereCourse);
 
     const targetCourses = await prisma.course.findMany({
       where: whereCourse,
@@ -131,6 +133,8 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
         },
       },
     });
+
+    console.log('Course registration progress:', targetCourses);
 
     if (targetCourses.length !== 0) {
       return 100;

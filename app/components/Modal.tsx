@@ -11,7 +11,7 @@ import Socials from './socials';
 import { useRouter } from 'next/navigation';
 
 type TModalProps = {
-  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile';
+  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile' | 'confirmation';
   children: ReactNode;
   headerLabel: string;
   backButtonLabel: string;
@@ -26,7 +26,10 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
 
   const modalCloseHandler = () => {
     context?.setIsModalOpen(false);
-    router.back();
+
+    if (type !== 'confirmation') {
+      router.back();
+    }
   };
 
   const handleOutsideClick = (event: MouseEvent) => {

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { createPrizeTicketSchema, editPrizeTicketSchema } from '../validation';
 import { getPrizeTicketByCode, getPrizeTicketById } from '../utils/prizetickets';
 import { cache } from 'react';
+import { getUserById } from '../utils/auth';
 
 export const getAllPrizeTickets = cache(async () => {
   try {
@@ -133,6 +134,26 @@ export const deletePrizeTicket = async (id: string) => {
     return { success: 'Призовой билет успешно удалён' };
   } catch (error) {
     console.error('Ошибка при удалении призового билета: ', error);
+    throw error;
+  }
+};
+
+export const disconnectPrizeTicketFromUser = async (prizeTicketId: string, userId: string) => {
+  try {
+    const existingTicket = await getPrizeTicketById(prizeTicketId);
+    if (!existingTicket) throw new Error('Призовой билет не найден');
+
+    const existingUser = await getUserById(userId);
+    if (!existingUser) throw new Error('Пользователь не найден');
+
+    await prisma.prizeTicket.update({
+      where: { id: prizeTicketId },
+      data: { users: { disconnect: { id: userId } } },
+    });
+
+    return { success: 'Призовой билет успешно отключён от пользователя' };
+  } catch (error) {
+    console.error('Ошибка при отключении призового билета от пользователя: ', error);
     throw error;
   }
 };

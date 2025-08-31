@@ -1,12 +1,13 @@
 'use client';
 
 import { getSession, SessionProvider } from 'next-auth/react';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useEffect, useState } from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useState } from 'react';
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import Modal from './modal';
 import { Button } from './button';
 import { Session } from 'next-auth';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import { disconnectPrizeTicketFromUser } from '../libs/server-actions/prizeticket-actions';
 
 export type TModalContext = {
   isModalOpen: boolean;
@@ -20,6 +21,7 @@ export type TConfirmationContext = {
   setConfirmation: Dispatch<SetStateAction<boolean>>;
   confirmationModalType: boolean;
   setConfirmationModalType: Dispatch<SetStateAction<boolean>>;
+  discount: number | null;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -40,6 +42,30 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [session, setSession] = useState<Session | null>(null);
   const discountTickets = session?.user?.prizeTickets?.filter((ticket) => ticket.type === 'DISCOUNT');
   const [selectedTicket, setSelectedTicket] = useState<string | null>(null);
+  const [discount, setDiscount] = useState<number | null>(null);
+
+  const confirmationDiscountHandler = useCallback(async () => {
+    try {
+      if (!session?.user) {
+        throw new Error('Пользователь не аутентифицирован');
+      }
+
+      if (!selectedTicket || !discountTickets) {
+        throw new Error('Призовой билет не выбран');
+      }
+
+      setConfirmation(true);
+
+      setDiscount(discountTickets.find((ticket) => ticket.id === selectedTicket)?.percent || null);
+
+      await disconnectPrizeTicketFromUser(selectedTicket, session?.user?.id);
+
+      setIsModalOpen(false);
+      setConfirmationModalType(false);
+    } catch (error) {
+      console.error('Ошибка при выполнении запроса:', error);
+    }
+  }, [selectedTicket, discountTickets, session?.user]);
 
   useEffect(() => {
     let mounted = true;
@@ -76,6 +102,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 setConfirmation,
                 confirmationModalType,
                 setConfirmationModalType,
+                discount,
               }}
             >
               {isModalOpen && confirmationModalType && (
@@ -98,16 +125,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                         </SelectContent>
                       </Select>
                       <div className="flex gap-5 mt-5">
-                        <Button
-                          variant="custom"
-                          className="w-full"
-                          type="submit"
-                          onClick={() => {
-                            setConfirmation(true);
-                            setIsModalOpen(false);
-                            setConfirmationModalType(false);
-                          }}
-                        >
+                        <Button variant="custom" className="w-full" type="submit" onClick={confirmationDiscountHandler}>
                           Использовать
                         </Button>
                         <Button

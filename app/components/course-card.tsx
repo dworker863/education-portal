@@ -22,43 +22,6 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const [isPending, setIsPending] = useState(false);
   const discounts = session?.data?.user.prizeTickets?.filter((ticket) => ticket.type === 'DISCOUNT');
 
-  // useEffect(() => {
-  //   let mounted = true;
-
-  //   const loadAchievementProgress = async () => {
-  //     if (context?.confirmation) {
-  //       setIsPending(true);
-  //       try {
-  //         if (!user) {
-  //           throw new Error('Пользователь не аутентифицирован');
-  //         }
-
-  //         await createCourseProgress(user.id, course.id);
-
-  //         const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-  //         await Promise.all(
-  //           achievements.map((achievement) => {
-  //             updateAchievementProgress(achievement.id, user.id);
-  //           }),
-  //         );
-
-  //         context.setConfirmation(false);
-  //       } catch (error) {
-  //         console.error('Ошибка при выполнении запроса: ', error);
-  //       } finally {
-  //         router.push(`/courses/${course.name}`);
-  //         setIsPending(false);
-  //       }
-  //     }
-  //   };
-
-  //   loadAchievementProgress();
-  //   return () => {
-  //     mounted = false;
-  //   };
-  // }, [context?.confirmation, course.id, course.name, router, user]);
-
   const courseCardClickHandler = useCallback(async () => {
     if (discounts && discounts.length > 0 && !context?.confirmation) {
       context?.setConfirmationModalType(true);
@@ -84,10 +47,11 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
       router.push(`/courses/${course.name}`);
       setIsPending(false);
+      context?.setConfirmation(false);
     } catch (error) {
       console.error('Ошибка при выполнении запроса: ', error);
     }
-  }, [user, course.id]);
+  }, [user, course.id, course.name, router, context, discounts]);
 
   return (
     <>
@@ -106,7 +70,11 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             <div className="flex-grow">{course.description}</div>
           </div>
           <div className="flex justify-end">
-            <span className="text-customSecondary text-lg font-semibold">{course.priceUSD + '$'}</span>
+            <span className="text-customSecondary text-lg font-semibold">
+              {context?.confirmation && context.discount
+                ? (course.priceUSD * context.discount) / 100 + '$'
+                : course.priceUSD + '$'}
+            </span>
           </div>
         </div>
       )}

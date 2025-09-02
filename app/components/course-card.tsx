@@ -9,6 +9,8 @@ import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs
 import { ConfirmationContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 import Spinner from './spinner';
+import { calculatePrizeWithDiscount } from '../libs/utils/prize';
+import { updateUserMoney } from '../libs/server-actions/users-actions';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -20,16 +22,54 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const user = session?.data?.user;
   const context = useContext(ConfirmationContext);
   const [isPending, setIsPending] = useState(false);
-  const discounts = session?.data?.user.prizeTickets?.filter((ticket) => ticket.type === 'DISCOUNT');
+
+  useEffect(() => {
+    const loadCourseWithDiscount = async () => {
+      if (context?.confirmation) {
+        setIsPending(true);
+
+        try {
+          if (!user) {
+            throw new Error('Пользователь не аутентифицирован');
+          }
+
+          await createCourseProgress(user.id, course.id);
+
+          const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
+
+          await Promise.all(
+            achievements.map((achievement) => {
+              updateAchievementProgress(achievement.id, user.id);
+            }),
+          );
+
+          const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
+
+          await updateUserMoney(user.id, amountMoney);
+
+          setIsPending(false);
+          context?.setConfirmation(false);
+
+          router.push(`/courses/${course.name}`);
+        } catch (error) {
+          console.error('Ошибка при выполнении запроса: ', error);
+        }
+      }
+    };
+
+    loadCourseWithDiscount();
+  }, [user, course, router, context, context?.confirmation]);
 
   const courseCardClickHandler = useCallback(async () => {
-    if (discounts && discounts.length > 0 && !context?.confirmation) {
+    if (context?.discountTickets && context.discountTickets.length > 0 && !context?.confirmation) {
       context?.setConfirmationModalType(true);
       context?.setIsModalOpen(true);
       return;
     }
 
     try {
+      setIsPending(true);
+
       if (!user) {
         throw new Error('Пользователь не аутентифицирован');
       }
@@ -37,7 +77,6 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       await createCourseProgress(user.id, course.id);
 
       const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-      console.log('Achievements fetched:', achievements);
 
       await Promise.all(
         achievements.map((achievement) => {
@@ -45,13 +84,14 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
         }),
       );
 
+      await updateUserMoney(user.id, course.priceUSD);
+
       router.push(`/courses/${course.name}`);
       setIsPending(false);
-      context?.setConfirmation(false);
     } catch (error) {
       console.error('Ошибка при выполнении запроса: ', error);
     }
-  }, [user, course.id, course.name, router, context, discounts]);
+  }, [user, course, router, context]);
 
   return (
     <>
@@ -70,11 +110,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             <div className="flex-grow">{course.description}</div>
           </div>
           <div className="flex justify-end">
-            <span className="text-customSecondary text-lg font-semibold">
-              {context?.confirmation && context.discount
-                ? (course.priceUSD * context.discount) / 100 + '$'
-                : course.priceUSD + '$'}
-            </span>
+            <span className="text-customSecondary text-lg font-semibold">{course.priceUSD + '$'}</span>
           </div>
         </div>
       )}

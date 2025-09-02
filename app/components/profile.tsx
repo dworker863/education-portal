@@ -33,6 +33,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const completedCourses = userCourses?.filter((course) => course.completedAt);
 
   useEffect(() => {
+    console.log('Profile component', user);
     let mounted = true;
     const loadSession = async () => {
       try {
@@ -51,7 +52,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     return () => {
       mounted = false;
     };
-  }, [context]);
+  }, [context, user]);
 
   useEffect(() => {
     if (!user) {

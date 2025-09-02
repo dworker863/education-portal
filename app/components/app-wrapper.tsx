@@ -2,7 +2,7 @@
 
 import { getSession, SessionProvider } from 'next-auth/react';
 import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
+import { IAchievement, IExercise, IPrizeTicket } from '../libs/interfaces/interfaces';
 import Modal from './modal';
 import { Button } from './button';
 import { Session } from 'next-auth';
@@ -22,6 +22,7 @@ export type TConfirmationContext = {
   confirmationModalType: boolean;
   setConfirmationModalType: Dispatch<SetStateAction<boolean>>;
   discount: number | null;
+  discountTickets?: IPrizeTicket[];
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -55,12 +56,12 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
       }
 
       setConfirmation(true);
+      setIsModalOpen(false);
 
       setDiscount(discountTickets.find((ticket) => ticket.id === selectedTicket)?.percent || null);
 
       await disconnectPrizeTicketFromUser(selectedTicket, session?.user?.id);
 
-      setIsModalOpen(false);
       setConfirmationModalType(false);
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
@@ -103,6 +104,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 confirmationModalType,
                 setConfirmationModalType,
                 discount,
+                discountTickets,
               }}
             >
               {isModalOpen && confirmationModalType && (

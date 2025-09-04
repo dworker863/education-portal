@@ -26,12 +26,16 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   useEffect(() => {
     const loadCourseWithDiscount = async () => {
       if (context?.confirmation) {
-        setIsPending(true);
-
         try {
           if (!user) {
             throw new Error('Пользователь не аутентифицирован');
           }
+
+          if (user.moneyUSD < course.priceUSD) {
+            throw new Error('Недостаточно средств на балансе');
+          }
+
+          setIsPending(true);
 
           await createCourseProgress(user.id, course.id);
 
@@ -45,20 +49,22 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
           const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
 
-          await updateUserMoney(user.id, amountMoney);
+          const { moneyUSD } = await updateUserMoney(user.id, amountMoney);
 
-          setIsPending(false);
-          context?.setConfirmation(false);
+          await session.update({ ...session.data?.user, moneyUSD });
 
           router.push(`/courses/${course.name}`);
         } catch (error) {
           console.error('Ошибка при выполнении запроса: ', error);
+        } finally {
+          setIsPending(false);
+          context?.setConfirmation(false);
         }
       }
     };
 
     loadCourseWithDiscount();
-  }, [user, course, router, context, context?.confirmation]);
+  }, [course, router, context, session]);
 
   const courseCardClickHandler = useCallback(async () => {
     if (context?.discountTickets && context.discountTickets.length > 0 && !context?.confirmation) {
@@ -68,11 +74,15 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     }
 
     try {
-      setIsPending(true);
-
       if (!user) {
         throw new Error('Пользователь не аутентифицирован');
       }
+
+      if (!user.moneyUSD || user.moneyUSD < course.priceUSD) {
+        throw new Error('Недостаточно средств на балансе');
+      }
+
+      setIsPending(true);
 
       await createCourseProgress(user.id, course.id);
 
@@ -84,14 +94,18 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
         }),
       );
 
-      await updateUserMoney(user.id, course.priceUSD);
+      const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
+
+      await session.update({ ...session.data?.user, moneyUSD });
 
       router.push(`/courses/${course.name}`);
       setIsPending(false);
     } catch (error) {
       console.error('Ошибка при выполнении запроса: ', error);
+    } finally {
+      setIsPending(false);
     }
-  }, [user, course, router, context]);
+  }, [course, router, context, session]);
 
   return (
     <>

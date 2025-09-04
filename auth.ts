@@ -10,10 +10,11 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import {
   IExercise,
   IPrizeTicket,
-  IPrizeTicketPartial,
   ITest,
   IUserAchievementProgress,
+  IUserAchievementProgressPartial,
   IUserCourseProgress,
+  IUserCourseProgressPartial,
 } from './app/libs/interfaces/interfaces';
 
 declare module 'next-auth' {
@@ -35,8 +36,8 @@ declare module 'next-auth' {
       completedExercises?: IExercise[];
       completedTests?: ITest[];
       prizeTickets?: IPrizeTicket[];
-      courseProgress?: IUserCourseProgress[];
-      achievementsProgress?: IUserAchievementProgress[];
+      coursesProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
+      achievementsProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
     } & DefaultSession['user'];
 
     /**
@@ -129,7 +130,30 @@ export const {
       if (userId) {
         const fullUser = await prisma.user.findUnique({
           where: { id: userId },
-          include: {
+          select: {
+            coursesProgress: {
+              select: {
+                id: true,
+                progress: true,
+                completedAt: true,
+                course: {
+                  select: { id: true, name: true },
+                },
+                currentLesson: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
+            achievementsProgress: {
+              select: {
+                id: true,
+                progress: true,
+                completedAt: true,
+                achievement: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
             completedExercises: true,
             completedTests: true,
             prizeTickets: true,
@@ -147,6 +171,8 @@ export const {
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
+
+      console.log('Updating session with', session);
 
       return session;
     },

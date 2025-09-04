@@ -15,7 +15,7 @@ export const updateUserMoney = async (userId: string, amount: number) => {
       data: { moneyUSD: user.moneyUSD },
     });
 
-    return { success: 'Баланс успешно обновлён' };
+    return { success: 'Баланс успешно обновлён', moneyUSD: user.moneyUSD };
   } catch (error) {
     console.error('Ошибка при выполнении запроса:', error);
     throw error;

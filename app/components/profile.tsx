@@ -1,16 +1,13 @@
 'use client';
 
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext } from 'react';
 import { cn } from '../libs/cn';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
-import { Session } from 'next-auth';
-import { getUserAchievementsProgress, getUserCoursesProgress } from '../libs/server-actions/progress-action';
-import { IUserAchievementProgressPartial, IUserCourseProgressPartial } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import slugify from 'slugify';
 
@@ -23,77 +20,12 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const context = useContext(ModalContext);
   const router = useRouter();
   const session = useSession();
+  const user = session?.data?.user;
   const prizeTickets = session?.data?.user?.prizeTickets;
 
-  const [authSession, setAuthSession] = useState<Session | null>(null);
-  const [userCourses, setUserCourses] = useState<IUserCourseProgressPartial[] | null>(null);
-  const [userAchievements, setUserAchievements] = useState<IUserAchievementProgressPartial[] | null>(null);
+  console.log('Profile component rendered with user:', user);
 
-  const user = session?.data?.user || authSession?.user;
-  const completedCourses = userCourses?.filter((course) => course.completedAt);
-
-  useEffect(() => {
-    console.log('Profile component', user);
-    let mounted = true;
-    const loadSession = async () => {
-      try {
-        const data = await getSession();
-
-        if (!mounted) return;
-
-        setAuthSession(data);
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    loadSession();
-
-    return () => {
-      mounted = false;
-    };
-  }, [context, user]);
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-
-    let mounted = true;
-
-    const loadUserCourses = async () => {
-      try {
-        const userCoursesProgress = await getUserCoursesProgress(user.id);
-        if (!mounted) return;
-
-        if (userCoursesProgress) {
-          setUserCourses(userCoursesProgress);
-        }
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    const loadUserAchievements = async () => {
-      try {
-        const userAchievementsProgress = await getUserAchievementsProgress(user.id);
-        if (!mounted) return;
-
-        if (userAchievementsProgress) {
-          setUserAchievements(userAchievementsProgress);
-        }
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    loadUserCourses();
-    loadUserAchievements();
-
-    return () => {
-      mounted = false;
-    };
-  }, [user]);
+  const completedCourses = user?.coursesProgress?.filter((course) => course.completedAt);
 
   if (!user) {
     return null;
@@ -194,10 +126,10 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           <p className="mb-2 text-sm">
             Рейтинг: <span className="text-customPrimary">{user?.rating}</span>
           </p>
-          {userCourses && userCourses.length > 0 && (
+          {user?.coursesProgress && user?.coursesProgress.length > 0 && (
             <div className="mb-2 text-sm">
               Изучаемые курсы:
-              {userCourses.map((courseProgress, index) => {
+              {user?.coursesProgress.map((courseProgress, index) => {
                 const lessonName =
                   courseProgress?.currentLesson?.name && slugify(courseProgress?.currentLesson.name, { locale: 'ru' });
 
@@ -234,10 +166,10 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               ))}
             </p>
           )}
-          {userAchievements && userAchievements.length > 0 && (
+          {user?.achievementsProgress && user?.achievementsProgress.length > 0 && (
             <div className="mb-2 text-sm">
               Прогресс достижений:
-              {userAchievements.map((achievementProgress, index) => {
+              {user?.achievementsProgress.map((achievementProgress, index) => {
                 if (achievementProgress.progress < 100) {
                   return (
                     <div

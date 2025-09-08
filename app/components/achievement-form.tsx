@@ -25,7 +25,6 @@ import { CalendarIcon } from 'lucide-react';
 import { cn } from '../libs/cn';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
-import { criteriaTypes } from '../libs/utils/static-data';
 
 type TAchievementFormProps = {
   mode: 'create' | 'edit';

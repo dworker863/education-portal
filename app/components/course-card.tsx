@@ -47,9 +47,10 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             }),
           );
 
-          const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
+          // const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
 
-          const { moneyUSD } = await updateUserMoney(user.id, amountMoney);
+          // const { moneyUSD } = await updateUserMoney(user.id, amountMoney);
+          const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
 
           await session.update({ ...session.data?.user, moneyUSD });
 
@@ -67,7 +68,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   }, [course, router, context, session]);
 
   const courseCardClickHandler = useCallback(async () => {
-    if (context?.discountTickets && context.discountTickets.length > 0 && !context?.confirmation) {
+    if (!context?.confirmation) {
       context?.setConfirmationModalType(true);
       context?.setIsModalOpen(true);
       return;

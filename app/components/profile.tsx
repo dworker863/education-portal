@@ -23,7 +23,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const user = session?.data?.user;
   const prizeTickets = session?.data?.user?.prizeTickets;
 
-  console.log('Profile component rendered with user:', user);
+  // console.log('Profile component rendered with user:', user);
 
   const completedCourses = user?.coursesProgress?.filter((course) => course.completedAt);
 

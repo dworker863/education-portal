@@ -145,7 +145,7 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
           });
         }
 
-        return { progress, success: 'Достижение выполнено! Награда доступна в личном кабинете.' };
+        return { prizeTicket, success: 'Достижение выполнено! Награда доступна в личном кабинете.' };
       }
 
       return { progress, success: 'Прогресс успешно обновлен' };

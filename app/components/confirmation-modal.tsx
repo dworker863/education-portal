@@ -1,22 +1,33 @@
-import { FC, use, useCallback, useContext } from 'react';
+import { FC, useCallback, useContext, useState } from 'react';
 import Modal from './modal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
 import { IPrizeTicket } from '../libs/interfaces/interfaces';
 import { ConfirmationContext } from './app-wrapper';
+import { useSession } from 'next-auth/react';
 
 type TConfirmationModalProps = {
   type: 'actionConfirmation' | 'usePrizeTicketConfirmation';
-  discountTickets?: IPrizeTicket[];
 };
 
-const ConfirmationModal: FC<TConfirmationModalProps> = ({ type, discountTickets }) => {
+const ConfirmationModal: FC<TConfirmationModalProps> = ({ type }) => {
   const context = useContext(ConfirmationContext);
+  const session = useSession();
+  const discountTickets = session?.data?.user?.prizeTickets?.filter((ticket) => ticket.type === 'DISCOUNT');
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
-  const confirmHandler = useCallback(() => {
+  const confirmHandler = useCallback(async () => {
     context?.setConfirmation(true);
     context?.setIsModalOpen(false);
     context?.setConfirmationModalType(false);
+
+    if (type === 'usePrizeTicketConfirmation' && selectedTicketId) {
+      await session.update({
+        ...session.data?.user,
+        prizeTickets: session.data?.user?.prizeTickets?.filter((ticket) => ticket.id !== selectedTicketId),
+      });
+      // console.log('Selected Prize Ticket ID:', selectedTicketId);
+    }
   }, [context]);
 
   const cancelHandler = useCallback(() => {
@@ -34,7 +45,7 @@ const ConfirmationModal: FC<TConfirmationModalProps> = ({ type, discountTickets 
           )}
           {type === 'actionConfirmation' && <p>Вы уверены?</p>}
           {type === 'usePrizeTicketConfirmation' && (
-            <Select onValueChange={(value) => {}} defaultValue="">
+            <Select onValueChange={setSelectedTicketId} defaultValue="">
               <SelectTrigger>
                 <SelectValue placeholder="Выберите призовой билет" />
               </SelectTrigger>

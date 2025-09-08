@@ -37,22 +37,34 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
           setIsPending(true);
 
-          await createCourseProgress(user.id, course.id);
+          const courseProgress = await createCourseProgress(user.id, course.id);
 
           const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
 
-          await Promise.all(
+          const achievementProgress = await Promise.all(
             achievements.map((achievement) => {
-              updateAchievementProgress(achievement.id, user.id);
+              return updateAchievementProgress(achievement.id, user.id);
             }),
           );
+
+          const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+
+          // if ()
 
           // const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
 
           // const { moneyUSD } = await updateUserMoney(user.id, amountMoney);
           const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
 
-          await session.update({ ...session.data?.user, moneyUSD });
+          await session.update({
+            ...session.data?.user,
+            moneyUSD,
+            coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
+            prizeTickets: [
+              ...(user.prizeTickets ?? []),
+              ...achievementPrizeTickets.map((progress) => progress?.prizeTicket),
+            ],
+          });
 
           router.push(`/courses/${course.name}`);
         } catch (error) {

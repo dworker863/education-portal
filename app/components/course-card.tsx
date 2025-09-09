@@ -9,8 +9,8 @@ import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs
 import { ConfirmationContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 import Spinner from './spinner';
-import { calculatePrizeWithDiscount } from '../libs/utils/prize';
 import { updateUserMoney } from '../libs/server-actions/users-actions';
+import { calculatePrizeWithDiscount } from '../libs/utils/prize';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -25,100 +25,109 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
   useEffect(() => {
     const loadCourseWithDiscount = async () => {
-      if (context?.confirmation) {
-        try {
-          if (!user) {
-            throw new Error('Пользователь не аутентифицирован');
+      try {
+        if (user) {
+          if (context?.modalType === 'confirmation' && context.confirmation) {
+            console.log('Course confirmed without discount', context);
+
+            if (user.moneyUSD < course.priceUSD) {
+              throw new Error('Недостаточно средств на балансе');
+            }
+
+            setIsPending(true);
+
+            const courseProgress = await createCourseProgress(user.id, course.id);
+
+            const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
+
+            const achievementProgress = await Promise.all(
+              achievements.map((achievement) => {
+                return updateAchievementProgress(achievement.id, user.id);
+              }),
+            );
+
+            const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+
+            const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
+
+            await session.update({
+              ...session.data?.user,
+              moneyUSD,
+              coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
+              prizeTickets: [
+                ...(user.prizeTickets ?? []),
+                ...achievementPrizeTickets.map((progress) => progress?.prizeTicket),
+              ],
+            });
+
+            router.push(`/courses/${course.name}`);
+            setIsPending(false);
+            context?.setModalType(null);
+            context?.setConfirmation(false);
+            return;
           }
 
-          if (user.moneyUSD < course.priceUSD) {
-            throw new Error('Недостаточно средств на балансе');
+          if (context?.modalType === 'usage' && context.confirmation) {
+            setIsPending(true);
+
+            const priceWithDiscount = calculatePrizeWithDiscount(course.priceUSD, context?.discount);
+
+            if (user.moneyUSD < priceWithDiscount) {
+              throw new Error('Недостаточно средств на балансе');
+            }
+
+            const courseProgress = await createCourseProgress(user.id, course.id);
+
+            const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
+
+            await Promise.all(
+              achievements.map((achievement) => {
+                return updateAchievementProgress(achievement.id, user.id);
+              }),
+            );
+
+            const { moneyUSD } = await updateUserMoney(user.id, priceWithDiscount);
+
+            await session.update({
+              ...session.data?.user,
+              moneyUSD,
+              coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
+            });
+
+            router.push(`/courses/${course.name}`);
+            setIsPending(false);
+            context?.setConfirmation(false);
+            context?.setModalType(null);
           }
-
-          setIsPending(true);
-
-          const courseProgress = await createCourseProgress(user.id, course.id);
-
-          const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-          const achievementProgress = await Promise.all(
-            achievements.map((achievement) => {
-              return updateAchievementProgress(achievement.id, user.id);
-            }),
-          );
-
-          const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
-
-          // if ()
-
-          // const amountMoney = calculatePrizeWithDiscount(course.priceUSD, context.discount);
-
-          // const { moneyUSD } = await updateUserMoney(user.id, amountMoney);
-          const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
-
-          await session.update({
-            ...session.data?.user,
-            moneyUSD,
-            coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
-            prizeTickets: [
-              ...(user.prizeTickets ?? []),
-              ...achievementPrizeTickets.map((progress) => progress?.prizeTicket),
-            ],
-          });
-
-          router.push(`/courses/${course.name}`);
-        } catch (error) {
-          console.error('Ошибка при выполнении запроса: ', error);
-        } finally {
-          setIsPending(false);
-          context?.setConfirmation(false);
         }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса: ', error);
       }
     };
 
     loadCourseWithDiscount();
-  }, [course, router, context, session]);
+  }, [course, context, user]);
 
   const courseCardClickHandler = useCallback(async () => {
-    if (!context?.confirmation) {
-      context?.setConfirmationModalType(true);
+    console.log('Course Card Click Handler Invoked', user);
+    if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+      router.push(`/courses/${course.name}`);
+      return;
+    }
+
+    if (user?.prizeTickets && user?.prizeTickets.length > 0) {
+      console.log('Course Card Clicked', user?.prizeTickets);
+      context?.setModalType('usage');
       context?.setIsModalOpen(true);
       return;
     }
 
-    try {
-      if (!user) {
-        throw new Error('Пользователь не аутентифицирован');
-      }
-
-      if (!user.moneyUSD || user.moneyUSD < course.priceUSD) {
-        throw new Error('Недостаточно средств на балансе');
-      }
-
-      setIsPending(true);
-
-      await createCourseProgress(user.id, course.id);
-
-      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-      await Promise.all(
-        achievements.map((achievement) => {
-          updateAchievementProgress(achievement.id, user.id);
-        }),
-      );
-
-      const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
-
-      await session.update({ ...session.data?.user, moneyUSD });
-
-      router.push(`/courses/${course.name}`);
-      setIsPending(false);
-    } catch (error) {
-      console.error('Ошибка при выполнении запроса: ', error);
-    } finally {
-      setIsPending(false);
+    if (!context?.confirmation) {
+      context?.setModalType('confirmation');
+      context?.setIsModalOpen(true);
+      return;
     }
-  }, [course, router, context, session]);
+  }, [context, user, course, router]);
 
   return (
     <>

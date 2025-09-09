@@ -1,9 +1,10 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useCallback, useEffect, useState } from 'react';
-import { IAchievement, IExercise, IPrizeTicket } from '../libs/interfaces/interfaces';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
+import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import ConfirmationModal from './confirmation-modal';
+import UsageModal from './usage-modal';
 
 export type TModalContext = {
   isModalOpen: boolean;
@@ -12,9 +13,12 @@ export type TModalContext = {
 
 export type TConfirmationContext = {
   confirmation: boolean;
-  setConfirmationModalType: Dispatch<SetStateAction<boolean>>;
+  modalType: null | 'confirmation' | 'notification' | 'usage';
+  setModalType: Dispatch<SetStateAction<null | 'confirmation' | 'notification' | 'usage'>>;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
   setConfirmation: Dispatch<SetStateAction<boolean>>;
+  discount: number;
+  setDiscount: Dispatch<SetStateAction<number>>;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -30,8 +34,9 @@ type TAppWrapperProps = {
 
 const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [confirmationModalType, setConfirmationModalType] = useState(false);
+  const [modalType, setModalType] = useState<null | 'confirmation' | 'notification' | 'usage'>(null);
   const [confirmation, setConfirmation] = useState(false);
+  const [discount, setDiscount] = useState(0);
 
   return (
     <SessionProvider>
@@ -39,9 +44,11 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
         <AchievementsContext.Provider value={achievements}>
           <ExercisesContext.Provider value={exercises}>
             <ConfirmationContext.Provider
-              value={{ confirmation, setConfirmationModalType, setIsModalOpen, setConfirmation }}
+              value={{ confirmation, modalType, setModalType, setIsModalOpen, setConfirmation, discount, setDiscount }}
             >
-              {isModalOpen && confirmationModalType && <ConfirmationModal type="actionConfirmation" />}
+              {isModalOpen && modalType === 'confirmation' && <ConfirmationModal />}
+              {/* {isModalOpen && modalType === 'notification' && <NotificationModal />} */}
+              {isModalOpen && modalType === 'usage' && <UsageModal />}
               {children}
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>

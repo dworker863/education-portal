@@ -75,8 +75,10 @@ export interface IUserCourseProgressPartial {
   progress: number;
   completedAt?: Date | null;
   currentLesson?: ILesson | ILessonPartial;
-  course?: ICourse | ICoursePartial;
+  userId: string;
   user?: IUser | IUserPartial;
+  courseId: string;
+  course?: ICourse | ICoursePartial;
 }
 
 export interface ILesson {

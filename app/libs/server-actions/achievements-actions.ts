@@ -94,7 +94,8 @@ export const updateAchievementProgress = async (achievementId: string, userId: s
       });
 
       if (userProgress?.completedAt) {
-        throw new Error('Достижение было выполнено ранее');
+        // throw new Error('Достижение было выполнено ранее');
+        return;
       }
 
       if (!userProgress) {

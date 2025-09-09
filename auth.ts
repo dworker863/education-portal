@@ -136,6 +136,8 @@ export const {
                 id: true,
                 progress: true,
                 completedAt: true,
+                courseId: true,
+                userId: true,
                 course: {
                   select: { id: true, name: true },
                 },
@@ -171,8 +173,6 @@ export const {
       if (token.user) {
         session = { ...session, user: { ...session.user, ...token.user } };
       }
-
-      console.log('Updating session with', session);
 
       return session;
     },

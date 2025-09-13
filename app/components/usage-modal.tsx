@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useContext, useState } from 'react';
 import Modal from './modal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
@@ -23,7 +25,6 @@ const UsageModal = () => {
         throw new Error('Призовой билет не выбран');
       }
 
-      context?.setConfirmation(true);
       context?.setIsModalOpen(false);
 
       if (selectedTicketId) {
@@ -35,6 +36,8 @@ const UsageModal = () => {
           ...session.data?.user,
           prizeTickets: session.data?.user?.prizeTickets?.filter((ticket) => ticket.id !== selectedTicketId),
         });
+
+        context?.setConfirmation(true);
       }
     } catch (error) {
       console.error('Ошибка при выполнении запроса: ', error);

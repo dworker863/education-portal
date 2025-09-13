@@ -1,15 +1,16 @@
 'use client';
 
-import { FC, useContext } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import { cn } from '../libs/cn';
-import { useSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { ModalContext } from './app-wrapper';
+import { ConfirmationContext, ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
+import { Session } from 'next-auth';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -17,19 +18,44 @@ type TProfile = {
 };
 
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
-  const context = useContext(ModalContext);
+  const modalContext = useContext(ModalContext);
+  const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
-  const session = useSession();
-  const user = session?.data?.user;
-  const prizeTickets = session?.data?.user?.prizeTickets;
-
-  // console.log('Profile component rendered with user:', user);
+  const [session, setSession] = useState<Session | null>(null);
+  const user = session?.user;
+  const prizeTickets = session?.user?.prizeTickets;
 
   const completedCourses = user?.coursesProgress?.filter((course) => course.completedAt);
+
+  useEffect(() => {
+    let mounted = true;
+
+    if (!modalContext) return;
+
+    const loadSession = async () => {
+      try {
+        const data = await getSession();
+
+        if (!mounted) return;
+
+        setSession(data);
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+      }
+    };
+
+    loadSession();
+
+    return () => {
+      mounted = false;
+    };
+  }, [modalContext, confirmationContext]);
 
   if (!user) {
     return null;
   }
+
+  // console.log('Profile user:', user);
 
   return (
     <div
@@ -56,7 +82,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           className="mt-4"
           variant="custom"
           onClick={() => {
-            context?.setIsModalOpen(true);
+            modalContext?.setIsModalOpen(true);
             router.push(`/edit-profile?email=${user?.email}&type=image`);
           }}
         >
@@ -76,7 +102,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                   variant="customLink"
                   size="icon"
                   onClick={() => {
-                    context?.setIsModalOpen(true);
+                    modalContext?.setIsModalOpen(true);
                     router.push(`/edit-profile?email=${user?.email}&field=firstName`);
                   }}
                 >
@@ -93,7 +119,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                   variant="customLink"
                   size="icon"
                   onClick={() => {
-                    context?.setIsModalOpen(true);
+                    modalContext?.setIsModalOpen(true);
                     router.push(`/edit-profile?email=${user?.email}&field=lastName`);
                   }}
                 >
@@ -111,7 +137,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                   variant="customLink"
                   size="icon"
                   onClick={() => {
-                    context?.setIsModalOpen(true);
+                    modalContext?.setIsModalOpen(true);
                     router.push(`/edit-profile?email=${user?.email}&type=birthDate`);
                   }}
                 >
@@ -132,7 +158,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               {user?.coursesProgress.map((courseProgress, index) => {
                 const lessonName =
                   courseProgress?.currentLesson?.name && slugify(courseProgress?.currentLesson.name, { locale: 'ru' });
-
+                console.log('Current lesson name:', user);
                 return (
                   <div
                     className="flex flex-col mb-4"

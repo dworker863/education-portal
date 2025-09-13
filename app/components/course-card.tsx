@@ -53,7 +53,9 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             await session.update({
               ...session.data?.user,
               moneyUSD,
-              coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
+              coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
+                ? user.coursesProgress
+                : [...(user.coursesProgress ?? []), courseProgress],
               prizeTickets: [
                 ...(user.prizeTickets ?? []),
                 ...achievementPrizeTickets.map((progress) => progress?.prizeTicket),
@@ -91,7 +93,9 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             await session.update({
               ...session.data?.user,
               moneyUSD,
-              coursesProgress: [...(user.coursesProgress ?? []), courseProgress],
+              coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
+                ? user.coursesProgress
+                : [...(user.coursesProgress ?? []), courseProgress],
             });
 
             router.push(`/courses/${course.name}`);
@@ -110,10 +114,10 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
   const courseCardClickHandler = useCallback(async () => {
     console.log('Course Card Click Handler Invoked', user);
-    if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
-      router.push(`/courses/${course.name}`);
-      return;
-    }
+    // if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+    //   router.push(`/courses/${course.name}`);
+    //   return;
+    // }
 
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
       console.log('Course Card Clicked', user?.prizeTickets);

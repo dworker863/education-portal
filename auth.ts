@@ -171,7 +171,7 @@ export const {
       }
 
       if (token.user) {
-        session = { ...session, user: { ...session.user, ...token.user } };
+        session = { ...session, user: { ...token.user, ...session.user } };
       }
 
       return session;

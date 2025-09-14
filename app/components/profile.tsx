@@ -1,16 +1,15 @@
 'use client';
 
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext } from 'react';
 import { cn } from '../libs/cn';
-import { getSession, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { ConfirmationContext, ModalContext } from './app-wrapper';
+import { ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
-import { Session } from 'next-auth';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -19,43 +18,16 @@ type TProfile = {
 
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const modalContext = useContext(ModalContext);
-  const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
-  const [session, setSession] = useState<Session | null>(null);
-  const user = session?.user;
-  const prizeTickets = session?.user?.prizeTickets;
+  const session = useSession();
+  const user = session?.data?.user;
+  const prizeTickets = session?.data?.user?.prizeTickets;
 
   const completedCourses = user?.coursesProgress?.filter((course) => course.completedAt);
-
-  useEffect(() => {
-    let mounted = true;
-
-    if (!modalContext) return;
-
-    const loadSession = async () => {
-      try {
-        const data = await getSession();
-
-        if (!mounted) return;
-
-        setSession(data);
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-      }
-    };
-
-    loadSession();
-
-    return () => {
-      mounted = false;
-    };
-  }, [modalContext, confirmationContext]);
 
   if (!user) {
     return null;
   }
-
-  // console.log('Profile user:', user);
 
   return (
     <div

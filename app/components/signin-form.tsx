@@ -44,6 +44,9 @@ const SigninForm = () => {
         if (!response) {
           context?.setIsModalOpen(false);
           router.back();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
           return;
         }
 

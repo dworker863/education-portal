@@ -20,15 +20,15 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const router = useRouter();
   const session = useSession();
   const user = session?.data?.user;
-  const context = useContext(ConfirmationContext);
+  const confirmationContext = useContext(ConfirmationContext);
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     const loadCourseWithDiscount = async () => {
       try {
         if (user) {
-          if (context?.modalType === 'confirmation' && context.confirmation) {
-            console.log('Course confirmed without discount', context);
+          if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
+            console.log('Course confirmed without discount', confirmationContext);
 
             if (user.moneyUSD < course.priceUSD) {
               throw new Error('Недостаточно средств на балансе');
@@ -64,15 +64,15 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
             router.push(`/courses/${course.name}`);
             setIsPending(false);
-            context?.setModalType(null);
-            context?.setConfirmation(false);
+            confirmationContext?.setModalType(null);
+            confirmationContext?.setConfirmation(false);
             return;
           }
 
-          if (context?.modalType === 'usage' && context.confirmation) {
+          if (confirmationContext?.modalType === 'usage' && confirmationContext.confirmation) {
             setIsPending(true);
 
-            const priceWithDiscount = calculatePrizeWithDiscount(course.priceUSD, context?.discount);
+            const priceWithDiscount = calculatePrizeWithDiscount(course.priceUSD, confirmationContext?.discount);
 
             if (user.moneyUSD < priceWithDiscount) {
               throw new Error('Недостаточно средств на балансе');
@@ -100,8 +100,8 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
             router.push(`/courses/${course.name}`);
             setIsPending(false);
-            context?.setConfirmation(false);
-            context?.setModalType(null);
+            confirmationContext?.setConfirmation(false);
+            confirmationContext?.setModalType(null);
           }
         }
       } catch (error) {
@@ -110,7 +110,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     };
 
     loadCourseWithDiscount();
-  }, [course, context, user]);
+  }, [course, confirmationContext, user]);
 
   const courseCardClickHandler = useCallback(async () => {
     console.log('Course Card Click Handler Invoked', user);
@@ -121,17 +121,17 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
       console.log('Course Card Clicked', user?.prizeTickets);
-      context?.setModalType('usage');
-      context?.setIsModalOpen(true);
+      confirmationContext?.setModalType('usage');
+      confirmationContext?.setIsModalOpen(true);
       return;
     }
 
-    if (!context?.confirmation) {
-      context?.setModalType('confirmation');
-      context?.setIsModalOpen(true);
+    if (!confirmationContext?.confirmation) {
+      confirmationContext?.setModalType('confirmation');
+      confirmationContext?.setIsModalOpen(true);
       return;
     }
-  }, [context, user, course, router]);
+  }, [confirmationContext, user, course, router]);
 
   return (
     <>

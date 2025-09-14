@@ -3,7 +3,11 @@ import Modal from './modal';
 import { Button } from './button';
 import { ConfirmationContext } from './app-wrapper';
 
-const ConfirmationModal = () => {
+type TConfirmationModalProps = {
+  text: string;
+};
+
+const ConfirmationModal: FC<TConfirmationModalProps> = ({ text }) => {
   const context = useContext(ConfirmationContext);
 
   const confirmHandler = useCallback(() => {
@@ -20,7 +24,7 @@ const ConfirmationModal = () => {
     <div className="h-screen flex items-center justify-center absolute w-full z-40 space-y-8 text-primary-foreground">
       <Modal type="confirmation" headerLabel="Подтвердите действие" backButtonLabel="Назад" showSocials={false}>
         <div className="space-y-8 text-primary-foreground">
-          <p>Вы уверены?</p>
+          <p>{text}</p>
           <div className="flex gap-5 mt-5">
             <Button variant="custom" className="w-full" type="submit" onClick={confirmHandler}>
               Подтвердить

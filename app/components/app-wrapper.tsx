@@ -19,6 +19,8 @@ export type TConfirmationContext = {
   setConfirmation: Dispatch<SetStateAction<boolean>>;
   discount: number;
   setDiscount: Dispatch<SetStateAction<number>>;
+  setConfirmModalText: Dispatch<SetStateAction<string>>;
+  setUsageModalText: Dispatch<SetStateAction<string>>;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -37,6 +39,8 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [modalType, setModalType] = useState<null | 'confirmation' | 'notification' | 'usage'>(null);
   const [confirmation, setConfirmation] = useState(false);
   const [discount, setDiscount] = useState(0);
+  const [confirmModalText, setConfirmModalText] = useState('');
+  const [usageModalText, setUsageModalText] = useState('');
 
   return (
     <SessionProvider>
@@ -44,11 +48,21 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
         <AchievementsContext.Provider value={achievements}>
           <ExercisesContext.Provider value={exercises}>
             <ConfirmationContext.Provider
-              value={{ confirmation, modalType, setModalType, setIsModalOpen, setConfirmation, discount, setDiscount }}
+              value={{
+                confirmation,
+                modalType,
+                setModalType,
+                setIsModalOpen,
+                setConfirmation,
+                discount,
+                setDiscount,
+                setConfirmModalText,
+                setUsageModalText,
+              }}
             >
-              {isModalOpen && modalType === 'confirmation' && <ConfirmationModal />}
+              {isModalOpen && modalType === 'confirmation' && <ConfirmationModal text={confirmModalText} />}
               {/* {isModalOpen && modalType === 'notification' && <NotificationModal />} */}
-              {isModalOpen && modalType === 'usage' && <UsageModal />}
+              {isModalOpen && modalType === 'usage' && <UsageModal text={usageModalText} />}
               {children}
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>

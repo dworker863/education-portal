@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useContext, useState } from 'react';
+import { FC, useCallback, useContext, useState } from 'react';
 import Modal from './modal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
 import { Button } from './button';
@@ -8,7 +8,11 @@ import { ConfirmationContext } from './app-wrapper';
 import { useSession } from 'next-auth/react';
 import { disconnectPrizeTicketFromUser } from '../libs/server-actions/prizeticket-actions';
 
-const UsageModal = () => {
+type TUsageModalProps = {
+  text: string;
+};
+
+const UsageModal: FC<TUsageModalProps> = ({ text }) => {
   const context = useContext(ConfirmationContext);
   const session = useSession();
   const user = session?.data?.user;
@@ -54,7 +58,7 @@ const UsageModal = () => {
     <div className="h-screen flex items-center justify-center absolute w-full z-40 space-y-8 text-primary-foreground">
       <Modal type="confirmation" headerLabel="Подтвердите действие" backButtonLabel="Назад" showSocials={false}>
         <div className="space-y-8 text-primary-foreground">
-          <p>Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.</p>
+          <p>{text}</p>
 
           <Select
             onValueChange={(params) => {

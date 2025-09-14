@@ -122,12 +122,18 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
       console.log('Course Card Clicked', user?.prizeTickets);
       confirmationContext?.setModalType('usage');
+      confirmationContext?.setUsageModalText(
+        'Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.',
+      );
       confirmationContext?.setIsModalOpen(true);
       return;
     }
 
     if (!confirmationContext?.confirmation) {
       confirmationContext?.setModalType('confirmation');
+      confirmationContext?.setConfirmModalText(
+        'Вы уверены, что хотите записаться на этот курс? С вашего баланса будет списана соответствующая сумма.',
+      );
       confirmationContext?.setIsModalOpen(true);
       return;
     }

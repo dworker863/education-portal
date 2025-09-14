@@ -5,6 +5,7 @@ import { createContext, Dispatch, FC, ReactNode, SetStateAction, useState } from
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import ConfirmationModal from './confirmation-modal';
 import UsageModal from './usage-modal';
+import NotificationModal from './notification-modal';
 
 export type TModalContext = {
   isModalOpen: boolean;
@@ -21,6 +22,7 @@ export type TConfirmationContext = {
   setDiscount: Dispatch<SetStateAction<number>>;
   setConfirmModalText: Dispatch<SetStateAction<string>>;
   setUsageModalText: Dispatch<SetStateAction<string>>;
+  setNotificationModalText: Dispatch<SetStateAction<string>>;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -41,6 +43,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [discount, setDiscount] = useState(0);
   const [confirmModalText, setConfirmModalText] = useState('');
   const [usageModalText, setUsageModalText] = useState('');
+  const [notificationModalText, setNotificationModalText] = useState('');
 
   return (
     <SessionProvider>
@@ -58,10 +61,11 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 setDiscount,
                 setConfirmModalText,
                 setUsageModalText,
+                setNotificationModalText,
               }}
             >
               {isModalOpen && modalType === 'confirmation' && <ConfirmationModal text={confirmModalText} />}
-              {/* {isModalOpen && modalType === 'notification' && <NotificationModal />} */}
+              {isModalOpen && modalType === 'notification' && <NotificationModal text={notificationModalText} />}
               {isModalOpen && modalType === 'usage' && <UsageModal text={usageModalText} />}
               {children}
             </ConfirmationContext.Provider>

@@ -6,6 +6,7 @@ import { ModalContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 import { Session } from 'next-auth';
 import Link from 'next/link';
+import { logout } from '../libs/server-actions/auth-actions';
 
 const TopLine = () => {
   const [session, setSession] = useState<Session | null>(null);
@@ -48,7 +49,7 @@ const TopLine = () => {
         {session?.user ? (
           <>
             {session.user.name || session.user.email}
-            <button onClick={() => signOut()}>Sign out</button>
+            <button onClick={async () => await logout()}>Sign out</button>
           </>
         ) : (
           <>

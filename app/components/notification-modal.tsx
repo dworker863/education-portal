@@ -16,7 +16,7 @@ const NotificationModal: FC<TConfirmationModalProps> = ({ text }) => {
   }, [context]);
 
   return (
-    <div className="h-screen flex items-center justify-center absolute w-full z-40 space-y-8 text-primary-foreground">
+    <div className="h-screen flex items-center justify-center fixed w-full z-40 space-y-8 text-primary-foreground">
       <Modal type="confirmation" headerLabel="Подтвердите действие" backButtonLabel="Назад" showSocials={false}>
         <div className="space-y-8 text-primary-foreground">
           <p>{text}</p>

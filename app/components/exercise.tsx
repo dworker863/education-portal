@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, memo, SetStateAction, useMemo, useRef, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useContext, useMemo, useRef, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
@@ -10,6 +10,7 @@ import { SlClose } from 'react-icons/sl';
 import { useSession } from 'next-auth/react';
 import { completeExercise } from '../libs/server-actions/exercises-actions';
 import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
+import { ConfirmationContext } from './app-wrapper';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -18,6 +19,7 @@ type TExerciseProps = {
 };
 
 const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks }) => {
+  const confirmationContext = useContext(ConfirmationContext);
   const session = useSession();
   const userId = session?.data?.user.id as string;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,7 +57,10 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         setIsPassed('success');
       }
     } catch (error) {
-      console.error('Ошибка при выполнении запроса:', error);
+      confirmationContext?.setModalType('notification');
+      confirmationContext?.setNotificationModalText((error as Error).message);
+      confirmationContext?.setIsModalOpen(true);
+      setIsPassed('failed');
     }
   };
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, memo, SetStateAction, useEffect, useMemo, useRef, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ITest } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
@@ -12,6 +12,7 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css';
 import { completeTest } from '../libs/server-actions/tests-actions';
 import { useSession } from 'next-auth/react';
+import { ConfirmationContext } from './app-wrapper';
 
 type TTestProps = {
   test: ITest;
@@ -20,6 +21,7 @@ type TTestProps = {
 };
 
 const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
+  const confirmationContext = useContext(ConfirmationContext);
   const session = useSession();
   const userId = session?.data?.user.id as string;
 
@@ -54,6 +56,9 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
       setButtonTypes(newButtonTypes);
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
+      confirmationContext?.setModalType('notification');
+      confirmationContext?.setNotificationModalText((error as Error).message);
+      confirmationContext?.setIsModalOpen(true);
     }
   };
 

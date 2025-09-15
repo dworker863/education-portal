@@ -130,7 +130,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               {user?.coursesProgress.map((courseProgress, index) => {
                 const lessonName =
                   courseProgress?.currentLesson?.name && slugify(courseProgress?.currentLesson.name, { locale: 'ru' });
-                console.log('Current lesson name:', user);
                 return (
                   <div
                     className="flex flex-col mb-4"

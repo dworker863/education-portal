@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
@@ -25,6 +25,7 @@ import { checkCompletedExercises } from '../libs/utils/exercises';
 import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
 import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
+import { ConfirmationContext } from './app-wrapper';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -34,6 +35,7 @@ type TLessonCardProps = {
 };
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
+  const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
   const content = useMemo(() => (lesson?.content ? DOMPurify?.sanitize(lesson?.content) : ''), [lesson?.content]);
   const session = useSession();
@@ -86,6 +88,10 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
       );
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
+      confirmationContext?.setModalType('notification');
+      confirmationContext?.setNotificationModalText((error as Error).message);
+      confirmationContext?.setIsModalOpen(true);
+      setIsPassed('failed');
     }
   };
 

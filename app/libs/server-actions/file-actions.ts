@@ -10,7 +10,8 @@ export const fileUpload = async (file: File) => {
     const data = await file.arrayBuffer();
     const uploadPath = path.resolve('public/uploads', file.name);
 
-    await fs.writeFile(uploadPath, Buffer.from(data));
+    // await fs.writeFile(uploadPath, Buffer.from(data));
+    await fs.writeFile(uploadPath, new Uint8Array(data));
 
     return path.join('/uploads', file.name);
   } catch (error) {

@@ -105,7 +105,11 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           }
         }
       } catch (error) {
-        console.error('Ошибка при выполнении запроса: ', error);
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
+        setIsPending(false);
+        confirmationContext?.setConfirmation(false);
       }
     };
 
@@ -137,7 +141,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       confirmationContext?.setIsModalOpen(true);
       return;
     }
-  }, [confirmationContext, user, course, router]);
+  }, [confirmationContext, user]);
 
   return (
     <>

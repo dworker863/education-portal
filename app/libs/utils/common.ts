@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import { getCourseByName } from './courses';
 import { getExerciseByName } from './exercises';
+import { TSubscription } from '../interfaces/interfaces';
 
 export const getInvalidNames = async (type: 'courses' | 'exercises', names: string[]) => {
   const idsCheckPromises = names.map(async (name) => {
@@ -84,19 +85,13 @@ export const isObjectCriteria = (
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 };
 
-export const isObjectSubscription = (
-  obj: any,
-): obj is {
-  firstTime: boolean;
-  startedAt: Date;
-  validUntil: Date;
-} => {
+export const isObjectSubscription = (obj: any): obj is TSubscription => {
   return (
     typeof obj === 'object' &&
     obj !== null &&
     !Array.isArray(obj) &&
-    ['ACTIVE', 'INACTIVE'].includes(obj.status) &&
     obj.startedAt instanceof Date &&
-    obj.validUntil instanceof Date
+    obj.validUntil instanceof Date &&
+    typeof obj.amount === 'number'
   );
 };

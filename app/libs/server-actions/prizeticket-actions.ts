@@ -3,9 +3,10 @@
 import { prisma } from '@/prisma/prisma';
 import { z } from 'zod';
 import { createPrizeTicketSchema, editPrizeTicketSchema } from '../validation';
-import { getPrizeTicketByCode, getPrizeTicketById } from '../utils/prizetickets';
+import { disconnectPrizeTicketFromUser, getPrizeTicketByCode, getPrizeTicketById } from '../utils/prizetickets';
 import { cache } from 'react';
 import { getUserById } from '../utils/auth';
+import { extendSubscription, subscribeUser } from './users-actions';
 
 export const getAllPrizeTickets = cache(async () => {
   try {
@@ -138,22 +139,35 @@ export const deletePrizeTicket = async (id: string) => {
   }
 };
 
-export const disconnectPrizeTicketFromUser = async (prizeTicketId: string, userId: string) => {
+export const applyPrizeTicket = async (userId: string, prizeTicketId: string, type: 'DISCOUNT' | 'SUBSCRIPTION') => {
   try {
     const existingTicket = await getPrizeTicketById(prizeTicketId);
+
     if (!existingTicket) throw new Error('Призовой билет не найден');
 
     const existingUser = await getUserById(userId);
+
     if (!existingUser) throw new Error('Пользователь не найден');
 
-    await prisma.prizeTicket.update({
-      where: { id: prizeTicketId },
-      data: { users: { disconnect: { id: userId } } },
-    });
+    if (type === 'SUBSCRIPTION' && existingTicket.type !== 'SUBSCRIPTION')
+      throw new Error('Призовой билет не является подпиской');
 
-    return { success: 'Призовой билет успешно отключён от пользователя' };
+    if (type === 'DISCOUNT' && existingTicket.type !== 'DISCOUNT')
+      throw new Error('Призовой билет не является скидкой');
+
+    if (!existingTicket.months) throw new Error('У призового билета не указано количество месяцев подписки');
+
+    if (!existingUser.subscription) {
+      await subscribeUser(userId, 'PRO', existingTicket.months, 0);
+    } else {
+      await extendSubscription(userId, existingTicket.months, 0);
+    }
+
+    await disconnectPrizeTicketFromUser(prizeTicketId, userId);
+
+    return { success: 'Призовой билет успешно применён' };
   } catch (error) {
-    console.error('Ошибка при отключении призового билета от пользователя: ', error);
+    console.error('Ошибка при применении призового билета: ', error);
     throw error;
   }
 };

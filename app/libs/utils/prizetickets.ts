@@ -44,3 +44,17 @@ export const getPrizeTicketByName = async (name: string) => {
     throw error;
   }
 };
+
+export const disconnectPrizeTicketFromUser = async (prizeTicketId: string, userId: string) => {
+  try {
+    await prisma.prizeTicket.update({
+      where: { id: prizeTicketId },
+      data: { users: { disconnect: { id: userId } } },
+    });
+
+    return { success: 'Призовой билет успешно отключён от пользователя' };
+  } catch (error) {
+    console.error('Ошибка при отключении призового билета от пользователя: ', error);
+    throw error;
+  }
+};

@@ -15,6 +15,7 @@ import {
   IUserAchievementProgressPartial,
   IUserCourseProgress,
   IUserCourseProgressPartial,
+  TSubscription,
 } from './app/libs/interfaces/interfaces';
 
 declare module 'next-auth' {
@@ -30,6 +31,7 @@ declare module 'next-auth' {
       rating: number;
       rank: string;
       moneyUSD: number;
+      subscription: JsonValue | null;
       meta: JsonValue;
       createdAt: Date;
       updatedAt: Date;
@@ -156,6 +158,7 @@ export const {
                 },
               },
             },
+            subscription: true,
             completedExercises: true,
             completedTests: true,
             prizeTickets: true,

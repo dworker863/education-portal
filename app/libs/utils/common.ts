@@ -83,3 +83,20 @@ export const isObjectCriteria = (
 } => {
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 };
+
+export const isObjectSubscription = (
+  obj: any,
+): obj is {
+  firstTime: boolean;
+  startedAt: Date;
+  validUntil: Date;
+} => {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    !Array.isArray(obj) &&
+    ['ACTIVE', 'INACTIVE'].includes(obj.status) &&
+    obj.startedAt instanceof Date &&
+    obj.validUntil instanceof Date
+  );
+};

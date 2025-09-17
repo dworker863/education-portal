@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
+import { isObjectSubscription } from '../libs/utils/common';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -28,6 +29,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   if (!user) {
     return null;
   }
+
+  console.log('User subscription:', user.subscription);
 
   return (
     <div
@@ -209,9 +212,34 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               })}
             </div>
           )}
-          <p className="mb-2 text-sm">
+          <div className="mb-2 text-sm">
             Баланс: <span className="text-customPrimary">{user?.moneyUSD}</span>
-          </p>
+          </div>
+          <div className="mb-2 text-sm">
+            {user?.subscription &&
+              isObjectSubscription(user?.subscription) &&
+              user?.subscription.validUntil > new Date() && (
+                <>
+                  <span className="text-customPrimary">
+                    Подписка активна до {user?.subscription.validUntil.toLocaleDateString()}{' '}
+                  </span>
+                  <Button variant="customLink">Продлить подписку</Button>
+                </>
+              )}
+            {(!user?.subscription ||
+              (isObjectSubscription(user?.subscription) && user?.subscription.validUntil < new Date())) && (
+              <Button
+                className="mt-4"
+                variant="custom"
+                onClick={() => {
+                  modalContext?.setIsModalOpen(true);
+                  router.push(`/edit-profile?email=${user?.email}&type=image`);
+                }}
+              >
+                Оформить подписку
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

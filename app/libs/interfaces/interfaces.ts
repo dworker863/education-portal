@@ -220,7 +220,9 @@ export type TSubscription = {
   type: 'SUBSCRIPTION';
   tier: 'PRO' | 'PREMIUM';
   amount: number;
-  firstTimeOnly: true;
+  firstTime: boolean;
+  startedAt: Date;
+  validUntil: Date;
 };
 
 export interface IReward {

@@ -2,6 +2,10 @@
 
 import { prisma } from '@/prisma/prisma';
 import { getCourseById } from '../utils/courses';
+import { createCourseProgress } from './progress-action';
+import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
+import { ICourse } from '../interfaces/interfaces';
+import { updateUserMoney } from './users-actions';
 
 export const deleteCourse = async (id: string) => {
   try {
@@ -34,6 +38,31 @@ export const getCourseNames = async () => {
     return coursesNames;
   } catch (error) {
     console.error('Ошибка при получении имен курсов: ', error);
+    throw error;
+  }
+};
+
+export const registerForCourse = async (userId: string, course: ICourse, priceWithDiscount?: number) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const courseProgress = await createCourseProgress(userId, course.id, tx);
+
+      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION', tx);
+
+      const achievementProgress = await Promise.all(
+        achievements.map((achievement) => {
+          return updateAchievementProgress(achievement.id, userId, tx);
+        }),
+      );
+
+      const price = priceWithDiscount ?? course.priceUSD;
+
+      const { moneyUSD } = await updateUserMoney(userId, price, tx);
+
+      return { achievementProgress, courseProgress, moneyUSD, success: 'Прогресс успешно обновлен' };
+    });
+  } catch (error) {
+    console.error('Ошибка при регистрации на курсе: ', error);
     throw error;
   }
 };

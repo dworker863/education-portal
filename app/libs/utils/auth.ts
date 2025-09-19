@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 
 export const getUserByEmail = async (email: string) => {
   try {
@@ -16,9 +17,11 @@ export const getUserByEmail = async (email: string) => {
   }
 };
 
-export const getUserById = async (id: string) => {
+export const getUserById = async (id: string, tx?: Prisma.TransactionClient) => {
+  const client = tx || prisma;
+
   try {
-    const user = await prisma.user.findUnique({
+    const user = await client.user.findUnique({
       where: {
         id,
       },

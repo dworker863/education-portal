@@ -1,8 +1,11 @@
 import { prisma } from '@/prisma/prisma';
+import { Prisma } from '@prisma/client';
 
-export const getPrizeTicketById = async (id: string) => {
+export const getPrizeTicketById = async (id: string, tx?: Prisma.TransactionClient) => {
+  const client = tx || prisma;
+
   try {
-    const prizeTicket = await prisma.prizeTicket.findUnique({
+    const prizeTicket = await client.prizeTicket.findUnique({
       where: {
         id,
       },
@@ -45,9 +48,15 @@ export const getPrizeTicketByName = async (name: string) => {
   }
 };
 
-export const disconnectPrizeTicketFromUser = async (prizeTicketId: string, userId: string) => {
+export const disconnectPrizeTicketFromUser = async (
+  prizeTicketId: string,
+  userId: string,
+  tx?: Prisma.TransactionClient,
+) => {
+  const client = tx || prisma;
+
   try {
-    await prisma.prizeTicket.update({
+    await client.prizeTicket.update({
       where: { id: prizeTicketId },
       data: { users: { disconnect: { id: userId } } },
     });

@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import Spinner from './spinner';
 import { updateUserMoney } from '../libs/server-actions/users-actions';
 import { calculatePrizeWithDiscount } from '../libs/utils/prize';
+import { registerForCourse } from '../libs/server-actions/courses-actions';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -36,19 +37,9 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
             setIsPending(true);
 
-            const courseProgress = await createCourseProgress(user.id, course.id);
-
-            const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-            const achievementProgress = await Promise.all(
-              achievements.map((achievement) => {
-                return updateAchievementProgress(achievement.id, user.id);
-              }),
-            );
+            const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(user.id, course);
 
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
-
-            const { moneyUSD } = await updateUserMoney(user.id, course.priceUSD);
 
             await session.update({
               ...session.data?.user,
@@ -78,17 +69,11 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
               throw new Error('Недостаточно средств на балансе');
             }
 
-            const courseProgress = await createCourseProgress(user.id, course.id);
-
-            const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-            await Promise.all(
-              achievements.map((achievement) => {
-                return updateAchievementProgress(achievement.id, user.id);
-              }),
+            const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(
+              user.id,
+              course,
+              priceWithDiscount,
             );
-
-            const { moneyUSD } = await updateUserMoney(user.id, priceWithDiscount);
 
             await session.update({
               ...session.data?.user,

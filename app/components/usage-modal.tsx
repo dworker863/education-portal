@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Button } from './button';
 import { ConfirmationContext } from './app-wrapper';
 import { useSession } from 'next-auth/react';
-import { disconnectPrizeTicketFromUser } from '../libs/server-actions/prizeticket-actions';
+import { applyPrizeTicket } from '../libs/server-actions/prizeticket-actions';
 
 type TUsageModalProps = {
   text: string;
@@ -34,7 +34,7 @@ const UsageModal: FC<TUsageModalProps> = ({ text }) => {
       if (selectedTicketId) {
         context?.setDiscount(user.prizeTickets?.find((ticket) => ticket.id === selectedTicketId)?.percent || 0);
 
-        await disconnectPrizeTicketFromUser(selectedTicketId, user.id);
+        await applyPrizeTicket(user.id, selectedTicketId, 'DISCOUNT');
 
         await session.update({
           ...session.data?.user,

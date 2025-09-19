@@ -141,31 +141,33 @@ export const deletePrizeTicket = async (id: string) => {
 
 export const applyPrizeTicket = async (userId: string, prizeTicketId: string, type: 'DISCOUNT' | 'SUBSCRIPTION') => {
   try {
-    const existingTicket = await getPrizeTicketById(prizeTicketId);
+    return await prisma.$transaction(async (tx) => {
+      const existingTicket = await getPrizeTicketById(prizeTicketId, tx);
 
-    if (!existingTicket) throw new Error('Призовой билет не найден');
+      if (!existingTicket) throw new Error('Призовой билет не найден');
 
-    const existingUser = await getUserById(userId);
+      const existingUser = await getUserById(userId, tx);
 
-    if (!existingUser) throw new Error('Пользователь не найден');
+      if (!existingUser) throw new Error('Пользователь не найден');
 
-    if (type === 'SUBSCRIPTION' && existingTicket.type !== 'SUBSCRIPTION')
-      throw new Error('Призовой билет не является подпиской');
+      if (type === 'SUBSCRIPTION' && existingTicket.type !== 'SUBSCRIPTION')
+        throw new Error('Призовой билет не является подпиской');
 
-    if (type === 'DISCOUNT' && existingTicket.type !== 'DISCOUNT')
-      throw new Error('Призовой билет не является скидкой');
+      if (type === 'DISCOUNT' && existingTicket.type !== 'DISCOUNT')
+        throw new Error('Призовой билет не является скидкой');
 
-    if (!existingTicket.months) throw new Error('У призового билета не указано количество месяцев подписки');
+      if (!existingTicket.months) throw new Error('У призового билета не указано количество месяцев подписки');
 
-    if (!existingUser.subscription) {
-      await subscribeUser(userId, 'PRO', existingTicket.months, 0);
-    } else {
-      await extendSubscription(userId, existingTicket.months, 0);
-    }
+      if (!existingUser.subscription) {
+        await subscribeUser(userId, 'PRO', existingTicket.months, 0, tx);
+      } else {
+        await extendSubscription(userId, existingTicket.months, 0, tx);
+      }
 
-    await disconnectPrizeTicketFromUser(prizeTicketId, userId);
+      await disconnectPrizeTicketFromUser(prizeTicketId, userId, tx);
 
-    return { success: 'Призовой билет успешно применён' };
+      return { success: 'Призовой билет успешно применён' };
+    });
   } catch (error) {
     console.error('Ошибка при применении призового билета: ', error);
     throw error;

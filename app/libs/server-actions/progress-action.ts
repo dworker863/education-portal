@@ -2,6 +2,7 @@
 
 import { prisma } from '@/prisma/prisma';
 import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
+import { Prisma } from '@prisma/client';
 
 export const getUserCoursesProgress = async (userId: string) => {
   try {
@@ -59,9 +60,11 @@ export const getUserAchievementsProgress = async (userId: string) => {
   }
 };
 
-export const createCourseProgress = async (userId: string, courseId: string) => {
+export const createCourseProgress = async (userId: string, courseId: string, tx?: Prisma.TransactionClient) => {
+  const client = tx || prisma;
+
   try {
-    const course = await prisma.course.findUnique({
+    const course = await client.course.findUnique({
       where: { id: courseId },
       select: { lessons: { select: { id: true } } },
     });
@@ -72,7 +75,7 @@ export const createCourseProgress = async (userId: string, courseId: string) => 
       throw new Error('У данного курса нет уроков');
     }
 
-    const progress = await prisma.userCourseProgress.upsert({
+    const progress = await client.userCourseProgress.upsert({
       where: {
         userId_courseId: {
           userId,
@@ -88,7 +91,7 @@ export const createCourseProgress = async (userId: string, courseId: string) => 
       update: {},
     });
 
-    return progress;
+    return { progress, sucess: 'Прогресс успешно обновлен' };
   } catch (error) {
     console.error('Ошибка при создании прогресса по курсу:', error);
     throw error;
@@ -159,27 +162,6 @@ export const updateCourseProgress = async (userId: string, courseId: string, les
     });
   } catch (error) {
     console.error('Ошибка при обновлении прогресса по курсу:', error);
-    throw error;
-  }
-};
-
-export const registerForCourse = async (userId: string, courseId: string) => {
-  try {
-    return await prisma.$transaction(async (tx) => {
-      const courseProgress = await createCourseProgress(userId, courseId);
-
-      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION');
-
-      const progress = await Promise.all(
-        achievements.map((achievement) => {
-          updateAchievementProgress(achievement.id, userId);
-        }),
-      );
-
-      return { progress, sucess: 'Прогресс успешно обновлен' };
-    });
-  } catch (error) {
-    console.error('Ошибка при регистрации на курсе: ', error);
     throw error;
   }
 };

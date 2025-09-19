@@ -4,15 +4,18 @@ import { prisma } from '@/prisma/prisma';
 import { getUserById } from '../utils/auth';
 import { TSubscription } from '../interfaces/interfaces';
 import { isObjectSubscription } from '../utils/common';
+import { Prisma } from '@prisma/client';
 
-export const updateUserMoney = async (userId: string, amount: number) => {
+export const updateUserMoney = async (userId: string, amount: number, tx?: Prisma.TransactionClient) => {
+  const client = tx || prisma;
+
   try {
-    const user = await getUserById(userId);
+    const user = await getUserById(userId, client);
     if (!user) throw new Error('Пользователь не найден');
 
     user.moneyUSD -= amount;
 
-    await prisma.user.update({
+    await client.user.update({
       where: { id: userId },
       data: { moneyUSD: user.moneyUSD },
     });
@@ -24,7 +27,15 @@ export const updateUserMoney = async (userId: string, amount: number) => {
   }
 };
 
-export const subscribeUser = async (userId: string, tier: 'PRO' | 'PREMIUM', months: number, amount: number) => {
+export const subscribeUser = async (
+  userId: string,
+  tier: 'PRO' | 'PREMIUM',
+  months: number,
+  amount: number,
+  tx?: Prisma.TransactionClient,
+) => {
+  const client = tx || prisma;
+
   try {
     const now = new Date();
     const validUntil = new Date();
@@ -39,7 +50,7 @@ export const subscribeUser = async (userId: string, tier: 'PRO' | 'PREMIUM', mon
       validUntil,
     };
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await client.user.update({
       where: { id: userId },
       data: {
         subscription,
@@ -53,9 +64,16 @@ export const subscribeUser = async (userId: string, tier: 'PRO' | 'PREMIUM', mon
   }
 };
 
-export const extendSubscription = async (userId: string, months: number, amount: number) => {
+export const extendSubscription = async (
+  userId: string,
+  months: number,
+  amount: number,
+  tx?: Prisma.TransactionClient,
+) => {
+  const client = tx || prisma;
+
   try {
-    const user = await prisma.user.findUnique({ where: { id: userId } });
+    const user = await client.user.findUnique({ where: { id: userId } });
 
     if (!user) throw new Error('Пользователь не найден');
 
@@ -74,7 +92,7 @@ export const extendSubscription = async (userId: string, months: number, amount:
         validUntil,
       };
 
-      const updatedUser = await prisma.user.update({
+      const updatedUser = await client.user.update({
         where: { id: userId },
         data: {
           subscription: updatedSubscription as any,

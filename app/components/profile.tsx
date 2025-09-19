@@ -170,23 +170,21 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             <div className="mb-2 text-sm">
               Прогресс достижений:
               {user?.achievementsProgress.map((achievementProgress, index) => {
-                if (achievementProgress.progress < 100) {
-                  return (
-                    <div
-                      className="flex flex-col mb-4"
-                      key={
-                        achievementProgress.achievement?.name ? achievementProgress.achievement?.name + index : index
-                      }
-                    >
-                      <Link href={`/achievements/${achievementProgress.achievement?.name}`}>
-                        <span className="ml-1 text-customPrimary hover:text-customBackground ">
-                          {achievementProgress.achievement?.name && achievementProgress.achievement?.name}
-                          <span className="text-customSecondary"> ({achievementProgress.progress}% )</span>
-                        </span>
-                      </Link>
-                    </div>
-                  );
-                }
+                // if (achievementProgress.progress < 100) {
+                return (
+                  <div
+                    className="flex flex-col mb-4"
+                    key={achievementProgress.achievement?.name ? achievementProgress.achievement?.name + index : index}
+                  >
+                    <Link href={`/achievements/${achievementProgress.achievement?.name}`}>
+                      <span className="ml-1 text-customPrimary hover:text-customBackground ">
+                        {achievementProgress.achievement?.name && achievementProgress.achievement?.name}
+                        <span className="text-customSecondary"> ({achievementProgress.progress}% )</span>
+                      </span>
+                    </Link>
+                  </div>
+                );
+                // }
               })}
             </div>
           )}

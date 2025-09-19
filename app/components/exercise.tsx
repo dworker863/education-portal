@@ -8,7 +8,7 @@ import DOMPurify from 'dompurify';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import { useSession } from 'next-auth/react';
-import { completeExercise } from '../libs/server-actions/exercises-actions';
+import { checkExercise, completeExercise } from '../libs/server-actions/exercises-actions';
 import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 import { ConfirmationContext } from './app-wrapper';
 
@@ -38,17 +38,8 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
       if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
         setIsPassed('failed');
       } else {
-        const { user } = await completeExercise(userId, exercise.id);
-
+        const { user, achievementProgress } = await checkExercise(userId, exercise.id);
         setPassedTasks([...passedTasks, exercise.id]);
-
-        const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION');
-
-        await Promise.all(
-          achievements.map((achievement) => {
-            updateAchievementProgress(achievement.id, user.id);
-          }),
-        );
 
         const result = await session.update({
           rating: user.rating || 0,

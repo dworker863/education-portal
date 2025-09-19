@@ -6,6 +6,8 @@ import { prisma } from '@/prisma/prisma';
 import { getExerciseById, getExerciseByName } from '../utils/exercises';
 import { calculateRank } from '../utils/common';
 import { cache } from 'react';
+import { Prisma } from '@prisma/client';
+import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
 
 export const getAllExercises = cache(async () => {
   try {
@@ -139,62 +141,83 @@ export const deleteExercise = async (id: string) => {
   }
 };
 
-export const completeExercise = async (userId: string, exerciseId: string) => {
+export const completeExercise = async (userId: string, exerciseId: string, tx?: Prisma.TransactionClient) => {
+  const client = tx || prisma;
+
   try {
-    return await prisma.$transaction(async (tx) => {
-      const existingExercise = await tx.exercise.findUnique({
-        where: {
-          id: exerciseId,
-        },
-        select: { prizePoints: true },
-      });
-
-      if (!existingExercise) {
-        throw Error('Упражнения с таким ID не существует');
-      }
-
-      const existingUser = await tx.user.findUnique({
-        where: {
-          id: userId,
-        },
-        select: {
-          rating: true,
-          completedExercises: {
-            where: {
-              id: exerciseId,
-            },
-          },
-        },
-      });
-
-      if (!existingUser) {
-        throw Error('Пользователя с таким ID не существует');
-      }
-
-      const newRating =
-        existingUser.completedExercises.length > 0
-          ? existingUser.rating
-          : existingUser.rating + existingExercise.prizePoints;
-
-      const newRank = calculateRank(newRating);
-
-      const updatedUser = await tx.user.update({
-        where: { id: userId },
-        data: {
-          rating: newRating,
-          rank: newRank,
-          completedExercises: {
-            connect: {
-              id: exerciseId,
-            },
-          },
-        },
-      });
-
-      return { user: updatedUser, success: 'Рейтинг успешно обновлен' };
+    const existingExercise = await client.exercise.findUnique({
+      where: {
+        id: exerciseId,
+      },
+      select: { prizePoints: true },
     });
+
+    if (!existingExercise) {
+      throw Error('Упражнения с таким ID не существует');
+    }
+
+    const existingUser = await client.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        rating: true,
+        completedExercises: {
+          where: {
+            id: exerciseId,
+          },
+        },
+      },
+    });
+
+    if (!existingUser) {
+      throw Error('Пользователя с таким ID не существует');
+    }
+
+    const newRating =
+      existingUser.completedExercises.length > 0
+        ? existingUser.rating
+        : existingUser.rating + existingExercise.prizePoints;
+
+    const newRank = calculateRank(newRating);
+
+    const updatedUser = await client.user.update({
+      where: { id: userId },
+      data: {
+        rating: newRating,
+        rank: newRank,
+        completedExercises: {
+          connect: {
+            id: exerciseId,
+          },
+        },
+      },
+    });
+
+    return { user: updatedUser, success: 'Рейтинг успешно обновлен' };
   } catch (error) {
     console.error('Ошибка при обновлении рейтинга пользователя: ', error);
+    throw error;
+  }
+};
+
+export const checkExercise = async (userId: string, exerciseId: string) => {
+  try {
+    return await prisma.$transaction(async (tx) => {
+      const { user } = await completeExercise(userId, exerciseId, tx);
+
+      const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION', tx);
+
+      const achievementProgress = await Promise.all(
+        achievements.map((achievement) => {
+          updateAchievementProgress(achievement.id, user.id, tx);
+        }),
+      );
+
+      return { user, achievementProgress, success: 'Упражнение успешно проверено' };
+    });
+  } catch (error) {
+    console.error('Ошибка при проверке упражнения: ', error);
     throw error;
   }
 };

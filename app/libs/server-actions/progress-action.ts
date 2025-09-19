@@ -98,68 +98,73 @@ export const createCourseProgress = async (userId: string, courseId: string, tx?
   }
 };
 
-export const updateCourseProgress = async (userId: string, courseId: string, lessonId: string) => {
+export const updateCourseProgress = async (
+  userId: string,
+  courseId: string,
+  lessonId: string,
+  tx?: Prisma.TransactionClient,
+) => {
+  const client = tx || prisma;
+
   try {
-    return await prisma.$transaction(async (tx) => {
-      const lessonExists = await tx.lesson.findUnique({
-        where: { id: lessonId },
-        select: { id: true },
-      });
-
-      if (!lessonExists) throw new Error('Урок не найден');
-
-      const alreadyCompleted = await tx.userCourseProgress.findFirst({
-        where: {
-          userId,
-          courseId,
-          completedLessons: { some: { id: lessonId } },
-        },
-        select: {
-          id: true,
-        },
-      });
-
-      if (alreadyCompleted) return;
-
-      const totalLessonsCount = await tx.lesson.count({
-        where: { courseId },
-      });
-
-      const completedLessonsCount = await tx.lesson.count({
-        where: {
-          courseId,
-          completedByUsers: { some: { userId } },
-        },
-      });
-
-      const updatedProgress = Math.round(((completedLessonsCount + 1) / totalLessonsCount) * 100);
-
-      const progress = await tx.userCourseProgress.upsert({
-        where: {
-          userId_courseId: {
-            userId,
-            courseId,
-          },
-        },
-        create: {
-          userId,
-          courseId,
-          currentLessonId: lessonId,
-          progress: updatedProgress,
-          completedLessons: { connect: { id: lessonId } },
-          completedAt: updatedProgress >= 100 ? new Date() : undefined,
-        },
-        update: {
-          currentLessonId: lessonId,
-          progress: updatedProgress,
-          completedLessons: { connect: { id: lessonId } },
-          completedAt: updatedProgress >= 100 ? new Date() : undefined,
-          lastAccessedAt: new Date(),
-        },
-      });
-
-      return { progress, sucess: 'Прогресс успешно обновлен' };
+    const lessonExists = await client.lesson.findUnique({
+      where: { id: lessonId },
+      select: { id: true },
     });
+
+    if (!lessonExists) throw new Error('Урок не найден');
+
+    const alreadyCompleted = await client.userCourseProgress.findFirst({
+      where: {
+        userId,
+        courseId,
+        completedLessons: { some: { id: lessonId } },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    if (alreadyCompleted) return;
+
+    const totalLessonsCount = await client.lesson.count({
+      where: { courseId },
+    });
+
+    const completedLessonsCount = await client.lesson.count({
+      where: {
+        courseId,
+        completedByUsers: { some: { userId } },
+      },
+    });
+
+    const updatedProgress = Math.round(((completedLessonsCount + 1) / totalLessonsCount) * 100);
+
+    const progress = await client.userCourseProgress.upsert({
+      where: {
+        userId_courseId: {
+          userId,
+          courseId,
+        },
+      },
+      create: {
+        userId,
+        courseId,
+        currentLessonId: lessonId,
+        progress: updatedProgress,
+        completedLessons: { connect: { id: lessonId } },
+        completedAt: updatedProgress >= 100 ? new Date() : undefined,
+      },
+      update: {
+        currentLessonId: lessonId,
+        progress: updatedProgress,
+        completedLessons: { connect: { id: lessonId } },
+        completedAt: updatedProgress >= 100 ? new Date() : undefined,
+        lastAccessedAt: new Date(),
+      },
+    });
+
+    return { progress, sucess: 'Прогресс успешно обновлен' };
   } catch (error) {
     console.error('Ошибка при обновлении прогресса по курсу:', error);
     throw error;

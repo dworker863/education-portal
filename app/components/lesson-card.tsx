@@ -18,13 +18,11 @@ import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import ErrorMessage from './error-message';
-import { checkLesson } from '../libs/utils/lessons';
-import { updateCourseProgress } from '../libs/server-actions/progress-action';
+import { checkLesson, checkLessonCompletion } from '../libs/utils/lessons';
 import { useSession } from 'next-auth/react';
 import { checkCompletedExercises } from '../libs/utils/exercises';
 import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
-import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 import { ConfirmationContext } from './app-wrapper';
 
 type TLessonCardProps = {
@@ -68,24 +66,16 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
 
   const checkLessonHandler = async () => {
     try {
-      const result = checkLesson(passedTasks, tasksIds);
+      const result = checkLessonCompletion(passedTasks, tasksIds);
 
       if (!result) {
         setIsPassed('failed');
-      } else {
-        setIsPassed('success');
-        router.push(`./${nextLessonName}`);
       }
 
-      await updateCourseProgress(userId, lesson.courseId, lesson.id);
+      await checkLesson(userId, lesson.courseId, lesson.id);
 
-      const achievements = await getAchievementByCriteriaType('COURSE_COMPLETION');
-
-      await Promise.all(
-        achievements.map((achievement) => {
-          updateAchievementProgress(achievement.id, userId);
-        }),
-      );
+      setIsPassed('success');
+      router.push(`./${nextLessonName}`);
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
       confirmationContext?.setModalType('notification');

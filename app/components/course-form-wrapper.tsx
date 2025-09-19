@@ -22,7 +22,11 @@ const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
 
     const loadDeleteCourseConfirm = async () => {
       try {
-        if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
+        if (
+          confirmationContext?.modalType === 'confirmation' &&
+          confirmationContext.confirmation &&
+          confirmationContext.confirmModalText === 'Вы уверены, что хотите удалить этот курс?'
+        ) {
           await deleteCourse(courseId);
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);

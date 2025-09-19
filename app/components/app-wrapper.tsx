@@ -20,6 +20,7 @@ export type TConfirmationContext = {
   setConfirmation: Dispatch<SetStateAction<boolean>>;
   discount: number;
   setDiscount: Dispatch<SetStateAction<number>>;
+  confirmModalText: string;
   setConfirmModalText: Dispatch<SetStateAction<string>>;
   setUsageModalText: Dispatch<SetStateAction<string>>;
   setNotificationModalText: Dispatch<SetStateAction<string>>;
@@ -59,6 +60,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 setConfirmation,
                 discount,
                 setDiscount,
+                confirmModalText,
                 setConfirmModalText,
                 setUsageModalText,
                 setNotificationModalText,

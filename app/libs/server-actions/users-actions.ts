@@ -30,7 +30,6 @@ export const updateUserMoney = async (userId: string, amount: number, tx?: Prism
 export const subscribeUser = async (
   userId: string,
   tier: 'PRO' | 'PREMIUM',
-  months: number,
   amount: number,
   tx?: Prisma.TransactionClient,
 ) => {
@@ -39,7 +38,7 @@ export const subscribeUser = async (
   try {
     const now = new Date();
     const validUntil = new Date();
-    validUntil.setMonth(validUntil.getMonth() + months);
+    validUntil.setMonth(validUntil.getMonth() + amount);
 
     const subscription = {
       type: 'SUBSCRIPTION',
@@ -64,12 +63,7 @@ export const subscribeUser = async (
   }
 };
 
-export const extendSubscription = async (
-  userId: string,
-  months: number,
-  amount: number,
-  tx?: Prisma.TransactionClient,
-) => {
+export const extendSubscription = async (userId: string, amount: number, tx?: Prisma.TransactionClient) => {
   const client = tx || prisma;
 
   try {
@@ -83,7 +77,7 @@ export const extendSubscription = async (
       const subscription: TSubscription = user.subscription;
 
       const validUntil = new Date(user.subscription.validUntil);
-      validUntil.setMonth(validUntil.getMonth() + months);
+      validUntil.setMonth(validUntil.getMonth() + amount);
 
       const updatedSubscription = {
         ...subscription,

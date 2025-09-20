@@ -156,12 +156,20 @@ export const applyPrizeTicket = async (userId: string, prizeTicketId: string, ty
       if (type === 'DISCOUNT' && existingTicket.type !== 'DISCOUNT')
         throw new Error('Призовой билет не является скидкой');
 
-      if (!existingTicket.months) throw new Error('У призового билета не указано количество месяцев подписки');
+      if (existingTicket.type === 'SUBSCRIPTION') {
+        const months = existingTicket.months;
+        if (months === null) throw new Error('У призового билета не указано количество месяцев подписки');
 
-      if (!existingUser.subscription) {
-        await subscribeUser(userId, 'PRO', existingTicket.months, 0, tx);
-      } else {
-        await extendSubscription(userId, existingTicket.months, 0, tx);
+        if (!existingUser.subscription) {
+          await subscribeUser(userId, 'PRO', months, tx);
+        } else {
+          await extendSubscription(userId, months, tx);
+        }
+      }
+
+      if (existingTicket.type === 'DISCOUNT') {
+        const discount = existingTicket.percent;
+        if (discount === null) throw new Error('У призового билета не указано количество процентов скидки');
       }
 
       await disconnectPrizeTicketFromUser(prizeTicketId, userId, tx);

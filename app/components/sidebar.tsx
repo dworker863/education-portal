@@ -55,7 +55,7 @@ const Sidebar = () => {
           setShowAchievements={setShowAchievements}
         />
       )}
-      <div className="flex flex-col items-center w-18 h-svh py-2 bg-customBlock">
+      <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
           <FaUser className="text-customSecondary hover:scale-125" size={22} />
         </Button>

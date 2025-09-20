@@ -99,17 +99,17 @@ export const languages = [
 export const subscribeOffers = [
   {
     name: 'monthly',
-    label: 'Monthly Subscription',
+    label: 'Подписка на месяц',
     price: 9.99,
   },
   {
     name: 'three_months',
-    label: 'Three Months Subscription',
+    label: 'Подписка на три месяца',
     price: 19.99,
   },
   {
     name: 'six_months',
-    label: 'Six Months Subscription',
+    label: 'Подписка на шесть месяцев',
     price: 39.99,
   },
 ];

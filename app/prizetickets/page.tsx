@@ -1,9 +1,7 @@
 import Prizetickets from '../components/prizetickets';
 import { getAllPrizeTickets } from '../libs/server-actions/prizeticket-actions';
 
-export const revalidate = 86400;
-
-export default async function Home() {
+export default async function PrizeTicketsPage() {
   const prizeTickets = await getAllPrizeTickets();
 
   return (

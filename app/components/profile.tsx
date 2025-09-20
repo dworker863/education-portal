@@ -230,8 +230,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                 className="mt-4"
                 variant="custom"
                 onClick={() => {
-                  modalContext?.setIsModalOpen(true);
-                  router.push(`/edit-profile?email=${user?.email}&type=image`);
+                  router.push(`/subscribe`);
                 }}
               >
                 Оформить подписку

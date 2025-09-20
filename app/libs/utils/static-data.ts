@@ -95,3 +95,21 @@ export const languages = [
     label: 'C#',
   },
 ] as const;
+
+export const subscribeOffers = [
+  {
+    name: 'monthly',
+    label: 'Monthly Subscription',
+    price: 9.99,
+  },
+  {
+    name: 'three_months',
+    label: 'Three Months Subscription',
+    price: 19.99,
+  },
+  {
+    name: 'six_months',
+    label: 'Six Months Subscription',
+    price: 39.99,
+  },
+];

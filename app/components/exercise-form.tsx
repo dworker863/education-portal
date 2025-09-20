@@ -98,7 +98,7 @@ const ExerciseForm: FC<TExerciseProps> = ({ lessonId, mode, exerciseId }) => {
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-customBlock"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField

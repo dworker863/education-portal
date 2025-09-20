@@ -20,8 +20,11 @@ const config: Config = {
       },
       colors: {
         customBackground: 'var(--custom-background)',
+        customBlock: 'var(--custom-block)',
         customPrimary: 'var(--custom-primary)',
         customSecondary: 'var(--custom-secondary)',
+        customAccent: 'var(--custom-accent)',
+        customTextAccent: 'var(--custom-text-accent)',
         customHover: 'var(--custom-hover)',
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',

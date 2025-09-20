@@ -12,7 +12,7 @@ type TSubscribeOfferProps = {
 
 const SubscribeOffer: FC<TSubscribeOfferProps> = ({ name, label, price }) => {
   return (
-    <div className="flex flex-col w-full mb-5 p-5 space-y-4 rounded-lg bg-primary cursor-pointer">
+    <div className="flex flex-col w-full mb-5 p-5 space-y-4 rounded-lg bg-customBlock cursor-pointer">
       <h2 className="text-center text-lg text-customSecondary font-semibold">{label}</h2>
       <p>Цена: ${price.toFixed(2)}</p>
       <p className="text-sm">9.99$ в месяц</p>

@@ -511,7 +511,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary text-primary-foreground"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-customBlock text-primary-foreground"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -606,7 +606,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-primary" align="start">
+                    <PopoverContent className="w-auto p-0 bg-customBlock" align="start">
                       <Calendar
                         mode="single"
                         selected={field.value}
@@ -647,7 +647,7 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-primary" align="start">
+                    <PopoverContent className="w-auto p-0 bg-customBlock" align="start">
                       <Calendar
                         mode="single"
                         selected={field.value}

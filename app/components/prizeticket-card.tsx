@@ -9,7 +9,7 @@ type TPrizeTicketCardProps = {
 
 const PrizeTicketCard: FC<TPrizeTicketCardProps> = ({ prizeTicket }) => {
   return (
-    <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary">
+    <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-customBlock">
       <h2 className="mb-5 text-center text-xl uppercase">{prizeTicket.name}</h2>
       <p className="text-right text-sm">{prizeTicket.code}</p>
       <div className="flex justify-between items-center mt-5">

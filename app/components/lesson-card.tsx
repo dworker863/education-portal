@@ -86,7 +86,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   };
 
   return (
-    <div className="flex w-full gap-10 p-10 bg-primary text-primary-foreground rounded-lg">
+    <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
       <div className="w-2/4">
         <h2 className="mb-5 text-center">Теория</h2>
         <div className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />

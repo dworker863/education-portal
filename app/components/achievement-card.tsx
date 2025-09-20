@@ -10,7 +10,7 @@ type TAchievementCardProps = {
 const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
   return (
     <Link href={`/achievements/${achievement.name}`}>
-      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary">
+      <div className="flex flex-col w-full mb-5 p-5 rounded-lg bg-customBlock">
         <h2 className="mb-5 text-center text-xl uppercase">{achievement.name}</h2>
         <div className="flex gap-10">
           <div className="w-[300px] flex-shrink-0">
@@ -19,50 +19,50 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
             )}
           </div>
           <div className="flex-grow space-y-4">
-            <h2 className="text-customSecondary">Описание</h2>
+            <h2 className="text-customAccent">Описание</h2>
             <p>{achievement.description}</p>
-            <h2 className="text-customSecondary">Сроки</h2>
+            <h2 className="text-customAccent">Сроки</h2>
             <div className="space-y-2">
               <p>
                 Дата начала:
-                <span className="text-customPrimary"> {achievement.startDate.toLocaleString()}</span>
+                <span className="text-customTextAccent"> {achievement.startDate.toLocaleString()}</span>
               </p>
               <p>
                 Дата окончания:
-                <span className="text-customPrimary"> {achievement.endDate?.toLocaleString()}</span>
+                <span className="text-customTextAccent"> {achievement.endDate?.toLocaleString()}</span>
               </p>
             </div>
-            <h2 className="mb-4 text-customSecondary">Условия</h2>
+            <h2 className="mb-4 text-customAccent">Условия</h2>
 
             {typeof achievement.criteria === 'object' &&
               !Array.isArray(achievement.criteria) &&
               achievement.criteria?.type === 'EXERCISE_COMPLETION' && (
                 <div className="space-y-2">
                   <p>
-                    Тип: <span className="text-customPrimary">Выполнение упражнений</span>
+                    Тип: <span className="text-customTextAccent">Выполнение упражнений</span>
                   </p>
                   {achievement.criteria?.count && (
                     <p>
                       Количество упражнений:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.count)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.count)}</span>
                     </p>
                   )}
                   {achievement.criteria?.language && (
                     <p>
                       Язык программирования:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.language)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.language)}</span>
                     </p>
                   )}
                   {achievement.criteria?.pointsToComplete && (
                     <p>
                       Необходимое количество баллов:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.prizePoints)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.prizePoints)}</span>
                     </p>
                   )}
                   {achievement.criteria?.requiredRank && (
                     <p>
                       Необходимый рейтинг:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.language)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.language)}</span>
                     </p>
                   )}
                 </div>
@@ -74,7 +74,7 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
                 <div className="space-y-2">
                   <p>
                     Тип:{' '}
-                    <span className="text-customPrimary">
+                    <span className="text-customTextAccent">
                       {achievement.criteria?.type === 'COURSE_COMPLETION' ? 'Завершение курса' : 'Регистрация на курсе'}
                     </span>
                   </p>
@@ -83,25 +83,25 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
                     achievement.criteria?.courseIds.length > 0 &&
                     achievement.criteria?.courseIds.map((courseId, index) => (
                       <p key={JSON.stringify(courseId) + index}>
-                        Допустимые курсы: <span className="text-customPrimary">{JSON.stringify(courseId)}</span>
+                        Допустимые курсы: <span className="text-customTextAccent">{JSON.stringify(courseId)}</span>
                       </p>
                     ))}
                   {achievement.criteria?.minPrice && (
                     <p>
                       Минимальная цена курса:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.minPrice)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.minPrice)}</span>
                     </p>
                   )}
                   {achievement.criteria?.maxPrice && (
                     <p>
                       Максимальная цена курса:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.maxPrice)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.maxPrice)}</span>
                     </p>
                   )}
                   {achievement.criteria?.requiredRank && (
                     <p>
                       Необходимый рейтинг:{' '}
-                      <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.language)}</span>
+                      <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.language)}</span>
                     </p>
                   )}
                 </div>
@@ -112,23 +112,23 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
               achievement.criteria?.type === 'SUBSCRIPTION' && (
                 <div className="space-y-2">
                   <p>
-                    Тип: <span className="text-customPrimary">Оформление подписки</span>
+                    Тип: <span className="text-customTextAccent">Оформление подписки</span>
                   </p>
                   <p>
                     Тип подписки:{' '}
-                    <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.tier)}</span>
+                    <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.tier)}</span>
                   </p>
                   <p>
                     Продолжительность подписки:{' '}
-                    <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.duration)}</span>
+                    <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.duration)}</span>
                   </p>
                   <p>
                     Количество месяцев/лет:{' '}
-                    <span className="text-customPrimary">{JSON.stringify(achievement.criteria?.amount)}</span>
+                    <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.amount)}</span>
                   </p>
                   <p>
                     Только для первой подписки:{' '}
-                    <span className="text-customPrimary">
+                    <span className="text-customTextAccent">
                       {JSON.stringify(achievement.criteria?.firstTimeOnly) ? 'Да' : 'Нет'}
                     </span>
                   </p>
@@ -136,15 +136,15 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
               )}
             {typeof achievement.reward === 'object' && !Array.isArray(achievement.reward) && achievement.reward && (
               <div className="flex justify-between pt-8">
-                <span className="text-customSecondary text-lg font-semibold">
+                <span className="text-customAccent text-lg font-semibold">
                   {JSON.stringify(achievement.reward.type)}
                 </span>
                 {achievement.reward.subscriptionType && (
-                  <span className="text-customSecondary text-lg font-semibold">
+                  <span className="text-customAccent text-lg font-semibold">
                     {JSON.stringify(achievement.reward.subscriptionType)}
                   </span>
                 )}
-                <span className="text-customSecondary text-lg font-semibold">
+                <span className="text-customAccent text-lg font-semibold">
                   {JSON.stringify(achievement.reward.amount)}
                 </span>
               </div>

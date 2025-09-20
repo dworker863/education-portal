@@ -200,7 +200,7 @@ const SignupForm = () => {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0 bg-primary" align="start">
+                  <PopoverContent className="w-full p-0 bg-customBlock" align="start">
                     <Calendar
                       mode="single"
                       selected={field.value}

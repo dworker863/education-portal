@@ -115,7 +115,7 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
       {showForm && (
         <Form {...form}>
           <form
-            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-primary"
+            className="space-y-8 mb-5 px-5 py-10 w-[400px] rounded-md bg-customBlock"
             onSubmit={form.handleSubmit(onSubmit)}
           >
             <FormField
@@ -263,7 +263,7 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-full p-0 bg-primary" align="start">
+                      <PopoverContent className="w-full p-0 bg-customBlock" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}
@@ -328,7 +328,7 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
-                      <PopoverContent className="w-full p-0 bg-primary" align="start">
+                      <PopoverContent className="w-full p-0 bg-customBlock" align="start">
                         <Calendar
                           mode="single"
                           selected={field.value}

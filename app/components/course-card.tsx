@@ -134,7 +134,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
         <Spinner />
       ) : (
         <div
-          className="flex flex-col w-full mb-5 p-5 rounded-lg bg-primary cursor-pointer"
+          className="flex flex-col w-full mb-5 p-5 rounded-lg bg-customBlock cursor-pointer"
           onClick={courseCardClickHandler}
         >
           <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>

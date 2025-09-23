@@ -76,7 +76,6 @@ export const isObjectCriteria = (
   minPrice: any;
   maxPrice: any;
   maxParticipants: any;
-  tier: any;
   duration: any;
   firstTimeOnly: any;
   operator: any;

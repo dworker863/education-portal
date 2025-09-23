@@ -115,10 +115,6 @@ const AchievementCard: FC<TAchievementCardProps> = ({ achievement }) => {
                     Тип: <span className="text-customTextAccent">Оформление подписки</span>
                   </p>
                   <p>
-                    Тип подписки:{' '}
-                    <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.tier)}</span>
-                  </p>
-                  <p>
                     Продолжительность подписки:{' '}
                     <span className="text-customTextAccent">{JSON.stringify(achievement.criteria?.duration)}</span>
                   </p>

@@ -158,6 +158,7 @@ export const {
                 },
               },
             },
+            moneyUSD: true,
             subscription: true,
             completedExercises: true,
             completedTests: true,

@@ -147,12 +147,7 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
   }
 };
 
-const getSubscriptionProgress = async (
-  userId: string,
-  criteria: TSubscription,
-  amount?: number,
-  tier?: 'PRO' | 'PREMIUM',
-) => {
+const getSubscriptionProgress = async (userId: string, criteria: TSubscription, amount?: number) => {
   try {
     const whereUser: any = {};
     const user = await prisma.user.findUnique({
@@ -164,12 +159,8 @@ const getSubscriptionProgress = async (
       },
     });
 
-    if (criteria.firstTimeOnly && user?.subscription) {
+    if (criteria.firstTime && user?.subscription) {
       throw new Error('Достижение для пользователей оформляющих подписку впервые');
-    }
-
-    if (tier !== criteria.tier) {
-      throw new Error('Виды подпискок не совпадают');
     }
 
     if (amount && amount > 0) {

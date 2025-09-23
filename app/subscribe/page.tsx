@@ -1,8 +1,5 @@
 import { IoCheckmarkDoneSharp } from 'react-icons/io5';
-import SubscribeOffer from '../components/subscribe-offer';
-import { subscribeOffers } from '../libs/utils/static-data';
-
-export const revalidate = 86400;
+import SubscribeOffers from '../components/subscribe-offers';
 
 export default async function SubscribePage() {
   return (
@@ -20,11 +17,7 @@ export default async function SubscribePage() {
           <IoCheckmarkDoneSharp className="text-green-700 hover:scale-125" size={20} /> Помощь в обучении
         </p>
       </div>
-      <div className="flex justify-between gap-8 mt-8">
-        {subscribeOffers.map((offer) => (
-          <SubscribeOffer key={offer.name} name={offer.name} label={offer.label} price={offer.price} />
-        ))}
-      </div>
+      <SubscribeOffers />
     </main>
   );
 }

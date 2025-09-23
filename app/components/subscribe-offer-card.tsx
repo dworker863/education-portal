@@ -1,19 +1,21 @@
 'use client';
 
-import { FC } from 'react';
+import { Dispatch, FC, SetStateAction } from 'react';
 import { Button } from './button';
 import SuccessMessage from './success-message';
 
 type TSubscribeOfferProps = {
-  name: string;
   label: string;
+  amount: number;
   price: number;
+  subscribeHandler: () => void;
+  setChosenOffer: Dispatch<SetStateAction<{ label: string; amount: number; price: number } | null>>;
 };
 
-const SubscribeOffer: FC<TSubscribeOfferProps> = ({ name, label, price }) => {
+const SubscribeOfferCard: FC<TSubscribeOfferProps> = ({ label, amount, price, subscribeHandler, setChosenOffer }) => {
   return (
     <div className="flex flex-col w-full mb-5 p-5 space-y-4 rounded-lg bg-customBlock cursor-pointer">
-      <h2 className="text-center text-lg text-customSecondary font-semibold">{label}</h2>
+      <h2 className="text-center text-lg text-customAccent font-semibold">{label}</h2>
       <p>Цена: ${price.toFixed(2)}</p>
       <p className="text-sm">9.99$ в месяц</p>
       <SuccessMessage message="Экономия 0%" />
@@ -21,7 +23,8 @@ const SubscribeOffer: FC<TSubscribeOfferProps> = ({ name, label, price }) => {
         className="mt-4"
         variant="custom"
         onClick={() => {
-          console.log(`Subscribed to ${name}`);
+          setChosenOffer({ label, amount, price });
+          subscribeHandler();
         }}
       >
         Оформить подписку
@@ -30,4 +33,4 @@ const SubscribeOffer: FC<TSubscribeOfferProps> = ({ name, label, price }) => {
   );
 };
 
-export default SubscribeOffer;
+export default SubscribeOfferCard;

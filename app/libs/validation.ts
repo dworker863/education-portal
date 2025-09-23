@@ -277,7 +277,6 @@ const courseRegistrationSchema = z.object({
 
 const subscriptionSchema = z.object({
   type: z.literal('SUBSCRIPTION'),
-  tier: z.enum(['PRO', 'PREMIUM']),
   amount: z
     .number({ invalid_type_error: 'Введите число' })
     .min(1, { message: 'Введите количество необходимых месяцев/лет подписки' }),
@@ -418,7 +417,6 @@ const courseRegistrationFiltersSchema = z.object({
 
 const subscriptionFiltersSchema = z.object({
   type: z.literal('SUBSCRIPTION'),
-  tier: z.enum(['PRO', 'PREMIUM']).optional(),
   duration: z.enum(['MONTHLY', 'YEARLY']).optional(),
   firstTimeOnly: z.boolean().optional(),
 });

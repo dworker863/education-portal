@@ -218,7 +218,6 @@ export type TCourseRegistration = {
 
 export type TSubscription = {
   type: 'SUBSCRIPTION';
-  tier: 'PRO' | 'PREMIUM';
   amount: number;
   firstTime: boolean;
   startedAt: Date;

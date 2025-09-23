@@ -100,16 +100,19 @@ export const subscribeOffers = [
   {
     name: 'monthly',
     label: 'Подписка на месяц',
+    amount: 1,
     price: 9.99,
   },
   {
-    name: 'three_months',
+    name: 'three-months',
     label: 'Подписка на три месяца',
+    amount: 3,
     price: 19.99,
   },
   {
-    name: 'six_months',
+    name: 'six-months',
     label: 'Подписка на шесть месяцев',
+    amount: 6,
     price: 39.99,
   },
 ];

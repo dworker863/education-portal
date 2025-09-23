@@ -47,10 +47,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
               coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
                 ? user.coursesProgress
                 : [...(user.coursesProgress ?? []), courseProgress],
-              prizeTickets: [
-                ...(user.prizeTickets ?? []),
-                ...achievementPrizeTickets.map((progress) => progress?.prizeTicket),
-              ],
+              prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
             });
 
             router.push(`/courses/${course.name}`);
@@ -102,14 +99,16 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   }, [course, confirmationContext, user]);
 
   const courseCardClickHandler = useCallback(async () => {
-    console.log('Course Card Click Handler Invoked', user);
+    if (!user) {
+      console.error('Пользователь не авторизован');
+      return;
+    }
     // if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
     //   router.push(`/courses/${course.name}`);
     //   return;
     // }
 
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
-      console.log('Course Card Clicked', user?.prizeTickets);
       confirmationContext?.setModalType('usage');
       confirmationContext?.setUsageModalText(
         'Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.',

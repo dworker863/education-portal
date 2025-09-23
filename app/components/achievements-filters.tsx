@@ -263,44 +263,6 @@ const SubscriptionFilters = ({
     <div className="mb-10 space-y-8">
       <h2 className="text-customSecondary text-lg">Подписка</h2>
 
-      <div className="mb-10">
-        <FormField
-          control={form.control}
-          name={`${prefix}.tier`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-md">Вид подписки</FormLabel>
-              <FormControl>
-                <RadioGroup
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                  className="flex flex-col space-y-1"
-                >
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem
-                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="PRO"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">PRO</FormLabel>
-                  </FormItem>
-                  <FormItem className="flex items-center space-x-3 space-y-0">
-                    <FormControl>
-                      <RadioGroupItem
-                        className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                        value="PREMIUM"
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal">PREMIUM</FormLabel>
-                  </FormItem>
-                </RadioGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
       <RangeSlider
         title="Срок"
         maxValue={12}
@@ -451,7 +413,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
       case 'SUBSCRIPTION':
         appendCriteriaTypeFilter({
           type: 'SUBSCRIPTION',
-          tier: undefined,
           duration: undefined,
           firstTimeOnly: undefined,
         });
@@ -613,19 +574,6 @@ const AchievementsFilters: FC<TAchievementsFiltersProps> = ({ achievements, setF
     }
 
     if (values.criteriaType?.includes('SUBSCRIPTION')) {
-      if (values.criteriaTypeFilters?.some((filter) => 'tier' in filter && filter.tier && filter.tier.length > 0)) {
-        result = (result || achievements).filter((achievement) =>
-          values.criteriaTypeFilters?.some((filter) => {
-            return (
-              'tier' in filter &&
-              isObjectCriteria(achievement.criteria) &&
-              typeof achievement.criteria?.tier === 'string' &&
-              filter.tier?.includes(achievement.criteria?.tier)
-            );
-          }),
-        );
-      }
-
       if (
         values.criteriaTypeFilters?.some(
           (filter) => 'duration' in filter && filter.duration && filter.duration.length > 0,

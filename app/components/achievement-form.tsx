@@ -271,39 +271,7 @@ const SubscriptionFields = ({
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Подписка</h3>
-      <FormField
-        control={form.control}
-        name={`${prefix}.tier`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Вид</FormLabel>
-            {mode === 'create' && <RequiredSign />}
-            <FormControl>
-              <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex flex-col space-y-1">
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem
-                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                      value="PRO"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">PRO</FormLabel>
-                </FormItem>
-                <FormItem className="flex items-center space-x-3 space-y-0">
-                  <FormControl>
-                    <RadioGroupItem
-                      className="w-5 h-5 bg-customPrimary data-[state=checked]:bg-customPrimary data-[state=checked]:text-primary-foreground"
-                      value="PREMIUM"
-                    />
-                  </FormControl>
-                  <FormLabel className="font-normal">PREMIUM</FormLabel>
-                </FormItem>
-              </RadioGroup>
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+
       <FormField
         control={form.control}
         name={`${prefix}.amount`}
@@ -422,7 +390,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
       case 'SUBSCRIPTION':
         appendCondition({
           type: 'SUBSCRIPTION',
-          tier: 'PRO',
           amount: 0,
           firstTimeOnly: false,
         });

@@ -6,7 +6,6 @@ import { createPrizeTicketSchema, editPrizeTicketSchema } from '../validation';
 import { disconnectPrizeTicketFromUser, getPrizeTicketByCode, getPrizeTicketById } from '../utils/prizetickets';
 import { cache } from 'react';
 import { getUserById } from '../utils/auth';
-import { extendSubscription, subscribeUser } from './users-actions';
 
 export const getAllPrizeTickets = cache(async () => {
   try {
@@ -160,11 +159,11 @@ export const applyPrizeTicket = async (userId: string, prizeTicketId: string, ty
         const months = existingTicket.months;
         if (months === null) throw new Error('У призового билета не указано количество месяцев подписки');
 
-        if (!existingUser.subscription) {
-          await subscribeUser(userId, 'PRO', months, tx);
-        } else {
-          await extendSubscription(userId, months, tx);
-        }
+        // if (!existingUser.subscription) {
+        //   await subscribeUser(userId, months, tx);
+        // } else {
+        //   await extendSubscription(userId, months, tx);
+        // }
       }
 
       if (existingTicket.type === 'DISCOUNT') {

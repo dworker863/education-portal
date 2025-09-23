@@ -37,6 +37,7 @@ const SubscribeOffers = () => {
             await session.update({
               ...session.data?.user,
               moneyUSD: updatedUser.moneyUSD,
+              subscription: updatedUser.subscription,
               prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
             });
 

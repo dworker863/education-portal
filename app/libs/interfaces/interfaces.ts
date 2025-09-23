@@ -219,7 +219,7 @@ export type TCourseRegistration = {
 export type TSubscription = {
   type: 'SUBSCRIPTION';
   amount: number;
-  firstTime: boolean;
+  firstTime?: boolean;
   startedAt: Date;
   validUntil: Date;
 };

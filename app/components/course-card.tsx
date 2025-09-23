@@ -3,13 +3,10 @@
 import React, { FC, memo, useCallback, useContext, useEffect, useState } from 'react';
 import { ICourse } from '../libs/interfaces/interfaces';
 import Image from 'next/image';
-import { createCourseProgress } from '../libs/server-actions/progress-action';
 import { useSession } from 'next-auth/react';
-import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
 import { ConfirmationContext } from './app-wrapper';
 import { useRouter } from 'next/navigation';
 import Spinner from './spinner';
-import { updateUserMoney } from '../libs/server-actions/users-actions';
 import { calculatePrizeWithDiscount } from '../libs/utils/prize';
 import { registerForCourse } from '../libs/server-actions/courses-actions';
 
@@ -110,6 +107,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
       confirmationContext?.setModalType('usage');
+      confirmationContext?.setUsageModalTicketType('DISCOUNT');
       confirmationContext?.setUsageModalText(
         'Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.',
       );

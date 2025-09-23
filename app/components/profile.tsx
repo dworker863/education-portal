@@ -1,16 +1,17 @@
 'use client';
 
-import { FC, useContext } from 'react';
+import { FC, useCallback, useContext, useEffect, useState } from 'react';
 import { cn } from '../libs/cn';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { Button } from './button';
 import { MdModeEditOutline } from 'react-icons/md';
 import { useRouter } from 'next/navigation';
-import { ModalContext } from './app-wrapper';
+import { ConfirmationContext, ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
 import { isObjectSubscription } from '../libs/utils/common';
+import { subscribeUser } from '../libs/server-actions/subscribe';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -19,12 +20,68 @@ type TProfile = {
 
 const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   const modalContext = useContext(ModalContext);
+  const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
   const session = useSession();
   const user = session?.data?.user;
   const prizeTickets = session?.data?.user?.prizeTickets;
+  const [isPending, setIsPending] = useState(false);
 
   const completedCourses = user?.coursesProgress?.filter((course) => course.completedAt);
+
+  useEffect(() => {
+    const loadSubscription = async () => {
+      try {
+        if (user) {
+          if (confirmationContext?.modalType === 'usage' && confirmationContext.confirmation) {
+            setIsPending(true);
+
+            const { updatedUser } = await subscribeUser(user.id, confirmationContext?.amount, 0);
+
+            await session.update({
+              ...session.data?.user,
+              subscription: updatedUser.subscription,
+            });
+
+            setIsPending(false);
+            confirmationContext?.setConfirmation(false);
+            confirmationContext?.setModalType(null);
+          }
+        }
+      } catch (error) {
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
+        setIsPending(false);
+        confirmationContext?.setConfirmation(false);
+      }
+    };
+
+    loadSubscription();
+  }, [confirmationContext, user]);
+
+  const subscribeClickHandler = useCallback(async () => {
+    if (!user) {
+      console.error('Пользователь не авторизован');
+      return;
+    }
+    // if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+    //   router.push(`/courses/${course.name}`);
+    //   return;
+    // }
+
+    if (user?.prizeTickets && user?.prizeTickets.length > 0) {
+      confirmationContext?.setModalType('usage');
+      confirmationContext?.setUsageModalTicketType('SUBSCRIPTION');
+      confirmationContext?.setUsageModalText(
+        'Если вы хотите использовать призовой билет, выберите билет из списка и подтвердите действие.',
+      );
+      confirmationContext?.setIsModalOpen(true);
+      return;
+    }
+
+    router.push(`/subscribe`);
+  }, [confirmationContext, user]);
 
   if (!user) {
     return null;
@@ -219,26 +276,14 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
                   <span className="text-customAccent">
                     Подписка активна до {new Date(user?.subscription.validUntil).toLocaleDateString()}{' '}
                   </span>
-                  <Button
-                    className="mt-4"
-                    variant="custom"
-                    onClick={() => {
-                      router.push(`/subscribe`);
-                    }}
-                  >
+                  <Button className="mt-4" variant="custom" onClick={subscribeClickHandler}>
                     Продлить подписку
                   </Button>
                 </>
               )}
             {(!user?.subscription ||
               (isObjectSubscription(user?.subscription) && user?.subscription.validUntil < new Date())) && (
-              <Button
-                className="mt-4"
-                variant="custom"
-                onClick={() => {
-                  router.push(`/subscribe`);
-                }}
-              >
+              <Button className="mt-4" variant="custom" onClick={subscribeClickHandler}>
                 Оформить подписку
               </Button>
             )}

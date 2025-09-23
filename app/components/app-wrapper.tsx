@@ -20,10 +20,13 @@ export type TConfirmationContext = {
   setConfirmation: Dispatch<SetStateAction<boolean>>;
   discount: number;
   setDiscount: Dispatch<SetStateAction<number>>;
+  amount: number;
+  setAmount: Dispatch<SetStateAction<number>>;
   confirmModalText: string;
   setConfirmModalText: Dispatch<SetStateAction<string>>;
   setUsageModalText: Dispatch<SetStateAction<string>>;
   setNotificationModalText: Dispatch<SetStateAction<string>>;
+  setUsageModalTicketType: Dispatch<SetStateAction<null | 'DISCOUNT' | 'SUBSCRIPTION'>>;
 };
 
 export const ModalContext = createContext<TModalContext | null>(null);
@@ -42,9 +45,11 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [modalType, setModalType] = useState<null | 'confirmation' | 'notification' | 'usage'>(null);
   const [confirmation, setConfirmation] = useState(false);
   const [discount, setDiscount] = useState(0);
+  const [amount, setAmount] = useState(0);
   const [confirmModalText, setConfirmModalText] = useState('');
   const [usageModalText, setUsageModalText] = useState('');
   const [notificationModalText, setNotificationModalText] = useState('');
+  const [usageModalTicketType, setUsageModalTicketType] = useState<null | 'DISCOUNT' | 'SUBSCRIPTION'>(null);
 
   return (
     <SessionProvider>
@@ -59,16 +64,21 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 setIsModalOpen,
                 setConfirmation,
                 discount,
+                amount,
+                setAmount,
                 setDiscount,
                 confirmModalText,
                 setConfirmModalText,
                 setUsageModalText,
                 setNotificationModalText,
+                setUsageModalTicketType,
               }}
             >
               {isModalOpen && modalType === 'confirmation' && <ConfirmationModal text={confirmModalText} />}
               {isModalOpen && modalType === 'notification' && <NotificationModal text={notificationModalText} />}
-              {isModalOpen && modalType === 'usage' && <UsageModal text={usageModalText} />}
+              {isModalOpen && modalType === 'usage' && (
+                <UsageModal ticketType={usageModalTicketType} text={usageModalText} />
+              )}
               {children}
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>

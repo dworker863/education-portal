@@ -181,9 +181,8 @@ const getSubscriptionProgress = async (
       throw new Error('Достижение для пользователей оформляющих подписку впервые');
     }
 
-    console.log('User subscription:', user);
-
     if (amount && amount > 0) {
+      console.log('User subscription:', amount);
       const progress = Math.floor((amount / criteria.amount) * 100);
       return Math.min(progress, 100);
     }
@@ -195,7 +194,12 @@ const getSubscriptionProgress = async (
   }
 };
 
-export const getNewProgress = async (userId: string, criteria: TCriteria, tx: Prisma.TransactionClient) => {
+export const getNewProgress = async (
+  userId: string,
+  criteria: TCriteria,
+  tx: Prisma.TransactionClient,
+  amount?: number,
+) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
       return await getExerciseCompletionProgress(userId, criteria as TExerciseCompletion, tx);
@@ -206,8 +210,13 @@ export const getNewProgress = async (userId: string, criteria: TCriteria, tx: Pr
     case 'COURSE_REGISTRATION':
       return await getCourseRegistrationProgress(userId, criteria as TCourseRegistration, tx);
 
-    case 'SUBSCRIPTION':
-      return await getSubscriptionProgress(userId, criteria as TSubscription, criteria.amount, tx);
+    case 'SUBSCRIPTION': {
+      if (!amount) {
+        return 0;
+      }
+
+      return await getSubscriptionProgress(userId, criteria as TSubscription, amount, tx);
+    }
 
     default:
       const _exhaustiveCheck: never = criteria;

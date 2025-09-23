@@ -18,7 +18,6 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
 
     if (user.subscription && isObjectSubscription(user.subscription)) {
       const userSubscription: TSubscription = user.subscription;
-      console.log('SubscribeUser function', userSubscription);
 
       const validUntil = new Date(user.subscription.validUntil);
       validUntil.setMonth(validUntil.getMonth() + amount);
@@ -61,18 +60,15 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
 };
 
 export const subscribeForOffer = async (userId: string, amount: number, price: number) => {
-  console.log('SubscribeForOffer function', price);
   try {
     return await prisma.$transaction(async (tx) => {
       const { updatedUser } = await subscribeUser(userId, amount, price, tx);
-
-      console.log('Achievements for SUBSCRIPTION:', updatedUser);
 
       const achievements = await getAchievementByCriteriaType('SUBSCRIPTION', tx);
 
       const achievementProgress = await Promise.all(
         achievements.map((achievement) => {
-          return updateAchievementProgress(achievement.id, userId, tx);
+          return updateAchievementProgress(achievement.id, userId, tx, amount);
         }),
       );
 

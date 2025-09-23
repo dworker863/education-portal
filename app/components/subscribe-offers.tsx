@@ -31,6 +31,7 @@ const SubscribeOffers = () => {
               chosenOffer.amount,
               chosenOffer.price,
             );
+            console.log('Subscribe offers', updatedUser.subscription);
 
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
 

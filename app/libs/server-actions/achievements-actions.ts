@@ -68,6 +68,7 @@ export const updateAchievementProgress = async (
   achievementId: string,
   userId: string,
   tx: Prisma.TransactionClient,
+  amount?: number,
 ) => {
   try {
     const achievement = await tx.achievement.findUnique({
@@ -120,7 +121,7 @@ export const updateAchievementProgress = async (
     if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
       const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
       console.log('Achievement found:', criteria);
-      newProgress = await getNewProgress(userId, criteria, tx);
+      newProgress = await getNewProgress(userId, criteria, tx, amount);
     }
 
     const isNowComplete = newProgress >= 100 && userProgress.progress < 100;

@@ -30,6 +30,8 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     return null;
   }
 
+  console.log('User subscription:', isObjectSubscription(user?.subscription));
+
   return (
     <div
       className={cn(
@@ -214,12 +216,20 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
           <div className="mb-2 text-sm">
             {user?.subscription &&
               isObjectSubscription(user?.subscription) &&
-              user?.subscription.validUntil > new Date() && (
+              new Date(user?.subscription.validUntil) > new Date() && (
                 <>
                   <span className="text-customAccent">
-                    Подписка активна до {user?.subscription.validUntil.toLocaleDateString()}{' '}
+                    Подписка активна до {new Date(user?.subscription.validUntil).toLocaleDateString()}{' '}
                   </span>
-                  <Button variant="customLink">Продлить подписку</Button>
+                  <Button
+                    className="mt-4"
+                    variant="custom"
+                    onClick={() => {
+                      router.push(`/subscribe`);
+                    }}
+                  >
+                    Продлить подписку
+                  </Button>
                 </>
               )}
             {(!user?.subscription ||

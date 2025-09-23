@@ -85,12 +85,5 @@ export const isObjectCriteria = (
 };
 
 export const isObjectSubscription = (obj: any): obj is TSubscription => {
-  return (
-    typeof obj === 'object' &&
-    obj !== null &&
-    !Array.isArray(obj) &&
-    obj.startedAt instanceof Date &&
-    obj.validUntil instanceof Date &&
-    typeof obj.amount === 'number'
-  );
+  return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 };

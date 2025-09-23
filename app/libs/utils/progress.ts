@@ -6,13 +6,18 @@ import {
   TExerciseCompletion,
   TSubscription,
 } from '../interfaces/interfaces';
+import { Prisma } from '@prisma/client';
 
 export const calculateCourseProgress = (totalLessonsCount: number, completeLessonsCount: number) => {
   const progress = (completeLessonsCount / totalLessonsCount) * 100;
   return progress;
 };
 
-export const getExerciseCompletionProgress = async (userId: string, criteria: TExerciseCompletion) => {
+export const getExerciseCompletionProgress = async (
+  userId: string,
+  criteria: TExerciseCompletion,
+  tx: Prisma.TransactionClient,
+) => {
   try {
     const whereExercise: any = {
       completedUsers: { some: { id: userId } },
@@ -29,7 +34,7 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
       whereExercise.language = criteria.language;
     }
 
-    const completedExercises = await prisma.exercise.findMany({
+    const completedExercises = await tx.exercise.findMany({
       where: whereExercise,
       select: {
         prizePoints: true,
@@ -54,7 +59,11 @@ export const getExerciseCompletionProgress = async (userId: string, criteria: TE
   }
 };
 
-export const getCourseCompletionProgress = async (userId: string, criteria: TCourseCompletion) => {
+export const getCourseCompletionProgress = async (
+  userId: string,
+  criteria: TCourseCompletion,
+  tx: Prisma.TransactionClient,
+) => {
   try {
     const whereCourse: any = {};
 
@@ -70,7 +79,7 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
       whereCourse.priceUSD = { lte: criteria.maxPrice };
     }
 
-    const targetCourses = await prisma.course.findMany({
+    const targetCourses = await tx.course.findMany({
       where: whereCourse,
       select: {
         id: true,
@@ -103,7 +112,11 @@ export const getCourseCompletionProgress = async (userId: string, criteria: TCou
   }
 };
 
-export const getCourseRegistrationProgress = async (userId: string, criteria: TCourseRegistration) => {
+export const getCourseRegistrationProgress = async (
+  userId: string,
+  criteria: TCourseRegistration,
+  tx: Prisma.TransactionClient,
+) => {
   try {
     const whereCourse: any = {};
 
@@ -121,7 +134,7 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
 
     console.log('Course registration whereCourse:', whereCourse);
 
-    const targetCourses = await prisma.course.findMany({
+    const targetCourses = await tx.course.findMany({
       where: whereCourse,
       select: {
         id: true,
@@ -147,10 +160,15 @@ export const getCourseRegistrationProgress = async (userId: string, criteria: TC
   }
 };
 
-const getSubscriptionProgress = async (userId: string, criteria: TSubscription, amount?: number) => {
+const getSubscriptionProgress = async (
+  userId: string,
+  criteria: TSubscription,
+  amount: number,
+  tx: Prisma.TransactionClient,
+) => {
   try {
     const whereUser: any = {};
-    const user = await prisma.user.findUnique({
+    const user = await tx.user.findUnique({
       where: {
         id: userId,
       },
@@ -162,6 +180,8 @@ const getSubscriptionProgress = async (userId: string, criteria: TSubscription, 
     if (criteria.firstTime && user?.subscription) {
       throw new Error('Достижение для пользователей оформляющих подписку впервые');
     }
+
+    console.log('User subscription:', user);
 
     if (amount && amount > 0) {
       const progress = Math.floor((amount / criteria.amount) * 100);
@@ -175,19 +195,19 @@ const getSubscriptionProgress = async (userId: string, criteria: TSubscription, 
   }
 };
 
-export const getNewProgress = async (userId: string, criteria: TCriteria) => {
+export const getNewProgress = async (userId: string, criteria: TCriteria, tx: Prisma.TransactionClient) => {
   switch (criteria.type) {
     case 'EXERCISE_COMPLETION':
-      return await getExerciseCompletionProgress(userId, criteria as TExerciseCompletion);
+      return await getExerciseCompletionProgress(userId, criteria as TExerciseCompletion, tx);
 
     case 'COURSE_COMPLETION':
-      return await getCourseCompletionProgress(userId, criteria as TCourseCompletion);
+      return await getCourseCompletionProgress(userId, criteria as TCourseCompletion, tx);
 
     case 'COURSE_REGISTRATION':
-      return await getCourseRegistrationProgress(userId, criteria as TCourseRegistration);
+      return await getCourseRegistrationProgress(userId, criteria as TCourseRegistration, tx);
 
     case 'SUBSCRIPTION':
-      return await getSubscriptionProgress(userId, criteria as TSubscription);
+      return await getSubscriptionProgress(userId, criteria as TSubscription, criteria.amount, tx);
 
     default:
       const _exhaustiveCheck: never = criteria;

@@ -119,7 +119,8 @@ export const updateAchievementProgress = async (
 
     if (achievement.criteria && typeof achievement.criteria === 'object' && !Array.isArray(achievement.criteria)) {
       const criteria = criteriaSchema.parse(achievement.criteria) as TCriteria;
-      newProgress = await getNewProgress(userId, criteria);
+      console.log('Achievement found:', criteria);
+      newProgress = await getNewProgress(userId, criteria, tx);
     }
 
     const isNowComplete = newProgress >= 100 && userProgress.progress < 100;

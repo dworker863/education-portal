@@ -30,8 +30,6 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
     return null;
   }
 
-  console.log('User subscription:', isObjectSubscription(user?.subscription));
-
   return (
     <div
       className={cn(

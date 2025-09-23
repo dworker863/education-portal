@@ -16,33 +16,33 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
 
     let updatedSubscription;
 
-    if (isObjectSubscription(user.subscription)) {
+    if (user.subscription && isObjectSubscription(user.subscription)) {
       const userSubscription: TSubscription = user.subscription;
       console.log('SubscribeUser function', userSubscription);
 
-      if (userSubscription) {
-        const validUntil = new Date(user.subscription.validUntil);
-        validUntil.setMonth(validUntil.getMonth() + amount);
+      const validUntil = new Date(user.subscription.validUntil);
+      validUntil.setMonth(validUntil.getMonth() + amount);
 
-        updatedSubscription = {
-          ...userSubscription,
-          amount: user.subscription.amount + amount,
-          firstTime: false,
-          validUntil,
-        };
-      } else {
-        const now = new Date();
-        const validUntil = new Date();
-        validUntil.setMonth(validUntil.getMonth() + amount);
+      updatedSubscription = {
+        ...userSubscription,
+        amount: user.subscription.amount + amount,
+        firstTime: false,
+        validUntil,
+      };
+    }
 
-        updatedSubscription = {
-          type: 'SUBSCRIPTION',
-          amount,
-          firstTime: true,
-          startedAt: now,
-          validUntil,
-        };
-      }
+    if (!user.subscription) {
+      const now = new Date();
+      const validUntil = new Date();
+      validUntil.setMonth(validUntil.getMonth() + amount);
+
+      updatedSubscription = {
+        type: 'SUBSCRIPTION',
+        amount,
+        firstTime: true,
+        startedAt: now,
+        validUntil,
+      };
     }
 
     const updatedUser = await client.user.update({

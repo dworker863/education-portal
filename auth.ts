@@ -17,6 +17,7 @@ import {
   IUserCourseProgressPartial,
   TSubscription,
 } from './app/libs/interfaces/interfaces';
+import { getReferralLink } from './app/libs/utils/common';
 
 declare module 'next-auth' {
   interface Session {
@@ -31,6 +32,10 @@ declare module 'next-auth' {
       rating: number;
       rank: string;
       moneyUSD: number;
+      referralCode: string;
+      referralLink: string;
+      referredById: string | null;
+      hasFirstPurchase: boolean;
       subscription: JsonValue | null;
       meta: JsonValue;
       createdAt: Date;
@@ -159,6 +164,7 @@ export const {
               },
             },
             moneyUSD: true,
+            referralCode: true,
             subscription: true,
             completedExercises: true,
             completedTests: true,
@@ -170,6 +176,7 @@ export const {
           session.user = {
             ...session.user,
             ...fullUser,
+            referralLink: getReferralLink(fullUser.referralCode),
           };
         }
       }

@@ -13,7 +13,7 @@ export interface IUser {
   rating: number;
   rank: string;
   moneyUSD: number;
-  referralCode: string | null;
+  referralCode: string;
   referredById: string | null;
   hasFirstPurchase: boolean;
   subsription: TSubscription | null;

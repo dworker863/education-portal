@@ -89,5 +89,5 @@ export const isObjectSubscription = (obj: any): obj is TSubscription => {
 };
 
 export const getReferralLink = (referralCode: string) => {
-  return `${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${referralCode}`;
+  return `${process.env.ROOT_PATH}/signup?ref=${referralCode}`;
 };

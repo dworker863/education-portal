@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { ConfirmationContext, ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
-import { isObjectSubscription } from '../libs/utils/common';
+import { getReferralLink, isObjectSubscription } from '../libs/utils/common';
 import { subscribeUser } from '../libs/server-actions/subscribe';
 
 type TProfile = {
@@ -265,6 +265,18 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
               })}
             </div>
           )}
+          <div className="mb-2 text-sm">
+            Реферальная ссылка:{' '}
+            <span
+              className="text-customAccent cursor-pointer hover:underline"
+              onClick={() => {
+                modalContext?.setIsModalOpen(true);
+                router.push(user?.referralLink);
+              }}
+            >
+              {user?.referralLink}
+            </span>
+          </div>
           <div className="mb-2 text-sm">
             Баланс: <span className="text-customAccent">{user?.moneyUSD}</span>
           </div>

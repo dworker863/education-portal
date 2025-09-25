@@ -13,6 +13,7 @@ export const registrationSchema = z
     firstName: z.string().optional(),
     lastName: z.string().optional(),
     birthDate: z.date().optional(),
+    referralCode: z.string().optional(),
     image: z
       .any()
       .refine((file) => !file || file instanceof File || file[0] instanceof File, {

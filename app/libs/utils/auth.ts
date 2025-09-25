@@ -34,6 +34,21 @@ export const getUserById = async (id: string, tx?: Prisma.TransactionClient) => 
   }
 };
 
+export const getUserByReferralCode = async (referralCode: string) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        referralCode,
+      },
+    });
+
+    return user;
+  } catch (error) {
+    console.error('Ошибка при получении пользователя по email: ', error);
+    throw error;
+  }
+};
+
 export const getTwoFactorConfirmationByUserId = async (userId: string) => {
   try {
     const twoFactorConfirmation = await prisma.twoFactorConfirmation.findUnique({

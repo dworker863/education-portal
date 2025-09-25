@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { registrationSchema } from '@/app/libs/validation';
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/prisma/prisma';
-import { getUserByEmail } from '@/app/libs/utils/auth';
+import { getUserByEmail, getUserByReferralCode } from '@/app/libs/utils/auth';
 import { generateVerificationToken } from '@/app/libs/utils/tokens';
 import { sendVerificationEmail } from '@/app/libs/utils/mail';
 import { fileUpload } from '@/app/libs/server-actions/file-actions';
@@ -34,6 +34,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
+    let referredByUser;
+
+    if (data.referralCode) {
+      referredByUser = await getUserByReferralCode(data.referralCode);
+    }
+
     const hashedPassword = await bcrypt.hash(data.password, 10);
 
     let uploadResult;
@@ -54,6 +60,7 @@ export async function POST(request: NextRequest) {
         firstName: data.firstName || null,
         lastName: data.lastName || null,
         birthDate: data.birthDate || null,
+        referredById: referredByUser?.id || null,
         image: uploadResult || null,
       },
     });

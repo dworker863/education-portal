@@ -13,11 +13,16 @@ export interface IUser {
   rating: number;
   rank: string;
   moneyUSD: number;
+  referralCode: string | null;
+  referredById: string | null;
+  hasFirstPurchase: boolean;
   subsription: TSubscription | null;
   meta: JsonValue;
   createdAt: Date;
   updatedAt: Date;
   role: 'ADMIN' | 'USER';
+  referredBy: IUser | IUserPartial | null;
+  referrals: (IUser | IUserPartial)[];
   completedExercises?: (IExercise | IExercisePartial)[];
   completedTests?: (ITest | ITestPartial)[];
   prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
@@ -151,6 +156,7 @@ export interface IAchievement {
   icon: string;
   criteria: JsonValue;
   criteriaType: string | TCriteriaType;
+  maxUsers: number | null;
   reward: JsonValue;
   meta: JsonValue;
   startDate: Date;

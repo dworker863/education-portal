@@ -21,8 +21,11 @@ import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { useSearchParams } from 'next/navigation';
 
 const SignupForm = () => {
+  const searchParams = useSearchParams();
+  const referralCode = searchParams.get('ref');
   const [isPending, startTransiton] = useTransition();
 
   const [error, setError] = useState<null | string>(null);
@@ -60,6 +63,10 @@ const SignupForm = () => {
 
         if (values.image) {
           formData.append('image', values.image[0]);
+        }
+
+        if (referralCode) {
+          formData.append('referralCode', referralCode);
         }
 
         const res = await fetch('api/signup', {

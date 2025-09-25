@@ -87,3 +87,7 @@ export const isObjectCriteria = (
 export const isObjectSubscription = (obj: any): obj is TSubscription => {
   return typeof obj === 'object' && obj !== null && !Array.isArray(obj);
 };
+
+export const getReferralLink = (referralCode: string) => {
+  return `${process.env.NEXT_PUBLIC_APP_URL}/signup?ref=${referralCode}`;
+};

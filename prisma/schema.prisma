@@ -20,12 +20,17 @@ model User {
   rating                Int                       @default(0)
   rank                  String                    @default("D-")
   moneyUSD              Float                     @default(0)
+  referralCode          String                    @unique @default(cuid())
+  referredById          String?
+  hasFirstPurchase      Boolean                   @default(false)
   subscription          Json?
   meta                  Json                      @default("{}")
   createdAt             DateTime                  @default(now())
   updatedAt             DateTime                  @updatedAt
   role                  UserRole                  @default(USER)
   accounts              Account[]
+  referredBy            User?                     @relation("UserReferrals", fields: [referredById], references: [id])
+  referrals             User[]                    @relation("UserReferrals")
   TwoFactorConfirmation TwoFactorConfirmation?
   achievementsProgress  UserAchievementProgress[]
   coursesProgress       UserCourseProgress[]
@@ -198,6 +203,7 @@ model Achievement {
   description   String
   criteria      Json
   criteriaType  String
+  maxUsers      Int?
   reward        Json
   startDate     DateTime
   endDate       DateTime?

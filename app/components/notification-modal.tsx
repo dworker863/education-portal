@@ -17,7 +17,7 @@ const NotificationModal: FC<TConfirmationModalProps> = ({ text }) => {
 
   return (
     <div className="h-screen flex items-center justify-center fixed w-full z-40 space-y-8 text-primary-foreground">
-      <Modal type="confirmation" headerLabel="Подтвердите действие" backButtonLabel="Назад" showSocials={false}>
+      <Modal type="notification" headerLabel="Подтвердите действие" backButtonLabel="Назад" showSocials={false}>
         <div className="space-y-8 text-primary-foreground">
           <p>{text}</p>
           <div className="flex gap-5 mt-5">

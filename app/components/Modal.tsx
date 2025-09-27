@@ -11,7 +11,15 @@ import Socials from './socials';
 import { useRouter } from 'next/navigation';
 
 type TModalProps = {
-  type: 'login' | 'registration' | 'reset-password' | 'new-password' | 'edit-profile' | 'confirmation';
+  type:
+    | 'login'
+    | 'registration'
+    | 'registration-page'
+    | 'reset-password'
+    | 'new-password'
+    | 'edit-profile'
+    | 'confirmation'
+    | 'notification';
   children: ReactNode;
   headerLabel: string;
   backButtonLabel: string;
@@ -51,7 +59,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     };
   }, []);
 
-  if (!context?.isModalOpen && type !== 'new-password') return null;
+  if (!context?.isModalOpen && type !== 'new-password' && type !== 'registration-page') return null;
 
   return (
     <Card ref={modalRef} className="relative w-[500px] bg-customBlock h-min">

@@ -266,6 +266,17 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             </div>
           )}
           <div className="mb-2 text-sm">
+            Количество рефералов:{' '}
+            <span
+              className="text-customAccent cursor-pointer hover:underline"
+              onClick={() => {
+                console.log(user.referrals);
+              }}
+            >
+              {user.referrals}
+            </span>
+          </div>
+          <div className="mb-2 text-sm">
             Реферальная ссылка:{' '}
             <span
               className="text-customAccent cursor-pointer hover:underline"

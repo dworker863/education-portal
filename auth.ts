@@ -35,6 +35,7 @@ declare module 'next-auth' {
       referralCode: string;
       referralLink: string;
       referredById: string | null;
+      referrals: number;
       hasFirstPurchase: boolean;
       subscription: JsonValue | null;
       meta: JsonValue;
@@ -169,6 +170,9 @@ export const {
             completedExercises: true,
             completedTests: true,
             prizeTickets: true,
+            _count: {
+              select: { referrals: true },
+            },
           },
         });
 
@@ -176,6 +180,7 @@ export const {
           session.user = {
             ...session.user,
             ...fullUser,
+            referrals: fullUser._count.referrals,
             referralLink: getReferralLink(fullUser.referralCode),
           };
         }

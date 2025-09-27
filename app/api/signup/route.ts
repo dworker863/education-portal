@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email: data.email,
         name: data.name || null,
@@ -64,6 +64,8 @@ export async function POST(request: NextRequest) {
         image: uploadResult || null,
       },
     });
+
+    console.log('SIGNUP ROUTE', user);
 
     const verificationToken = await generateVerificationToken(data.email);
 

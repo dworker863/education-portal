@@ -35,6 +35,11 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
   const modalCloseHandler = () => {
     context?.setIsModalOpen(false);
 
+    if (type === 'registration-page' || type === 'new-password') {
+      router.push('/');
+      return;
+    }
+
     if (type !== 'confirmation') {
       router.back();
     }
@@ -50,7 +55,7 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
   };
 
   useEffect(() => {
-    if (type !== 'registration') {
+    if (type !== 'registration' && type !== 'registration-page') {
       document.addEventListener('mousedown', handleOutsideClick);
     }
 

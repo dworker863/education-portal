@@ -49,6 +49,7 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
       data: {
         subscription: updatedSubscription,
         moneyUSD: { decrement: price },
+        hasFirstPurchase: true,
       },
     });
 

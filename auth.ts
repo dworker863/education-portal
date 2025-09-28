@@ -170,9 +170,13 @@ export const {
             completedExercises: true,
             completedTests: true,
             prizeTickets: true,
-            _count: {
-              select: { referrals: true },
-            },
+          },
+        });
+
+        const referralsWithPurchase = await prisma.user.count({
+          where: {
+            referredById: userId,
+            hasFirstPurchase: true,
           },
         });
 
@@ -180,7 +184,7 @@ export const {
           session.user = {
             ...session.user,
             ...fullUser,
-            referrals: fullUser._count.referrals,
+            referrals: referralsWithPurchase,
             referralLink: getReferralLink(fullUser.referralCode),
           };
         }

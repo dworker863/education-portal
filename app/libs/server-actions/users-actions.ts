@@ -15,7 +15,7 @@ export const updateUserMoney = async (userId: string, amount: number, tx?: Prism
 
     await client.user.update({
       where: { id: userId },
-      data: { moneyUSD: user.moneyUSD },
+      data: { moneyUSD: user.moneyUSD, hasFirstPurchase: true },
     });
 
     return { success: 'Баланс успешно обновлён', moneyUSD: user.moneyUSD };

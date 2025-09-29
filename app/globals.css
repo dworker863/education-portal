@@ -32,10 +32,10 @@ body {
     --custom-block: rgba(31, 31, 31, 1);
     --custom-primary: rgb(82, 38, 74);
     /* --custom-primary: rgb(194 65 12); */
-    --custom-secondary: rgb(153, 27, 27);
-    --custom-accent: rgb(194 65 12);
+    --custom-secondary: rgb(204, 55, 55);
+    --custom-accent: rgb(152, 168, 57);
     /* --custom-accent: rgb(214, 39, 185); */
-    --custom-text-accent: rgb(100, 149, 237, 50%);
+    --custom-text-accent: rgba(54, 127, 151);
     --custom-hover: rgb(41 37 36);
   }
 }

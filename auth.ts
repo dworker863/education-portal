@@ -180,6 +180,8 @@ export const {
           },
         });
 
+        // if (referralsWithPurchase )
+
         if (fullUser) {
           session.user = {
             ...session.user,

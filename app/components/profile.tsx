@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 import { ConfirmationContext, ModalContext } from './app-wrapper';
 import Link from 'next/link';
 import slugify from 'slugify';
-import { getReferralLink, isObjectSubscription } from '../libs/utils/common';
+import { isObjectSubscription } from '../libs/utils/common';
 import { subscribeUser } from '../libs/server-actions/subscribe';
 
 type TProfile = {

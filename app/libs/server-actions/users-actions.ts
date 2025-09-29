@@ -13,10 +13,37 @@ export const updateUserMoney = async (userId: string, amount: number, tx?: Prism
 
     user.moneyUSD -= amount;
 
+    const isFirstPurchase = !user.hasFirstPurchase;
+
     await client.user.update({
       where: { id: userId },
-      data: { moneyUSD: user.moneyUSD, hasFirstPurchase: true },
+      data: {
+        moneyUSD: user.moneyUSD,
+        hasFirstPurchase: true,
+      },
     });
+
+    // 🔥 Логика начисления бонусов за рефералов
+    if (isFirstPurchase && user.referredById) {
+      const referralsWithPurchase = await client.user.count({
+        where: {
+          referredById: user.referredById,
+          hasFirstPurchase: true,
+        },
+      });
+
+      // если число рефералов стало кратно 10 → даём новый билет
+      if (referralsWithPurchase % 10 === 0) {
+        await client.user.update({
+          where: { id: user.referredById },
+          data: {
+            prizeTickets: {
+              connect: { name: 'Награда за рефералов ' }, // id уже существующего билета
+            },
+          },
+        });
+      }
+    }
 
     return { success: 'Баланс успешно обновлён', moneyUSD: user.moneyUSD };
   } catch (error) {

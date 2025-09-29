@@ -134,7 +134,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           className="flex flex-col w-full mb-5 p-5 rounded-lg bg-customBlock cursor-pointer"
           onClick={courseCardClickHandler}
         >
-          <h2 className="mb-5 text-center text-xl uppercase">{course.name}</h2>
+          <h2 className="mb-5 text-center text-xl text-customAccent uppercase">{course.name}</h2>
           <div className="flex gap-10 mb-8">
             <div className="w-[300px] flex-shrink-0">
               {course.icon && <Image src={course.icon.replace(/\\/gi, '/')} alt="avatar" width={300} height={300} />}

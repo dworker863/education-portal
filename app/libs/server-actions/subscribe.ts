@@ -44,6 +44,8 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
       };
     }
 
+    const isFirstPurchase = !user.hasFirstPurchase;
+
     const updatedUser = await client.user.update({
       where: { id: userId },
       data: {
@@ -52,6 +54,27 @@ export const subscribeUser = async (userId: string, amount: number, price: numbe
         hasFirstPurchase: true,
       },
     });
+
+    if (isFirstPurchase && user.referredById) {
+      const referralsWithPurchase = await client.user.count({
+        where: {
+          referredById: user.referredById,
+          hasFirstPurchase: true,
+        },
+      });
+
+      // если число рефералов стало кратно 10 → даём новый билет
+      if (referralsWithPurchase % 10 === 0) {
+        await client.user.update({
+          where: { id: user.referredById },
+          data: {
+            prizeTickets: {
+              connect: { name: 'Награда за рефералов ' }, // id уже существующего билета
+            },
+          },
+        });
+      }
+    }
 
     return { updatedUser, success: 'Подписка успешно оформлена' };
   } catch (error) {

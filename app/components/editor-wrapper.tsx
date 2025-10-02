@@ -25,6 +25,7 @@ const EditorWrapper: FC<TEditorWrapperProps> = ({ exercise, tab }) => {
           `${exercise.language.toLowerCase()}-${exercise.name.toLowerCase()}`,
           {
             view: 'editor',
+            clickToLoad: true,
           },
         );
 

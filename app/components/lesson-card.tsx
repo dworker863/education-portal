@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';

@@ -5,7 +5,8 @@ import { ITest } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
+import parse from 'html-react-parser';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css'; // Базовая тема
 import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для нумерации строк
@@ -29,7 +30,7 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
     Array(test.variants.length).fill('custom'),
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const task = useMemo(() => (test?.task ? DOMPurify.sanitize(test?.task) : ''), [test?.task]);
+  const task = useMemo(() => (test?.task ? parse(DOMPurify.sanitize(test?.task)) : ''), [test?.task]);
   const isDisabled = useMemo(() => buttonTypes.some((t) => t === 'customFail' || t === 'customSuccess'), [buttonTypes]);
 
   useEffect(() => {
@@ -71,7 +72,9 @@ const Test: FC<TTestProps> = ({ test, passedTasks, setPassedTasks }) => {
       <p className="lesson-p">
         Баллы: <span className="text-customSecondary font-semibold">{test.prizePoints}</span>
       </p>
-      <div ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
+      <div ref={containerRef} className="lesson-p mb-10">
+        {task}
+      </div>
       <div className="flex justify-between gap-3 flex-wrap">
         {test.variants.map((variant, index) => (
           <Button

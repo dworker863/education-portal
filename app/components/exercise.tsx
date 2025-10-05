@@ -4,7 +4,8 @@ import { Dispatch, FC, memo, SetStateAction, useContext, useMemo, useRef, useSta
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
+import parse from 'html-react-parser';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import { useSession } from 'next-auth/react';
@@ -26,7 +27,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
 
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
-  const task = useMemo(() => (exercise?.task ? DOMPurify.sanitize(exercise?.task) : ''), [exercise?.task]);
+  const task = useMemo(() => (exercise?.task ? parse(DOMPurify.sanitize(exercise?.task)) : ''), [exercise?.task]);
 
   const checkExerciseHandler = async (exerciseName: string) => {
     try {
@@ -57,7 +58,9 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
 
   return (
     <>
-      <div ref={containerRef} className="lesson-p mb-10" dangerouslySetInnerHTML={{ __html: task }} />
+      <div ref={containerRef} className="lesson-p mb-10">
+        {task}
+      </div>
       <p>
         Необходимый Уровень: <span className="text-customSecondary font-semibold">{exercise.requiredRank}</span>
       </p>

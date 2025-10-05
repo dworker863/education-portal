@@ -4,7 +4,8 @@ import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
 import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
-import DOMPurify from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
+import parse from 'html-react-parser';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-tomorrow.css'; // Базовая тема
 import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для нумерации строк
@@ -35,7 +36,7 @@ type TLessonCardProps = {
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
   const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
-  const content = useMemo(() => (lesson?.content ? DOMPurify?.sanitize(lesson?.content) : ''), [lesson?.content]);
+  const content = useMemo(() => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''), [lesson?.content]);
   const session = useSession();
   const userId = session?.data?.user.id as string;
 
@@ -89,7 +90,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
     <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
       <div className="w-2/4">
         <h2 className="mb-5 text-center">Теория</h2>
-        <div className="mb-10" dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="mb-10">{content}</div>
         {lesson?.video && <Video src={lesson?.video} />}
         <div className="flex justify-between">
           {prevLessonName && (
@@ -125,7 +126,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
         )}
       </div>
 
-      <div className="w-2/4">
+      <div className="w-2/4 pr-10">
         <h2 className="mb-5 text-center">Практика</h2>
         <Carousel className="w-full">
           <CarouselContent>

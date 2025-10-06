@@ -20,13 +20,13 @@ export const getExerciseCompletionProgress = async (
 ) => {
   try {
     const whereExercise: any = {
-      completedUsers: { some: { id: userId } },
+      completedByUsers: { some: { id: userId } },
     };
 
     if (criteria.requiredRank) {
-      whereExercise.completedUsers = {
-        ...whereExercise.completedUsers,
-        some: { ...whereExercise.completedUsers.some, rank: criteria.requiredRank },
+      whereExercise.completedByUsers = {
+        ...whereExercise.completedByUsers,
+        some: { ...whereExercise.completedByUsers.some, rank: criteria.requiredRank },
       };
     }
 

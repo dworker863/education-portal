@@ -22,7 +22,7 @@ type TExerciseProps = {
 const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks }) => {
   const confirmationContext = useContext(ConfirmationContext);
   const session = useSession();
-  const userId = session?.data?.user.id as string;
+  const user = session?.data?.user;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
@@ -30,24 +30,39 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
   const task = useMemo(() => (exercise?.task ? parse(DOMPurify.sanitize(exercise?.task)) : ''), [exercise?.task]);
 
   const checkExerciseHandler = async (exerciseName: string) => {
+    if (!user) {
+      console.error('Пользователь не авторизован');
+      return;
+    }
+
     try {
       const response = await fetch(
         `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
       );
       const data = await response.json();
 
+      console.log('Exercise: ', data);
+
       if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
         setIsPassed('failed');
-      } else {
-        const { user, achievementProgress } = await checkExercise(userId, exercise.id);
-        setPassedTasks([...passedTasks, exercise.id]);
-
-        const result = await session.update({
-          rating: user.rating || 0,
-        });
-
-        setIsPassed('success');
+        return;
       }
+
+      const { updatedUser, achievementProgress } = await checkExercise(user.id, exercise.id);
+
+      const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+
+      setPassedTasks([...passedTasks, exercise.id]);
+
+      await session.update({
+        ...session.data?.user,
+        rating: updatedUser.rating,
+        rank: updatedUser.rank,
+        completeExercise: updatedUser.completedExercises,
+        prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
+      });
+
+      setIsPassed('success');
     } catch (error) {
       confirmationContext?.setModalType('notification');
       confirmationContext?.setNotificationModalText((error as Error).message);
@@ -55,6 +70,10 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
       setIsPassed('failed');
     }
   };
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <>
@@ -84,7 +103,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         </Button>
       </nav>
       <div className="mb-5" id={exercise.id}>
-        <EditorWrapper userId={userId} exercise={exercise} tab={tab} />
+        <EditorWrapper userId={user.id} exercise={exercise} tab={tab} />
       </div>
       <div className="flex gap-4">
         <Button

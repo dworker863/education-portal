@@ -181,7 +181,7 @@ export const completeExercise = async (userId: string, exerciseId: string, tx?: 
 
     const newRank = calculateRank(newRating);
 
-    const updatedUser = await client.user.update({
+    const { password, ...updatedUser } = await client.user.update({
       where: { id: userId },
       data: {
         rating: newRating,
@@ -192,9 +192,12 @@ export const completeExercise = async (userId: string, exerciseId: string, tx?: 
           },
         },
       },
+      include: {
+        completedExercises: true,
+      },
     });
 
-    return { user: updatedUser, success: 'Рейтинг успешно обновлен' };
+    return { updatedUser, success: 'Рейтинг успешно обновлен' };
   } catch (error) {
     console.error('Ошибка при обновлении рейтинга пользователя: ', error);
     throw error;
@@ -204,17 +207,19 @@ export const completeExercise = async (userId: string, exerciseId: string, tx?: 
 export const checkExercise = async (userId: string, exerciseId: string) => {
   try {
     return await prisma.$transaction(async (tx) => {
-      const { user } = await completeExercise(userId, exerciseId, tx);
+      const { updatedUser } = await completeExercise(userId, exerciseId, tx);
 
       const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION', tx);
 
       const achievementProgress = await Promise.all(
         achievements.map((achievement) => {
-          updateAchievementProgress(achievement.id, user.id, tx);
+          return updateAchievementProgress(achievement.id, updatedUser.id, tx);
         }),
       );
 
-      return { user, achievementProgress, success: 'Упражнение успешно проверено' };
+      // console.log('Check exercise: ', achievementProgress);
+
+      return { updatedUser, achievementProgress, success: 'Упражнение успешно проверено' };
     });
   } catch (error) {
     console.error('Ошибка при проверке упражнения: ', error);

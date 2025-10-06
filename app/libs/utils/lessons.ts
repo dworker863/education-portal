@@ -71,24 +71,3 @@ export const checkLessonCompletion = (passedExercises: string[], totalExercises:
     return true;
   }
 };
-
-export const checkLesson = async (userId: string, courseId: string, lessonId: string) => {
-  try {
-    return await prisma.$transaction(async (tx) => {
-      const courseProgress = await updateCourseProgress(userId, courseId, lessonId, tx);
-
-      const achievements = await getAchievementByCriteriaType('COURSE_COMPLETION', tx);
-
-      const achievementProgress = await Promise.all(
-        achievements.map((achievement) => {
-          updateAchievementProgress(achievement.id, userId, tx);
-        }),
-      );
-
-      return { courseProgress, achievementProgress, success: 'Урок успешно проверен' };
-    });
-  } catch (error) {
-    console.error('Ошибка при проверке урока: ', error);
-    throw error;
-  }
-};

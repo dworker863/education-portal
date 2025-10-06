@@ -19,12 +19,13 @@ import { Button } from './button';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import ErrorMessage from './error-message';
-import { checkLesson, checkLessonCompletion } from '../libs/utils/lessons';
+import { checkLessonCompletion } from '../libs/utils/lessons';
 import { useSession } from 'next-auth/react';
 import { checkCompletedExercises } from '../libs/utils/exercises';
 import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
 import { ConfirmationContext } from './app-wrapper';
+import { checkLesson } from '../libs/server-actions/lessons-actions';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -71,6 +72,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
 
       if (!result) {
         setIsPassed('failed');
+        return;
       }
 
       await checkLesson(userId, lesson.courseId, lesson.id);

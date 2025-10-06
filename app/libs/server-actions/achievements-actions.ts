@@ -71,6 +71,8 @@ export const updateAchievementProgress = async (
   amount?: number,
 ) => {
   try {
+    console.log('Update Achievement Progress: ', achievementId);
+
     const achievement = await tx.achievement.findUnique({
       where: {
         id: achievementId,

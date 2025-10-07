@@ -36,10 +36,12 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
 
             const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(user.id, course);
 
+            // console.log('Course Card: ', achievementProgress);
+
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
 
             await session.update({
-              ...session.data?.user,
+              // ...session.data?.user,
               moneyUSD,
               coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
                 ? user.coursesProgress
@@ -70,7 +72,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             );
 
             await session.update({
-              ...session.data?.user,
+              // ...session.data?.user,
               moneyUSD,
               coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
                 ? user.coursesProgress

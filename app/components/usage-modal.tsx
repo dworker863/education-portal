@@ -45,7 +45,7 @@ const UsageModal: FC<TUsageModalProps> = ({ text, ticketType }) => {
         await applyPrizeTicket(user.id, selectedTicketId, ticketType);
 
         await session.update({
-          ...session.data?.user,
+          // ...session.data?.user,
           prizeTickets: session.data?.user?.prizeTickets?.filter((ticket) => ticket.id !== selectedTicketId),
         });
 

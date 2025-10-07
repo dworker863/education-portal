@@ -36,7 +36,7 @@ const SubscribeOffers = () => {
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
 
             await session.update({
-              ...session.data?.user,
+              // ...session.data?.user,
               moneyUSD: updatedUser.moneyUSD,
               subscription: updatedUser.subscription,
               prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],

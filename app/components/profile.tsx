@@ -39,7 +39,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             const { updatedUser } = await subscribeUser(user.id, confirmationContext?.amount, 0);
 
             await session.update({
-              ...session.data?.user,
+              // ...session.data?.user,
               subscription: updatedUser.subscription,
             });
 

@@ -18,8 +18,8 @@ type TLessonsProps = {
 
 const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   const confirmationContext = useContext(ConfirmationContext);
-  const [lessonId, setLessonId] = useState<string | null>(null);
   const router = useRouter();
+  const [lessonId, setLessonId] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -29,9 +29,12 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
         if (
           confirmationContext?.modalType === 'confirmation' &&
           confirmationContext.confirmation &&
-          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить этот урок?' &&
-          lessonId
+          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить этот урок?'
         ) {
+          if (!lessonId) {
+            throw new Error('Не выбран урок для удаления');
+          }
+
           await deleteLesson(lessonId);
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);

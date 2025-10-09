@@ -16,10 +16,21 @@ const SubscribeOffers = () => {
   const [chosenOffer, setChosenOffer] = useState<null | { label: string; amount: number; price: number }>(null);
 
   useEffect(() => {
+    let mounted = true;
+
     const loadSubscription = async () => {
       try {
         if (user) {
-          if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation && chosenOffer) {
+          if (
+            confirmationContext?.modalType === 'confirmation' &&
+            confirmationContext.confirmation &&
+            confirmationContext.confirmModalText ===
+              'Вы уверены, что хотите оформить подписку по этому тарифу? С вашего баланса будет списана соответствующая сумма.'
+          ) {
+            if (!chosenOffer) {
+              throw new Error('Не выбран тариф для подписки');
+            }
+
             if (user.moneyUSD < chosenOffer.price) {
               throw new Error('Недостаточно средств на балансе');
             }
@@ -31,12 +42,10 @@ const SubscribeOffers = () => {
               chosenOffer.amount,
               chosenOffer.price,
             );
-            console.log('Subscribe offers', updatedUser.subscription);
 
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
 
             await session.update({
-              // ...session.data?.user,
               moneyUSD: updatedUser.moneyUSD,
               subscription: updatedUser.subscription,
               prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
@@ -45,6 +54,9 @@ const SubscribeOffers = () => {
             setIsPending(false);
             confirmationContext?.setModalType(null);
             confirmationContext?.setConfirmation(false);
+
+            if (!mounted) return;
+
             return;
           }
 
@@ -57,7 +69,7 @@ const SubscribeOffers = () => {
     };
 
     loadSubscription();
-  }, [user, confirmationContext]);
+  }, [user, confirmationContext, chosenOffer, session]);
 
   const subscribeHandler = useCallback(async () => {
     // if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {

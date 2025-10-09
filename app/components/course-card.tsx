@@ -26,8 +26,6 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       try {
         if (user) {
           if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
-            console.log('Course confirmed without discount', confirmationContext);
-
             if (user.moneyUSD < course.priceUSD) {
               throw new Error('Недостаточно средств на балансе');
             }
@@ -35,8 +33,6 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             setIsPending(true);
 
             const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(user.id, course);
-
-            // console.log('Course Card: ', achievementProgress);
 
             const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
 

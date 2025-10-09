@@ -1,57 +1,18 @@
 'use client';
 
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { Dispatch, FC, useState } from 'react';
 import { Button } from './button';
-import { deleteCourse } from '../libs/server-actions/courses-actions';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import CourseForm from './course-form';
-import { useRouter } from 'next/navigation';
-import { ConfirmationContext } from './app-wrapper';
 
 type TCourseFormWrapperProps = {
   courseId: string;
+  deleteCourseHandler: () => void;
+  setCourseId: Dispatch<React.SetStateAction<string | null>>;
 };
 
-const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
-  const confirmationContext = useContext(ConfirmationContext);
+const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId, deleteCourseHandler, setCourseId }) => {
   const [showEditForm, setShowEditForm] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadDeleteCourseConfirm = async () => {
-      try {
-        if (
-          confirmationContext?.modalType === 'confirmation' &&
-          confirmationContext.confirmation &&
-          confirmationContext.confirmModalText === 'Вы уверены, что хотите удалить этот курс?'
-        ) {
-          await deleteCourse(courseId);
-          confirmationContext.setConfirmation(false);
-          confirmationContext.setIsModalOpen(false);
-
-          if (!mounted) return;
-
-          router.refresh();
-        }
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-        confirmationContext?.setModalType('notification');
-        confirmationContext?.setNotificationModalText((error as Error).message);
-        confirmationContext?.setIsModalOpen(true);
-        confirmationContext?.setConfirmation(false);
-      }
-    };
-
-    loadDeleteCourseConfirm();
-  }, [courseId, confirmationContext]);
-
-  const deleteCourseHandler = async () => {
-    confirmationContext?.setModalType('confirmation');
-    confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот курс?');
-  };
 
   return (
     <>
@@ -61,7 +22,14 @@ const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId }) => {
             <FaEdit size={22} />
             <span className="ml-2">Редактировать</span>
           </Button>
-          <Button variant="custom" className="ml-4" onClick={deleteCourseHandler}>
+          <Button
+            variant="custom"
+            className="ml-4"
+            onClick={() => {
+              setCourseId(courseId);
+              deleteCourseHandler();
+            }}
+          >
             <FaTrash size={16} />
             <span className="ml-2">Удалить</span>
           </Button>

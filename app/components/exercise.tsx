@@ -1,6 +1,6 @@
 'use client';
 
-import { Dispatch, FC, memo, SetStateAction, useContext, useMemo, useRef, useState } from 'react';
+import { Dispatch, FC, memo, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
@@ -9,9 +9,9 @@ import parse from 'html-react-parser';
 import { GoIssueClosed } from 'react-icons/go';
 import { SlClose } from 'react-icons/sl';
 import { useSession } from 'next-auth/react';
-import { checkExercise, completeExercise } from '../libs/server-actions/exercises-actions';
-import { getAchievementByCriteriaType, updateAchievementProgress } from '../libs/server-actions/achievements-actions';
+import { checkExercise } from '../libs/server-actions/exercises-actions';
 import { ConfirmationContext } from './app-wrapper';
+import Prism from 'prismjs';
 
 type TExerciseProps = {
   exercise: IExercise;
@@ -28,6 +28,10 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
   const [tab, setTab] = useState<'exercise' | 'solution'>('exercise');
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
   const task = useMemo(() => (exercise?.task ? parse(DOMPurify.sanitize(exercise?.task)) : ''), [exercise?.task]);
+
+  useEffect(() => {
+    Prism.highlightAll();
+  }, [task]);
 
   const checkExerciseHandler = async (exerciseName: string) => {
     if (!user) {

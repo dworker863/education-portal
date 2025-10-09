@@ -36,6 +36,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
           if (!lessonId) {
             throw new Error('Не выбран урок для удаления');
           }
+
           setIsPending(true);
 
           await deleteLesson(lessonId);

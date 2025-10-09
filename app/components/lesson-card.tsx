@@ -26,6 +26,9 @@ import { useRouter } from 'next/navigation';
 import slugify from 'slugify';
 import { ConfirmationContext } from './app-wrapper';
 import { checkLesson } from '../libs/server-actions/lessons-actions';
+import { deleteExercise } from '../libs/server-actions/exercises-actions';
+import Spinner from './spinner';
+import { deleteTest } from '../libs/server-actions/tests-actions';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -39,6 +42,9 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   const router = useRouter();
   const content = useMemo(() => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''), [lesson?.content]);
   const session = useSession();
+  const [isPending, setIsPending] = useState(false);
+  const [exerciseId, setExerciseId] = useState<string | null>(null);
+  const [testId, setTestId] = useState<string | null>(null);
   const userId = session?.data?.user.id as string;
 
   const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
@@ -66,6 +72,95 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
     setPassedTasks(lessonCompletedExercises);
   }, [tasks, completedTasks]);
 
+  useEffect(() => {
+    let mounted = true;
+
+    const loadDeleteExerciseConfirm = async () => {
+      try {
+        if (
+          confirmationContext?.modalType === 'confirmation' &&
+          confirmationContext.confirmation &&
+          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить это упражнение?'
+        ) {
+          if (!exerciseId) {
+            throw new Error('Не выбрано упражнение для удаления');
+          }
+
+          setIsPending(true);
+
+          await deleteExercise(exerciseId);
+
+          setIsPending(false);
+
+          confirmationContext.setConfirmation(false);
+          confirmationContext.setIsModalOpen(false);
+
+          if (!mounted) return;
+
+          router.refresh();
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
+        confirmationContext?.setConfirmation(false);
+      }
+    };
+
+    loadDeleteExerciseConfirm();
+  }, [exerciseId, confirmationContext, router]);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadDeleteTestConfirm = async () => {
+      try {
+        if (
+          confirmationContext?.modalType === 'confirmation' &&
+          confirmationContext.confirmation &&
+          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить этот тест?'
+        ) {
+          if (!testId) {
+            throw new Error('Не выбран тест для удаления');
+          }
+
+          setIsPending(true);
+
+          await deleteTest(testId);
+          confirmationContext.setConfirmation(false);
+          confirmationContext.setIsModalOpen(false);
+
+          setIsPending(false);
+
+          if (!mounted) return;
+
+          router.refresh();
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
+        confirmationContext?.setConfirmation(false);
+      }
+    };
+
+    loadDeleteTestConfirm();
+  }, [testId, confirmationContext, router]);
+
+  const deleteExerciseHandler = async () => {
+    confirmationContext?.setModalType('confirmation');
+    confirmationContext?.setIsModalOpen(true);
+    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить это упражнение?');
+  };
+
+  const deleteTestHandler = async () => {
+    confirmationContext?.setModalType('confirmation');
+    confirmationContext?.setIsModalOpen(true);
+    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот тест?');
+  };
+
   const checkLessonHandler = async () => {
     try {
       const result = checkLessonCompletion(passedTasks, tasksIds);
@@ -89,84 +184,98 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   };
 
   return (
-    <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
-      <div className="w-2/4">
-        <h2 className="mb-5 text-center">Теория</h2>
-        <div className="mb-10">{content}</div>
-        {lesson?.video && <Video src={lesson?.video} />}
-        <div className="flex justify-between">
-          {prevLessonName && (
-            <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
-              Предыдущий урок
-            </Button>
-          )}
-          {nextLessonName && (
-            <Button
-              variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-              onClick={() => checkLessonHandler()}
-            >
-              {isPassed === 'success' && (
-                <>
-                  <GoIssueClosed className="mr-2" size={20} />
-                  Пройдено
-                </>
+    <>
+      {isPending ? (
+        <Spinner />
+      ) : (
+        <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
+          <div className="w-2/4">
+            <h2 className="mb-5 text-center">Теория</h2>
+            <div className="mb-10">{content}</div>
+            {lesson?.video && <Video src={lesson?.video} />}
+            <div className="flex justify-between">
+              {prevLessonName && (
+                <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
+                  Предыдущий урок
+                </Button>
               )}
-              {isPassed === 'failed' && (
-                <>
-                  <SlClose className="mr-2" size={20} />
-                  Не Пройдено
-                </>
+              {nextLessonName && (
+                <Button
+                  variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+                  onClick={() => checkLessonHandler()}
+                >
+                  {isPassed === 'success' && (
+                    <>
+                      <GoIssueClosed className="mr-2" size={20} />
+                      Пройдено
+                    </>
+                  )}
+                  {isPassed === 'failed' && (
+                    <>
+                      <SlClose className="mr-2" size={20} />
+                      Не Пройдено
+                    </>
+                  )}
+                  {isPassed === 'default' && 'Следующий урок'}
+                </Button>
               )}
-              {isPassed === 'default' && 'Следующий урок'}
-            </Button>
-          )}
-        </div>
-        {isPassed === 'failed' && (
-          <div className="mt-4">
-            <ErrorMessage message="Чтобы перейти к следующему уроку Вы должны успешно выполнить 75% упражнений" />
+            </div>
+            {isPassed === 'failed' && (
+              <div className="mt-4">
+                <ErrorMessage message="Чтобы перейти к следующему уроку Вы должны успешно выполнить 75% упражнений" />
+              </div>
+            )}
           </div>
-        )}
-      </div>
 
-      <div className="w-2/4 pr-10">
-        <h2 className="mb-5 text-center">Практика</h2>
-        <Carousel className="w-full">
-          <CarouselContent>
-            {tasks.length > 0 &&
-              tasks.map((task, index) => (
-                <CarouselItem key={task.id}>
-                  <div className="p-1">
-                    {'variants' in task ? (
-                      <Test
-                        key={index + task.name}
-                        test={task}
-                        passedTasks={passedTasks}
-                        setPassedTasks={setPassedTasks}
-                      />
-                    ) : (
-                      <Exercise
-                        key={index + task.name}
-                        exercise={task}
-                        passedTasks={passedTasks}
-                        setPassedTasks={setPassedTasks}
-                      />
-                    )}
-                    <div className="flex justify-center mt-20">
-                      {'variants' in task ? (
-                        <TestFormWrapper testId={task.id} />
-                      ) : (
-                        <ExerciseFormWrapper exerciseId={task?.id} />
-                      )}
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-          </CarouselContent>
-          {tasks.length > 1 && <CarouselPrevious variant="customCircle" />}
-          {tasks.length > 1 && <CarouselNext variant="customCircle" />}
-        </Carousel>
-      </div>
-    </div>
+          <div className="w-2/4 pr-10">
+            <h2 className="mb-5 text-center">Практика</h2>
+            <Carousel className="w-full">
+              <CarouselContent>
+                {tasks.length > 0 &&
+                  tasks.map((task, index) => (
+                    <CarouselItem key={task.id}>
+                      <div className="p-1">
+                        {'variants' in task ? (
+                          <Test
+                            key={index + task.name}
+                            test={task}
+                            passedTasks={passedTasks}
+                            setPassedTasks={setPassedTasks}
+                          />
+                        ) : (
+                          <Exercise
+                            key={index + task.name}
+                            exercise={task}
+                            passedTasks={passedTasks}
+                            setPassedTasks={setPassedTasks}
+                          />
+                        )}
+                        <div className="flex justify-center mt-20">
+                          {'variants' in task ? (
+                            <TestFormWrapper
+                              testId={task.id}
+                              deleteTestHandler={deleteTestHandler}
+                              setTestId={setTestId}
+                            />
+                          ) : (
+                            <ExerciseFormWrapper
+                              exerciseId={task?.id}
+                              deleteExerciseHandler={deleteExerciseHandler}
+                              setExerciseId={setExerciseId}
+                            />
+                          )}
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+              </CarouselContent>
+              {tasks.length > 1 && <CarouselPrevious variant="customCircle" />}
+              {tasks.length > 1 && <CarouselNext variant="customCircle" />}
+            </Carousel>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

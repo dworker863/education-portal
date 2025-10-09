@@ -22,7 +22,11 @@ const AchievementFormWrapper: FC<TAchievementFormWrapperProps> = ({ achievementI
 
     const loadDeleteAchievementConfirm = async () => {
       try {
-        if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
+        if (
+          confirmationContext?.modalType === 'confirmation' &&
+          confirmationContext.confirmation &&
+          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить это достижение?'
+        ) {
           await deleteAchievement(achievementId);
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);

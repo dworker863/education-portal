@@ -1,53 +1,22 @@
 'use client';
 
-import React, { FC, useContext, useEffect, useState } from 'react';
+import React, { Dispatch, FC, SetStateAction, useState } from 'react';
 import { Button } from './button';
 import { FaEdit, FaTrash } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
 import PrizeTicketForm from './prizeticket-form';
-import { deletePrizeTicket } from '../libs/server-actions/prizeticket-actions';
-import { ConfirmationContext } from './app-wrapper';
 
 type TPrizeTicketFormWrapperProps = {
   prizeTicketId: string;
+  deletePrizeTicketHandler: () => Promise<void>;
+  setPrizeTicketId: Dispatch<SetStateAction<string | null>>;
 };
 
-const PrizeTicketFormWrapper: FC<TPrizeTicketFormWrapperProps> = ({ prizeTicketId }) => {
-  const confirmationContext = useContext(ConfirmationContext);
+const PrizeTicketFormWrapper: FC<TPrizeTicketFormWrapperProps> = ({
+  prizeTicketId,
+  deletePrizeTicketHandler,
+  setPrizeTicketId,
+}) => {
   const [showEditForm, setShowEditForm] = useState(false);
-  const router = useRouter();
-
-  useEffect(() => {
-    let mounted = true;
-
-    const loadDeletePrizeTicketConfirm = async () => {
-      try {
-        if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
-          await deletePrizeTicket(prizeTicketId);
-          confirmationContext.setConfirmation(false);
-          confirmationContext.setIsModalOpen(false);
-
-          if (!mounted) return;
-
-          router.refresh();
-        }
-      } catch (error) {
-        console.error('Ошибка при выполнении запроса:', error);
-        confirmationContext?.setModalType('notification');
-        confirmationContext?.setNotificationModalText((error as Error).message);
-        confirmationContext?.setIsModalOpen(true);
-        confirmationContext?.setConfirmation(false);
-      }
-    };
-
-    loadDeletePrizeTicketConfirm();
-  }, [prizeTicketId, confirmationContext]);
-
-  const deletePrizeTicketHandler = async () => {
-    confirmationContext?.setModalType('confirmation');
-    confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот призовой билет?');
-  };
 
   return (
     <>
@@ -57,7 +26,14 @@ const PrizeTicketFormWrapper: FC<TPrizeTicketFormWrapperProps> = ({ prizeTicketI
             <FaEdit size={22} />
             <span className="ml-2">Редактировать</span>
           </Button>
-          <Button variant="custom" className="ml-4" onClick={deletePrizeTicketHandler}>
+          <Button
+            variant="custom"
+            className="ml-4"
+            onClick={() => {
+              setPrizeTicketId(prizeTicketId);
+              deletePrizeTicketHandler();
+            }}
+          >
             <FaTrash size={16} />
             <span className="ml-2">Удалить</span>
           </Button>

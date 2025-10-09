@@ -9,6 +9,7 @@ import slugify from 'slugify';
 import { ConfirmationContext } from './app-wrapper';
 import { deleteLesson } from '../libs/server-actions/lessons-actions';
 import { useRouter } from 'next/navigation';
+import Spinner from './spinner';
 
 type TLessonsProps = {
   courseId?: string;
@@ -19,6 +20,7 @@ type TLessonsProps = {
 const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
+  const [isPending, setIsPending] = useState(false);
   const [lessonId, setLessonId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -34,8 +36,12 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
           if (!lessonId) {
             throw new Error('Не выбран урок для удаления');
           }
+          setIsPending(true);
 
           await deleteLesson(lessonId);
+
+          setIsPending(false);
+
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);
 
@@ -62,28 +68,34 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   };
 
   return (
-    <section>
-      <LessonForm courseId={courseId} mode="create" />
-      <ol className="px-5 list-decimal">
-        {lessons &&
-          lessons.length > 0 &&
-          lessons.map((lesson) => {
-            const lessonName = slugify(lesson.name, { locale: 'ru' });
-            return (
-              <li key={lesson.id + lesson.name}>
-                <div className="mb-5">
-                  <Link href={`/courses/${name}/${lessonName}`}>{lesson.name}</Link>
-                  <LessonFormWrapper
-                    lessonId={lesson.id}
-                    deleteLessonHandler={deleteLessonHandler}
-                    setLessonId={setLessonId}
-                  />
-                </div>
-              </li>
-            );
-          })}
-      </ol>
-    </section>
+    <>
+      {isPending ? (
+        <Spinner />
+      ) : (
+        <section>
+          <LessonForm courseId={courseId} mode="create" />
+          <ol className="px-5 list-decimal">
+            {lessons &&
+              lessons.length > 0 &&
+              lessons.map((lesson) => {
+                const lessonName = slugify(lesson.name, { locale: 'ru' });
+                return (
+                  <li key={lesson.id + lesson.name}>
+                    <div className="mb-5">
+                      <Link href={`/courses/${name}/${lessonName}`}>{lesson.name}</Link>
+                      <LessonFormWrapper
+                        lessonId={lesson.id}
+                        deleteLessonHandler={deleteLessonHandler}
+                        setLessonId={setLessonId}
+                      />
+                    </div>
+                  </li>
+                );
+              })}
+          </ol>
+        </section>
+      )}
+    </>
   );
 };
 

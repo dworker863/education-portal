@@ -55,7 +55,6 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
       setPassedTasks([...passedTasks, exercise.id]);
 
       await session.update({
-        // ...session.data?.user,
         rating: updatedUser.rating,
         rank: updatedUser.rank,
         completeExercise: updatedUser.completedExercises,

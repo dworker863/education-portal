@@ -173,7 +173,10 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
       await checkLesson(userId, lesson.courseId, lesson.id);
 
       setIsPassed('success');
-      router.push(`./${nextLessonName}`);
+
+      if (nextLessonName) {
+        router.push(`./${nextLessonName}`);
+      }
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
       confirmationContext?.setModalType('notification');
@@ -199,26 +202,24 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
                   Предыдущий урок
                 </Button>
               )}
-              {nextLessonName && (
-                <Button
-                  variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
-                  onClick={() => checkLessonHandler()}
-                >
-                  {isPassed === 'success' && (
-                    <>
-                      <GoIssueClosed className="mr-2" size={20} />
-                      Пройдено
-                    </>
-                  )}
-                  {isPassed === 'failed' && (
-                    <>
-                      <SlClose className="mr-2" size={20} />
-                      Не Пройдено
-                    </>
-                  )}
-                  {isPassed === 'default' && 'Следующий урок'}
-                </Button>
-              )}
+              <Button
+                variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+                onClick={() => checkLessonHandler()}
+              >
+                {isPassed === 'success' && (
+                  <>
+                    <GoIssueClosed className="mr-2" size={20} />
+                    Пройдено
+                  </>
+                )}
+                {isPassed === 'failed' && (
+                  <>
+                    <SlClose className="mr-2" size={20} />
+                    Не Пройдено
+                  </>
+                )}
+                {isPassed === 'default' && (nextLessonName ? 'Следующий урок' : 'Завершить курс')}
+              </Button>
             </div>
             {isPassed === 'failed' && (
               <div className="mt-4">

@@ -32,6 +32,9 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
             </Button>
           );
         },
+        cell: ({ row }) => {
+          return <div className="text-customSecondary">{row.original.name}</div>;
+        },
       },
       {
         accessorKey: 'startDate',
@@ -96,7 +99,11 @@ const Achievements: FC<TAchievementsProps> = ({ mode, showAchievements, setShowA
         cell: ({ row }) => {
           if (typeof row.original.reward === 'object' && !Array.isArray(row.original.reward)) {
             return (
-              <div>{row.original.reward?.amount + ' ' + row.original.reward?.subscriptionType || 'Нет курса'}</div>
+              <div className="text-customAccent">
+                {row.original.reward?.type === 'DISCOUNT'
+                  ? `Скидка ${row.original.reward?.amount}%`
+                  : `Подписка ${row.original.reward?.amount} мес.`}
+              </div>
             );
           }
         },

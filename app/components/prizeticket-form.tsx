@@ -168,7 +168,10 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
                       <Input
                         type="number"
                         placeholder="Например, 20"
-                        {...form.register('percent', { valueAsNumber: true })}
+                        {...form.register('percent', {
+                          valueAsNumber: mode === 'create',
+                          setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                        })}
                       />
                     </FormControl>
                     <FormMessage />
@@ -183,12 +186,15 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
                 name="months"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Месяцы (для SUBSCRIPTION)</FormLabel>
+                    <FormLabel>Количество месяцев (для SUBSCRIPTION)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
-                        placeholder="Например, 6"
-                        {...form.register('months', { valueAsNumber: true })}
+                        placeholder="Количество месяцев"
+                        {...form.register('months', {
+                          valueAsNumber: mode === 'create',
+                          setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                        })}
                       />
                     </FormControl>
                     <FormMessage />

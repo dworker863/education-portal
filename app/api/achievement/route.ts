@@ -79,6 +79,14 @@ export async function POST(request: Request) {
       }
     }
 
+    if (data.reward.type === 'DISCOUNT' && (data.reward.percent === null || data.reward.percent === undefined)) {
+      throw new Error('Для DISCOUNT нужно указать percent');
+    }
+
+    if (data.reward.type === 'SUBSCRIPTION' && (data.reward.months === null || data.reward.months === undefined)) {
+      throw new Error('Для SUBSCRIPTION нужно указать months');
+    }
+
     let uploadIconResult;
 
     if (data.icon) {

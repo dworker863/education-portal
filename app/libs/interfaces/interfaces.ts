@@ -233,7 +233,8 @@ export type TSubscription = {
 export interface IReward {
   type: 'DISCOUNT' | 'SUBSCRIPTION';
   icon: string;
-  amount: number;
+  months?: number;
+  percent?: number;
 }
 
 export interface IPrizeTicket {

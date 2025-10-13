@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { FC, memo, useMemo, useState, useTransition } from 'react';
+import React, { FC, memo, useEffect, useMemo, useState, useTransition } from 'react';
 import { Controller, useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
 import { createAchievementSchema, editAchievementSchema } from '../libs/validation';
 import { z } from 'zod';
@@ -343,11 +343,28 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
           ? {
               type: 'SUBSCRIPTION',
               icon: null,
-              amount: 1,
+              months: 1,
+              percent: 0,
             }
           : undefined,
     },
   });
+
+  const criteriaType = form.watch('criteria.type');
+  const rewardType = form.watch('reward.type');
+
+  useEffect(() => {
+    if (mode === 'create') {
+      if (rewardType === 'DISCOUNT') {
+        form.setValue('reward.percent', 0);
+        form.setValue('reward.months', undefined);
+      }
+      if (rewardType === 'SUBSCRIPTION') {
+        form.setValue('reward.percent', undefined);
+        form.setValue('reward.months', 1);
+      }
+    }
+  }, [rewardType, mode, form]);
 
   const {
     fields: conditionFields,
@@ -400,9 +417,6 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
         return _exhaustiveCheck;
     }
   };
-
-  const criteriaType = form.watch('criteria.type');
-  const rewardType = form.watch('reward.type');
 
   const onSubmit = (values: z.infer<typeof schema>) => {
     startTransiton(async () => {
@@ -747,27 +761,52 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="reward.amount"
-                render={() => (
-                  <FormItem>
-                    <FormLabel>{rewardType === 'SUBSCRIPTION' ? 'Количество месяцев' : 'Количество билетов'}</FormLabel>
-                    {mode === 'create' && <RequiredSign />}
-                    <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="Количество"
-                        {...form.register('reward.amount', {
-                          valueAsNumber: mode === 'create',
-                          setValueAs: (value) => (value === '' ? undefined : Number(value)),
-                        })}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {rewardType === 'SUBSCRIPTION' && (
+                <FormField
+                  control={form.control}
+                  name="reward.months"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>Количество месяцев</FormLabel>
+                      {mode === 'create' && <RequiredSign />}
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Количество месяцев"
+                          {...form.register('reward.months', {
+                            valueAsNumber: mode === 'create',
+                            setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                          })}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+              {rewardType === 'DISCOUNT' && (
+                <FormField
+                  control={form.control}
+                  name="reward.percent"
+                  render={() => (
+                    <FormItem>
+                      <FormLabel>% скидки</FormLabel>
+                      {mode === 'create' && <RequiredSign />}
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="% скидки"
+                          {...form.register('reward.percent', {
+                            valueAsNumber: mode === 'create',
+                            setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                          })}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
             {error && <ErrorMessage message={error} />}
             {success && <SuccessMessage message={success} />}

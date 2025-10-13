@@ -312,9 +312,11 @@ export const rewardSchema = z.object({
       },
       { message: 'Вставьте изображение' },
     ),
-  amount: z
+  months: z
     .number({ invalid_type_error: 'Введите число' })
-    .min(1, { message: 'Введите количество призовых билетов со скидкой' }),
+    .min(1, { message: 'Введите количество месяцев подписки' })
+    .optional(),
+  percent: z.number({ invalid_type_error: 'Введите число' }).min(1, { message: 'Введите процент скидки' }).optional(),
 });
 
 export const createAchievementSchema = z.object({

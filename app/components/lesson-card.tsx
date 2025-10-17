@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useContext, useEffect, useMemo, useState } from 'react';
+import React, { FC, useContext, useEffect, useMemo, useState, useTransition } from 'react';
 import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
@@ -39,10 +39,11 @@ type TLessonCardProps = {
 
 const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
   const confirmationContext = useContext(ConfirmationContext);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const content = useMemo(() => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''), [lesson?.content]);
   const session = useSession();
-  const [isPending, setIsPending] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [exerciseId, setExerciseId] = useState<string | null>(null);
   const [testId, setTestId] = useState<string | null>(null);
   const userId = session?.data?.user.id as string;
@@ -86,11 +87,11 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
             throw new Error('Не выбрано упражнение для удаления');
           }
 
-          setIsPending(true);
+          setIsLoading(true);
 
           await deleteExercise(exerciseId);
 
-          setIsPending(false);
+          setIsLoading(false);
 
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);
@@ -125,13 +126,13 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
             throw new Error('Не выбран тест для удаления');
           }
 
-          setIsPending(true);
+          setIsLoading(true);
 
           await deleteTest(testId);
           confirmationContext.setConfirmation(false);
           confirmationContext.setIsModalOpen(false);
 
-          setIsPending(false);
+          setIsLoading(false);
 
           if (!mounted) return;
 
@@ -162,33 +163,35 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   };
 
   const checkLessonHandler = async () => {
-    try {
-      const result = checkLessonCompletion(passedTasks, tasksIds);
+    startTransition(async () => {
+      try {
+        const result = checkLessonCompletion(passedTasks, tasksIds);
 
-      if (!result) {
+        if (!result) {
+          setIsPassed('failed');
+          return;
+        }
+
+        await checkLesson(userId, lesson.courseId, lesson.id);
+
+        setIsPassed('success');
+
+        if (nextLessonName) {
+          router.push(`./${nextLessonName}`);
+        }
+      } catch (error) {
+        console.error('Ошибка при выполнении запроса:', error);
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
         setIsPassed('failed');
-        return;
       }
-
-      await checkLesson(userId, lesson.courseId, lesson.id);
-
-      setIsPassed('success');
-
-      if (nextLessonName) {
-        router.push(`./${nextLessonName}`);
-      }
-    } catch (error) {
-      console.error('Ошибка при выполнении запроса:', error);
-      confirmationContext?.setModalType('notification');
-      confirmationContext?.setNotificationModalText((error as Error).message);
-      confirmationContext?.setIsModalOpen(true);
-      setIsPassed('failed');
-    }
+    });
   };
 
   return (
     <>
-      {isPending ? (
+      {isLoading ? (
         <Spinner />
       ) : (
         <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
@@ -205,6 +208,7 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
               <Button
                 variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
                 onClick={() => checkLessonHandler()}
+                disabled={isPending}
               >
                 {isPassed === 'success' && (
                   <>

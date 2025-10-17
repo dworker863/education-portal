@@ -1,6 +1,17 @@
 'use client';
 
-import { Dispatch, FC, memo, SetStateAction, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Dispatch,
+  FC,
+  memo,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
 import { IExercise } from '../libs/interfaces/interfaces';
 import { Button } from './button';
 import EditorWrapper from './editor-wrapper';
@@ -21,6 +32,7 @@ type TExerciseProps = {
 
 const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks }) => {
   const confirmationContext = useContext(ConfirmationContext);
+  const [isPending, startTransition] = useTransition();
   const session = useSession();
   const user = session?.data?.user;
   const containerRef = useRef<HTMLDivElement>(null);
@@ -33,45 +45,47 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
     Prism.highlightAll();
   }, [task]);
 
-  const checkExerciseHandler = async (exerciseName: string) => {
-    if (!user) {
-      console.error('Пользователь не авторизован');
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
-      );
-      const data = await response.json();
-
-      console.log('Exercise: ', data);
-
-      if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
-        setIsPassed('failed');
+  const checkExerciseHandler = (exerciseName: string) => {
+    startTransition(async () => {
+      if (!user) {
+        console.error('Пользователь не авторизован');
         return;
       }
 
-      const { updatedUser, achievementProgress } = await checkExercise(user.id, exercise.id);
+      try {
+        const response = await fetch(
+          `https://67e2eeaf97fc65f535382fe2.mockapi.io/exercises?exerciseName=${exerciseName}`,
+        );
+        const data = await response.json();
 
-      const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+        console.log('Exercise: ', data);
 
-      setPassedTasks([...passedTasks, exercise.id]);
+        if (data === 'Not found' || data.length === 0 || data[0].failed > 0) {
+          setIsPassed('failed');
+          return;
+        }
 
-      await session.update({
-        rating: updatedUser.rating,
-        rank: updatedUser.rank,
-        completeExercise: updatedUser.completedExercises,
-        prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
-      });
+        const { updatedUser, achievementProgress } = await checkExercise(user.id, exercise.id);
 
-      setIsPassed('success');
-    } catch (error) {
-      confirmationContext?.setModalType('notification');
-      confirmationContext?.setNotificationModalText((error as Error).message);
-      confirmationContext?.setIsModalOpen(true);
-      setIsPassed('failed');
-    }
+        const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+
+        setPassedTasks([...passedTasks, exercise.id]);
+
+        await session.update({
+          rating: updatedUser.rating,
+          rank: updatedUser.rank,
+          completeExercise: updatedUser.completedExercises,
+          prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
+        });
+
+        setIsPassed('success');
+      } catch (error) {
+        confirmationContext?.setModalType('notification');
+        confirmationContext?.setNotificationModalText((error as Error).message);
+        confirmationContext?.setIsModalOpen(true);
+        setIsPassed('failed');
+      }
+    });
   };
 
   if (!user) {
@@ -112,6 +126,7 @@ const Exercise: FC<TExerciseProps> = ({ exercise, passedTasks, setPassedTasks })
         <Button
           variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
           onClick={async () => await checkExerciseHandler(exercise.name)}
+          disabled={isPending}
         >
           {isPassed === 'success' && (
             <>

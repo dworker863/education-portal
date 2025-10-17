@@ -12,6 +12,7 @@ import Link from 'next/link';
 import slugify from 'slugify';
 import { isObjectSubscription } from '../libs/utils/common';
 import { subscribeUser } from '../libs/server-actions/subscribe';
+import ScrollIndicator from './scroll-indicator';
 
 type TProfile = {
   mode: 'component' | 'page';
@@ -89,7 +90,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   return (
     <div
       className={cn(
-        ' flex flex-col h-full overflow-y-scroll',
+        'relative flex flex-col h-full overflow-y-auto',
         {
           'fixed top-0 right-[-400px] -z-10 w-[400px] h-full px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
             mode === 'component',
@@ -97,6 +98,7 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
         { '-translate-x-[400px]': showProfile },
       )}
     >
+      <ScrollIndicator />
       <div className="mb-10">
         <div className="flex gap-8 ">
           <div className="w-20 ml-[10px] rounded-full overflow-hidden">

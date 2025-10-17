@@ -37,7 +37,7 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="fixed right-0 z-50">
+    <div className="fixed right-0 z-50 h-full">
       <Profile mode="component" showProfile={showProfile} />
       {exercises && exercises?.length > 0 && (
         <Exercises
@@ -55,7 +55,7 @@ const Sidebar = () => {
           setShowAchievements={setShowAchievements}
         />
       )}
-      <div className="flex flex-col items-center w-18 h-svh py-2 bg-primary">
+      <div className="flex flex-col items-center w-18 h-full py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
           <FaUser className="text-customSecondary hover:scale-125" size={22} />
         </Button>

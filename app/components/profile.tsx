@@ -89,9 +89,9 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
   return (
     <div
       className={cn(
-        ' flex flex-col ',
+        ' flex flex-col h-full overflow-y-scroll',
         {
-          'absolute top-0 right-[-400px] -z-10 w-[400px] h-svh px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
+          'fixed top-0 right-[-400px] -z-10 w-[400px] h-full px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
             mode === 'component',
         },
         { '-translate-x-[400px]': showProfile },

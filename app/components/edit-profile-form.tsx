@@ -98,7 +98,7 @@ const EditProfileForm: FC<TEditProfileFormProps> = ({ email, fieldName, type }) 
           setTimeout(() => {
             context?.setIsModalOpen(false);
             router.back();
-          }, 1500);
+          }, 2000);
         }
       } catch (error) {
         setSuccess(null);

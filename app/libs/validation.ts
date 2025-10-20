@@ -94,7 +94,7 @@ export const editProfileSchema = z.object({
   name: z.string().optional(),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  birthDate: z.date().optional(),
+  birthDate: z.coerce.date().optional(),
   image: z
     .any()
     .refine((file) => !file || file instanceof File || file[0] instanceof File, {

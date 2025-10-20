@@ -23,6 +23,7 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
+      name: string | null;
       password: string | null;
       emailVerified: Date | null;
       role: 'ADMIN' | 'USER';
@@ -139,6 +140,7 @@ export const {
         const fullUser = await prisma.user.findUnique({
           where: { id: userId },
           select: {
+            name: true,
             coursesProgress: {
               select: {
                 id: true,

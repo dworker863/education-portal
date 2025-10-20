@@ -1,7 +1,6 @@
 'use server';
 
 import { prisma } from '@/prisma/prisma';
-import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
 import { Prisma } from '@prisma/client';
 
 export const getUserCoursesProgress = async (userId: string) => {

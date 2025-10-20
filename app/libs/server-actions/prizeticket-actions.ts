@@ -3,7 +3,12 @@
 import { prisma } from '@/prisma/prisma';
 import { z } from 'zod';
 import { createPrizeTicketSchema, editPrizeTicketSchema } from '../validation';
-import { disconnectPrizeTicketFromUser, getPrizeTicketByCode, getPrizeTicketById } from '../utils/prizetickets';
+import {
+  disconnectPrizeTicketFromUser,
+  getPrizeTicketByCode,
+  getPrizeTicketById,
+  getPrizeTicketByName,
+} from '../utils/prizetickets';
 import { cache } from 'react';
 import { getUserById } from '../utils/auth';
 
@@ -31,6 +36,14 @@ export const addPrizeTicket = async (values: z.infer<typeof createPrizeTicketSch
 
     if (existingTicket) {
       throw new Error('Призовой билет с таким кодом уже существует');
+    }
+
+    if (data.name) {
+      const existingName = await getPrizeTicketByName(data.name);
+
+      if (existingName) {
+        throw new Error('Призовой билет с таким названием уже существует');
+      }
     }
 
     if (data.type === 'DISCOUNT' && (data.percent === null || data.percent === undefined)) {

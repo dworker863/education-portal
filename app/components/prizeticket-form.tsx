@@ -13,7 +13,7 @@ import ErrorMessage from './error-message';
 import SuccessMessage from './success-message';
 import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
 import { cn } from '../libs/cn';
-import { format } from 'date-fns';
+import { addMonths, format } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
 import { ru } from 'date-fns/locale';
@@ -247,44 +247,49 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
               <FormField
                 control={form.control}
                 name="validFrom"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col flex-grow gap-1">
-                    <FormLabel>Действует с</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              ' pl-3 text-left text-primary font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'd MMMM yyyy', { locale: ru })
-                            ) : (
-                              <span>Укажите дату</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0 bg-customBlock" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          month={field.value}
-                          onSelect={field.onChange}
-                          onMonthChange={field.onChange}
-                          locale={ru}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const now = new Date();
+                  const oneMonthLater = addMonths(now, 1);
+
+                  return (
+                    <FormItem className="flex flex-col flex-grow gap-1">
+                      <FormLabel>Действует с</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                ' pl-3 text-left text-primary font-normal',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, 'd MMMM yyyy', { locale: ru })
+                              ) : (
+                                <span>Укажите дату</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0 bg-customBlock" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            month={field.value}
+                            onSelect={field.onChange}
+                            onMonthChange={field.onChange}
+                            locale={ru}
+                            disabled={(date) => date < now || date > oneMonthLater}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               <FormItem className="flex flex-col flex-grow gap-1">
                 <FormLabel>Укажите год</FormLabel>
@@ -312,44 +317,50 @@ const PrizeTicketForm: FC<TPrizeTicketFormProps> = ({ prizeTicketId, mode }) => 
               <FormField
                 control={form.control}
                 name="validUntil"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col flex-grow gap-1">
-                    <FormLabel>Действует до</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={'outline'}
-                            className={cn(
-                              ' pl-3 text-left text-primary font-normal',
-                              !field.value && 'text-muted-foreground',
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, 'd MMMM yyyy', { locale: ru })
-                            ) : (
-                              <span>Укажите дату</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-full p-0 bg-customBlock" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          month={field.value}
-                          onSelect={field.onChange}
-                          onMonthChange={field.onChange}
-                          locale={ru}
-                          disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
+                render={({ field }) => {
+                  const now = new Date();
+                  const validFrom = form.watch('validFrom'); // 👈 следим за validFrom
+                  const maxDate = validFrom ? addMonths(validFrom, 1) : addMonths(now, 1);
+
+                  return (
+                    <FormItem className="flex flex-col flex-grow gap-1">
+                      <FormLabel>Действует до</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                ' pl-3 text-left text-primary font-normal',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, 'd MMMM yyyy', { locale: ru })
+                              ) : (
+                                <span>Укажите дату</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-full p-0 bg-customBlock" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            month={field.value}
+                            onSelect={field.onChange}
+                            onMonthChange={field.onChange}
+                            locale={ru}
+                            disabled={(date) => date < (validFrom || now) || date > maxDate}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
               />
               <FormItem className="flex flex-col flex-grow gap-1">
                 <FormLabel>Укажите год</FormLabel>

@@ -1,4 +1,5 @@
 import { PrizeTicketType } from '@prisma/client';
+import { addMonths } from 'date-fns';
 import { z } from 'zod';
 
 export const registrationSchema = z
@@ -441,7 +442,7 @@ export const achievementsFiltersSchema = z.object({
   rewardType: z.enum(['DISCOUNT', 'SUBSCRIPTION']).optional(),
 });
 
-export const createPrizeTicketSchema = z.object({
+const basePrizeTicketSchema = z.object({
   code: z.string().min(3, 'Код должен содержать минимум 3 символа'),
   name: z.string().optional(),
   type: z.nativeEnum(PrizeTicketType, { errorMap: () => ({ message: 'Неверный тип билета' }) }),
@@ -453,4 +454,27 @@ export const createPrizeTicketSchema = z.object({
   validUntil: z.coerce.date().optional(),
 });
 
-export const editPrizeTicketSchema = createPrizeTicketSchema.partial();
+export const createPrizeTicketSchema = basePrizeTicketSchema.refine(
+  (data) =>
+    data.validFrom &&
+    data.validUntil &&
+    data.validUntil >= data.validFrom &&
+    data.validUntil <= addMonths(data.validFrom, 1),
+  {
+    message: 'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
+    path: ['validUntil'],
+  },
+);
+
+export const editPrizeTicketSchema = basePrizeTicketSchema
+  .partial()
+  .refine(
+    (data) =>
+      !data.validFrom ||
+      !data.validUntil ||
+      (data.validUntil >= data.validFrom && data.validUntil <= addMonths(data.validFrom, 1)),
+    {
+      message: 'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
+      path: ['validUntil'],
+    },
+  );

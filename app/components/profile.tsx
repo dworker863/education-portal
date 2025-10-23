@@ -105,7 +105,19 @@ const Profile: FC<TProfile> = ({ mode, showProfile }) => {
             {user?.image && <Image src={user?.image?.replace(/\\/gi, '/')} alt="avatar" width={100} height={100} />}
           </div>
           <div className="flex flex-col">
-            <p className="text-sm text-customTextAccent">{user?.name}</p>
+            <div className="flex items-center">
+              <p className="text-sm text-customTextAccent">{user?.name}</p>
+              <Button
+                variant="customLink"
+                size="icon"
+                onClick={() => {
+                  modalContext?.setIsModalOpen(true);
+                  router.push(`/edit-profile?email=${user?.email}&field=name`);
+                }}
+              >
+                <MdModeEditOutline className="text-customAccent hover:scale-125" size={20} />
+              </Button>
+            </div>
             <p className="max-w-36 text-xs">{user?.email}</p>
           </div>
         </div>

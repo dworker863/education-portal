@@ -1,11 +1,12 @@
 'use client';
 
 import { SessionProvider } from 'next-auth/react';
-import { createContext, Dispatch, FC, ReactNode, SetStateAction, useState } from 'react';
+import { createContext, Dispatch, FC, ReactNode, SetStateAction, useEffect, useState } from 'react';
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import ConfirmationModal from './confirmation-modal';
 import UsageModal from './usage-modal';
 import NotificationModal from './notification-modal';
+import { usePathname } from 'next/navigation';
 
 export type TModalContext = {
   isModalOpen: boolean;
@@ -41,6 +42,7 @@ type TAppWrapperProps = {
 };
 
 const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children }) => {
+  const pathname = usePathname();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<null | 'confirmation' | 'notification' | 'usage'>(null);
   const [confirmation, setConfirmation] = useState(false);
@@ -50,6 +52,19 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [usageModalText, setUsageModalText] = useState('');
   const [notificationModalText, setNotificationModalText] = useState('');
   const [usageModalTicketType, setUsageModalTicketType] = useState<null | 'DISCOUNT' | 'SUBSCRIPTION'>(null);
+
+  useEffect(() => {
+    if (
+      !pathname.startsWith('/signin') &&
+      !pathname.startsWith('/signup') &&
+      !pathname.startsWith('/reset-password') &&
+      !pathname.startsWith('/new-password') &&
+      !pathname.startsWith('/edit-profile')
+    ) {
+      setIsModalOpen(false);
+    }
+    // Закрываем модалку при изменении URL
+  }, [pathname]);
 
   return (
     <SessionProvider>

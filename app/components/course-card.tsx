@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import Spinner from './spinner';
 import { calculatePrizeWithDiscount } from '../libs/utils/prize';
 import { registerForCourse } from '../libs/server-actions/courses-actions';
+import { isObjectSubscription } from '../libs/utils/common';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -96,10 +97,15 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       console.error('Пользователь не авторизован');
       return;
     }
-    // if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
-    //   router.push(`/courses/${course.name}`);
-    //   return;
-    // }
+    if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+      router.push(`/courses/${course.name}`);
+      return;
+    }
+
+    if (user && isObjectSubscription(user.subscription) && new Date(user.subscription?.validUntil) > new Date()) {
+      router.push(`/courses/${course.name}`);
+      return;
+    }
 
     if (user?.prizeTickets && user?.prizeTickets.length > 0) {
       confirmationContext?.setModalType('usage');

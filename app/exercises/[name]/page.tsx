@@ -1,13 +1,14 @@
-import Exercise from '@/app/components/exercise';
+import ExerciseWrapper from '@/app/components/exercise-wrapper';
 import { getExerciseByName } from '@/app/libs/utils/exercises';
 import React from 'react';
 
 const ExercisePage = async ({ params }: { params: { name: string } }) => {
   const { name } = params;
-  const title = name.replace(/([A-Z])/g, ' $1').trim();
-  const exercise = await getExerciseByName(title);
+  const exercise = await getExerciseByName(name);
 
-  return <div>{exercise && <Exercise exercise={exercise} />}</div>;
+  console.log('ExercisePage exercise:', name, exercise);
+
+  return <div>{exercise && <ExerciseWrapper exercise={exercise} />}</div>;
 };
 
 export default ExercisePage;

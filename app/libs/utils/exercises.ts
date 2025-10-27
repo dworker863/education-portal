@@ -24,6 +24,8 @@ export const getExerciseByName = async (name: string) => {
       },
     });
 
+    console.log('getExerciseByName:', name, exercise);
+
     return exercise;
   } catch (error) {
     console.error('Ошибка при получении упражнения по названию: ', error);
@@ -33,17 +35,21 @@ export const getExerciseByName = async (name: string) => {
 
 export const checkCompletedExercises = (
   userCompletedExercises: (IExercise | ITest)[],
-  lessonExercises: (IExercise | ITest)[],
+  lessonExercises?: (IExercise | ITest)[],
 ) => {
   if (userCompletedExercises.length === 0) {
     return [];
   }
 
-  const matchedExercises = lessonExercises.filter((lessonExercise) => {
-    return userCompletedExercises.some((userExercise) => userExercise.id === lessonExercise.id);
-  });
+  if (lessonExercises && lessonExercises.length > 0) {
+    const matchedExercises = lessonExercises.filter((lessonExercise) => {
+      return userCompletedExercises.some((userExercise) => userExercise.id === lessonExercise.id);
+    });
 
-  const matchedExercisesIds = matchedExercises.map((matchedExercise) => matchedExercise.id);
+    const matchedExercisesIds = matchedExercises.map((matchedExercise) => matchedExercise.id);
 
-  return matchedExercisesIds;
+    return matchedExercisesIds;
+  }
+
+  return userCompletedExercises.map((exercise) => exercise.id);
 };

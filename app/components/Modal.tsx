@@ -8,11 +8,12 @@ import Link from 'next/link';
 import { IoCloseSharp } from 'react-icons/io5';
 import { ModalContext } from './app-wrapper';
 import Socials from './socials';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type TModalProps = {
   type:
     | 'login'
+    | 'login-page'
     | 'registration'
     | 'registration-page'
     | 'reset-password'
@@ -28,6 +29,8 @@ type TModalProps = {
 };
 
 const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, backButtonHref, showSocials }) => {
+  const searchParams = useSearchParams();
+  const modalOpenParam = searchParams.get('modalopen');
   const context = useContext(ModalContext);
   const router = useRouter();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -64,7 +67,14 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     };
   }, []);
 
-  if (!context?.isModalOpen && type !== 'new-password' && type !== 'registration-page') return null;
+  useEffect(() => {
+    if (modalOpenParam) {
+      context?.setIsModalOpen(true);
+    }
+  }, [modalOpenParam, context]);
+
+  if (!context?.isModalOpen && type !== 'new-password' && type !== 'registration-page' && type !== 'login-page')
+    return null;
 
   return (
     <Card ref={modalRef} className="relative w-[500px] bg-customBlock h-min">

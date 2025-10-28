@@ -24,8 +24,6 @@ export const getExerciseByName = async (name: string) => {
       },
     });
 
-    console.log('getExerciseByName:', name, exercise);
-
     return exercise;
   } catch (error) {
     console.error('Ошибка при получении упражнения по названию: ', error);

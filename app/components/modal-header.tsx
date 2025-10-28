@@ -3,6 +3,7 @@ import React, { FC } from 'react';
 type TModalHeader = {
   type:
     | 'login'
+    | 'login-page'
     | 'registration'
     | 'registration-page'
     | 'reset-password'

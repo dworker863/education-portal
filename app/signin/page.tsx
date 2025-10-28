@@ -28,7 +28,7 @@ const SignIn = () => {
   return (
     <div className="flex items-center justify-center w-full h-full -translate-y-16">
       <Modal
-        type="login"
+        type="login-page"
         headerLabel="Добро пожаловать"
         backButtonLabel="Нет аккаунта?"
         backButtonHref="/signup"

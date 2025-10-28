@@ -1,9 +1,3 @@
-export const publicRoutes = ['/', '/api/verification'];
-export const authRoutes = [
-  '/signin',
-  '/signup',
-  '/reset-password',
-  '/new-password',
-];
-export const apiAuthRoutes = ['/api/auth', '/signup'];
+export const publicRoutes = ['/', '/signin', '/signup', '/api/verification'];
+export const authRoutes = ['/reset-password', '/new-password'];
 export const DEFAULT_LOGIN_REDIRECT = '/';

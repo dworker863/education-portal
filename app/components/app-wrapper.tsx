@@ -7,6 +7,8 @@ import ConfirmationModal from './confirmation-modal';
 import UsageModal from './usage-modal';
 import NotificationModal from './notification-modal';
 import { usePathname } from 'next/navigation';
+import * as Ably from 'ably';
+import { AblyProvider, ChannelProvider } from 'ably/react';
 
 export type TModalContext = {
   isModalOpen: boolean;
@@ -34,6 +36,8 @@ export const ModalContext = createContext<TModalContext | null>(null);
 export const ConfirmationContext = createContext<TConfirmationContext | null>(null);
 export const AchievementsContext = createContext<IAchievement[] | null>(null);
 export const ExercisesContext = createContext<IExercise[] | null>(null);
+
+const client = new Ably.Realtime({ key: 'GknX1g.BmBquQ:zg4dlhftbbKmsO9-lXpNOHzKOfMIXEjnXO47eSKKCGE' });
 
 type TAppWrapperProps = {
   achievements: IAchievement[];
@@ -94,7 +98,9 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
               {isModalOpen && modalType === 'usage' && (
                 <UsageModal ticketType={usageModalTicketType} text={usageModalText} />
               )}
-              {children}
+              <AblyProvider client={client}>
+                <ChannelProvider channelName="get-started">{children}</ChannelProvider>
+              </AblyProvider>
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>
         </AchievementsContext.Provider>

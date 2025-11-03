@@ -1,3 +1,4 @@
+import Chat from './components/chat';
 import Courses from './components/courses';
 import { getAllCourses } from './libs/utils/courses';
 
@@ -9,6 +10,7 @@ export default async function Home() {
   return (
     <main>
       <Courses courses={courses} />
+      <Chat />
     </main>
   );
 }

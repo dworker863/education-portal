@@ -92,7 +92,7 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
       className={cn(
         'flex flex-col w-svw h-svh ',
         {
-          'absolute top-0 left-full -z-10 px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
+          'absolute bottom-5 left-full -z-10 px-12 py-5 bg-primary transition-transform duration-500 ease-in-out transform':
             mode === 'component',
         },
         { '-translate-x-full': showExercises },

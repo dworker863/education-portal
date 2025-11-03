@@ -5,10 +5,12 @@ import { FaUser } from 'react-icons/fa';
 import { Button } from './button';
 import { TfiPencilAlt } from 'react-icons/tfi';
 import { GrAchievement } from 'react-icons/gr';
+import { IoChatboxEllipses } from 'react-icons/io5';
 import Profile from './profile';
 import Achievements from './achievements';
 import Exercises from './exercises';
 import { AchievementsContext, ExercisesContext } from './app-wrapper';
+import Chat from './chat';
 
 const Sidebar = () => {
   const exercises = useContext(ExercisesContext);
@@ -17,6 +19,7 @@ const Sidebar = () => {
   const [showProfile, setShowProfile] = useState(false);
   const [showExercises, setShowExercises] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   const showProfileHandler = () => {
     setShowProfile(!showProfile);
@@ -34,6 +37,13 @@ const Sidebar = () => {
     setShowAchievements(!showAchievements);
     setShowExercises(false);
     setShowProfile(false);
+  };
+
+  const showChatHandler = () => {
+    setShowChat(!showChat);
+    setShowExercises(false);
+    setShowProfile(false);
+    setShowAchievements(false);
   };
 
   return (
@@ -55,6 +65,7 @@ const Sidebar = () => {
           setShowAchievements={setShowAchievements}
         />
       )}
+      <Chat showChat={showChat} />
       <div className="flex flex-col items-center w-18 h-full py-2 bg-primary">
         <Button className="mb-1" onClick={showProfileHandler}>
           <FaUser className="text-customSecondary hover:scale-125" size={22} />
@@ -65,6 +76,9 @@ const Sidebar = () => {
         </Button>
         <Button className="mb-1" onClick={showAchievementsHandler}>
           <GrAchievement className="text-customSecondary hover:scale-125" size={22} />
+        </Button>
+        <Button className="fixed bottom-5 mb-1" onClick={showChatHandler}>
+          <IoChatboxEllipses className="text-customSecondary hover:scale-125" size={22} />
         </Button>
       </div>
     </div>

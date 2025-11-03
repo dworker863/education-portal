@@ -21,8 +21,6 @@ const Overlay: FC<TOverlayProps> = ({ children }) => {
   const active = context?.isModalOpen || false;
   const setActive = context?.setIsModalOpen || (() => {});
 
-  console.log('Overlay render', active);
-
   return (
     <OverlayContext.Provider value={{ active, setActive }}>
       <div

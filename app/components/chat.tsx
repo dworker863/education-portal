@@ -14,7 +14,7 @@ const Chat: FC<TChat> = ({ showChat }) => {
   const [isPending, startTransiton] = useTransition();
 
   const [currentRoom, setCurrentRoom] = useState('main');
-
+  const [message, setMessage] = useState('');
   const [mainMessages, setMainMessages] = useState<Message[]>([]);
   const [courseMessages, setCourseMessages] = useState<Message[]>([]);
 
@@ -41,9 +41,9 @@ const Chat: FC<TChat> = ({ showChat }) => {
       )}
     >
       {/* <ChannelProvider channelName="get-started"> */}
-      <div className="flex gap-4">
+      <div className="flex gap-5">
         <Button
-          className="w-[50%]"
+          className="w-[100px]"
           variant="custom"
           onClick={() => {
             setCurrentRoom('main');
@@ -52,7 +52,7 @@ const Chat: FC<TChat> = ({ showChat }) => {
           Общий
         </Button>
         <Button
-          className="w-[50%]"
+          className="w-[100px]"
           variant="custom"
           onClick={() => {
             setCurrentRoom('course');
@@ -70,15 +70,21 @@ const Chat: FC<TChat> = ({ showChat }) => {
               return <p key={message.id}>{message.data}</p>;
             })}
       </div>
-      <div className="fixed w-full bottom-0 flex justify-center">
+      <div className="absolute w-[90%] bottom-0 flex gap-5">
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="w-[80%] h-[36px] p-2 rounded-lg text-black"
+        />
         <Button
-          className="w-[50%]"
+          className="w-[20%]"
           variant="custom"
           type="submit"
           disabled={isPending}
           onClick={() => {
             startTransiton(() => {
-              channel.publish('first', 'Here is my first message!');
+              channel.publish('first', message);
             });
           }}
         >

@@ -99,7 +99,9 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
                 <UsageModal ticketType={usageModalTicketType} text={usageModalText} />
               )}
               <AblyProvider client={client}>
-                <ChannelProvider channelName="get-started">{children}</ChannelProvider>
+                <ChannelProvider channelName="main">
+                  <ChannelProvider channelName="course">{children}</ChannelProvider>
+                </ChannelProvider>
               </AblyProvider>
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>

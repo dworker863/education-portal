@@ -1,10 +1,13 @@
 'use client';
 
-import React, { FC, useState, useTransition } from 'react';
-import { ChannelProvider, useChannel, useConnectionStateListener } from 'ably/react';
+import React, { FC, useContext, useState, useTransition } from 'react';
+import { useChannel, useConnectionStateListener } from 'ably/react';
 import type { Message } from 'ably';
 import { Button } from './button';
 import { cn } from '../libs/cn';
+import { useSession } from 'next-auth/react';
+import { IUserCourseProgressPartial } from '../libs/interfaces/interfaces';
+import { ChatRoomContext } from './app-wrapper';
 
 type TChat = {
   showChat?: boolean;
@@ -12,25 +15,25 @@ type TChat = {
 
 const Chat: FC<TChat> = ({ showChat }) => {
   const [isPending, startTransiton] = useTransition();
+  const { currentRoom, setCurrentRoom } = useContext(ChatRoomContext)!;
+  const session = useSession();
 
-  const [currentRoom, setCurrentRoom] = useState('main');
   const [message, setMessage] = useState('');
-  const [mainMessages, setMainMessages] = useState<Message[]>([]);
-  const [courseMessages, setCourseMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Record<string, Message[]>>({});
 
   useConnectionStateListener('connected', () => {
     console.log('Connected to Ably!');
   });
 
   const { channel } = useChannel(currentRoom, 'first', (message) => {
-    if (currentRoom === 'main') {
-      setMainMessages((previousMessages) => [...previousMessages, message]);
-    } else {
-      setCourseMessages((previousMessages) => [...previousMessages, message]);
-    }
+    setMessages((prevMessages) => {
+      const roomMessages = prevMessages[currentRoom] || [];
+      return {
+        ...prevMessages,
+        [currentRoom]: [...roomMessages, message],
+      };
+    });
   });
-
-  console.log('Chat:', channel.name);
 
   return (
     // Publish a message with the name 'first' and the contents 'Here is my first message!' when the 'Publish' button is clicked
@@ -51,24 +54,28 @@ const Chat: FC<TChat> = ({ showChat }) => {
         >
           Общий
         </Button>
-        <Button
-          className="w-[100px]"
-          variant="custom"
-          onClick={() => {
-            setCurrentRoom('course');
-          }}
-        >
-          Курс
-        </Button>
+        {session.data?.user.coursesProgress &&
+          session.data?.user.coursesProgress.map((courseProgress: IUserCourseProgressPartial) => {
+            return (
+              <Button
+                key={courseProgress.id}
+                className="w-[100px]"
+                variant="custom"
+                onClick={() => {
+                  setCurrentRoom(`course-${courseProgress.course?.name}`);
+                }}
+              >
+                {courseProgress.course?.name}
+              </Button>
+            );
+          })}
       </div>
       <div className="max-h-[200px] py-1 overflow-y-hidden">
-        {currentRoom === 'main'
-          ? mainMessages.map((message) => {
-              return <p key={message.id}>{message.data}</p>;
-            })
-          : courseMessages.map((message) => {
-              return <p key={message.id}>{message.data}</p>;
-            })}
+        {messages[currentRoom] &&
+          messages[currentRoom].length > 0 &&
+          messages[currentRoom].map((message) => {
+            return <p key={message.id}>{message.data}</p>;
+          })}
       </div>
       <div className="absolute w-[90%] bottom-0 flex gap-5">
         <input

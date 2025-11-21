@@ -93,16 +93,28 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   }, [course, confirmationContext, user]);
 
   const courseCardClickHandler = useCallback(async () => {
+    // console.log('Клик по карточке курса:', user?.role);
+
     if (!user) {
       console.error('Пользователь не авторизован');
       return;
     }
+
+    // if (user.role === 'ADMIN') {
+    //   router.push(`/courses/${course.name}`);
+    //   return;
+    // }
+
     if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+      console.log('Пользователь уже записан на курс');
+
       router.push(`/courses/${course.name}`);
       return;
     }
 
     if (user && isObjectSubscription(user.subscription) && new Date(user.subscription?.validUntil) > new Date()) {
+      console.log('Пользователь имеет активную подписку');
+
       router.push(`/courses/${course.name}`);
       return;
     }

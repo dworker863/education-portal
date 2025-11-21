@@ -8,14 +8,15 @@ import UsageModal from './usage-modal';
 import NotificationModal from './notification-modal';
 import { usePathname } from 'next/navigation';
 import * as Ably from 'ably';
-import { AblyProvider, ChannelProvider } from 'ably/react';
+import { AblyProvider } from 'ably/react';
+import ChatWrapper from './chat-wrapper';
 
-export type TModalContext = {
+type TModalContext = {
   isModalOpen: boolean;
   setIsModalOpen: Dispatch<SetStateAction<boolean>>;
 };
 
-export type TConfirmationContext = {
+type TConfirmationContext = {
   confirmation: boolean;
   modalType: null | 'confirmation' | 'notification' | 'usage';
   setModalType: Dispatch<SetStateAction<null | 'confirmation' | 'notification' | 'usage'>>;
@@ -32,10 +33,16 @@ export type TConfirmationContext = {
   setUsageModalTicketType: Dispatch<SetStateAction<null | 'DISCOUNT' | 'SUBSCRIPTION'>>;
 };
 
+type TChatRoomContext = {
+  currentRoom: string;
+  setCurrentRoom: Dispatch<SetStateAction<string>>;
+};
+
 export const ModalContext = createContext<TModalContext | null>(null);
 export const ConfirmationContext = createContext<TConfirmationContext | null>(null);
 export const AchievementsContext = createContext<IAchievement[] | null>(null);
 export const ExercisesContext = createContext<IExercise[] | null>(null);
+export const ChatRoomContext = createContext<TChatRoomContext | null>(null);
 
 const client = new Ably.Realtime({ key: 'GknX1g.BmBquQ:zg4dlhftbbKmsO9-lXpNOHzKOfMIXEjnXO47eSKKCGE' });
 
@@ -47,6 +54,7 @@ type TAppWrapperProps = {
 
 const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children }) => {
   const pathname = usePathname();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState<null | 'confirmation' | 'notification' | 'usage'>(null);
   const [confirmation, setConfirmation] = useState(false);
@@ -56,6 +64,7 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
   const [usageModalText, setUsageModalText] = useState('');
   const [notificationModalText, setNotificationModalText] = useState('');
   const [usageModalTicketType, setUsageModalTicketType] = useState<null | 'DISCOUNT' | 'SUBSCRIPTION'>(null);
+  const [currentRoom, setCurrentRoom] = useState('main');
 
   useEffect(() => {
     if (
@@ -98,11 +107,11 @@ const AppWrapper: FC<TAppWrapperProps> = ({ achievements, exercises, children })
               {isModalOpen && modalType === 'usage' && (
                 <UsageModal ticketType={usageModalTicketType} text={usageModalText} />
               )}
-              <AblyProvider client={client}>
-                <ChannelProvider channelName="main">
-                  <ChannelProvider channelName="course">{children}</ChannelProvider>
-                </ChannelProvider>
-              </AblyProvider>
+              <ChatRoomContext.Provider value={{ currentRoom, setCurrentRoom }}>
+                <AblyProvider client={client}>
+                  <ChatWrapper channelName={currentRoom}>{children}</ChatWrapper>
+                </AblyProvider>
+              </ChatRoomContext.Provider>
             </ConfirmationContext.Provider>
           </ExercisesContext.Provider>
         </AchievementsContext.Provider>

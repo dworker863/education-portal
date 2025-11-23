@@ -1,4 +1,3 @@
-import { ChannelProvider } from 'ably/react';
 import Chat from './components/chat';
 import Courses from './components/courses';
 import { getAllCourses } from './libs/utils/courses';
@@ -11,9 +10,7 @@ export default async function Home() {
   return (
     <main>
       <Courses courses={courses} />
-      {/* <ChannelProvider channelName="get-started"> */}
       <Chat />
-      {/* </ChannelProvider> */}
     </main>
   );
 }

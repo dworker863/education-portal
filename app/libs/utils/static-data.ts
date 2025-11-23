@@ -117,5 +117,3 @@ export const subscribeOffers = [
     price: 39.99,
   },
 ];
-
-export const courseNames = ['JavaScript', 'Python'];

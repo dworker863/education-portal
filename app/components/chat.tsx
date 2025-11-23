@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, useContext, useState, useTransition } from 'react';
+import React, { FC, useContext, useEffect, useRef, useState, useTransition } from 'react';
 import { useChannel, useConnectionStateListener } from 'ably/react';
 import type { Message } from 'ably';
 import { Button } from './button';
@@ -14,12 +14,17 @@ type TChat = {
 };
 
 const Chat: FC<TChat> = ({ showChat }) => {
-  const [isPending, startTransiton] = useTransition();
   const { currentRoom, setCurrentRoom } = useContext(ChatRoomContext)!;
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isPending, startTransiton] = useTransition();
   const session = useSession();
 
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Record<string, Message[]>>({});
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   useConnectionStateListener('connected', () => {
     console.log('Connected to Ably!');
@@ -70,19 +75,38 @@ const Chat: FC<TChat> = ({ showChat }) => {
             );
           })}
       </div>
-      <div className="max-h-[200px] py-1 overflow-y-hidden">
+      <div className="max-h-[200px] mb-4 overflow-y-scroll">
         {messages[currentRoom] &&
           messages[currentRoom].length > 0 &&
           messages[currentRoom].map((message) => {
-            return <p key={message.id}>{message.data}</p>;
+            return (
+              <p key={message.id} className="flex gap-2 mb-4 whitespace-pre-wrap ">
+                <span className="font-bold text-customSecondary">{session.data?.user?.name}:</span>
+                {message.data}
+              </p>
+            );
           })}
+
+        <div ref={messagesEndRef} />
       </div>
       <div className="absolute w-[90%] bottom-0 flex gap-5">
-        <input
-          type="text"
+        <textarea
+          className="w-[80%] h-[36px] p-2 rounded-lg text-black"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-[80%] h-[36px] p-2 rounded-lg text-black"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && message.trim() !== '') {
+              if (e.shiftKey) {
+                return;
+              }
+
+              e.preventDefault();
+              startTransiton(() => {
+                channel.publish('first', message);
+                setMessage('');
+              });
+            }
+          }}
         />
         <Button
           className="w-[20%]"
@@ -92,6 +116,7 @@ const Chat: FC<TChat> = ({ showChat }) => {
           onClick={() => {
             startTransiton(() => {
               channel.publish('first', message);
+              setMessage('');
             });
           }}
         >

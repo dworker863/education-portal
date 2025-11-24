@@ -15,7 +15,7 @@ type TChat = {
 
 const Chat: FC<TChat> = ({ showChat }) => {
   const { currentRoom, setCurrentRoom } = useContext(ChatRoomContext)!;
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   const [isPending, startTransiton] = useTransition();
   const session = useSession();
 
@@ -23,7 +23,10 @@ const Chat: FC<TChat> = ({ showChat }) => {
   const [messages, setMessages] = useState<Record<string, Message[]>>({});
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      console.log('Scrolling to bottom');
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   }, [messages]);
 
   useConnectionStateListener('connected', () => {
@@ -44,7 +47,7 @@ const Chat: FC<TChat> = ({ showChat }) => {
     // Publish a message with the name 'first' and the contents 'Here is my first message!' when the 'Publish' button is clicked
     <div
       className={cn(
-        'flex flex-col w-svw space-y-4 p-5 h-[300px] rounded-lg bg-primary shadow-md absolute bottom-0 left-full -z-10 px-12 py-5 transition-transform duration-500 ease-in-out transform',
+        'flex flex-col w-svw space-y-4 p-5 h-[350px] rounded-lg bg-primary shadow-md absolute bottom-0 left-full -z-10 px-12 py-5 transition-transform duration-500 ease-in-out transform',
         { '-translate-x-full': showChat },
       )}
     >
@@ -75,7 +78,7 @@ const Chat: FC<TChat> = ({ showChat }) => {
             );
           })}
       </div>
-      <div className="max-h-[200px] mb-4 overflow-y-scroll">
+      <div ref={messagesContainerRef} className="mb-4 overflow-y-scroll h-[200px]">
         {messages[currentRoom] &&
           messages[currentRoom].length > 0 &&
           messages[currentRoom].map((message) => {
@@ -86,25 +89,27 @@ const Chat: FC<TChat> = ({ showChat }) => {
               </p>
             );
           })}
-
-        <div ref={messagesEndRef} />
       </div>
-      <div className="absolute w-[90%] bottom-0 flex gap-5">
+      <div className="w-[90%] flex gap-5">
         <textarea
           className="w-[80%] h-[36px] p-2 rounded-lg text-black"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && message.trim() !== '') {
+            if (e.key === 'Enter') {
               if (e.shiftKey) {
                 return;
               }
 
               e.preventDefault();
-              startTransiton(() => {
-                channel.publish('first', message);
-                setMessage('');
-              });
+              if (message.trim() !== '') {
+                startTransiton(() => {
+                  console.log('Sending message:', message);
+                  channel.publish('first', message);
+
+                  setMessage('');
+                });
+              }
             }
           }}
         />
@@ -114,10 +119,14 @@ const Chat: FC<TChat> = ({ showChat }) => {
           type="submit"
           disabled={isPending}
           onClick={() => {
-            startTransiton(() => {
-              channel.publish('first', message);
-              setMessage('');
-            });
+            if (message.trim() !== '') {
+              startTransiton(() => {
+                console.log('Sending message:', message);
+                channel.publish('first', message);
+
+                setMessage('');
+              });
+            }
           }}
         >
           Отправить сообщение

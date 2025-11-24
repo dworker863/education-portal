@@ -78,7 +78,10 @@ const Chat: FC<TChat> = ({ showChat }) => {
             );
           })}
       </div>
-      <div ref={messagesContainerRef} className="mb-4 overflow-y-scroll h-[200px]">
+      <div
+        ref={messagesContainerRef}
+        className="mr-2 mb-4 overflow-y-scroll scrollbar scrollbar-thumb-rounded  scrollbar-thumb-customSecondary scrollbar-track-customBackground h-[200px]"
+      >
         {messages[currentRoom] &&
           messages[currentRoom].length > 0 &&
           messages[currentRoom].map((message) => {

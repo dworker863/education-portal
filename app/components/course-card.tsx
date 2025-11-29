@@ -1,6 +1,13 @@
 'use client';
 
-import React, { FC, memo, useCallback, useContext, useEffect, useState } from 'react';
+import React, {
+  FC,
+  memo,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { ICourse } from '../libs/interfaces/interfaces';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
@@ -26,23 +33,36 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     const loadCourseWithDiscount = async () => {
       try {
         if (user) {
-          if (confirmationContext?.modalType === 'confirmation' && confirmationContext.confirmation) {
+          if (
+            confirmationContext?.modalType === 'confirmation' &&
+            confirmationContext.confirmation &&
+            confirmationContext.confirmModalText ===
+              'Вы уверены, что хотите записаться на этот курс? С вашего баланса будет списана соответствующая сумма.'
+          ) {
             if (user.moneyUSD < course.priceUSD) {
               throw new Error('Недостаточно средств на балансе');
             }
 
             setIsPending(true);
 
-            const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(user.id, course);
+            const { achievementProgress, courseProgress, moneyUSD } =
+              await registerForCourse(user.id, course);
 
-            const achievementPrizeTickets = achievementProgress.filter((progress) => progress?.prizeTicket);
+            const achievementPrizeTickets = achievementProgress.filter(
+              (progress) => progress?.prizeTicket,
+            );
 
             await session.update({
               moneyUSD,
-              coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
+              coursesProgress: user.coursesProgress?.some(
+                (progress) => progress.courseId === course.id,
+              )
                 ? user.coursesProgress
                 : [...(user.coursesProgress ?? []), courseProgress],
-              prizeTickets: [...(user.prizeTickets ?? []), ...achievementPrizeTickets],
+              prizeTickets: [
+                ...(user.prizeTickets ?? []),
+                ...achievementPrizeTickets,
+              ],
             });
 
             router.push(`/courses/${course.name}`);
@@ -52,24 +72,29 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
             return;
           }
 
-          if (confirmationContext?.modalType === 'usage' && confirmationContext.confirmation) {
+          if (
+            confirmationContext?.modalType === 'usage' &&
+            confirmationContext.confirmation
+          ) {
             setIsPending(true);
 
-            const priceWithDiscount = calculatePrizeWithDiscount(course.priceUSD, confirmationContext?.discount);
+            const priceWithDiscount = calculatePrizeWithDiscount(
+              course.priceUSD,
+              confirmationContext?.discount,
+            );
 
             if (user.moneyUSD < priceWithDiscount) {
               throw new Error('Недостаточно средств на балансе');
             }
 
-            const { achievementProgress, courseProgress, moneyUSD } = await registerForCourse(
-              user.id,
-              course,
-              priceWithDiscount,
-            );
+            const { achievementProgress, courseProgress, moneyUSD } =
+              await registerForCourse(user.id, course, priceWithDiscount);
 
             await session.update({
               moneyUSD,
-              coursesProgress: user.coursesProgress?.some((progress) => progress.courseId === course.id)
+              coursesProgress: user.coursesProgress?.some(
+                (progress) => progress.courseId === course.id,
+              )
                 ? user.coursesProgress
                 : [...(user.coursesProgress ?? []), courseProgress],
             });
@@ -105,14 +130,21 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     //   return;
     // }
 
-    if (user && user?.coursesProgress?.some((progress) => progress.courseId === course.id)) {
+    if (
+      user &&
+      user?.coursesProgress?.some((progress) => progress.courseId === course.id)
+    ) {
       console.log('Пользователь уже записан на курс');
 
       router.push(`/courses/${course.name}`);
       return;
     }
 
-    if (user && isObjectSubscription(user.subscription) && new Date(user.subscription?.validUntil) > new Date()) {
+    if (
+      user &&
+      isObjectSubscription(user.subscription) &&
+      new Date(user.subscription?.validUntil) > new Date()
+    ) {
       console.log('Пользователь имеет активную подписку');
 
       router.push(`/courses/${course.name}`);
@@ -148,15 +180,26 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
           className="flex flex-col w-full mb-5 p-5 rounded-lg bg-customBlock cursor-pointer"
           onClick={courseCardClickHandler}
         >
-          <h2 className="mb-5 text-center text-xl text-customAccent uppercase">{course.name}</h2>
+          <h2 className="mb-5 text-center text-xl text-customAccent uppercase">
+            {course.name}
+          </h2>
           <div className="flex gap-10 mb-8">
             <div className="w-[300px] flex-shrink-0">
-              {course.icon && <Image src={course.icon.replace(/\\/gi, '/')} alt="avatar" width={300} height={300} />}
+              {course.icon && (
+                <Image
+                  src={course.icon.replace(/\\/gi, '/')}
+                  alt="avatar"
+                  width={300}
+                  height={300}
+                />
+              )}
             </div>
             <div className="flex-grow">{course.description}</div>
           </div>
           <div className="flex justify-end">
-            <span className="text-customSecondary text-lg font-semibold">{course.priceUSD + '$'}</span>
+            <span className="text-customSecondary text-lg font-semibold">
+              {course.priceUSD + '$'}
+            </span>
           </div>
         </div>
       )}

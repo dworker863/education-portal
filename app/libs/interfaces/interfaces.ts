@@ -280,3 +280,18 @@ export interface IPrizeTicketPartial {
   months?: number;
   validUntil: Date | null;
 }
+
+export interface IIndexCourse {
+  id: string;
+  name: string;
+  description: string;
+  tags: string[];
+}
+
+export interface IIndexExercise {
+  id: string;
+  name: string;
+  task: string;
+  language: string;
+  tags: string[];
+}

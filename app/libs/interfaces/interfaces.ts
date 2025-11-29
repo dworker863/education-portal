@@ -27,7 +27,10 @@ export interface IUser {
   completedTests?: (ITest | ITestPartial)[];
   prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
   courseProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
-  achievementsProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
+  achievementsProgress?: (
+    | IUserAchievementProgress
+    | IUserAchievementProgressPartial
+  )[];
 }
 
 export interface IUserPartial {
@@ -44,6 +47,7 @@ export interface ICourse {
   priceUSD: number;
   certificateId: string | null;
   category: string;
+  tags: string[];
   meta: JsonValue;
   createdAt: Date;
   updatedAt: Date;
@@ -118,6 +122,7 @@ export interface IExercise {
   language: string;
   requiredRank: string;
   prizePoints: number;
+  tags: string[];
   meta: JsonValue;
   lesson?: ILesson | ILessonPartial;
   lessonId: string | null;
@@ -161,7 +166,10 @@ export interface IAchievement {
   meta: JsonValue;
   startDate: Date;
   endDate: Date | null;
-  usersProgress?: (IUserAchievementProgress | IUserAchievementProgressPartial)[];
+  usersProgress?: (
+    | IUserAchievementProgress
+    | IUserAchievementProgressPartial
+  )[];
 }
 
 export interface IAchievementPartial {
@@ -189,13 +197,25 @@ export interface IUserAchievementProgressPartial {
   achievement?: IAchievement | IAchievementPartial;
 }
 
-export type TCriteriaType = 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'SUBSCRIPTION';
+export type TCriteriaType =
+  | 'EXERCISE_COMPLETION'
+  | 'COURSE_COMPLETION'
+  | 'COURSE_REGISTRATION'
+  | 'SUBSCRIPTION';
 
-export type TCriteria = TExerciseCompletion | TCourseCompletion | TCourseRegistration | TSubscription;
+export type TCriteria =
+  | TExerciseCompletion
+  | TCourseCompletion
+  | TCourseRegistration
+  | TSubscription;
 
 export interface IAchievementCriteria {
   type: TCriteriaType;
-  condition: TExerciseCompletion | TCourseCompletion | TCourseRegistration | TSubscription;
+  condition:
+    | TExerciseCompletion
+    | TCourseCompletion
+    | TCourseRegistration
+    | TSubscription;
 }
 
 export type TExerciseCompletion = {

@@ -3,9 +3,13 @@
 import { prisma } from '@/prisma/prisma';
 import { getCourseById } from '../utils/courses';
 import { createCourseProgress } from './progress-action';
-import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
+import {
+  getAchievementByCriteriaType,
+  updateAchievementProgress,
+} from './achievements-actions';
 import { ICourse } from '../interfaces/interfaces';
 import { updateUserMoney } from './users-actions';
+import { deleteIndexCourse } from '../search-engine/collections';
 
 export const deleteCourse = async (id: string) => {
   try {
@@ -18,6 +22,8 @@ export const deleteCourse = async (id: string) => {
         id,
       },
     });
+
+    await deleteIndexCourse(course.id);
 
     return { success: 'Курс успешно удален' };
   } catch (error) {
@@ -42,12 +48,19 @@ export const getCourseNames = async () => {
   }
 };
 
-export const registerForCourse = async (userId: string, course: ICourse, priceWithDiscount?: number) => {
+export const registerForCourse = async (
+  userId: string,
+  course: ICourse,
+  priceWithDiscount?: number,
+) => {
   try {
     return await prisma.$transaction(async (tx) => {
       const courseProgress = await createCourseProgress(userId, course.id, tx);
 
-      const achievements = await getAchievementByCriteriaType('COURSE_REGISTRATION', tx);
+      const achievements = await getAchievementByCriteriaType(
+        'COURSE_REGISTRATION',
+        tx,
+      );
 
       const achievementProgress = await Promise.all(
         achievements.map((achievement) => {
@@ -59,7 +72,12 @@ export const registerForCourse = async (userId: string, course: ICourse, priceWi
 
       const { moneyUSD } = await updateUserMoney(userId, price, tx);
 
-      return { achievementProgress, courseProgress, moneyUSD, success: 'Прогресс успешно обновлен' };
+      return {
+        achievementProgress,
+        courseProgress,
+        moneyUSD,
+        success: 'Прогресс успешно обновлен',
+      };
     });
   } catch (error) {
     console.error('Ошибка при регистрации на курсе: ', error);

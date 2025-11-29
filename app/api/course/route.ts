@@ -1,3 +1,4 @@
+import { indexCourse } from '@/app/libs/search-engine/collections';
 import { fileUpload } from '@/app/libs/server-actions/file-actions';
 import { getCourseById, getCourseByName } from '@/app/libs/utils/courses';
 import { createCourseSchema, editCourseSchema } from '@/app/libs/validation';
@@ -12,7 +13,10 @@ export async function POST(request: NextRequest) {
     const existingCourse = await getCourseByName(values.name as string);
 
     if (existingCourse) {
-      return NextResponse.json({ error: 'Курс с таким названием уже существует' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'Курс с таким названием уже существует' },
+        { status: 409 },
+      );
     }
 
     const { data, ...parsedResult } = await createCourseSchema.safeParse({
@@ -21,7 +25,10 @@ export async function POST(request: NextRequest) {
     });
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
@@ -34,11 +41,14 @@ export async function POST(request: NextRequest) {
       uploadResult = await fileUpload(data.icon);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message }, { status: 400 });
+        return NextResponse.json(
+          { error: uploadResult.message },
+          { status: 400 },
+        );
       }
     }
 
-    await prisma.course.create({
+    const createdCourse = await prisma.course.create({
       data: {
         name: data.name,
         description: data.description,
@@ -49,7 +59,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: 'Курс успешно добавлен' }, { status: 200 });
+    await indexCourse(createdCourse);
+
+    return NextResponse.json(
+      { success: 'Курс успешно добавлен' },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Ошибка при создании курса: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
@@ -63,7 +78,10 @@ export async function PATCH(request: NextRequest) {
     const courseId = values.id;
 
     if (!courseId) {
-      return NextResponse.json({ error: 'Не указан ID курса' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Не указан ID курса' },
+        { status: 400 },
+      );
     }
 
     const existingCourse = await getCourseById(courseId as string);
@@ -78,14 +96,22 @@ export async function PATCH(request: NextRequest) {
     });
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
 
-    const fieldsToCheck = ['name', 'description', 'priceUSD', 'category'] as const;
+    const fieldsToCheck = [
+      'name',
+      'description',
+      'priceUSD',
+      'category',
+    ] as const;
 
     const updatedData: Record<string, any> = {};
 
@@ -99,7 +125,10 @@ export async function PATCH(request: NextRequest) {
       const course = await getCourseByName(updatedData.name);
 
       if (course && courseId !== course.id) {
-        return NextResponse.json({ error: 'Курс с таким названием уже существует' }, { status: 409 });
+        return NextResponse.json(
+          { error: 'Курс с таким названием уже существует' },
+          { status: 409 },
+        );
       }
     }
 
@@ -107,18 +136,26 @@ export async function PATCH(request: NextRequest) {
       const uploadResult = await fileUpload(data.icon);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message }, { status: 400 });
+        return NextResponse.json(
+          { error: uploadResult.message },
+          { status: 400 },
+        );
       }
 
       updatedData.icon = uploadResult;
     }
 
-    await prisma.course.update({
+    const updatedCourse = await prisma.course.update({
       where: { id: courseId as string },
       data: updatedData,
     });
 
-    return NextResponse.json({ success: 'Курс успешно изменен' }, { status: 200 });
+    await indexCourse(updatedCourse);
+
+    return NextResponse.json(
+      { success: 'Курс успешно изменен' },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Ошибка при обновлении курса: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });

@@ -7,7 +7,14 @@ import { getExerciseById, getExerciseByName } from '../utils/exercises';
 import { calculateRank } from '../utils/common';
 import { cache } from 'react';
 import { Prisma } from '@prisma/client';
-import { getAchievementByCriteriaType, updateAchievementProgress } from './achievements-actions';
+import {
+  getAchievementByCriteriaType,
+  updateAchievementProgress,
+} from './achievements-actions';
+import {
+  deleteIndexExercise,
+  indexExercise,
+} from '../search-engine/collections';
 
 export const getAllExercises = cache(async () => {
   try {
@@ -19,9 +26,13 @@ export const getAllExercises = cache(async () => {
   }
 });
 
-export const addExercise = async (values: z.infer<typeof createExerciseSchema>) => {
+export const addExercise = async (
+  values: z.infer<typeof createExerciseSchema>,
+) => {
   try {
-    const { data, ...parsedResult } = await createExerciseSchema.safeParse(values);
+    const { data, ...parsedResult } = await createExerciseSchema.safeParse(
+      values,
+    );
 
     const existingExercise = await getExerciseByName(values.name);
 
@@ -37,7 +48,7 @@ export const addExercise = async (values: z.infer<typeof createExerciseSchema>) 
       throw new Error('Invalid data');
     }
 
-    await prisma.exercise.create({
+    const createdExercise = await prisma.exercise.create({
       data: {
         name: data.name,
         task: data.task,
@@ -51,6 +62,8 @@ export const addExercise = async (values: z.infer<typeof createExerciseSchema>) 
       },
     });
 
+    await indexExercise(createdExercise);
+
     return { success: 'Упражнение успешно добавлено' };
   } catch (error) {
     console.error('Ошибка при создании упражнения: ', error);
@@ -58,7 +71,10 @@ export const addExercise = async (values: z.infer<typeof createExerciseSchema>) 
   }
 };
 
-export const editExercise = async (id: string, values: z.infer<typeof editExerciseSchema>) => {
+export const editExercise = async (
+  id: string,
+  values: z.infer<typeof editExerciseSchema>,
+) => {
   try {
     if (!id) {
       throw new Error('Не указан ID упражнения');
@@ -70,7 +86,9 @@ export const editExercise = async (id: string, values: z.infer<typeof editExerci
       throw new Error('Упражнение не найдено');
     }
 
-    const { data, ...parsedResult } = await editExerciseSchema.safeParse(values);
+    const { data, ...parsedResult } = await editExerciseSchema.safeParse(
+      values,
+    );
 
     if (!parsedResult.success) {
       throw new Error(parsedResult.error?.issues[0].message);
@@ -96,24 +114,31 @@ export const editExercise = async (id: string, values: z.infer<typeof editExerci
 
     fieldsToCheck.forEach((field) => {
       if (data[field] && data[field] !== existingExercise[field]) {
-        updatedData[field] = field === 'prizePoints' ? Number(data[field]) : data[field];
+        updatedData[field] =
+          field === 'prizePoints' ? Number(data[field]) : data[field];
       }
     });
 
     if (updatedData.name) {
       const exercise = await getExerciseByName(updatedData.name);
 
-      if (exercise && exercise.language === data?.language && id !== exercise.id) {
+      if (
+        exercise &&
+        exercise.language === data?.language &&
+        id !== exercise.id
+      ) {
         throw Error('Упражнение с таким названием уже существует');
       }
     }
 
-    await prisma.exercise.update({
+    const updatedExercise = await prisma.exercise.update({
       where: {
         id,
       },
       data: updatedData,
     });
+
+    await indexExercise(updatedExercise);
 
     return { success: 'Упражнение успешно изменено' };
   } catch (error) {
@@ -134,6 +159,8 @@ export const deleteExercise = async (id: string) => {
       },
     });
 
+    await deleteIndexExercise(exercise.id);
+
     return { success: 'Упражнение успешно удалено' };
   } catch (error) {
     console.error('Ошибка при удалении упражнения: ', error);
@@ -141,7 +168,11 @@ export const deleteExercise = async (id: string) => {
   }
 };
 
-export const completeExercise = async (userId: string, exerciseId: string, tx?: Prisma.TransactionClient) => {
+export const completeExercise = async (
+  userId: string,
+  exerciseId: string,
+  tx?: Prisma.TransactionClient,
+) => {
   const client = tx || prisma;
 
   try {
@@ -209,7 +240,10 @@ export const checkExercise = async (userId: string, exerciseId: string) => {
     return await prisma.$transaction(async (tx) => {
       const { updatedUser } = await completeExercise(userId, exerciseId, tx);
 
-      const achievements = await getAchievementByCriteriaType('EXERCISE_COMPLETION', tx);
+      const achievements = await getAchievementByCriteriaType(
+        'EXERCISE_COMPLETION',
+        tx,
+      );
 
       const achievementProgress = await Promise.all(
         achievements.map((achievement) => {
@@ -219,7 +253,11 @@ export const checkExercise = async (userId: string, exerciseId: string) => {
 
       // console.log('Check exercise: ', achievementProgress);
 
-      return { updatedUser, achievementProgress, success: 'Упражнение успешно проверено' };
+      return {
+        updatedUser,
+        achievementProgress,
+        success: 'Упражнение успешно проверено',
+      };
     });
   } catch (error) {
     console.error('Ошибка при проверке упражнения: ', error);

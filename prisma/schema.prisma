@@ -98,6 +98,7 @@ model Course {
   priceUSD      Float
   certificateId String?
   category      String
+  tags          String[]             @default([])
   meta          Json                 @default("{}")
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
@@ -163,6 +164,7 @@ model Exercise {
   language         String   @default("JavaScript")
   requiredRank     String   @default("D-")
   prizePoints      Int
+  tags             String[]
   meta             Json     @default("{}")
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

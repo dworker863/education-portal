@@ -6,10 +6,10 @@ import AppWrapper from './components/app-wrapper';
 import { cn } from './libs/cn';
 import TopLine from './components/top-line';
 import Sidebar from './components/sidebar';
-import Overlay from './components/overlay';
 import Breadcrumbs from './components/breadcrumbs';
 import { getAllAchievements } from './libs/server-actions/achievements-actions';
 import { getAllExercises } from './libs/server-actions/exercises-actions';
+import Overlay from './components/overlay';
 
 export const revalidate = 86400;
 
@@ -35,7 +35,10 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={cn('bg-customBackground text-primary-foreground overflow-x-hidden line-numbers', inter.className)}
+        className={cn(
+          'bg-customBackground text-primary-foreground overflow-x-hidden line-numbers',
+          inter.className,
+        )}
       >
         <AppWrapper achievements={achievements} exercises={exercises}>
           <Overlay>

@@ -15,6 +15,7 @@ const Socials = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const onSubmit = (provider: string) => {
+    console.log('provider', provider);
     startTransiton(async () => {
       try {
         const resposnse = await login(undefined, provider);

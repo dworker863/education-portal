@@ -4,7 +4,14 @@ import { useContext, useMemo, useState, useTransition } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { registrationSchema } from '../libs/validation';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/app/components/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/app/components/input';
 import { Button } from '@/app/components/button';
@@ -14,8 +21,18 @@ import Dropzone from 'react-dropzone';
 import { FaPlus } from 'react-icons/fa';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
-import { Popover, PopoverContent, PopoverTrigger } from '@radix-ui/react-popover';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@radix-ui/react-popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 import { cn } from '../libs/cn';
 import { CalendarIcon } from 'lucide-react';
 import { Calendar } from './calendar';
@@ -32,7 +49,14 @@ const SignupForm = () => {
   const [success, setSuccess] = useState<null | string>(null);
   const [year, setYear] = useState<number>(new Date().getFullYear());
 
-  const years = useMemo(() => Array.from({ length: new Date().getFullYear() - 1900 + 1 }, (_, i) => 1900 + i), []);
+  const years = useMemo(
+    () =>
+      Array.from(
+        { length: new Date().getFullYear() - 1900 + 1 },
+        (_, i) => 1900 + i,
+      ),
+    [],
+  );
 
   const form = useForm<z.infer<typeof registrationSchema>>({
     resolver: zodResolver(registrationSchema),
@@ -96,7 +120,10 @@ const SignupForm = () => {
 
   return (
     <Form {...form}>
-      <form className="space-y-8 text-primary-foreground" onSubmit={form.handleSubmit(onSubmit)}>
+      <form
+        className="space-y-8 text-primary-foreground"
+        onSubmit={form.handleSubmit(onSubmit)}
+      >
         <div className="flex flex-wrap gap-4">
           <div className="flex-1 space-y-6">
             <FormField
@@ -202,12 +229,19 @@ const SignupForm = () => {
                           !field.value && 'text-muted-foreground',
                         )}
                       >
-                        {field.value ? format(field.value, 'd MMMM yyyy', { locale: ru }) : <span>Укажите дату</span>}
+                        {field.value ? (
+                          format(field.value, 'd MMMM yyyy', { locale: ru })
+                        ) : (
+                          <span>Укажите дату</span>
+                        )}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-full p-0 bg-customBlock" align="start">
+                  <PopoverContent
+                    className="w-full p-0 bg-customBlock"
+                    align="start"
+                  >
                     <Calendar
                       mode="single"
                       selected={field.value}
@@ -215,7 +249,9 @@ const SignupForm = () => {
                       onSelect={field.onChange}
                       onMonthChange={field.onChange}
                       locale={ru}
-                      disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date('1900-01-01')
+                      }
                       initialFocus
                     />
                   </PopoverContent>
@@ -227,7 +263,12 @@ const SignupForm = () => {
           <FormItem className="flex flex-col flex-grow gap-1">
             <FormLabel>Укажите год</FormLabel>
             <Select
-              onValueChange={(year) => form.setValue('birthDate', new Date(new Date().setFullYear(Number(year))))}
+              onValueChange={(year) =>
+                form.setValue(
+                  'birthDate',
+                  new Date(new Date().setFullYear(Number(year))),
+                )
+              }
               defaultValue={String(year)}
             >
               <FormControl className="w-[85px] text-primary bg-primary-foreground">
@@ -261,22 +302,36 @@ const SignupForm = () => {
                 >
                   {({ getRootProps, getInputProps }) => (
                     <section className="container ">
-                      <div {...getRootProps({ className: 'dropzone disabled' })}>
-                        <input type="file" accept="image/*" {...getInputProps()} />
+                      <div
+                        {...getRootProps({ className: 'dropzone disabled' })}
+                      >
+                        <input
+                          type="file"
+                          accept="image/*"
+                          {...getInputProps()}
+                        />
                         <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
-                          <p className=" text-muted-foreground text">Загрузите изображение</p>
+                          <p className=" text-muted-foreground text">
+                            Загрузите изображение
+                          </p>
                           <FaPlus className="text-customPrimary" size={20} />
                         </div>
                       </div>
                       {field.value && (
-                        <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
+                        <Thumbnails
+                          field={field.name}
+                          thumbnails={field.value}
+                          closeBtnHandler={form.setValue}
+                        />
                       )}
                     </section>
                   )}
                 </Dropzone>
               </FormControl>
               {form.formState.errors.image && (
-                <p className="text-destructive text-sm mt-2">{form.formState.errors.image.message as string}</p>
+                <p className="text-destructive text-sm mt-2">
+                  {form.formState.errors.image.message as string}
+                </p>
               )}
             </FormItem>
           )}
@@ -284,7 +339,11 @@ const SignupForm = () => {
 
         {error && <ErrorMessage message={error} />}
         {success && <SuccessMessage message={success} />}
-        <Button type="submit" className="w-full bg-customPrimary" disabled={isPending}>
+        <Button
+          type="submit"
+          className="w-full bg-customPrimary"
+          disabled={isPending}
+        >
           Зарегистрироваться
         </Button>
       </form>

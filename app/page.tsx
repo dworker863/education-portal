@@ -8,7 +8,7 @@ export default async function Home() {
   const courses = await getAllCourses();
 
   return (
-    <main>
+    <main className="s">
       <Courses courses={courses} />
       <Chat />
     </main>

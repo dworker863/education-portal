@@ -1,7 +1,11 @@
 'use server';
 
 import { auth, signIn, signOut } from '@/auth';
-import { loginSchema, newPasswordSchema, resetPasswordSchema } from '../validation';
+import {
+  loginSchema,
+  newPasswordSchema,
+  resetPasswordSchema,
+} from '../validation';
 import { z } from 'zod';
 import { prisma } from '@/prisma/prisma';
 import { sendResetPasswordEmail, sendTwoFactorToken } from '../utils/mail';
@@ -17,13 +21,18 @@ import {
   getVerificationTokenByToken,
 } from '../utils/tokens';
 
-export const login = async (values?: z.infer<typeof loginSchema>, provider: string = 'credentials') => {
+export const login = async (
+  values?: z.infer<typeof loginSchema>,
+  provider: string = 'credentials',
+) => {
   try {
     const isLoggedIn = await auth();
 
     if (isLoggedIn) {
       throw new Error('Вы уже авторизованы');
     }
+
+    console.log('login values', values);
 
     if (!values) {
       await signIn(provider, {
@@ -81,7 +90,10 @@ export const login = async (values?: z.infer<typeof loginSchema>, provider: stri
     });
   } catch (error) {
     if (error instanceof AuthError) {
-      if (error.type === 'AccessDenied' && error.cause?.err instanceof VerificationError) {
+      if (
+        error.type === 'AccessDenied' &&
+        error.cause?.err instanceof VerificationError
+      ) {
         return { success: error.cause?.err.message };
       }
 
@@ -155,7 +167,9 @@ export const confirmVerification = async (token: string) => {
   }
 };
 
-export const resetPassword = async (values: z.infer<typeof resetPasswordSchema>) => {
+export const resetPassword = async (
+  values: z.infer<typeof resetPasswordSchema>,
+) => {
   try {
     const parsedResult = await resetPasswordSchema.safeParse(values);
 
@@ -173,7 +187,10 @@ export const resetPassword = async (values: z.infer<typeof resetPasswordSchema>)
 
     const resetPasswordToken = await generateResetPasswordToken(email);
 
-    await sendResetPasswordEmail(resetPasswordToken.email, resetPasswordToken.token);
+    await sendResetPasswordEmail(
+      resetPasswordToken.email,
+      resetPasswordToken.token,
+    );
 
     return { success: 'Ссылка сброса пароля отправлена на ваш email' };
   } catch (error) {
@@ -213,7 +230,11 @@ export const confirmResetPasswordToken = async (token: string | null) => {
   }
 };
 
-export const addNewPassword = async (token: string, email: string, values: z.infer<typeof newPasswordSchema>) => {
+export const addNewPassword = async (
+  token: string,
+  email: string,
+  values: z.infer<typeof newPasswordSchema>,
+) => {
   try {
     const parsedResult = await newPasswordSchema.safeParse(values);
 

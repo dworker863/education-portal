@@ -8,6 +8,7 @@ import { sendVerificationEmail } from '@/app/libs/utils/mail';
 import { fileUpload } from '@/app/libs/server-actions/file-actions';
 
 export async function POST(request: NextRequest) {
+  console.log('SIGNUP ROUTE CALLED');
   try {
     const formData = await request.formData();
 
@@ -15,19 +16,29 @@ export async function POST(request: NextRequest) {
 
     const valuesToParse = {
       ...values,
-      birthDate: values.birthDate ? new Date(values.birthDate as string) : undefined,
+      birthDate: values.birthDate
+        ? new Date(values.birthDate as string)
+        : undefined,
     };
 
     const existingUser = await getUserByEmail(values.email as string);
 
     if (existingUser) {
-      return NextResponse.json({ error: 'Пользователь с данным email уже существует' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'Пользователь с данным email уже существует' },
+        { status: 409 },
+      );
     }
 
-    const { data, ...parsedResult } = await registrationSchema.safeParse(valuesToParse);
+    const { data, ...parsedResult } = await registrationSchema.safeParse(
+      valuesToParse,
+    );
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
@@ -48,7 +59,10 @@ export async function POST(request: NextRequest) {
       uploadResult = await fileUpload(data.image);
 
       if (uploadResult instanceof Error) {
-        return NextResponse.json({ error: uploadResult.message }, { status: 400 });
+        return NextResponse.json(
+          { error: uploadResult.message },
+          { status: 400 },
+        );
       }
     }
 
@@ -69,7 +83,10 @@ export async function POST(request: NextRequest) {
 
     const verificationToken = await generateVerificationToken(data.email);
 
-    await sendVerificationEmail(verificationToken.email, verificationToken.token);
+    await sendVerificationEmail(
+      verificationToken.email,
+      verificationToken.token,
+    );
 
     return NextResponse.json(
       {

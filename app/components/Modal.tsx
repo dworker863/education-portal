@@ -1,6 +1,11 @@
 'use client';
 
-import { Card, CardContent, CardFooter, CardHeader } from '@/app/components/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from '@/app/components/card';
 import React, { FC, ReactNode, useContext, useEffect, useRef } from 'react';
 import ModalHeader from './modal-header';
 import { Button } from '@/app/components/button';
@@ -28,7 +33,14 @@ type TModalProps = {
   showSocials?: boolean;
 };
 
-const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, backButtonHref, showSocials }) => {
+const Modal: FC<TModalProps> = ({
+  children,
+  type,
+  headerLabel,
+  backButtonLabel,
+  backButtonHref,
+  showSocials,
+}) => {
   const searchParams = useSearchParams();
   const modalOpenParam = searchParams.get('modalopen');
   const context = useContext(ModalContext);
@@ -50,9 +62,16 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
 
   const handleOutsideClick = (event: MouseEvent) => {
     const isSelectElement = (event.target as HTMLElement).closest('span');
-    const isRoleElement = (event.target as HTMLElement).matches('div[role="option"]');
+    const isRoleElement = (event.target as HTMLElement).matches(
+      'div[role="option"]',
+    );
 
-    if (modalRef.current && !modalRef.current.contains(event.target as Node) && !isSelectElement && !isRoleElement) {
+    if (
+      modalRef.current &&
+      !modalRef.current.contains(event.target as Node) &&
+      !isSelectElement &&
+      !isRoleElement
+    ) {
       modalCloseHandler();
     }
   };
@@ -73,14 +92,23 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
     }
   }, [modalOpenParam, context]);
 
-  if (!context?.isModalOpen && type !== 'new-password' && type !== 'registration-page' && type !== 'login-page')
+  if (
+    !context?.isModalOpen &&
+    type !== 'new-password' &&
+    type !== 'registration-page' &&
+    type !== 'login-page'
+  )
     return null;
 
   return (
     <Card ref={modalRef} className="relative w-[500px] bg-customBlock h-min">
       <CardHeader>
         <ModalHeader label={headerLabel} type={type} />
-        <Button className="absolute right-0 top-0" variant="link" onClick={modalCloseHandler}>
+        <Button
+          className="absolute right-0 top-0"
+          variant="link"
+          onClick={modalCloseHandler}
+        >
           <IoCloseSharp className="text-customPrimary" size={24} />
         </Button>
       </CardHeader>
@@ -92,7 +120,12 @@ const Modal: FC<TModalProps> = ({ children, type, headerLabel, backButtonLabel, 
       )}
       <CardFooter>
         {backButtonHref ? (
-          <Button variant="link" className="w-full text-primary-foreground font-normal" size="sm" asChild>
+          <Button
+            variant="link"
+            className="w-full text-primary-foreground font-normal"
+            size="sm"
+            asChild
+          >
             <Link href={backButtonHref}>Назад</Link>
           </Button>
         ) : (

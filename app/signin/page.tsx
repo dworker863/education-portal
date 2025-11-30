@@ -3,8 +3,8 @@
 import Modal from '@/app/components/modal';
 import { useContext, useEffect } from 'react';
 import { ModalContext } from '../components/app-wrapper';
-import { OverlayContext } from '../components/overlay';
 import SigninForm from '../components/signin-form';
+import { OverlayContext } from '../components/overlay';
 
 const SignIn = () => {
   const modalContext = useContext(ModalContext);

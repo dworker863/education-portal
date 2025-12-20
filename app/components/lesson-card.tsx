@@ -47,6 +47,7 @@ import { checkLesson } from '../libs/server-actions/lessons-actions';
 import { deleteExercise } from '../libs/server-actions/exercises-actions';
 import Spinner from './spinner';
 import { deleteTest } from '../libs/server-actions/tests-actions';
+import { cn } from '../libs/cn';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -244,7 +245,7 @@ const LessonCard: FC<TLessonCardProps> = ({
         <Spinner />
       ) : (
         <div className="flex w-full gap-10 p-10 bg-customBlock text-primary-foreground rounded-lg">
-          <div className="w-2/4">
+          <div className={cn('w-2/4', tasks.length === 0 && 'w-full')}>
             <h2 className="mb-5 text-center">Теория</h2>
             <div className="mb-10">{content}</div>
             {lesson?.video && <Video src={lesson?.video} />}
@@ -293,52 +294,56 @@ const LessonCard: FC<TLessonCardProps> = ({
             )}
           </div>
 
-          <div className="w-2/4 pr-10">
-            <h2 className="mb-5 text-center">Практика</h2>
-            <Carousel className="w-full">
-              <CarouselContent>
-                {tasks.length > 0 &&
-                  tasks.map((task, index) => (
-                    <CarouselItem key={task.id}>
-                      <div className="p-1">
-                        {'variants' in task ? (
-                          <Test
-                            key={index + task.name}
-                            test={task}
-                            passedTasks={passedTasks}
-                            setPassedTasks={setPassedTasks}
-                          />
-                        ) : (
-                          <Exercise
-                            key={index + task.name}
-                            exercise={task}
-                            passedTasks={passedTasks}
-                            setPassedTasks={setPassedTasks}
-                          />
-                        )}
-                        <div className="flex justify-center mt-20">
+          {tasks.length > 0 && (
+            <div className="w-2/4 pr-10">
+              <h2 className="mb-5 text-center">Практика</h2>
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {tasks.length > 0 &&
+                    tasks.map((task, index) => (
+                      <CarouselItem key={task.id}>
+                        <div className="p-1">
                           {'variants' in task ? (
-                            <TestFormWrapper
-                              testId={task.id}
-                              deleteTestHandler={deleteTestHandler}
-                              setTestId={setTestId}
+                            <Test
+                              key={index + task.name}
+                              test={task}
+                              passedTasks={passedTasks}
+                              setPassedTasks={setPassedTasks}
                             />
                           ) : (
-                            <ExerciseFormWrapper
-                              exerciseId={task?.id}
-                              deleteExerciseHandler={deleteExerciseHandler}
-                              setExerciseId={setExerciseId}
+                            <Exercise
+                              key={index + task.name}
+                              exercise={task}
+                              passedTasks={passedTasks}
+                              setPassedTasks={setPassedTasks}
                             />
                           )}
+                          <div className="flex justify-center mt-20">
+                            {'variants' in task ? (
+                              <TestFormWrapper
+                                testId={task.id}
+                                deleteTestHandler={deleteTestHandler}
+                                setTestId={setTestId}
+                              />
+                            ) : (
+                              <ExerciseFormWrapper
+                                exerciseId={task?.id}
+                                deleteExerciseHandler={deleteExerciseHandler}
+                                setExerciseId={setExerciseId}
+                              />
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </CarouselItem>
-                  ))}
-              </CarouselContent>
-              {tasks.length > 1 && <CarouselPrevious variant="customCircle" />}
-              {tasks.length > 1 && <CarouselNext variant="customCircle" />}
-            </Carousel>
-          </div>
+                      </CarouselItem>
+                    ))}
+                </CarouselContent>
+                {tasks.length > 1 && (
+                  <CarouselPrevious variant="customCircle" />
+                )}
+                {tasks.length > 1 && <CarouselNext variant="customCircle" />}
+              </Carousel>
+            </div>
+          )}
         </div>
       )}
     </>

@@ -23,6 +23,8 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   const [isPending, setIsPending] = useState(false);
   const [lessonId, setLessonId] = useState<string | null>(null);
 
+  const courseName = slugify(name, { locale: 'ru' });
+
   useEffect(() => {
     let mounted = true;
 
@@ -87,7 +89,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
                   <li key={lesson.id + lesson.name}>
                     <div className="mb-5">
                       <Link
-                        href={`/courses/${name}/${lessonName}-${lesson.id}`}
+                        href={`/courses/${courseName}/${lessonName}-${lesson.id}`}
                       >
                         {lesson.name}
                       </Link>

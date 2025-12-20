@@ -31,7 +31,8 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
         if (
           confirmationContext?.modalType === 'confirmation' &&
           confirmationContext.confirmation &&
-          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить этот урок?'
+          confirmationContext?.confirmModalText ===
+            'Вы уверены, что хотите удалить этот урок?'
         ) {
           if (!lessonId) {
             throw new Error('Не выбран урок для удаления');
@@ -65,7 +66,9 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
   const deleteLessonHandler = async () => {
     confirmationContext?.setModalType('confirmation');
     confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот урок?');
+    confirmationContext?.setConfirmModalText(
+      'Вы уверены, что хотите удалить этот урок?',
+    );
   };
 
   return (
@@ -83,7 +86,9 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
                 return (
                   <li key={lesson.id + lesson.name}>
                     <div className="mb-5">
-                      <Link href={`/courses/${name}/${lessonName}`}>{lesson.name}</Link>
+                      <Link href={`/courses/${name}/${lessonName}`}>
+                        {lesson.name}
+                      </Link>
                       <LessonFormWrapper
                         lessonId={lesson.id}
                         deleteLessonHandler={deleteLessonHandler}

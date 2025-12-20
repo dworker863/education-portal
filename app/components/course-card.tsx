@@ -17,6 +17,7 @@ import Spinner from './spinner';
 import { calculatePrizeWithDiscount } from '../libs/utils/prize';
 import { registerForCourse } from '../libs/server-actions/courses-actions';
 import { isObjectSubscription } from '../libs/utils/common';
+import slugify from 'slugify';
 
 type TCourseCardProps = {
   course: ICourse;
@@ -28,6 +29,8 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
   const user = session?.data?.user;
   const confirmationContext = useContext(ConfirmationContext);
   const [isPending, setIsPending] = useState(false);
+
+  const courseName = slugify(course.name, { locale: 'ru' });
 
   useEffect(() => {
     const loadCourseWithDiscount = async () => {
@@ -65,7 +68,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
               ],
             });
 
-            router.push(`/courses/${course.name}`);
+            router.push(`/courses/${courseName}`);
             setIsPending(false);
             confirmationContext?.setModalType(null);
             confirmationContext?.setConfirmation(false);
@@ -99,7 +102,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
                 : [...(user.coursesProgress ?? []), courseProgress],
             });
 
-            router.push(`/courses/${course.name}`);
+            router.push(`/courses/${courseName}`);
             setIsPending(false);
             confirmationContext?.setConfirmation(false);
             confirmationContext?.setModalType(null);
@@ -125,10 +128,10 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
       return;
     }
 
-    // if (user.role === 'ADMIN') {
-    //   router.push(`/courses/${course.name}`);
-    //   return;
-    // }
+    if (user.role === 'ADMIN') {
+      router.push(`/courses/${courseName}`);
+      return;
+    }
 
     if (
       user &&
@@ -136,7 +139,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     ) {
       console.log('Пользователь уже записан на курс');
 
-      router.push(`/courses/${course.name}`);
+      router.push(`/courses/${courseName}`);
       return;
     }
 
@@ -147,7 +150,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     ) {
       console.log('Пользователь имеет активную подписку');
 
-      router.push(`/courses/${course.name}`);
+      router.push(`/courses/${courseName}`);
       return;
     }
 

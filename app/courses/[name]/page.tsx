@@ -16,7 +16,7 @@ export default async function CoursePage({
   }
 
   const slugParts = params.name.split('-');
-  const id = slugParts.pop()!; // получаем ID
+  const id = slugParts.pop()!;
   const course = await getCourseWithLessonsById(id);
 
   if (!course) {

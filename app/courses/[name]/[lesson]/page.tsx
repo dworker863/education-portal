@@ -19,9 +19,9 @@ export default async function LessonPage({
       </div>
     );
   }
+
   const slugParts = params.lesson.split('-');
-  const id = slugParts.pop()!; // получаем ID
-  console.log('LessonPage id:', id);
+  const id = slugParts.pop()!;
   const lesson = await getLessonWithExercisesById(id);
   const lessons = await getPartialLessons();
 

@@ -17,9 +17,15 @@ type TExercisesProps = {
   setShowExercises?: Dispatch<SetStateAction<boolean>>;
 };
 
-const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setShowExercises }) => {
+const Exercises: FC<TExercisesProps> = ({
+  exercises,
+  mode,
+  showExercises,
+  setShowExercises,
+}) => {
   const [showFilters, setShowFilters] = useState(false);
-  const [filteredExercises, setFilteredExercises] = useState<IExercise[]>(exercises);
+  const [filteredExercises, setFilteredExercises] =
+    useState<IExercise[]>(exercises);
 
   const columns = useMemo<ColumnDef<IExercise>[]>(
     () => [
@@ -27,7 +33,12 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         accessorKey: 'name',
         header: ({ column }) => {
           return (
-            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            <Button
+              variant="custom"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
               Название
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
@@ -38,7 +49,12 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         accessorKey: 'task',
         header: ({ column }) => {
           return (
-            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            <Button
+              variant="custom"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
               Задание
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
@@ -54,7 +70,12 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         accessorKey: 'language',
         header: ({ column }) => {
           return (
-            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            <Button
+              variant="custom"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
               Язык программирования
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
@@ -65,7 +86,12 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         accessorKey: 'requiredRank',
         header: ({ column }) => {
           return (
-            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            <Button
+              variant="custom"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
               Уровень
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
@@ -76,7 +102,12 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         accessorKey: 'prizePoints',
         header: ({ column }) => {
           return (
-            <Button variant="custom" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+            <Button
+              variant="custom"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === 'asc')
+              }
+            >
               Баллы
               <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
@@ -98,19 +129,39 @@ const Exercises: FC<TExercisesProps> = ({ exercises, mode, showExercises, setSho
         { '-translate-x-full': showExercises },
       )}
     >
-      {mode === 'component' && <h2 className="text-customSecondary">Exercises</h2>}
+      {mode === 'component' && (
+        <h2 className="text-customSecondary">Exercises</h2>
+      )}
       {filteredExercises && filteredExercises.length > 0 ? (
         <>
-          <Button className="mr-auto my-4" variant="custom" onClick={() => setShowFilters(!showFilters)}>
+          <Button
+            className="mr-auto my-4"
+            variant="custom"
+            onClick={() => setShowFilters(!showFilters)}
+          >
             {!showFilters ? 'Фильтр' : 'Скрыть'}
           </Button>
-          {showFilters && <ExercisesFilters exercises={exercises} setFilterExercises={setFilteredExercises} />}
-          <DataTable mode="exercises" data={filteredExercises} setShowComponent={setShowExercises} columns={columns} />
+          {showFilters && (
+            <ExercisesFilters
+              exercises={exercises}
+              setFilterExercises={setFilteredExercises}
+            />
+          )}
+          <DataTable
+            mode="exercises"
+            data={filteredExercises}
+            setShowComponent={setShowExercises}
+            columns={columns}
+          />
         </>
       ) : (
         <>
           <p>Подходящих упражнений не найдено</p>
-          <Button className="mr-auto my-4" variant="custom" onClick={() => setFilteredExercises(exercises)}>
+          <Button
+            className="mr-auto my-4"
+            variant="custom"
+            onClick={() => setFilteredExercises(exercises)}
+          >
             Сбросить фильтр
           </Button>
         </>

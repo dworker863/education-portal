@@ -72,13 +72,22 @@ const Sidebar = () => {
         </Button>
 
         <Button className="mb-2" onClick={showExercisesHandler}>
-          <TfiPencilAlt className="text-customSecondary hover:scale-125" size={22} />
+          <TfiPencilAlt
+            className="text-customSecondary hover:scale-125"
+            size={22}
+          />
         </Button>
         <Button className="mb-1" onClick={showAchievementsHandler}>
-          <GrAchievement className="text-customSecondary hover:scale-125" size={22} />
+          <GrAchievement
+            className="text-customSecondary hover:scale-125"
+            size={22}
+          />
         </Button>
         <Button className="fixed bottom-5 mb-1" onClick={showChatHandler}>
-          <IoChatboxEllipses className="text-customSecondary hover:scale-125" size={22} />
+          <IoChatboxEllipses
+            className="text-customSecondary hover:scale-125"
+            size={22}
+          />
         </Button>
       </div>
     </div>

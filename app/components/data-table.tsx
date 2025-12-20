@@ -12,12 +12,25 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './table';
 import { Input } from './input';
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from './dropdown-menu';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from './dropdown-menu';
 import { Button } from './button';
 import { IAchievement, IExercise } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
+import slugify from 'slugify';
 
 type TDataTableProps<TData> = {
   mode: 'exercises' | 'achievements';
@@ -26,7 +39,12 @@ type TDataTableProps<TData> = {
   columns: ColumnDef<IExercise>[] | ColumnDef<IAchievement>[];
 };
 
-const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, columns }) => {
+const DataTable: FC<TDataTableProps<any>> = ({
+  mode,
+  data,
+  setShowComponent,
+  columns,
+}) => {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -53,7 +71,9 @@ const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, col
         <Input
           placeholder="Название..."
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+          onChange={(event) =>
+            table.getColumn('name')?.setFilterValue(event.target.value)
+          }
           className="max-w-sm mr-6 text-primary"
         />
         <DropdownMenu>
@@ -72,7 +92,9 @@ const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, col
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
@@ -85,11 +107,19 @@ const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, col
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="text-primary-foreground" key={headerGroup.id}>
+              <TableRow
+                className="text-primary-foreground"
+                key={headerGroup.id}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead className="text-center" key={header.id}>
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   );
                 })}
@@ -99,22 +129,38 @@ const DataTable: FC<TDataTableProps<any>> = ({ mode, data, setShowComponent, col
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="text-center" key={cell.id}>
-                      <Link
-                        href={`/${mode}/${row.original.name.split(' ').join('')}`}
-                        onClick={() => setShowComponent && setShowComponent(false)}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Link>
-                    </TableCell>
-                  ))}
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && 'selected'}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const name = slugify(row.original.name, { locale: 'ru' });
+                    return (
+                      <TableCell key={cell.id} className="text-center">
+                        <Link
+                          href={`/${mode}/${name.split(' ').join('')}-${
+                            row.original.id
+                          }`}
+                          onClick={() =>
+                            setShowComponent && setShowComponent(false)
+                          }
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </Link>
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>

@@ -1,7 +1,19 @@
 'use client';
 
-import React, { FC, useContext, useEffect, useMemo, useState, useTransition } from 'react';
-import { IExercise, ILesson, ILessonPartial, ITest } from '../libs/interfaces/interfaces';
+import React, {
+  FC,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
+import {
+  IExercise,
+  ILesson,
+  ILessonPartial,
+  ITest,
+} from '../libs/interfaces/interfaces';
 import Video from './video';
 import Exercise from './exercise';
 import DOMPurify from 'isomorphic-dompurify';
@@ -12,7 +24,13 @@ import 'prismjs/plugins/line-numbers/prism-line-numbers'; // Плагин для
 import 'prismjs/plugins/line-numbers/prism-line-numbers.css'; // Стили для нумерации строк
 import Test from './test';
 
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './carousel';
 import TestFormWrapper from './test-form-wrapper';
 import ExerciseFormWrapper from './exercise-form-wrapper';
 import { Button } from './button';
@@ -37,38 +55,63 @@ type TLessonCardProps = {
   tests: ITest[];
 };
 
-const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests }) => {
+const LessonCard: FC<TLessonCardProps> = ({
+  lesson,
+  lessons,
+  exercises,
+  tests,
+}) => {
   const confirmationContext = useContext(ConfirmationContext);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const content = useMemo(() => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''), [lesson?.content]);
+  const content = useMemo(
+    () => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''),
+    [lesson?.content],
+  );
   const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [exerciseId, setExerciseId] = useState<string | null>(null);
   const [testId, setTestId] = useState<string | null>(null);
   const userId = session?.data?.user.id as string;
 
-  const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>('default');
+  const [isPassed, setIsPassed] = useState<'default' | 'success' | 'failed'>(
+    'default',
+  );
   const [passedTasks, setPassedTasks] = useState<string[]>([]);
 
   const tasks = useMemo(() => [...exercises, ...tests], [exercises, tests]);
   const completedTasks = useMemo(
-    () => [...(session?.data?.user.completedExercises || []), ...(session?.data?.user.completedTests || [])],
-    [session?.data?.user.completedExercises, session?.data?.user.completedTests],
+    () => [
+      ...(session?.data?.user.completedExercises || []),
+      ...(session?.data?.user.completedTests || []),
+    ],
+    [
+      session?.data?.user.completedExercises,
+      session?.data?.user.completedTests,
+    ],
   );
   const tasksIds = useMemo(() => tasks.map((task) => task.id), [tasks]);
 
-  const lessonIndex = lessons.findIndex((partialLesson) => partialLesson.name === lesson.name);
-  const nextLessonName = lessonIndex !== lessons.length - 1 && slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
+  const lessonIndex = lessons.findIndex(
+    (partialLesson) => partialLesson.name === lesson.name,
+  );
+  const nextLessonName =
+    lessonIndex !== lessons.length - 1 &&
+    slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
 
-  const prevLessonName = lessonIndex !== 0 && slugify(lessons[lessonIndex - 1].name, { locale: 'ru' });
+  const prevLessonName =
+    lessonIndex !== 0 &&
+    slugify(lessons[lessonIndex - 1].name, { locale: 'ru' });
 
   useEffect(() => {
     Prism.highlightAll();
   }, [content]);
 
   useEffect(() => {
-    const lessonCompletedExercises = checkCompletedExercises(completedTasks, tasks);
+    const lessonCompletedExercises = checkCompletedExercises(
+      completedTasks,
+      tasks,
+    );
 
     setPassedTasks(lessonCompletedExercises);
   }, [tasks, completedTasks]);
@@ -81,7 +124,8 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
         if (
           confirmationContext?.modalType === 'confirmation' &&
           confirmationContext.confirmation &&
-          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить это упражнение?'
+          confirmationContext?.confirmModalText ===
+            'Вы уверены, что хотите удалить это упражнение?'
         ) {
           if (!exerciseId) {
             throw new Error('Не выбрано упражнение для удаления');
@@ -120,7 +164,8 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
         if (
           confirmationContext?.modalType === 'confirmation' &&
           confirmationContext.confirmation &&
-          confirmationContext?.confirmModalText === 'Вы уверены, что хотите удалить этот тест?'
+          confirmationContext?.confirmModalText ===
+            'Вы уверены, что хотите удалить этот тест?'
         ) {
           if (!testId) {
             throw new Error('Не выбран тест для удаления');
@@ -153,13 +198,17 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
   const deleteExerciseHandler = async () => {
     confirmationContext?.setModalType('confirmation');
     confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить это упражнение?');
+    confirmationContext?.setConfirmModalText(
+      'Вы уверены, что хотите удалить это упражнение?',
+    );
   };
 
   const deleteTestHandler = async () => {
     confirmationContext?.setModalType('confirmation');
     confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот тест?');
+    confirmationContext?.setConfirmModalText(
+      'Вы уверены, что хотите удалить этот тест?',
+    );
   };
 
   const checkLessonHandler = async () => {
@@ -201,12 +250,21 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
             {lesson?.video && <Video src={lesson?.video} />}
             <div className="flex justify-between">
               {prevLessonName && (
-                <Button variant="custom" onClick={() => router.push(`./${prevLessonName}`)}>
+                <Button
+                  variant="custom"
+                  onClick={() => router.push(`./${prevLessonName}`)}
+                >
                   Предыдущий урок
                 </Button>
               )}
               <Button
-                variant={isPassed === 'success' ? 'customSuccess' : isPassed === 'default' ? 'custom' : 'customFail'}
+                variant={
+                  isPassed === 'success'
+                    ? 'customSuccess'
+                    : isPassed === 'default'
+                    ? 'custom'
+                    : 'customFail'
+                }
                 onClick={() => checkLessonHandler()}
                 disabled={isPending}
               >
@@ -222,7 +280,8 @@ const LessonCard: FC<TLessonCardProps> = ({ lesson, lessons, exercises, tests })
                     Не Пройдено
                   </>
                 )}
-                {isPassed === 'default' && (nextLessonName ? 'Следующий урок' : 'Завершить курс')}
+                {isPassed === 'default' &&
+                  (nextLessonName ? 'Следующий урок' : 'Завершить курс')}
               </Button>
             </div>
             {isPassed === 'failed' && (

@@ -86,7 +86,9 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
                 return (
                   <li key={lesson.id + lesson.name}>
                     <div className="mb-5">
-                      <Link href={`/courses/${name}/${lessonName}`}>
+                      <Link
+                        href={`/courses/${name}/${lessonName}-${lesson.id}`}
+                      >
                         {lesson.name}
                       </Link>
                       <LessonFormWrapper

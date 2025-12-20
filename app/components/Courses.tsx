@@ -28,7 +28,8 @@ const Courses: FC<TCoursesProps> = ({ courses }) => {
         if (
           confirmationContext?.modalType === 'confirmation' &&
           confirmationContext.confirmation &&
-          confirmationContext.confirmModalText === 'Вы уверены, что хотите удалить этот курс?'
+          confirmationContext.confirmModalText ===
+            'Вы уверены, что хотите удалить этот курс?'
         ) {
           if (!courseId) {
             throw new Error('Не выбран курс для удаления');
@@ -62,7 +63,9 @@ const Courses: FC<TCoursesProps> = ({ courses }) => {
   const deleteCourseHandler = async () => {
     confirmationContext?.setModalType('confirmation');
     confirmationContext?.setIsModalOpen(true);
-    confirmationContext?.setConfirmModalText('Вы уверены, что хотите удалить этот курс?');
+    confirmationContext?.setConfirmModalText(
+      'Вы уверены, что хотите удалить этот курс?',
+    );
   };
 
   return (

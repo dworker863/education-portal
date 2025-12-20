@@ -1,7 +1,10 @@
 import { prisma } from '@/prisma/prisma';
 import { Prisma } from '@prisma/client';
 import { updateCourseProgress } from '../server-actions/progress-action';
-import { getAchievementByCriteriaType, updateAchievementProgress } from '../server-actions/achievements-actions';
+import {
+  getAchievementByCriteriaType,
+  updateAchievementProgress,
+} from '../server-actions/achievements-actions';
 
 export const getAllLessons = async () => {
   try {
@@ -62,7 +65,29 @@ export const getLessonById = async (id: string) => {
   }
 };
 
-export const checkLessonCompletion = (passedExercises: string[], totalExercises: string[]) => {
+export const getLessonWithExercisesAndTestsById = async (id: string) => {
+  try {
+    const lesson = await prisma.lesson.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        exercises: true,
+        tests: true,
+      },
+    });
+
+    return lesson;
+  } catch (error) {
+    console.error('Ошибка при получении урока по ID: ', error);
+    throw error;
+  }
+};
+
+export const checkLessonCompletion = (
+  passedExercises: string[],
+  totalExercises: string[],
+) => {
   const result = (passedExercises.length / totalExercises.length) * 100;
 
   if (result < 75) {

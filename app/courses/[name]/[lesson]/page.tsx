@@ -1,22 +1,42 @@
+import ErrorMessage from '@/app/components/error-message';
 import ExerciseForm from '@/app/components/exercise-form';
 import LessonCard from '@/app/components/lesson-card';
 import TestForm from '@/app/components/test-form';
-import { getLessonByName, getPartialLessons } from '@/app/libs/utils/lessons';
-import CyrillicToTranslit from 'cyrillic-to-translit-js';
+import {
+  getLessonWithExercisesById,
+  getPartialLessons,
+} from '@/app/libs/utils/lessons';
 
-export default async function LessonPage({ params }: { params: { lesson: string } }) {
-  // @ts-ignore
-  const cyrillicToTranslit = new CyrillicToTranslit();
-  const lessonName = cyrillicToTranslit.reverse(params.lesson).replace('-', ' ');
-  const lesson = await getLessonByName(lessonName);
+export default async function LessonPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const id = params.slug.split('-')[1];
+  const lesson = await getLessonWithExercisesById(id);
   const lessons = await getPartialLessons();
+
+  if (!lesson) {
+    return (
+      <div className="flex justify-center items-center">
+        <ErrorMessage message="Урок не найден" />
+      </div>
+    );
+  }
 
   return (
     <>
-      <h1 className="mb-5 text-center text-xl uppercase">{lessonName}</h1>
+      <h1 className="mb-5 text-center text-xl uppercase">{lesson.name}</h1>
       <ExerciseForm lessonId={lesson?.id} mode="create" />
       <TestForm lessonId={lesson?.id} mode="create" />
-      {lesson && <LessonCard lesson={lesson} exercises={lesson.exercises} tests={lesson.tests} lessons={lessons} />}
+      {lesson && (
+        <LessonCard
+          lesson={lesson}
+          exercises={lesson.exercises}
+          tests={lesson.tests}
+          lessons={lessons}
+        />
+      )}
     </>
   );
 }

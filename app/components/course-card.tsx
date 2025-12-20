@@ -68,7 +68,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
               ],
             });
 
-            router.push(`/courses/${courseName}`);
+            router.push(`/courses/${courseName}-${course.id}`);
             setIsPending(false);
             confirmationContext?.setModalType(null);
             confirmationContext?.setConfirmation(false);
@@ -102,7 +102,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
                 : [...(user.coursesProgress ?? []), courseProgress],
             });
 
-            router.push(`/courses/${courseName}`);
+            router.push(`/courses/${courseName}-${course.id}`);
             setIsPending(false);
             confirmationContext?.setConfirmation(false);
             confirmationContext?.setModalType(null);
@@ -129,7 +129,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     }
 
     if (user.role === 'ADMIN') {
-      router.push(`/courses/${courseName}`);
+      router.push(`/courses/${courseName}-${course.id}`);
       return;
     }
 
@@ -139,7 +139,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     ) {
       console.log('Пользователь уже записан на курс');
 
-      router.push(`/courses/${courseName}`);
+      router.push(`/courses/${courseName}-${course.id}`);
       return;
     }
 
@@ -150,7 +150,7 @@ const CourseCard: FC<TCourseCardProps> = ({ course }) => {
     ) {
       console.log('Пользователь имеет активную подписку');
 
-      router.push(`/courses/${courseName}`);
+      router.push(`/courses/${courseName}-${course.id}`);
       return;
     }
 

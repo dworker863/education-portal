@@ -50,3 +50,21 @@ export const getCourseById = async (id: string) => {
     throw error;
   }
 };
+
+export const getCourseWithLessonsById = async (id: string) => {
+  try {
+    const course = await prisma.course.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        lessons: true,
+      },
+    });
+
+    return course;
+  } catch (error) {
+    console.error('Ошибка при получении курса по ID: ', error);
+    throw error;
+  }
+};

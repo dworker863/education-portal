@@ -5,9 +5,18 @@ import { getCourseWithLessonsById } from '@/app/libs/utils/courses';
 export default async function CoursePage({
   params,
 }: {
-  params: { slug: string };
+  params: { name: string };
 }) {
-  const id = params.slug.split('-')[1];
+  if (!params.name) {
+    return (
+      <div className="flex justify-center items-center">
+        <ErrorMessage message="Неверный URL" />
+      </div>
+    );
+  }
+
+  const slugParts = params.name.split('-');
+  const id = slugParts.pop()!; // получаем ID
   const course = await getCourseWithLessonsById(id);
 
   if (!course) {

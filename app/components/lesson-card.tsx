@@ -226,7 +226,7 @@ const LessonCard: FC<TLessonCardProps> = ({
         setIsPassed('success');
 
         if (nextLessonName) {
-          router.push(`./${nextLessonName}`);
+          router.push(`./${nextLessonName}-${lesson.id}`);
         }
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -252,7 +252,9 @@ const LessonCard: FC<TLessonCardProps> = ({
               {prevLessonName && (
                 <Button
                   variant="custom"
-                  onClick={() => router.push(`./${prevLessonName}`)}
+                  onClick={() =>
+                    router.push(`./${prevLessonName}-${lesson.id}`)
+                  }
                 >
                   Предыдущий урок
                 </Button>

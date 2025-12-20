@@ -65,7 +65,7 @@ export const getLessonById = async (id: string) => {
   }
 };
 
-export const getLessonWithExercisesAndTestsById = async (id: string) => {
+export const getLessonWithExercisesById = async (id: string) => {
   try {
     const lesson = await prisma.lesson.findUnique({
       where: {

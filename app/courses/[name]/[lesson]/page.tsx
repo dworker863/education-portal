@@ -10,9 +10,18 @@ import {
 export default async function LessonPage({
   params,
 }: {
-  params: { slug: string };
+  params: { lesson: string };
 }) {
-  const id = params.slug.split('-')[1];
+  if (!params.lesson) {
+    return (
+      <div className="flex justify-center items-center">
+        <ErrorMessage message="Неверный URL" />
+      </div>
+    );
+  }
+  const slugParts = params.lesson.split('-');
+  const id = slugParts.pop()!; // получаем ID
+  console.log('LessonPage id:', id);
   const lesson = await getLessonWithExercisesById(id);
   const lessons = await getPartialLessons();
 

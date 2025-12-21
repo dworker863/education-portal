@@ -48,6 +48,7 @@ import { deleteExercise } from '../libs/server-actions/exercises-actions';
 import Spinner from './spinner';
 import { deleteTest } from '../libs/server-actions/tests-actions';
 import { cn } from '../libs/cn';
+import Image from 'next/image';
 
 type TLessonCardProps = {
   lesson: ILesson;
@@ -65,10 +66,54 @@ const LessonCard: FC<TLessonCardProps> = ({
   const confirmationContext = useContext(ConfirmationContext);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
-  const content = useMemo(
-    () => (lesson?.content ? parse(DOMPurify.sanitize(lesson?.content)) : ''),
-    [lesson?.content],
-  );
+
+  const content = useMemo(() => {
+    if (!lesson?.content) return null;
+
+    const cleanHTML = DOMPurify.sanitize(lesson.content, {
+      ALLOWED_TAGS: [
+        'p',
+        'img',
+        'h1',
+        'h2',
+        'h3',
+        'pre',
+        'code',
+        'ul',
+        'li',
+        'strong',
+        'em',
+        'br',
+      ],
+      ALLOWED_ATTR: ['alt', 'data-image-index', 'class'],
+    });
+
+    return parse(cleanHTML, {
+      replace(domNode) {
+        if (
+          domNode.type === 'tag' &&
+          domNode.name === 'img' &&
+          domNode.attribs?.['data-image-index']
+        ) {
+          const index = Number(domNode.attribs['data-image-index']);
+          const src = lesson.images?.[index].replaceAll('\\', '/');
+
+          if (!src) return null;
+
+          return (
+            <Image
+              src={src}
+              alt={domNode.attribs.alt || ''}
+              className="my-6 rounded-lg"
+              width={400}
+              height={500}
+            />
+          );
+        }
+      },
+    });
+  }, [lesson.content, lesson.images]);
+
   const session = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [exerciseId, setExerciseId] = useState<string | null>(null);

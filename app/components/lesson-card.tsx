@@ -67,11 +67,14 @@ const LessonCard: FC<TLessonCardProps> = ({
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
+  console.log('Rendering LessonCard for lesson:', lesson.name);
+
   const content = useMemo(() => {
     if (!lesson?.content) return null;
 
     const cleanHTML = DOMPurify.sanitize(lesson.content, {
       ALLOWED_TAGS: [
+        'div',
         'p',
         'img',
         'h1',
@@ -81,8 +84,7 @@ const LessonCard: FC<TLessonCardProps> = ({
         'code',
         'ul',
         'li',
-        'strong',
-        'em',
+        'span',
         'br',
       ],
       ALLOWED_ATTR: ['alt', 'data-image-index', 'class'],
@@ -96,17 +98,18 @@ const LessonCard: FC<TLessonCardProps> = ({
           domNode.attribs?.['data-image-index']
         ) {
           const index = Number(domNode.attribs['data-image-index']);
-          const src = lesson.images?.[index].replaceAll('\\', '/');
+          const src = lesson.images?.[index]?.replaceAll('\\', '/');
 
           if (!src) return null;
+
+          console.log('Rendering image with src:', domNode.attribs);
 
           return (
             <Image
               src={src}
               alt={domNode.attribs.alt || ''}
-              className="my-6 rounded-lg"
-              width={400}
-              height={500}
+              width={Number(domNode.attribs['data-image-width'])}
+              height={Number(domNode.attribs['data-image-height'])}
             />
           );
         }
@@ -143,11 +146,15 @@ const LessonCard: FC<TLessonCardProps> = ({
   );
   const nextLessonName =
     lessonIndex !== lessons.length - 1 &&
-    slugify(lessons[lessonIndex + 1].name, { locale: 'ru' });
+    slugify(lessons[lessonIndex + 1].name, { locale: 'ru' }) +
+      '-' +
+      lessons[lessonIndex + 1].id;
 
   const prevLessonName =
     lessonIndex !== 0 &&
-    slugify(lessons[lessonIndex - 1].name, { locale: 'ru' });
+    slugify(lessons[lessonIndex - 1].name, { locale: 'ru' }) +
+      '-' +
+      lessons[lessonIndex - 1].id;
 
   useEffect(() => {
     Prism.highlightAll();
@@ -272,7 +279,7 @@ const LessonCard: FC<TLessonCardProps> = ({
         setIsPassed('success');
 
         if (nextLessonName) {
-          router.push(`./${nextLessonName}-${lesson.id}`);
+          router.push(`./${nextLessonName}`);
         }
       } catch (error) {
         console.error('Ошибка при выполнении запроса:', error);
@@ -298,9 +305,7 @@ const LessonCard: FC<TLessonCardProps> = ({
               {prevLessonName && (
                 <Button
                   variant="custom"
-                  onClick={() =>
-                    router.push(`./${prevLessonName}-${lesson.id}`)
-                  }
+                  onClick={() => router.push(`./${prevLessonName}`)}
                 >
                   Предыдущий урок
                 </Button>

@@ -89,7 +89,7 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
                   <li key={lesson.id + lesson.name}>
                     <div className="mb-5">
                       <Link
-                        href={`/courses/${courseName}/${lessonName}-${lesson.id}`}
+                        href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
                       >
                         {lesson.name}
                       </Link>

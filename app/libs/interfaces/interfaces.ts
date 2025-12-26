@@ -67,8 +67,8 @@ export interface ICourseSection {
   title: string;
   order: number;
   courseId: string;
-  course: ICourse;
-  lessons: ILesson[];
+  course?: ICourse;
+  lessons?: ILesson[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -2,6 +2,7 @@ import ErrorMessage from '@/app/components/error-message';
 import ExerciseForm from '@/app/components/exercise-form';
 import LessonCard from '@/app/components/lesson-card';
 import TestForm from '@/app/components/test-form';
+import { getCourseWithLessonsById } from '@/app/libs/utils/courses';
 import {
   getLessonWithExercisesById,
   getPartialLessons,
@@ -23,12 +24,21 @@ export default async function LessonPage({
   const slugParts = params.lesson.split('-');
   const id = slugParts.pop()!;
   const lesson = await getLessonWithExercisesById(id);
-  const lessons = await getPartialLessons();
 
   if (!lesson) {
     return (
       <div className="flex justify-center items-center">
         <ErrorMessage message="Урок не найден" />
+      </div>
+    );
+  }
+
+  const course = await getCourseWithLessonsById(lesson.courseId);
+
+  if (!course) {
+    return (
+      <div className="flex justify-center items-center">
+        <ErrorMessage message="Курс не найден" />
       </div>
     );
   }
@@ -43,7 +53,7 @@ export default async function LessonPage({
           lesson={lesson}
           exercises={lesson.exercises}
           tests={lesson.tests}
-          lessons={lessons}
+          lessons={course.lessons}
         />
       )}
     </>

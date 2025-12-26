@@ -110,6 +110,7 @@ export interface ILesson {
 export interface ILessonPartial {
   id: string;
   name: string;
+  createdAt: Date;
 }
 
 export interface IExercise {

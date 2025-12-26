@@ -161,6 +161,14 @@ body {
   margin-bottom: 40px;
 }
 
+.lesson-image {
+  flex: 0 0 35%;
+}
+
+.lesson-content {
+  flex: 0 0 63%;
+}
+
 .lesson-flex-item-w-1\/4 {
   flex: 0 0 25%;
 }

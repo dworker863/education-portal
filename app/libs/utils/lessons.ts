@@ -22,6 +22,7 @@ export const getPartialLessons = async () => {
       select: {
         id: true,
         name: true,
+        createdAt: true,
       },
     });
     return lessons;

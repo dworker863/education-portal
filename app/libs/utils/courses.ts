@@ -58,7 +58,11 @@ export const getCourseWithLessonsById = async (id: string) => {
         id,
       },
       include: {
-        lessons: true,
+        lessons: {
+          orderBy: {
+            createdAt: 'asc', // или 'desc'
+          },
+        },
       },
     });
 

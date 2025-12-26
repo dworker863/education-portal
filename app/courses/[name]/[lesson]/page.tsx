@@ -3,10 +3,7 @@ import ExerciseForm from '@/app/components/exercise-form';
 import LessonCard from '@/app/components/lesson-card';
 import TestForm from '@/app/components/test-form';
 import { getCourseWithLessonsById } from '@/app/libs/utils/courses';
-import {
-  getLessonWithExercisesById,
-  getPartialLessons,
-} from '@/app/libs/utils/lessons';
+import { getLessonWithExercisesById } from '@/app/libs/utils/lessons';
 
 export default async function LessonPage({
   params,

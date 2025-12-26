@@ -104,6 +104,7 @@ model Course {
   updatedAt     DateTime             @updatedAt
   usersProgress UserCourseProgress[]
   lessons       Lesson[]
+  sections      CourseSection[]
   prizeTickets  PrizeTicket[]        @relation("CourseToPrizeTickets")
 
   @@index([name])
@@ -133,6 +134,20 @@ model UserCourseProgress {
   @@index([completedAt])
 }
 
+model CourseSection {
+  id        String   @id @default(cuid())
+  title     String
+  order     Int
+  courseId  String
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([courseId, order])
+  @@index([courseId])
+}
+
 model Lesson {
   id                String               @id @default(cuid())
   name              String
@@ -144,6 +159,8 @@ model Lesson {
   updatedAt         DateTime             @updatedAt
   course            Course               @relation(fields: [courseId], references: [id], onDelete: Cascade)
   courseId          String
+  section           CourseSection?       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  sectionId         String?
   exercises         Exercise[]
   tests             Test[]
   currentInProgress UserCourseProgress?

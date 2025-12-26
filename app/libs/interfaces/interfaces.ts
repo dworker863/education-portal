@@ -51,6 +51,7 @@ export interface ICourse {
   meta: JsonValue;
   createdAt: Date;
   updatedAt: Date;
+  sections?: ICourseSection[];
   lessons?: (ILesson | ILessonPartial)[];
   usersProgress?: (IUserCourseProgress | IUserCourseProgressPartial)[];
   prizeTickets?: (IPrizeTicket | IPrizeTicketPartial)[];
@@ -59,6 +60,17 @@ export interface ICourse {
 export interface ICoursePartial {
   id: string;
   name: string;
+}
+
+export interface ICourseSection {
+  id: string;
+  title: string;
+  order: number;
+  courseId: string;
+  course: ICourse;
+  lessons: ILesson[];
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IUserCourseProgress {
@@ -101,6 +113,8 @@ export interface ILesson {
   updatedAt: Date;
   course?: ICourse | ICoursePartial;
   courseId: string;
+  section?: ICourseSection | null;
+  sectionId: string | null;
   exercises?: (IExercise | IExercisePartial)[];
   tests?: (ITest | ITestPartial)[];
   completedByUsers?: (IUserCourseProgress | IUserCourseProgressPartial)[];

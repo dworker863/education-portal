@@ -73,6 +73,12 @@ export const getLessonWithExercisesById = async (id: string) => {
         id,
       },
       include: {
+        section: {
+          include: {
+            course: true,
+            lessons: true,
+          },
+        },
         exercises: true,
         tests: true,
       },

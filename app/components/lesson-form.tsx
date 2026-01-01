@@ -96,8 +96,7 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
           );
 
           if (section) {
-            formData.append('sectionId', section.id);
-            console.log('section', section.id);
+            formData.append('section', section.id);
           }
         }
 

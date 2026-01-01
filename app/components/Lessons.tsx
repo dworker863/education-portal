@@ -2,7 +2,7 @@
 
 import React, { FC, memo, useContext, useEffect, useState } from 'react';
 import LessonForm from './lesson-form';
-import { ILessonPartial } from '../libs/interfaces/interfaces';
+import { ICourseSection, ILessonPartial } from '../libs/interfaces/interfaces';
 import Link from 'next/link';
 import LessonFormWrapper from './lesson-form-wrapper';
 import slugify from 'slugify';
@@ -14,10 +14,11 @@ import Spinner from './spinner';
 type TLessonsProps = {
   courseId?: string;
   lessons?: ILessonPartial[];
+  sections?: ICourseSection[];
   name: string;
 };
 
-const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
+const Lessons: FC<TLessonsProps> = ({ courseId, lessons, sections, name }) => {
   const confirmationContext = useContext(ConfirmationContext);
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
@@ -80,29 +81,47 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, name }) => {
       ) : (
         <section>
           <LessonForm courseId={courseId} mode="create" />
-          <ol className="px-5 list-decimal">
-            {lessons &&
-              lessons.length > 0 &&
-              lessons.map((lesson) => {
-                const lessonName = slugify(lesson.name, { locale: 'ru' });
-                return (
-                  <li key={lesson.id + lesson.name}>
-                    <div className="mb-5">
-                      <Link
-                        href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
-                      >
-                        {lesson.name}
-                      </Link>
-                      <LessonFormWrapper
-                        lessonId={lesson.id}
-                        deleteLessonHandler={deleteLessonHandler}
-                        setLessonId={setLessonId}
-                      />
-                    </div>
-                  </li>
-                );
-              })}
-          </ol>
+          {sections &&
+            sections.length > 0 &&
+            sections.map((section) => {
+              return (
+                <>
+                  <h2
+                    key={section.id}
+                    className="mt-5 mb-2 text-lg text-customAccent"
+                  >
+                    {section.title}
+                  </h2>
+                  <div className="ml-4">
+                    <ol className="px-5 list-decimal">
+                      {section.lessons &&
+                        section.lessons.length > 0 &&
+                        section.lessons.map((lesson) => {
+                          const lessonName = slugify(lesson.name, {
+                            locale: 'ru',
+                          });
+                          return (
+                            <li key={lesson.id + lesson.name}>
+                              <div className="mb-5">
+                                <Link
+                                  href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
+                                >
+                                  {lesson.name}
+                                </Link>
+                                <LessonFormWrapper
+                                  lessonId={lesson.id}
+                                  deleteLessonHandler={deleteLessonHandler}
+                                  setLessonId={setLessonId}
+                                />
+                              </div>
+                            </li>
+                          );
+                        })}
+                    </ol>
+                  </div>
+                </>
+              );
+            })}
         </section>
       )}
     </>

@@ -9,7 +9,10 @@ export const registrationSchema = z
     password: z
       .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
-      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/, 'Пароль должен содержать как буквы, так и цифры'),
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
+        'Пароль должен содержать как буквы, так и цифры',
+      ),
     confirmPassword: z.string(),
     firstName: z.string().optional(),
     lastName: z.string().optional(),
@@ -17,9 +20,12 @@ export const registrationSchema = z
     referralCode: z.string().optional(),
     image: z
       .any()
-      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-        message: 'Файл должен быть валидным',
-      })
+      .refine(
+        (file) => !file || file instanceof File || file[0] instanceof File,
+        {
+          message: 'Файл должен быть валидным',
+        },
+      )
       .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
         message: 'Файл не должен быть пустым',
       })
@@ -56,7 +62,10 @@ export const newPasswordSchema = z
     password: z
       .string()
       .min(8, { message: 'Пароль должен содержать не менее 8 символов' })
-      .regex(/^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/, 'Пароль должен содержать как буквы, так и цифры'),
+      .regex(
+        /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]+$/,
+        'Пароль должен содержать как буквы, так и цифры',
+      ),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -67,12 +76,23 @@ export const newPasswordSchema = z
 export const createCourseSchema = z.object({
   name: z.string().min(1, { message: 'Введите название курса' }),
   description: z.string().min(1, { message: 'Введите описание курса' }),
+  sections: z
+    .array(
+      z.object({
+        name: z.string().min(1, { message: 'Введите название секции' }),
+        order: z.number().min(1, { message: 'Введите порядок секции' }),
+      }),
+    )
+    .optional(),
   icon: z
     .any()
     .refine((file) => file, { message: 'Вставьте изображение для курса' })
-    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
-      message: 'Файл должен быть валидным',
-    })
+    .refine(
+      (file) => file && (file instanceof File || file[0] instanceof File),
+      {
+        message: 'Файл должен быть валидным',
+      },
+    )
     .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
       message: 'Файл не должен быть пустым',
     })
@@ -86,9 +106,37 @@ export const createCourseSchema = z.object({
       },
       { message: 'Вставьте изображение' },
     ),
-  priceUSD: z.number({ invalid_type_error: 'Введите число' }).min(0, { message: 'Введите цену курса' }),
+  priceUSD: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(0, { message: 'Введите цену курса' }),
   category: z.string().min(1, { message: 'Введите категорию курса' }),
 });
+
+export const editCourseSchema = createCourseSchema
+  .extend({
+    icon: z
+      .any()
+      .refine(
+        (file) => !file || file instanceof File || file[0] instanceof File,
+        {
+          message: 'Файл должен быть валидным',
+        },
+      )
+      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
+        message: 'Файл не должен быть пустым',
+      })
+      .refine(
+        (file) => {
+          if (file instanceof File) {
+            return file.type && file.type.includes('image');
+          }
+
+          return !file || (file[0]?.type && file[0].type.includes('image'));
+        },
+        { message: 'Вставьте изображение' },
+      ),
+  })
+  .partial();
 
 export const editProfileSchema = z.object({
   name: z.string().optional(),
@@ -97,9 +145,12 @@ export const editProfileSchema = z.object({
   birthDate: z.coerce.date().optional(),
   image: z
     .any()
-    .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-      message: 'Файл должен быть валидным',
-    })
+    .refine(
+      (file) => !file || file instanceof File || file[0] instanceof File,
+      {
+        message: 'Файл должен быть валидным',
+      },
+    )
     .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
       message: 'Файл не должен быть пустым',
     })
@@ -117,29 +168,6 @@ export const editProfileSchema = z.object({
     .optional(),
   code: z.string({ message: 'Неверный код подтвеждения' }).optional(),
 });
-
-export const editCourseSchema = createCourseSchema
-  .extend({
-    icon: z
-      .any()
-      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-        message: 'Файл должен быть валидным',
-      })
-      .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
-        message: 'Файл не должен быть пустым',
-      })
-      .refine(
-        (file) => {
-          if (file instanceof File) {
-            return file.type && file.type.includes('image');
-          }
-
-          return !file || (file[0]?.type && file[0].type.includes('image'));
-        },
-        { message: 'Вставьте изображение' },
-      ),
-  })
-  .partial();
 
 export const createLessonSchema = z.object({
   name: z.string().min(1, { message: 'Введите название урока' }),
@@ -166,9 +194,12 @@ export const createLessonSchema = z.object({
     .optional(),
   video: z
     .any()
-    .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-      message: 'Файл должен быть валидным',
-    })
+    .refine(
+      (file) => !file || file instanceof File || file[0] instanceof File,
+      {
+        message: 'Файл должен быть валидным',
+      },
+    )
     .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
       message: 'Файл не должен быть пустым',
     })
@@ -197,7 +228,9 @@ export const createExerciseSchema = z.object({
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.string().optional(),
-  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(5, { message: 'Укажите баллы за задание' }),
+  prizePoints: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(5, { message: 'Укажите баллы за задание' }),
   lessonId: z.string().optional(),
 });
 
@@ -213,11 +246,15 @@ export const exercisesFiltersSchema = z.object({
 const baseTestSchema = z.object({
   name: z.string().min(1, { message: 'Введите название задания' }),
   task: z.string().min(1, { message: 'Введите задание' }),
-  variants: z.array(z.string().min(1, { message: 'Вариант не может быть пустым' })),
+  variants: z.array(
+    z.string().min(1, { message: 'Вариант не может быть пустым' }),
+  ),
   solution: z.string().min(1, { message: 'Укажите решение' }),
   language: z.string().min(1, { message: 'Укажите язык программирования' }),
   requiredRank: z.string().optional(),
-  prizePoints: z.number({ invalid_type_error: 'Введите число' }).min(5, { message: 'Укажите баллы за задание' }),
+  prizePoints: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(5, { message: 'Укажите баллы за задание' }),
   lessonId: z.string().optional(),
 });
 
@@ -297,9 +334,12 @@ export const rewardSchema = z.object({
   icon: z
     .any()
     .refine((file) => file, { message: 'Вставьте изображение для достижения' })
-    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
-      message: 'Файл должен быть валидным',
-    })
+    .refine(
+      (file) => file && (file instanceof File || file[0] instanceof File),
+      {
+        message: 'Файл должен быть валидным',
+      },
+    )
     .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
       message: 'Файл не должен быть пустым',
     })
@@ -317,7 +357,10 @@ export const rewardSchema = z.object({
     .number({ invalid_type_error: 'Введите число' })
     .min(1, { message: 'Введите количество месяцев подписки' })
     .optional(),
-  percent: z.number({ invalid_type_error: 'Введите число' }).min(1, { message: 'Введите процент скидки' }).optional(),
+  percent: z
+    .number({ invalid_type_error: 'Введите число' })
+    .min(1, { message: 'Введите процент скидки' })
+    .optional(),
 });
 
 export const createAchievementSchema = z.object({
@@ -326,9 +369,12 @@ export const createAchievementSchema = z.object({
   icon: z
     .any()
     .refine((file) => file, { message: 'Вставьте изображение для достижения' })
-    .refine((file) => file && (file instanceof File || file[0] instanceof File), {
-      message: 'Файл должен быть валидным',
-    })
+    .refine(
+      (file) => file && (file instanceof File || file[0] instanceof File),
+      {
+        message: 'Файл должен быть валидным',
+      },
+    )
     .refine((file) => file && (file.size > 0 || file[0]?.size > 0), {
       message: 'Файл не должен быть пустым',
     })
@@ -359,9 +405,12 @@ export const editAchievementSchema = createAchievementSchema
   .extend({
     icon: z
       .any()
-      .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-        message: 'Файл должен быть валидным',
-      })
+      .refine(
+        (file) => !file || file instanceof File || file[0] instanceof File,
+        {
+          message: 'Файл должен быть валидным',
+        },
+      )
       .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
         message: 'Файл не должен быть пустым',
       })
@@ -380,9 +429,12 @@ export const editAchievementSchema = createAchievementSchema
       .extend({
         icon: z
           .any()
-          .refine((file) => !file || file instanceof File || file[0] instanceof File, {
-            message: 'Файл должен быть валидным',
-          })
+          .refine(
+            (file) => !file || file instanceof File || file[0] instanceof File,
+            {
+              message: 'Файл должен быть валидным',
+            },
+          )
           .refine((file) => !file || file.size > 0 || file[0]?.size > 0, {
             message: 'Файл не должен быть пустым',
           })
@@ -427,7 +479,14 @@ const subscriptionFiltersSchema = z.object({
 
 export const achievementsFiltersSchema = z.object({
   criteriaType: z
-    .array(z.enum(['EXERCISE_COMPLETION', 'COURSE_COMPLETION', 'COURSE_REGISTRATION', 'SUBSCRIPTION']))
+    .array(
+      z.enum([
+        'EXERCISE_COMPLETION',
+        'COURSE_COMPLETION',
+        'COURSE_REGISTRATION',
+        'SUBSCRIPTION',
+      ]),
+    )
     .optional(),
   criteriaTypeFilters: z
     .array(
@@ -445,7 +504,9 @@ export const achievementsFiltersSchema = z.object({
 const basePrizeTicketSchema = z.object({
   code: z.string().min(3, 'Код должен содержать минимум 3 символа'),
   name: z.string().optional(),
-  type: z.nativeEnum(PrizeTicketType, { errorMap: () => ({ message: 'Неверный тип билета' }) }),
+  type: z.nativeEnum(PrizeTicketType, {
+    errorMap: () => ({ message: 'Неверный тип билета' }),
+  }),
   percent: z.number().min(0).max(100).optional(),
   months: z.number().min(1).optional(),
   minAmountToActivate: z.number().min(0).optional(),
@@ -461,7 +522,8 @@ export const createPrizeTicketSchema = basePrizeTicketSchema.refine(
     data.validUntil >= data.validFrom &&
     data.validUntil <= addMonths(data.validFrom, 1),
   {
-    message: 'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
+    message:
+      'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
     path: ['validUntil'],
   },
 );
@@ -472,9 +534,11 @@ export const editPrizeTicketSchema = basePrizeTicketSchema
     (data) =>
       !data.validFrom ||
       !data.validUntil ||
-      (data.validUntil >= data.validFrom && data.validUntil <= addMonths(data.validFrom, 1)),
+      (data.validUntil >= data.validFrom &&
+        data.validUntil <= addMonths(data.validFrom, 1)),
     {
-      message: 'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
+      message:
+        'Дата окончания не должна быть раньше даты начала и не больше чем через месяц',
       path: ['validUntil'],
     },
   );

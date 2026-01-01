@@ -11,14 +11,22 @@ type TCourseFormWrapperProps = {
   setCourseId: Dispatch<React.SetStateAction<string | null>>;
 };
 
-const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({ courseId, deleteCourseHandler, setCourseId }) => {
+const CourseFormWrapper: FC<TCourseFormWrapperProps> = ({
+  courseId,
+  deleteCourseHandler,
+  setCourseId,
+}) => {
   const [showEditForm, setShowEditForm] = useState(false);
 
   return (
     <>
       <div className="flex justify-between mb-5">
         <div className="flex gap-2">
-          <Button variant="custom" className="ml-4" onClick={() => setShowEditForm(!showEditForm)}>
+          <Button
+            variant="custom"
+            className="ml-4"
+            onClick={() => setShowEditForm(!showEditForm)}
+          >
             <FaEdit size={22} />
             <span className="ml-2">Редактировать</span>
           </Button>

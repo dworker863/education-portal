@@ -1,11 +1,33 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { FC, memo, useEffect, useMemo, useState, useTransition } from 'react';
-import { Controller, useFieldArray, useForm, UseFormReturn } from 'react-hook-form';
-import { createAchievementSchema, editAchievementSchema } from '../libs/validation';
+import React, {
+  FC,
+  memo,
+  useEffect,
+  useMemo,
+  useState,
+  useTransition,
+} from 'react';
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  UseFormReturn,
+} from 'react-hook-form';
+import {
+  createAchievementSchema,
+  editAchievementSchema,
+} from '../libs/validation';
 import { z } from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from './form';
 import { Input } from '@/app/components/input';
 import { Textarea } from './textarea';
 import Dropzone from 'react-dropzone';
@@ -16,7 +38,13 @@ import ErrorMessage from './error-message';
 import { Button } from './button';
 import SuccessMessage from './success-message';
 import { useRouter } from 'next/navigation';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 import { Checkbox } from './checkbox';
 import { RadioGroup, RadioGroupItem } from './radio-group';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
@@ -31,7 +59,13 @@ type TAchievementFormProps = {
   achievementId?: string;
 };
 
-const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+const ExerciseCompletionFields = ({
+  form,
+  prefix = '',
+}: {
+  form: UseFormReturn<any>;
+  prefix: string;
+}) => {
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Выполнение упражнений</h3>
@@ -46,7 +80,8 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
                 type="number"
                 placeholder="Колличество упражнений"
                 {...form.register(`${prefix}.count`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -78,7 +113,8 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
                 type="number"
                 placeholder="Колличество призовых баллов"
                 {...form.register(`${prefix}.pointsToComplete`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -103,7 +139,13 @@ const ExerciseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<a
   );
 };
 
-const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+const CourseCompletionFields = ({
+  form,
+  prefix = '',
+}: {
+  form: UseFormReturn<any>;
+  prefix: string;
+}) => {
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Завершение курсов</h3>
@@ -118,7 +160,9 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
                 placeholder="Введите id курсов через запятую"
                 {...form.register(`${prefix}.courseNames`, {
                   setValueAs: (value) =>
-                    typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
+                    typeof value === 'string' && value !== ''
+                      ? value.split(',').map((item) => item.trim())
+                      : [],
                 })}
               />
             </FormControl>
@@ -137,7 +181,8 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
                 type="number"
                 placeholder="Минимальная цена курса"
                 {...form.register(`${prefix}.minPrice`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -156,7 +201,8 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
                 type="number"
                 placeholder="Максимальная цена курса"
                 {...form.register(`${prefix}.maxPrice`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -181,7 +227,13 @@ const CourseCompletionFields = ({ form, prefix = '' }: { form: UseFormReturn<any
   );
 };
 
-const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<any>; prefix: string }) => {
+const CourseRegistrationFields = ({
+  form,
+  prefix = '',
+}: {
+  form: UseFormReturn<any>;
+  prefix: string;
+}) => {
   return (
     <div className="space-y-4 border p-4 rounded-lg">
       <h3 className="font-medium">Регистрация в курсах</h3>
@@ -196,7 +248,9 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
                 placeholder="Курсы"
                 {...form.register(`${prefix}.courseNames`, {
                   setValueAs: (value) =>
-                    typeof value === 'string' && value !== '' ? value.split(',').map((item) => item.trim()) : [],
+                    typeof value === 'string' && value !== ''
+                      ? value.split(',').map((item) => item.trim())
+                      : [],
                 })}
               />
             </FormControl>
@@ -215,7 +269,8 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
                 type="number"
                 placeholder="Минимальная цена курса"
                 {...form.register(`${prefix}.minPrice`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -234,7 +289,8 @@ const CourseRegistrationFields = ({ form, prefix = '' }: { form: UseFormReturn<a
                 type="number"
                 placeholder="Максимальная цена курса"
                 {...form.register(`${prefix}.maxPrice`, {
-                  setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                  setValueAs: (value) =>
+                    value === '' ? undefined : Number(value),
                 })}
               />
             </FormControl>
@@ -314,11 +370,17 @@ const SubscriptionFields = ({
   );
 };
 
-const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => {
+const AchievementForm: FC<TAchievementFormProps> = ({
+  mode,
+  achievementId,
+}) => {
   const [isPending, startTransiton] = useTransition();
   const router = useRouter();
 
-  const schema = useMemo(() => (mode === 'create' ? createAchievementSchema : editAchievementSchema), [mode]);
+  const schema = useMemo(
+    () => (mode === 'create' ? createAchievementSchema : editAchievementSchema),
+    [mode],
+  );
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -372,7 +434,13 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
     remove: removeConfition,
   } = useFieldArray({ control: form.control, name: 'criteria.conditions' });
 
-  const addCondition = (type: 'EXERCISE_COMPLETION' | 'COURSE_COMPLETION' | 'COURSE_REGISTRATION' | 'SUBSCRIPTION') => {
+  const addCondition = (
+    type:
+      | 'EXERCISE_COMPLETION'
+      | 'COURSE_COMPLETION'
+      | 'COURSE_REGISTRATION'
+      | 'SUBSCRIPTION',
+  ) => {
     switch (type) {
       case 'EXERCISE_COMPLETION':
         appendCondition({
@@ -443,7 +511,12 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
 
         for (const key in values) {
           const value = values[key as keyof typeof values];
-          if (key !== 'reward' && key !== 'criteria' && key !== 'icon' && value !== undefined) {
+          if (
+            key !== 'reward' &&
+            key !== 'criteria' &&
+            key !== 'icon' &&
+            value !== undefined
+          ) {
             formData.append(key, value);
           }
         }
@@ -484,9 +557,15 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
   return (
     <>
       {mode === 'create' ? (
-        <Button variant="custom" className="mb-5" onClick={() => setShowForm(!showForm)}>
+        <Button
+          variant="custom"
+          className="mb-5"
+          onClick={() => setShowForm(!showForm)}
+        >
           <FaPlus size={20} />
-          <span className="ml-2">{!showForm ? 'Добавить Достижение' : 'Скрыть'}</span>
+          <span className="ml-2">
+            {!showForm ? 'Добавить Достижение' : 'Скрыть'}
+          </span>
         </Button>
       ) : null}
       {showForm && (
@@ -517,7 +596,11 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                   <FormLabel>Условия</FormLabel>
                   {mode === 'create' && <RequiredSign />}
                   <FormControl>
-                    <Textarea placeholder="Условия достижения" rows={5} {...field} />
+                    <Textarea
+                      placeholder="Условия достижения"
+                      rows={5}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -545,21 +628,36 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input type="file" accept="image/*" {...getInputProps()} />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              {...getInputProps()}
+                            />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base">
-                              <p className="text-muted-foreground">Загрузите изображение</p>
-                              <FaPlus className="text-customPrimary" size={20} />
+                              <p className="text-muted-foreground">
+                                Загрузите изображение
+                              </p>
+                              <FaPlus
+                                className="text-customPrimary"
+                                size={20}
+                              />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
+                            <Thumbnails
+                              field={field.name}
+                              thumbnails={field.value}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.icon && (
-                    <p className="text-destructive text-sm mt-2">{form.formState.errors.icon.message as string}</p>
+                    <p className="text-destructive text-sm mt-2">
+                      {form.formState.errors.icon.message as string}
+                    </p>
                   )}
                   <FormMessage />
                 </FormItem>
@@ -582,12 +680,19 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                             !field.value && 'text-muted-foreground',
                           )}
                         >
-                          {field.value ? format(field.value, 'd MMMM yyyy', { locale: ru }) : <span>Укажите дату</span>}
+                          {field.value ? (
+                            format(field.value, 'd MMMM yyyy', { locale: ru })
+                          ) : (
+                            <span>Укажите дату</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-customBlock" align="start">
+                    <PopoverContent
+                      className="w-auto p-0 bg-customBlock"
+                      align="start"
+                    >
                       <Calendar
                         mode="single"
                         selected={field.value}
@@ -623,12 +728,19 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                             !field.value && 'text-muted-foreground',
                           )}
                         >
-                          {field.value ? format(field.value, 'd MMMM yyyy', { locale: ru }) : <span>Укажите дату</span>}
+                          {field.value ? (
+                            format(field.value, 'd MMMM yyyy', { locale: ru })
+                          ) : (
+                            <span>Укажите дату</span>
+                          )}
                           <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                         </Button>
                       </FormControl>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-customBlock" align="start">
+                    <PopoverContent
+                      className="w-auto p-0 bg-customBlock"
+                      align="start"
+                    >
                       <Calendar
                         mode="single"
                         selected={field.value}
@@ -660,16 +772,25 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                 <FormItem>
                   <FormLabel className="text-base">Тип достижения</FormLabel>
                   {mode === 'create' && <RequiredSign />}
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
                     <FormControl className="w-[300px]">
                       <SelectTrigger>
                         <SelectValue placeholder="Выберите тип достижения" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="EXERCISE_COMPLETION">EXERCISE_COMPLETION</SelectItem>
-                      <SelectItem value="COURSE_COMPLETION">COURSE_COMPLETION</SelectItem>
-                      <SelectItem value="COURSE_REGISTRATION">COURSE_REGISTRATION</SelectItem>
+                      <SelectItem value="EXERCISE_COMPLETION">
+                        EXERCISE_COMPLETION
+                      </SelectItem>
+                      <SelectItem value="COURSE_COMPLETION">
+                        COURSE_COMPLETION
+                      </SelectItem>
+                      <SelectItem value="COURSE_REGISTRATION">
+                        COURSE_REGISTRATION
+                      </SelectItem>
                       <SelectItem value="SUBSCRIPTION">SUBSCRIPTION</SelectItem>
                     </SelectContent>
                   </Select>
@@ -677,11 +798,19 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
               )}
             />
 
-            {criteriaType === 'EXERCISE_COMPLETION' && <ExerciseCompletionFields form={form} prefix="criteria" />}
-            {criteriaType === 'COURSE_COMPLETION' && <CourseCompletionFields form={form} prefix="criteria" />}
-            {criteriaType === 'COURSE_REGISTRATION' && <CourseRegistrationFields form={form} prefix="criteria" />}
+            {criteriaType === 'EXERCISE_COMPLETION' && (
+              <ExerciseCompletionFields form={form} prefix="criteria" />
+            )}
+            {criteriaType === 'COURSE_COMPLETION' && (
+              <CourseCompletionFields form={form} prefix="criteria" />
+            )}
+            {criteriaType === 'COURSE_REGISTRATION' && (
+              <CourseRegistrationFields form={form} prefix="criteria" />
+            )}
 
-            {criteriaType === 'SUBSCRIPTION' && <SubscriptionFields form={form} prefix="criteria" mode={mode} />}
+            {criteriaType === 'SUBSCRIPTION' && (
+              <SubscriptionFields form={form} prefix="criteria" mode={mode} />
+            )}
 
             <div className="space-y-4 border p-4 rounded-lg">
               <h3 className="font-medium">Награда</h3>
@@ -705,7 +834,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                               value="DISCOUNT"
                             />
                           </FormControl>
-                          <FormLabel className="font-normal">DISCOUNT</FormLabel>
+                          <FormLabel className="font-normal">
+                            DISCOUNT
+                          </FormLabel>
                         </FormItem>
                         <FormItem className="flex items-center space-x-3 space-y-0">
                           <FormControl>
@@ -714,7 +845,9 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                               value="SUBSCRIPTION"
                             />
                           </FormControl>
-                          <FormLabel className="font-normal">SUBSCRIPTION</FormLabel>
+                          <FormLabel className="font-normal">
+                            SUBSCRIPTION
+                          </FormLabel>
                         </FormItem>
                       </RadioGroup>
                     </FormControl>
@@ -739,15 +872,32 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                       >
                         {({ getRootProps, getInputProps }) => (
                           <section className="container ">
-                            <div {...getRootProps({ className: 'dropzone disabled' })}>
-                              <input type="file" accept="image/*" {...getInputProps()} />
+                            <div
+                              {...getRootProps({
+                                className: 'dropzone disabled',
+                              })}
+                            >
+                              <input
+                                type="file"
+                                accept="image/*"
+                                {...getInputProps()}
+                              />
                               <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
-                                <p className=" text-muted-foreground text">Загрузите изображение</p>
-                                <FaPlus className="text-customPrimary" size={20} />
+                                <p className=" text-muted-foreground text">
+                                  Загрузите изображение
+                                </p>
+                                <FaPlus
+                                  className="text-customPrimary"
+                                  size={20}
+                                />
                               </div>
                             </div>
                             {field.value && (
-                              <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
+                              <Thumbnails
+                                field={field.name}
+                                thumbnails={field.value}
+                                closeBtnHandler={form.setValue}
+                              />
                             )}
                           </section>
                         )}
@@ -775,7 +925,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           placeholder="Количество месяцев"
                           {...form.register('reward.months', {
                             valueAsNumber: mode === 'create',
-                            setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                            setValueAs: (value) =>
+                              value === '' ? undefined : Number(value),
                           })}
                         />
                       </FormControl>
@@ -798,7 +949,8 @@ const AchievementForm: FC<TAchievementFormProps> = ({ mode, achievementId }) => 
                           placeholder="% скидки"
                           {...form.register('reward.percent', {
                             valueAsNumber: mode === 'create',
-                            setValueAs: (value) => (value === '' ? undefined : Number(value)),
+                            setValueAs: (value) =>
+                              value === '' ? undefined : Number(value),
                           })}
                         />
                       </FormControl>

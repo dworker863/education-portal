@@ -8,9 +8,10 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const images = formData.getAll('images');
-    const values: Record<string, FormDataEntryValue | FormDataEntryValue[]> = Object.fromEntries(
-      [...formData.entries()].filter(([key]) => key !== 'images'),
-    );
+    const values: Record<string, FormDataEntryValue | FormDataEntryValue[]> =
+      Object.fromEntries(
+        [...formData.entries()].filter(([key]) => key !== 'images'),
+      );
 
     values.images = images;
 
@@ -19,11 +20,17 @@ export async function POST(request: NextRequest) {
     const existingLesson = await getLessonByName(values.name as string);
 
     if (existingLesson && existingLesson.courseId === data?.courseId) {
-      return NextResponse.json({ error: 'Урок с таким названием уже существует' }, { status: 409 });
+      return NextResponse.json(
+        { error: 'Урок с таким названием уже существует' },
+        { status: 409 },
+      );
     }
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
@@ -40,7 +47,9 @@ export async function POST(request: NextRequest) {
         }),
       );
 
-      const hasError = uploadImagesResult.some((result) => result instanceof Error);
+      const hasError = uploadImagesResult.some(
+        (result) => result instanceof Error,
+      );
 
       if (hasError) {
         return NextResponse.json(
@@ -51,28 +60,39 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      uploadImagesResult = uploadImagesResult.filter((result) => typeof result === 'string');
+      uploadImagesResult = uploadImagesResult.filter(
+        (result) => typeof result === 'string',
+      );
     }
 
     if (data.video) {
       uploadVideoResult = await fileUpload(data.video);
 
       if (uploadVideoResult instanceof Error) {
-        return NextResponse.json({ error: uploadVideoResult.message }, { status: 400 });
+        return NextResponse.json(
+          { error: uploadVideoResult.message },
+          { status: 400 },
+        );
       }
     }
+
+    console.log('data.section', data.section);
 
     await prisma.lesson.create({
       data: {
         name: data.name,
         content: data.content,
+        sectionId: data.section || null,
         images: uploadImagesResult || [],
         video: uploadVideoResult || null,
         courseId: data.courseId,
       },
     });
 
-    return NextResponse.json({ success: 'Урок успешно добавлен' }, { status: 200 });
+    return NextResponse.json(
+      { success: 'Урок успешно добавлен' },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Ошибка при создании урока: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });
@@ -84,15 +104,19 @@ export async function PATCH(request: NextRequest) {
     const formData = await request.formData();
 
     const images = formData.getAll('images');
-    const values: Record<string, FormDataEntryValue | FormDataEntryValue[]> = Object.fromEntries(
-      [...formData.entries()].filter(([key]) => key !== 'images'),
-    );
+    const values: Record<string, FormDataEntryValue | FormDataEntryValue[]> =
+      Object.fromEntries(
+        [...formData.entries()].filter(([key]) => key !== 'images'),
+      );
 
     values.images = images;
     const lessonId = values.id;
 
     if (!lessonId) {
-      return NextResponse.json({ error: 'Не указан ID урока' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Не указан ID урока' },
+        { status: 400 },
+      );
     }
 
     const existingLesson = await getLessonById(lessonId as string);
@@ -104,7 +128,10 @@ export async function PATCH(request: NextRequest) {
     const { data, ...parsedResult } = await editLessonSchema.safeParse(values);
 
     if (!parsedResult.success) {
-      return NextResponse.json({ error: parsedResult.error.issues[0].message }, { status: 400 });
+      return NextResponse.json(
+        { error: parsedResult.error.issues[0].message },
+        { status: 400 },
+      );
     }
 
     if (!data) {
@@ -124,8 +151,15 @@ export async function PATCH(request: NextRequest) {
     if (updatedData.name) {
       const lesson = await getLessonByName(updatedData.name);
 
-      if (lesson && lesson.courseId === data?.courseId && lessonId !== lesson.id) {
-        return NextResponse.json({ error: 'Урок с таким названием уже существует' }, { status: 409 });
+      if (
+        lesson &&
+        lesson.courseId === data?.courseId &&
+        lessonId !== lesson.id
+      ) {
+        return NextResponse.json(
+          { error: 'Урок с таким названием уже существует' },
+          { status: 409 },
+        );
       }
     }
 
@@ -136,7 +170,9 @@ export async function PATCH(request: NextRequest) {
         }),
       );
 
-      const hasError = uploadImagesResult.some((result) => result instanceof Error);
+      const hasError = uploadImagesResult.some(
+        (result) => result instanceof Error,
+      );
 
       if (hasError) {
         return NextResponse.json(
@@ -154,7 +190,10 @@ export async function PATCH(request: NextRequest) {
       const uploadVideoResult = await fileUpload(data.video);
 
       if (uploadVideoResult instanceof Error) {
-        return NextResponse.json({ error: uploadVideoResult.message }, { status: 400 });
+        return NextResponse.json(
+          { error: uploadVideoResult.message },
+          { status: 400 },
+        );
       }
 
       updatedData.video = uploadVideoResult;
@@ -165,7 +204,10 @@ export async function PATCH(request: NextRequest) {
       data: updatedData,
     });
 
-    return NextResponse.json({ success: 'Урок успешно изменен' }, { status: 200 });
+    return NextResponse.json(
+      { success: 'Урок успешно изменен' },
+      { status: 200 },
+    );
   } catch (error) {
     console.error('Ошибка при обновлении урока: ', error);
     return NextResponse.json({ error: 'Что-то пошло не так' }, { status: 500 });

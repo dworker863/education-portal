@@ -1,6 +1,13 @@
 'use client';
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/app/components/form';
 import { z } from 'zod';
 import { Controller, useForm } from 'react-hook-form';
 import { createLessonSchema, editLessonSchema } from '../libs/validation';
@@ -16,6 +23,7 @@ import Dropzone from 'react-dropzone';
 import Thumbnails from './thumbnails';
 import RequiredSign from './required-sign';
 import { useRouter } from 'next/navigation';
+import { getSectionByNameAndCourseId } from '../libs/server-actions/sections-actions';
 
 type TLessonFormProps = {
   mode: 'create' | 'edit';
@@ -32,13 +40,17 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   const [files, setFiles] = useState<File[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const schema = useMemo(() => (mode === 'create' ? createLessonSchema : editLessonSchema), [mode]);
+  const schema = useMemo(
+    () => (mode === 'create' ? createLessonSchema : editLessonSchema),
+    [mode],
+  );
 
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: mode === 'create' ? '' : undefined,
       content: mode === 'create' ? '' : undefined,
+      section: mode === 'create' ? '' : undefined,
       images: null,
       video: null,
       courseId,
@@ -57,7 +69,12 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
         for (const key in values) {
           const value = values[key as keyof typeof values];
 
-          if (key !== 'images' && key !== 'video' && value !== undefined) {
+          if (
+            key !== 'images' &&
+            key !== 'video' &&
+            key !== 'section' &&
+            value !== undefined
+          ) {
             formData.append(key, value);
           }
         }
@@ -70,6 +87,18 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
 
         if (values.video) {
           formData.append('video', values.video[0]);
+        }
+
+        if (courseId && values.section) {
+          const section = await getSectionByNameAndCourseId(
+            values.section,
+            courseId,
+          );
+
+          if (section) {
+            formData.append('sectionId', section.id);
+            console.log('section', section.id);
+          }
         }
 
         const res = await fetch('/api/lesson', {
@@ -103,7 +132,11 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
   return (
     <>
       {mode === 'create' ? (
-        <Button variant="custom" className="mb-5" onClick={() => setShowForm(!showForm)}>
+        <Button
+          variant="custom"
+          className="mb-5"
+          onClick={() => setShowForm(!showForm)}
+        >
           <FaPlus size={20} />
           <span className="ml-2">{!showForm ? 'Добавить Урок' : 'Скрыть'}</span>
         </Button>
@@ -143,6 +176,19 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                 </FormItem>
               )}
             />
+            <FormField
+              control={form.control}
+              name="section"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Раздел</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Раздел" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <Controller
               control={form.control}
               name="images"
@@ -152,7 +198,10 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   <FormControl>
                     <Dropzone
                       onDrop={(acceptedFiles) => {
-                        setFiles((prevFiles) => [...prevFiles, ...acceptedFiles]);
+                        setFiles((prevFiles) => [
+                          ...prevFiles,
+                          ...acceptedFiles,
+                        ]);
                         form.setValue('images', [...files, ...acceptedFiles], {
                           shouldValidate: true,
                         });
@@ -165,14 +214,28 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input type="file" accept="image/*" multiple {...getInputProps()} />
+                            <input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              {...getInputProps()}
+                            />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
-                              <p className=" text-muted-foreground">Загрузите изображение</p>
-                              <FaPlus className="text-customPrimary" size={20} />
+                              <p className=" text-muted-foreground">
+                                Загрузите изображение
+                              </p>
+                              <FaPlus
+                                className="text-customPrimary"
+                                size={20}
+                              />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails field={field.name} thumbnails={files} closeBtnHandler={form.setValue} />
+                            <Thumbnails
+                              field={field.name}
+                              thumbnails={files}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}
@@ -181,12 +244,17 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                   {form.formState.errors.images && (
                     <>
                       {form.formState.errors.images.message && (
-                        <p className="text-destructive text-sm mt-2">{form.formState.errors.images.message}</p>
+                        <p className="text-destructive text-sm mt-2">
+                          {form.formState.errors.images.message}
+                        </p>
                       )}
 
                       {Array.isArray(form.formState.errors.images) &&
                         form.formState.errors.images.map((error, index) => (
-                          <p key={index} className="text-destructive text-sm mt-2">
+                          <p
+                            key={index}
+                            className="text-destructive text-sm mt-2"
+                          >
                             {`Файл ${index + 1}: ${error?.message}`}
                           </p>
                         ))}
@@ -216,21 +284,36 @@ const LessonForm: FC<TLessonFormProps> = ({ mode, courseId, lessonId }) => {
                               className: 'dropzone disabled',
                             })}
                           >
-                            <input type="file" accept="video/*" {...getInputProps()} />
+                            <input
+                              type="file"
+                              accept="video/*"
+                              {...getInputProps()}
+                            />
                             <div className=" flex flex-col items-center gap-4 w-fit min-w-[275px] px-10 py-6 border border-customPrimary rounded-lg cursor-pointer text-base text-muted-foreground ">
-                              <p className=" text-muted-foreground text">Загрузите видео</p>
-                              <FaPlus className="text-customPrimary" size={20} />
+                              <p className=" text-muted-foreground text">
+                                Загрузите видео
+                              </p>
+                              <FaPlus
+                                className="text-customPrimary"
+                                size={20}
+                              />
                             </div>
                           </div>
                           {field.value && (
-                            <Thumbnails field={field.name} thumbnails={field.value} closeBtnHandler={form.setValue} />
+                            <Thumbnails
+                              field={field.name}
+                              thumbnails={field.value}
+                              closeBtnHandler={form.setValue}
+                            />
                           )}
                         </section>
                       )}
                     </Dropzone>
                   </FormControl>
                   {form.formState.errors.video && (
-                    <p className="text-destructive text-sm mt-2">{form.formState.errors.video.message as string}</p>
+                    <p className="text-destructive text-sm mt-2">
+                      {form.formState.errors.video.message as string}
+                    </p>
                   )}
                 </FormItem>
               )}

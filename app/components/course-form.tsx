@@ -60,6 +60,10 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
   } = useFieldArray({ control: form.control, name: 'sections' });
 
   const onSubmit = (values: z.infer<typeof schema>) => {
+    // console.log('Submitting form with values:', values.sections);
+
+    // return;
+
     startTransiton(async () => {
       try {
         const formData = new FormData();
@@ -68,10 +72,14 @@ const CourseForm: FC<TCourseFormProps> = ({ courseId, mode }) => {
           formData.append('id', courseId);
         }
 
+        if (values.sections && values.sections.length > 0) {
+          formData.append('sections', JSON.stringify(values.sections));
+        }
+
         for (const key in values) {
           const value = values[key as keyof typeof values];
 
-          if (key !== 'icon' && value !== undefined) {
+          if (key !== 'reward' && key !== 'sections' && value !== undefined) {
             formData.append(key, value);
           }
         }

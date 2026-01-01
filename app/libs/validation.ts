@@ -84,6 +84,7 @@ export const createCourseSchema = z.object({
       }),
     )
     .optional(),
+  // sections: z.any().optional(),
   icon: z
     .any()
     .refine((file) => file, { message: 'Вставьте изображение для курса' })

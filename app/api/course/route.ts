@@ -8,7 +8,27 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData);
+    const values: Record<string, any> = {};
+
+    if (formData.has('sections')) {
+      try {
+        const sectionsData = JSON.parse(formData.get('sections') as string);
+        console.log('Parsed sections data:', sectionsData);
+        values.sections = sectionsData;
+      } catch (error) {
+        console.error('Ошибка парсинга sections:', error);
+        return NextResponse.json(
+          { error: 'Некорректный формат sections' },
+          { status: 400 },
+        );
+      }
+    }
+
+    for (const [key, value] of formData.entries()) {
+      if (key !== 'sections') {
+        values[key] = value;
+      }
+    }
 
     const existingCourse = await getCourseByName(values.name as string);
 
@@ -59,6 +79,22 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    console.log('Received form data:', data.sections);
+
+    if (data.sections && data.sections.length > 0) {
+      const createdSections = await Promise.all(
+        data.sections.map(async (section, index) => {
+          return await prisma.courseSection.create({
+            data: {
+              title: section.name,
+              order: section.order,
+              courseId: createdCourse.id,
+            },
+          });
+        }),
+      );
+    }
+
     await indexCourse(createdCourse);
 
     return NextResponse.json(
@@ -74,7 +110,27 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const values = Object.fromEntries(formData);
+    const values: Record<string, any> = {};
+
+    if (formData.has('sections')) {
+      try {
+        const sectionsData = JSON.parse(formData.get('sections') as string);
+        values.sections = sectionsData;
+      } catch (error) {
+        console.error('Ошибка парсинга sections:', error);
+        return NextResponse.json(
+          { error: 'Некорректный формат sections' },
+          { status: 400 },
+        );
+      }
+    }
+
+    for (const [key, value] of formData.entries()) {
+      if (key !== 'sections') {
+        values[key] = value;
+      }
+    }
+
     const courseId = values.id;
 
     if (!courseId) {
@@ -149,6 +205,20 @@ export async function PATCH(request: NextRequest) {
       where: { id: courseId as string },
       data: updatedData,
     });
+
+    if (data.sections && data.sections.length > 0) {
+      const createdSections = await Promise.all(
+        data.sections.map(async (section, index) => {
+          return await prisma.courseSection.create({
+            data: {
+              title: section.name,
+              order: section.order,
+              courseId: updatedCourse.id,
+            },
+          });
+        }),
+      );
+    }
 
     await indexCourse(updatedCourse);
 

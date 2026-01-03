@@ -64,35 +64,35 @@ export const getCourseById = async (id: string) => {
   }
 };
 
-export const getCourseWithLessonsById = async (
-  id: string,
-): Promise<CoursePageData | null> => {
-  const sectionsCount = await prisma.courseSection.count({
-    where: { courseId: id },
-  });
-
-  if (sectionsCount === 0) {
-    const course = await prisma.course.findUnique({
-      where: { id },
-      include: { lessons: { orderBy: { createdAt: 'asc' } } },
+export const getCourseWithLessonsById = async (id: string) => {
+  try {
+    const sectionsCount = await prisma.courseSection.count({
+      where: { courseId: id },
     });
 
-    if (!course) return null;
-
-    return { ...course, sections: [] };
-  }
-
-  const course = await prisma.course.findUnique({
-    where: { id },
-    include: {
-      sections: {
-        orderBy: { order: 'asc' },
+    if (sectionsCount === 0) {
+      const course = await prisma.course.findUnique({
+        where: { id },
         include: { lessons: { orderBy: { createdAt: 'asc' } } },
+      });
+
+      return course as CoursePageData;
+    }
+
+    const course = await prisma.course.findUnique({
+      where: { id },
+      include: {
+        sections: {
+          orderBy: { order: 'asc' },
+          include: { lessons: { orderBy: { createdAt: 'asc' } } },
+        },
+        lessons: { orderBy: { createdAt: 'asc' } },
       },
-    },
-  });
+    });
 
-  if (!course) return null;
-
-  return { ...course, lessons: [] };
+    return course as CoursePageData;
+  } catch (error) {
+    console.error('Ошибка при получении курса с уроками по ID: ', error);
+    throw error;
+  }
 };

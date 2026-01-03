@@ -173,7 +173,7 @@ export const editProfileSchema = z.object({
 export const createLessonSchema = z.object({
   name: z.string().min(1, { message: 'Введите название урока' }),
   content: z.string().min(1, { message: 'Введите текст урока' }),
-  section: z.string().min(1, { message: 'Укажите секцию урока' }).optional(),
+  section: z.string().optional(),
   images: z
     .array(
       z

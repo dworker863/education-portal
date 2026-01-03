@@ -81,47 +81,73 @@ const Lessons: FC<TLessonsProps> = ({ courseId, lessons, sections, name }) => {
       ) : (
         <section>
           <LessonForm courseId={courseId} mode="create" />
-          {sections &&
-            sections.length > 0 &&
-            sections.map((section) => {
-              return (
-                <>
-                  <h2
-                    key={section.id}
-                    className="mt-5 mb-2 text-lg text-customAccent"
-                  >
-                    {section.title}
-                  </h2>
-                  <div className="ml-4">
-                    <ol className="px-5 list-decimal">
-                      {section.lessons &&
-                        section.lessons.length > 0 &&
-                        section.lessons.map((lesson) => {
-                          const lessonName = slugify(lesson.name, {
-                            locale: 'ru',
-                          });
-                          return (
-                            <li key={lesson.id + lesson.name}>
-                              <div className="mb-5">
-                                <Link
-                                  href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
-                                >
-                                  {lesson.name}
-                                </Link>
-                                <LessonFormWrapper
-                                  lessonId={lesson.id}
-                                  deleteLessonHandler={deleteLessonHandler}
-                                  setLessonId={setLessonId}
-                                />
-                              </div>
-                            </li>
-                          );
-                        })}
-                    </ol>
+          {sections && sections.length > 0
+            ? sections.map((section) => {
+                return (
+                  <div className="mb-10" key={section.id}>
+                    <h2 className="mt-5 mb-2 text-lg text-customAccent">
+                      {section.title}
+                    </h2>
+                    <div className="ml-4">
+                      <ol className="px-5 list-decimal">
+                        {section.lessons &&
+                          section.lessons.length > 0 &&
+                          section.lessons.map((lesson) => {
+                            const lessonName = slugify(lesson.name, {
+                              locale: 'ru',
+                            });
+                            return (
+                              <li key={lesson.id + lesson.name}>
+                                <div className="mb-5">
+                                  <Link
+                                    href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
+                                  >
+                                    {lesson.name}
+                                  </Link>
+                                  <LessonFormWrapper
+                                    lessonId={lesson.id}
+                                    deleteLessonHandler={deleteLessonHandler}
+                                    setLessonId={setLessonId}
+                                  />
+                                </div>
+                              </li>
+                            );
+                          })}
+                      </ol>
+                    </div>
                   </div>
+                );
+              })
+            : lessons &&
+              lessons.length > 0 && (
+                <>
+                  <ol className="px-5 list-decimal">
+                    {lessons &&
+                      lessons.length > 0 &&
+                      lessons.map((lesson) => {
+                        const lessonName = slugify(lesson.name, {
+                          locale: 'ru',
+                        });
+                        return (
+                          <li key={lesson.id + lesson.name}>
+                            <div className="mb-5">
+                              <Link
+                                href={`/courses/${courseName}-${courseId}/${lessonName}-${lesson.id}`}
+                              >
+                                {lesson.name}
+                              </Link>
+                              <LessonFormWrapper
+                                lessonId={lesson.id}
+                                deleteLessonHandler={deleteLessonHandler}
+                                setLessonId={setLessonId}
+                              />
+                            </div>
+                          </li>
+                        );
+                      })}
+                  </ol>
                 </>
-              );
-            })}
+              )}
         </section>
       )}
     </>

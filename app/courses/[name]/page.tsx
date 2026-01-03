@@ -28,7 +28,7 @@ export default async function CoursePage({
   }
 
   return (
-    <>
+    <main>
       <h1 className="mb-5 text-center text-xl uppercase">{course.name}</h1>
       <Lessons
         sections={course.sections}
@@ -36,6 +36,6 @@ export default async function CoursePage({
         lessons={course.lessons}
         name={course?.name}
       />
-    </>
+    </main>
   );
 }

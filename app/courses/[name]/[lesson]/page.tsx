@@ -32,6 +32,8 @@ export default async function LessonPage({
 
   const course = await getCourseWithLessonsById(lesson.courseId);
 
+  // console.log('Lesson page course:', course);
+
   if (!course) {
     return (
       <div className="flex justify-center items-center">

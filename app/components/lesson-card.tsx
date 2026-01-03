@@ -144,6 +144,9 @@ const LessonCard: FC<TLessonCardProps> = ({
   const lessonIndex = lessons.findIndex(
     (partialLesson) => partialLesson.name === lesson.name,
   );
+
+  console.log('Lesson index:', lesson, lessons);
+
   const nextLessonName =
     lessonIndex !== lessons.length - 1 &&
     slugify(lessons[lessonIndex + 1].name, { locale: 'ru' }) +

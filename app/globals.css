@@ -241,6 +241,7 @@ body {
 }
 
 .code-wrapper {
+  max-width: 700px;
   margin-top: 20px;
   margin-bottom: 20px;
 }
@@ -299,6 +300,16 @@ body {
 
 .lesson-answer {
   margin-bottom: 40px;
+}
+
+pre.line-numbers {
+  display: block;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+pre.line-numbers > code {
+  display: block;
 }
 
 @-webkit-keyframes loader {
